@@ -200,7 +200,4 @@ theorem preparation_sum_bound (n P : ℕ) (prepCost : ℕ → ℕ)
       Finset.sum_le_sum (fun i hi => hcost i (Finset.mem_range.mp hi))
     _ = n*P := by simp
 
-/-- Finite control depends on the chosen preparation machine, not the inputs. -/
-theorem stateCount_eq (m : ℕ) : 7+(m+217+5)+4 = m+233 := by omega
-
 end IntegerMultBounds.Machine.TranslationPreparedFamily

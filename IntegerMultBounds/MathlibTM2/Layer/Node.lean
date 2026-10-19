@@ -86,9 +86,4 @@ theorem program_gate_coeff (ds : Directions) (g : Circuit.Gate NWire ℚ) (hg : 
     (t : NWire × ℚ) (ht : t ∈ g.terms) : (2 * t.2).den = 1 :=
   program_fit ds _ hg t ht
 
-/-- The factors of the network have phase `±1`. -/
-theorem program_factor_phase (ds : Directions) (w : NWire) (g : ZMod 4 × BinaryWalsh.Address m)
-    (hg : Instr.factor w g ∈ program ds) : g.1 = 1 ∨ g.1 = -1 :=
-  program_fit ds _ hg
-
 end IntegerMultBounds.MathlibTM2.Layer

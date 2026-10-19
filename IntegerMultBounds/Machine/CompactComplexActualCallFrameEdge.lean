@@ -53,11 +53,6 @@ theorem requiredInverse_weight (call : Call) :
     simp only [requiredInverse,signedWeight,hn,neg_neg]
     cases direction (edge call.site) <;> rfl
 
-theorem requiredInverse_of_negative (call : Call)
-    (h : weight (edge call.site) call.coordinate=-1) : requiredInverse call= !direction (edge call.site) := by
-  have hn : weight (edge call.site) call.coordinate≠1 := by rw [h]; decide
-  exact ite_eq_right hn
-
 /-- The actual schema now uses precisely the proved coordinate direction. -/
 theorem inverse_eq_required (call : Call) : call.inverse=requiredInverse call := by
   unfold Call.inverse
@@ -167,17 +162,6 @@ theorem calls_frame_edge (columns : ℕ) (site : Occurrence) :
   apply congrArg (fun q : BinaryWalsh.Address (25^3) → ZMod 4 => frame q f)
   funext x
   exact (calls_phase site x).symm
-
-/-- Evaluation is the literal original rational-module frame transition,
-including the descending edge orientation. -/
-theorem original_frame_call_product (columns : ℕ) (site : Occurrence)
-    (f : BinaryColumns.Arrays (25^3) columns) :
-    ComplexFramedExecution.frameOf columns (edge site).val.2
-      ((ComplexFramedExecution.frameOf columns (edge site).val.1).symm f)=
-      (((callsAt site).map kernel).map (vectorFactor columns)).prod f := by
-  have h := congrArg (fun T : BinaryColumns.Operator (25^3) columns => T f)
-    (calls_frame_edge columns site)
-  exact h
 
 end
 end IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge

@@ -71,16 +71,5 @@ theorem compactSynFwdCore_runs (park : List (Fin (prime+Ka+4))) (hPk : Pk park)
       cvFwdOut p l a (synPi (layPerm (List.ofFn a) ℓ (Mult.Sizes.K M))) Z := rfl
   simpa only [compactSynFwdCore,R₁,Function.update_idem,ite_true,hout] using he
 
-theorem compactSynFwdCore_spec :
-    SynFwdSpec (compactMainBody legacy ds) (compactSynFwdCore ds layP) (compactMnRg (.src (.v .io)))
-      (compactSynPreReady M Pk v₀) W p l a (synPi (layPerm (List.ofFn a) ℓ (Mult.Sizes.K M)))
-      ((1+cL)+compactSynLoopFCost (Ka := Ka) ds M (List.ofFn a) ℓ W l (nRounds a)
-        (synStashCostW v₀ synXS+6*nRounds a+6)) := by
-  intro Z vv S hPre hdisk hio
-  obtain ⟨hleft,hr,park,hPk,hR⟩ := hPre
-  rw [hio] at hR
-  exact compactSynFwdCore_runs legacy ds hbody a H hAl hLoop v₀ hv₀ hvh hvt hvc hcb Pk layP cL hLay
-    park hPk Z hdisk S.R hR hr vv S hleft rfl
-
 end
 end IntegerMultBounds.MathlibTM2.Fast.Main

@@ -135,13 +135,6 @@ theorem translate_hoare (r : ℚ) (B : ℕ) (hB : 0 < B)
     (RationalOffsetPrepare.result_canonical r xs)
   exact (hp.seq ht).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
-/-- Full physical destination tape, with encoded payload and unchanged background. -/
-theorem output_destination (r : ℚ) (B : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ)
-    (blocks : List (List (Fin 4))) (bs qs : List Bool) (xs : List (Fin radix)) :
-    (output r B source dest p q blocks bs qs xs).tape 11 = fun z =>
-      (RadixToBinary.binaryEncoding (q := radix)).encode
-        (putWord dest q (BlockRotationData.rotate (Counter.value (RationalOffsetPrepare.result r xs)) blocks).flatten z) := rfl
-
 /-- The marked prefix-control word is not changed by preparation or translation. -/
 theorem output_control (r : ℚ) (B : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ)
     (blocks : List (List (Fin 4))) (bs qs : List Bool) (xs : List (Fin radix)) :

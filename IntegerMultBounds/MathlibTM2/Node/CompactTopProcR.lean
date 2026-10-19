@@ -75,18 +75,6 @@ lemma topRSW_eq_topRS (ds : ComplexFramedExecution.Directions) (w a : ℕ) (low 
   simp only [topRSW, topPreRW, h]
   rfl
 
-/-- The pieces of the tape are the rounded pieces when every layer of the tape agrees with the
-rounded layer on its input. -/
-lemma piecesRW_eq_piecesR (w : ℕ) (ds : ComplexFramedExecution.Directions) {R₂ : ℕ} :
-    ∀ (Ps : List (Piece n R₂)) (Z : ZArr (Fin R₂ × Fin r) n),
-      (∀ Y : ZArr (Fin R₂ × Fin r) n, ∀ P ∈ Ps, pieceRW w P.u ds P.R₀ P.j P.hR P.e Y = pieceR P.u ds P.R₀ P.j P.hR P.e Y) →
-      piecesRW w ds Ps Z = piecesR ds Ps Z
-  | [], _, _ => rfl
-  | P :: Ps, Z, h => by
-      simp only [piecesRW, piecesR]
-      rw [h Z P List.mem_cons_self]
-      exact piecesRW_eq_piecesR w ds Ps _ fun Y Q hQ => h Y Q (List.mem_cons_of_mem _ hQ)
-
 end Sem
 
 noncomputable section

@@ -49,13 +49,6 @@ theorem compact_before_values (hfit : offset+p.f*p.q≤p.before) (i : Fin 8) :
   fin_cases i <;> simp [values,inputs,prefixWidth,targetStart,sourceStart,
     ActivePrefixParityOnlyBank.values,backBeforeShape,backWidth,targetWidth,hf,Nat.add_assoc,Nat.add_comm,Nat.add_left_comm]
 
-theorem compact_after_values (hfit : offset+p.f*p.q≤p.after) (i : Fin 8) :
-    values .compactAfter (inputs s p offset rows) (Fin.castAdd 2 i)=
-      ActivePrefixParityOnlyBank.values (backAfterShape s p offset hfit) i := by
-  have hf := p.hnf
-  fin_cases i <;> simp [values,inputs,prefixWidth,targetStart,sourceStart,
-    ActivePrefixParityOnlyBank.values,backAfterShape,backWidth,targetWidth,hf,Nat.add_assoc]
-
 theorem target_suffix : suffix .target (inputs s p offset rows)=targetSuffix s p.after := by
   simp only [suffix,inputs,exponent,targetSuffix,pow_add]
   ring

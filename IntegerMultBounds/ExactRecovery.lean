@@ -242,26 +242,6 @@ theorem computedConv_approx (hk : 0 < k) {x y : List Bool}
     _ ≤ 16 * S * (3 * Es + 2) := by gcongr
 
 
-/-- The transform error chain gives the actual half-unit real margin used
-by the native recovery machine, without assuming a rounded coefficient. -/
-theorem computedConv_coefficient_real_error (hk : 0 < k) {x y : List Bool}
-    (hF : ‖F‖ ≤ 1) (hF' : ∀ u : ZMod S → ℂ, ‖u‖ ≤ 1 / 2 → 2 ^ p * ‖F' u - F u‖ ≤ Es)
-    (hG : ‖G‖ ≤ 1) (hG' : ∀ y : κ → ℂ, ‖y‖ ≤ 1 / 2 → 2 ^ p * ‖G' y - G y‖ ≤ Es)
-    (hEs : Es ≤ 2 ^ p / 100)
-    (hconv : ∀ u v : ZMod S → ℂ,
-      G (fun κ => F u κ * F v κ) = fun i => cconv u v i / (S : ℂ) ^ 2)
-    (hfinal : (2 : ℝ) ^ (2 * k + 4) * S ^ 2 * (3 * Es + 2) < 2 ^ p / 2) (index : ZMod S) :
-    |(((2 : ℂ) ^ (2 * k) * S) * computedConv (p := p) (k := k) F' G' x y index).re -
-      ((cconvList S (digitsOf k x) (digitsOf k y)).getD index.val 0 : ℝ)| < 1 / 2 := by
-  refine recover_coefficient_real_error (digitsOf k x) (digitsOf k y)
-    (computedConv_approx F F' G G' hk hF hF' hG hG' hEs hconv) ?_ index
-  have precisionPositive : (0 : ℝ) < 2 ^ p := by positivity
-  rw [← mul_div_assoc, div_lt_iff₀ precisionPositive]
-  calc (2 : ℝ) ^ (2 * k) * S * (16 * S * (3 * Es + 2))
-      = 2 ^ (2 * k + 4) * S ^ 2 * (3 * Es + 2) := by ring
-    _ < 2 ^ p / 2 := hfinal
-    _ = 1 / 2 * 2 ^ p := by ring
-
 /-- The exact product from the computed pipeline: rounding `2^(2k) S` times the
 computed normalised convolution gives the digits of the product, provided
 `2^(2k+4) S² (3 E_s + 2) < 2^(p-1)`. -/

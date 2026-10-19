@@ -218,21 +218,6 @@ lemma RsaV.upd_er [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
   funext r
   cases r <;> simp [RsaV.get]
 
-lemma RsaV.upd_cS [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .cS l = { V with cS := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_cM [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .cM l = { V with cM := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_cP [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .cP l = { V with cP := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
 lemma RsaV.upd_cW [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
     Function.update V.get .cW l = { V with cW := l }.get := by
   funext r
@@ -253,48 +238,8 @@ lemma RsaV.upd_kT [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
   funext r
   cases r <;> simp [RsaV.get]
 
-lemma RsaV.upd_kx [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .kx l = { V with kx := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_ka [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .ka l = { V with ka := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_kb [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .kb l = { V with kb := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_atm [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .atm l = { V with atm := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
 lemma RsaV.upd_rr [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
     Function.update V.get .rr l = { V with rr := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_bS [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .bS l = { V with bS := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_bxa [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .bxa l = { V with bxa := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_bya [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .bya l = { V with bya := l }.get := by
-  funext r
-  cases r <;> simp [RsaV.get]
-
-lemma RsaV.upd_bza [DecidableEq X] (V : RsaV X A) (l : List (Fin (A + 4))) :
-    Function.update V.get .bza l = { V with bza := l }.get := by
   funext r
   cases r <;> simp [RsaV.get]
 
@@ -497,12 +442,6 @@ theorem rsa_terms (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states 
   · rw [RsaV.upd_cW, RsaV.upd_kW]
     congr 1
     ext1 <;> simp [rsaTV, hkW]
-
-omit [DecidableEq X] hrg hdisj in
-lemma rsaCr_rsaCr (ρ : CR → List (Fin (A + 4))) (w : ℕ) (a b c d a' b' c' d' : List GaussianInt) :
-    rsaCr (rsaCr ρ w a b c d) w a' b' c' d' = rsaCr ρ w a' b' c' d' := by
-  funext x
-  cases x <;> simp [rsaCr]
 
 /-- The register file before an output: the extended line from `e` on in `xs`, the table from
 `j` on in `ys` (the entries before `j` reversed on `ysv`), the residue `r` in `rr` and the

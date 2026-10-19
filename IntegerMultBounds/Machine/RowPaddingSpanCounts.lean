@@ -187,10 +187,5 @@ theorem ready (rs rps ls : List Bool) (R R' L : ℕ) :
     (output (q := q) rs rps ls R R' L).tape 5 = RadixZeroFill.encodedBinary (padBits R R' L) :=
   ⟨rfl,rfl,rfl,rfl⟩
 
-theorem valid_positive (R L : ℕ) (hR : 0 < R) (hL : 0 < L) :
-    0 < Counter.value (validBits R L) := by
-  rw [valid_value]
-  exact Nat.mul_pos hR hL
-
 end
 end IntegerMultBounds.Machine.RowPaddingSpanCounts

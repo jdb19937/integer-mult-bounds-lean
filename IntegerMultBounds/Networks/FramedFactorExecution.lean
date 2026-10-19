@@ -36,50 +36,6 @@ theorem run_append (p q : List (Instruction ι R E)) (x : ι → E) :
 def onWire (i : ι) (fs : List (E →ₗ[R] E)) : List (Instruction ι R E) :=
   fs.reverse.map (Instruction.linear i)
 
-theorem run_onWire (i : ι) (fs : List (E →ₗ[R] E)) (x : ι → E) :
-    run (onWire i fs) x = Function.update x i (fs.prod (x i)) := by
-  induction fs with
-  | nil => simp [onWire, run]
-  | cons f fs ih =>
-    rw [onWire, List.reverse_cons, List.map_append]
-    simp only [List.map_cons, List.map_nil]
-    rw [run_append]
-    change execute (.linear i f) (run (onWire i fs) x) = _
-    rw [ih]
-    simp only [execute, Function.update_self, Function.update_idem, List.prod_cons, Module.End.mul_apply]
-
-/-- Factor lowering changes only the original edge's physical register. -/
-theorem run_onWire_other (i j : ι) (hji : j ≠ i) (fs : List (E →ₗ[R] E)) (x : ι → E) :
-    run (onWire i fs) x j = x j := by
-  rw [run_onWire]
-  exact Function.update_of_ne hji _ _
-
-/-- Actual frame-change operators, extracted in program order and ignoring gates. -/
-def edgeOperators : List (FramedCircuit.Instruction ι R E) → List (E →ₗ[R] E)
-  | [] => []
-  | .edge _ old next :: rest => (next.toLinearMap * old.symm.toLinearMap) :: edgeOperators rest
-  | .gate _ :: rest => edgeOperators rest
-
-omit [DecidableEq ι] in
-/-- The generic lowering consumes the same ordered edge extraction as the
-physical grouped compiler. -/
-theorem edgeOperators_eq (p : List (FramedCircuit.Instruction ι R E)) :
-    edgeOperators p = (GroupedModuleFrames.edgePairs p).map
-      (fun e => e.2.toLinearMap * e.1.symm.toLinearMap) := by
-  induction p with
-  | nil => rfl
-  | cons instr rest ih => cases instr <;> simp [edgeOperators, GroupedModuleFrames.edgePairs, ih]
-
-omit [DecidableEq ι] in
-/-- Certificates phrased directly over the grouped compiler's frame pairs
-are accepted without reordering or choosing new edge operators. -/
-theorem certificate_of_edgePairs (p : List (FramedCircuit.Instruction ι R E))
-    (factors : List (List (E →ₗ[R] E)))
-    (hf : List.Forall₂ (fun e fs => fs.prod = e.2.toLinearMap * e.1.symm.toLinearMap)
-      (GroupedModuleFrames.edgePairs p) factors) :
-    List.Forall₂ (fun op fs => fs.prod = op) (edgeOperators p) factors := by
-  rwa [edgeOperators_eq, List.forall₂_map_left_iff]
-
 /-- Consume one factor list for each actual edge; scalar gates consume none.
 The correctness premise below guarantees that the supplied lists match exactly. -/
 def lower : List (FramedCircuit.Instruction ι R E) → List (List (E →ₗ[R] E)) →
@@ -87,26 +43,6 @@ def lower : List (FramedCircuit.Instruction ι R E) → List (List (E →ₗ[R] 
   | [], _ => []
   | .edge i _ _ :: rest, fs => onWire i (fs.headD []) ++ lower rest fs.tail
   | .gate g :: rest, fs => .gate g :: lower rest fs
-
-/-- Exact operator certificates suffice to refine every register state, including
-scratch and spectators, throughout the entire ordered program. -/
-theorem run_lower (p : List (FramedCircuit.Instruction ι R E))
-    (factors : List (List (E →ₗ[R] E)))
-    (hf : List.Forall₂ (fun op fs => fs.prod = op) (edgeOperators p) factors)
-    (x : ι → E) : run (lower p factors) x = FramedCircuit.run p x := by
-  induction p generalizing factors x with
-  | nil => rfl
-  | cons instr rest ih =>
-    cases instr with
-    | edge i old next =>
-      cases hf with
-      | cons hprod hrest =>
-        simp only [lower, List.headD_cons, List.tail_cons, run_append, run_onWire,
-          FramedCircuit.run, FramedCircuit.execute]
-        rw [ih _ hrest, hprod]
-        rfl
-    | gate g =>
-      exact ih factors hf (FramedCircuit.moduleGate g x)
 
 def gates : List (Instruction ι R E) → List (Circuit.Gate ι R)
   | [] => []
@@ -133,14 +69,6 @@ omit [DecidableEq ι] in
   | nil => rfl
   | cons f gs ih => exact ih
 
-omit [DecidableEq ι] in
-/-- Scalar gate values and their order are literally retained. -/
-theorem gates_lower (p : List (FramedCircuit.Instruction ι R E))
-    (factors : List (List (E →ₗ[R] E))) : gates (lower p factors) = originalGates p := by
-  induction p generalizing factors with
-  | nil => rfl
-  | cons instr rest ih => cases instr <;> simp [lower, gates, originalGates, ih]
-
 def linearCount : List (Instruction ι R E) → ℕ
   | [] => 0
   | .linear _ _ :: rest => 1 + linearCount rest
@@ -162,23 +90,6 @@ omit [DecidableEq ι] in
     | nil => rfl
     | cons f gs ih => simp [linearCount, ih, Nat.add_comm]
   simpa [onWire] using aux fs.reverse
-
-omit [DecidableEq ι] in
-/-- The exact number of executed linear-factor instructions is the certificate
-list's aggregate length; zero-factor edges introduce no instruction. -/
-theorem linearCount_lower (p : List (FramedCircuit.Instruction ι R E))
-    (factors : List (List (E →ₗ[R] E)))
-    (hf : List.Forall₂ (fun op fs => fs.prod = op) (edgeOperators p) factors) :
-    linearCount (lower p factors) = (factors.map List.length).sum := by
-  induction p generalizing factors with
-  | nil => cases hf; rfl
-  | cons instr rest ih =>
-    cases instr with
-    | edge i old next =>
-      cases hf with
-      | cons hprod hrest =>
-        simp [lower, ih _ hrest]
-    | gate g => exact ih factors hf
 
 omit [DecidableEq ι] in
 /-- Every lowered instruction is either one linear factor or one scalar gate. -/
@@ -215,36 +126,6 @@ variable {L : Type*} [DecidableEq R]
     (current : ι → FramedCircuit.Frame R E) (D : FramedCircuit.Frame R E) :
     originalGates (GroupedCircuit.compileFramed g current D) = GroupedCircuit.compile g := by
   simp [GroupedCircuit.compileFramed]
-
-/-- Erasing frame changes yields exactly the fixed compiled scalar schedule. -/
-theorem originalGates_compile (frameOf : L → FramedCircuit.Frame R E)
-    (current : ι → L) (vs : List (GroupedFrames.Vertex ι L R)) :
-    originalGates (GroupedModuleFrames.compile frameOf current vs) =
-      GroupedCircuit.compileGroups (vs.map GroupedFrames.Vertex.group) := by
-  induction vs generalizing current with
-  | nil => rfl
-  | cons v vs ih =>
-    simp [GroupedModuleFrames.compile, ih, GroupedCircuit.compileGroups]
-
-/-- Sink alignment contributes no scalar gates, so the physical module
-network retains the same scalar schedule independently of its frame module. -/
-theorem originalGates_network (frameOf : L → FramedCircuit.Frame R E)
-    (wires : List ι) (input output : ι → L) (vs : List (GroupedFrames.Vertex ι L R)) :
-    originalGates (GroupedModuleFrames.network frameOf wires input output vs) =
-      GroupedCircuit.compileGroups (vs.map GroupedFrames.Vertex.group) := by
-  simp [GroupedModuleFrames.network, originalGates_compile]
-
-/-- Exact total length after lowering: all placed factors plus the unchanged
-scalar gates, with no count assigned to nonexistent instructions. -/
-theorem length_lower_network (frameOf : L → FramedCircuit.Frame R E)
-    (wires : List ι) (input output : ι → L) (vs : List (GroupedFrames.Vertex ι L R))
-    (factors : List (List (E →ₗ[R] E)))
-    (hf : List.Forall₂ (fun op fs => fs.prod = op)
-      (edgeOperators (GroupedModuleFrames.network frameOf wires input output vs)) factors) :
-    (lower (GroupedModuleFrames.network frameOf wires input output vs) factors).length =
-      (factors.map List.length).sum +
-        (GroupedCircuit.compileGroups (vs.map GroupedFrames.Vertex.group)).length := by
-  rw [length_eq, linearCount_lower _ _ hf, gates_lower, originalGates_network]
 
 end Grouped
 end IntegerMultBounds.Networks.FramedFactorExecution

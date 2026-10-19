@@ -107,11 +107,6 @@ theorem scalarBound_append {ι : Type*} (d B : ℕ) (gs hs : List (Circuit.Gate 
   | nil => rfl
   | cons g gs ih => exact ih _
 
-theorem scalarBound_prefix_le {ι : Type*} (d B : ℕ) (gs : List (Circuit.Gate ι ℂ)) (M k : ℕ) :
-    scalarBound d B (gs.take k) M≤scalarBound d B gs M := by
-  have h := scalarBound_ge d B (gs.drop k) (scalarBound d B (gs.take k) M)
-  simpa only [←scalarBound_append,List.take_append_drop] using h
-
 theorem bounded_run {ι : Type*} [DecidableEq ι] (gs : List (Circuit.Gate ι ℂ))
     (r : ι → ℂ) (n d M B : ℕ) (hr : ∀ i,BoundedGrid n M (r i))
     (hc : ∀ g ∈ gs,∀ term ∈ g.terms,BoundedGrid d B term.2) :

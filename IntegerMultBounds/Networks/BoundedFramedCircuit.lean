@@ -60,9 +60,6 @@ def restrict (capacity : ℕ) (instructions : List (Instruction ℕ R E)) (h : B
     (h : Bounded capacity instructions) : (restrict capacity instructions h).length = instructions.length := by
   simp [restrict]
 
-theorem restrict_nil (capacity : ℕ) (h : Bounded capacity ([] : List (Instruction ℕ R E))) :
-    restrict capacity [] h = [] := rfl
-
 theorem restrict_cons (capacity : ℕ) (instr : Instruction ℕ R E) (rest : List (Instruction ℕ R E))
     (h : Bounded capacity (instr::rest)) :
     restrict capacity (instr::rest) h = finiteInstruction capacity instr (h instr (by simp)) ::

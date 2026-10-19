@@ -61,27 +61,12 @@ theorem compile_frontier (nodes : List (Node ι)) (outputs : List ℕ) (hv : Val
     (marked_scheduled nodes outputs hv ho) hf hd
   exact ⟨hh.1, by simpa [compile, active] using hh.2.1, hh.2.2.2⟩
 
-/-- Each actual emitted gate has distinct inputs and outputs and shares only
-its first input pivot, proved from the original DAG validity. -/
-theorem compile_gate_layout (nodes : List (Node ι)) (outputs : List ℕ) (hv : Valid nodes)
-    (ho : ∀ i ∈ outputs, i < nodes.length) (gate : Gate) (hg : gate ∈ (compile nodes outputs).gates) :
-    gate.inputs.Nodup ∧ gate.outputs.Nodup ∧
-      ∀ slot, slot ∈ gate.inputs ∧ slot ∈ gate.outputs ↔ slot = gate.inputs.headD 0 := by
-  obtain ⟨layout, hi, hout⟩ := (compile_frontier nodes outputs hv ho).2.2 gate hg
-  rw [← hi, ← hout]
-  exact ⟨layout.inputs_nodup, layout.outputs_nodup, fun slot => by simpa [ReversibleFanout.Layout.inputs] using layout.shared_only_pivot slot⟩
-
 /-- The complete actual allocated scalar program has an executable inverse
 on arbitrary register contents, including dirty scratch roles. -/
 theorem compile_run_reverse (nodes : List (Node ι)) (outputs : List ℕ) (hv : Valid nodes)
     (ho : ∀ i ∈ outputs, i < nodes.length) (r : ℕ → ZMod 2) :
     Circuit.run (compile nodes outputs).program.reverse (Circuit.run (compile nodes outputs).program r) = r :=
   (compile nodes outputs).run_reverse (compile_frontier nodes outputs hv ho).2.2 r
-
-theorem compile_reverse_run (nodes : List (Node ι)) (outputs : List ℕ) (hv : Valid nodes)
-    (ho : ∀ i ∈ outputs, i < nodes.length) (r : ℕ → ZMod 2) :
-    Circuit.run (compile nodes outputs).program (Circuit.run (compile nodes outputs).program.reverse r) = r :=
-  (compile nodes outputs).reverse_run (compile_frontier nodes outputs hv ho).2.2 r
 
 /-- The final association lookup used for a requested output index. -/
 def Code.outputSlot (code : Code) (index : ℕ) : ℕ := slot code.state.live (.output index)
@@ -93,14 +78,6 @@ theorem requestedPort_mem (outputs : List ℕ) (index : ℕ) (hi : index < outpu
   have hm := List.getElem_mem hiz
   simp only [List.getElem_zipIdx, Nat.zero_add] at hm
   exact List.mem_map.mpr ⟨(outputs[index],index), hm, rfl⟩
-
-omit [DecidableEq ι] in
-theorem requestedPort_bound (outputs : List ℕ) (owner index : ℕ)
-    (hp : (owner,.output index) ∈ requestedPorts outputs) : index < outputs.length := by
-  obtain ⟨⟨value,i⟩, hm, he⟩ := List.mem_map.mp hp
-  have he' : i = index := Port.output.inj (congrArg Prod.snd he)
-  have hh := (List.mem_zipIdx hm).2.1
-  omega
 
 /-- Every requested output gets a real final frontier entry, even if several
 requested outputs refer to the same DAG node. -/
@@ -126,26 +103,6 @@ theorem compile_output_ne (nodes : List (Node ι)) (outputs : List ℕ) (hv : Va
   (compile_frontier nodes outputs hv ho).1.slot_ne _ _
     (compile_output_present nodes outputs hv ho i hi) (compile_output_present nodes outputs hv ho j hj)
     (fun h => hne (Port.output.inj h))
-
-/-- No gate input ports survive the scan: the final live frontier consists
-precisely of requested output ports; all other roles have retired. -/
-theorem compile_live_output (nodes : List (Node ι)) (outputs : List ℕ) (hv : Valid nodes)
-    (ho : ∀ i ∈ outputs, i < nodes.length) (entry : Port × ℕ)
-    (he : entry ∈ (compile nodes outputs).state.live) :
-    ∃ index, index < outputs.length ∧ entry.1 = .output index := by
-  have hd := (compile_frontier nodes outputs hv ho).2.1 entry.1 |>.mp (List.mem_map.mpr ⟨entry,he,rfl⟩)
-  obtain ⟨⟨owner, howner, hw⟩, hp⟩ := hd
-  rcases List.mem_append.mp hw with hw | hw
-  · obtain ⟨target, right, htarget, _, _, hbound⟩ := gatePorts_target _ 0 nodes (owner,entry.1) hw
-    change entry.1 = .gate target right at htarget
-    rw [htarget] at hp
-    change nodes.length ≤ target at hp
-    omega
-  · obtain ⟨index, hindex⟩ := requestedPorts_output outputs (owner,entry.1) hw
-    change entry.1 = .output index at hindex
-    refine ⟨index, ?_, hindex⟩
-    apply requestedPort_bound outputs owner index
-    rwa [hindex] at hw
 
 /-- Every intermediate gate uses only roles below the final actual allocation
 count, including retired nonpivot inputs and fresh intermediate outputs. -/

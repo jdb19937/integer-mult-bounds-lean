@@ -22,10 +22,6 @@ def folded (v : Descriptor) : Descriptor :=
 theorem folded_volume (q : ℕ) (v : Descriptor) : volume q v = volume q (folded v) :=
   ArbitraryWidthHighPrefix.folded_volume q _ _ _ _ _ _
 
-theorem folded_positive (v : Descriptor) (hv : v.Positive) : (folded v).Positive :=
-  ⟨Nat.mul_pos (Nat.mul_pos hv.1 hv.2.1) hv.2.2.1,by change 0 < 1; decide,by change 0 < 1; decide,
-    hv.2.2.2.1,hv.2.2.2.2⟩
-
 def foldAddress {v : Descriptor} (x : Address v) : Address (folded v) where
   beforeRows := finProdFinEquiv (finProdFinEquiv (x.beforeRows,x.row),x.before)
   row := ⟨0,by change 0 < 1; decide⟩
@@ -110,23 +106,6 @@ theorem transpose_fold {α : Type*} {v : Descriptor} {c : ℕ}
 theorem foldArray_word {α : Type*} {v : Descriptor} (x : Fin (volume prime v) → α) :
     List.ofFn (foldArray x) = List.ofFn x :=
   (List.ofFn_congr (folded_volume prime v) x).symm
-
-theorem foldArray_encoded {v : Descriptor} (x : Fin (volume prime v) → ZMod 2) :
-    Shared50RecursiveNodeSemantics.encoded (foldArray x) =
-      foldArray (Shared50RecursiveNodeSemantics.encoded x) := rfl
-
-theorem foldArray_encoded_word {v : Descriptor} (x : Fin (volume prime v) → ZMod 2) :
-    List.ofFn (Shared50RecursiveNodeSemantics.encoded (foldArray x)) =
-      List.ofFn (Shared50RecursiveNodeSemantics.encoded x) := by
-  rw [foldArray_encoded,foldArray_word]
-
-theorem encoded_transpose_fold {v : Descriptor} {c : ℕ} (hc : 0 < c) (hd : c ∣ v.rows)
-    (x : Fin (volume prime v) → ZMod 2) :
-    Shared50RecursiveNodeRows.transpose (one_dvd _)
-      (Shared50RecursiveNodeSemantics.encoded (foldArray x)) =
-      foldArray (Shared50RecursiveNodeRows.transpose hd
-        (Shared50RecursiveNodeSemantics.encoded x)) := by
-  rw [foldArray_encoded,transpose_fold hc hd]
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighFoldSemantics

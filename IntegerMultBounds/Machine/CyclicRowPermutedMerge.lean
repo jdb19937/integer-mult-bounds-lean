@@ -28,13 +28,6 @@ theorem reindex_append {m n : ℕ} (e : Equiv.Perm (Fin m)) (f : Equiv.Perm (Fin
 def slots (rho : Equiv.Perm (Fin c)) : Equiv.Perm (Fin (((1+c)+2)+2)) :=
   sumPerm (sumPerm (sumPerm (Equiv.refl _) rho) (Equiv.refl _)) (Equiv.refl _)
 
-/-- The compiled wiring reads logical role j from its actual network output
-slot rho j, with common output and both binary controllers fixed. -/
-theorem slots_role (rho : Equiv.Perm (Fin c)) (j : Fin c) :
-    slots rho (Fin.castAdd 2 (Fin.castAdd 2 (Fin.natAdd 1 j))) =
-      Fin.castAdd 2 (Fin.castAdd 2 (Fin.natAdd 1 (rho j))) := by
-  simp [slots,sumPerm]
-
 theorem reindex_bank (rho : Equiv.Perm (Fin c)) (source : ℤ → Fin (a+4))
     (outputs : Fin c → ℤ → Fin (a+4)) (p : ℤ) (origins : Fin c → ℤ)
     (bs gs : List Bool) :

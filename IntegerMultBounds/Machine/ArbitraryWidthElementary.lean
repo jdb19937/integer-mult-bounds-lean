@@ -150,15 +150,5 @@ theorem bounded_hoare (cutoff : ℕ) (v : Descriptor) (hs : Fin 6 → List Bool)
     (fun _ h => h) (fun _ h => h)
     (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ (Nat.add_le_add_right hw 1)))
 
-/-- The bounded-width fallback budget satisfies every positive width
-exponent, so its use cannot weaken the fast branch's certified exponent. -/
-theorem bounded_budget (cutoff e V : ℕ) (τ : ℝ) (he : 0 < e) (hτ : 0 < τ) :
-    ((coefficient*(cutoff+1)*V : ℕ) : ℝ) ≤
-      ((coefficient*(cutoff+1) : ℕ) : ℝ)*(V : ℝ)*(e : ℝ)^τ := by
-  have hp : 1 ≤ (e : ℝ)^τ := Real.one_le_rpow (by exact_mod_cast he) hτ.le
-  have h := mul_le_mul_of_nonneg_left hp
-    (show 0 ≤ ((coefficient*(cutoff+1) : ℕ) : ℝ)*(V : ℝ) by exact mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
-  simpa only [Nat.cast_mul,mul_one] using h
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthElementary

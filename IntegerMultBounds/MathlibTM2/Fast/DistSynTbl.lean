@@ -375,8 +375,6 @@ def dsyCodeNr : TblCode 40 :=
 /-- The number of rounds: `ℓ` if some axis is long (`N > D (ℓ - 1)`), `ℓ - 1` otherwise. -/
 def dsyNr (N D ℓ : ℕ) : ℕ := if 0 < N - D * (ℓ - 1) then ℓ else ℓ - 1
 
-theorem dsyNr_eq (N D ℓ : ℕ) : dsyNr N D ℓ = if 0 < N - D * (ℓ - 1) then ℓ else ℓ - 1 := rfl
-
 variable {es : List ℕ} {ℓ K E : ℕ}
 
 theorem dsyCodeB_do (s : TblSt 40 A) (hc : DsyInv s es ℓ K E) (hℓW : ℓ < 2 ^ W) (hℓ : 1 ≤ ℓ) :

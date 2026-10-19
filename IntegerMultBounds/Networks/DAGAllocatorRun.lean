@@ -202,34 +202,4 @@ theorem compileFrom_gates_bounded {ι : Type*} (all : List (Node ι)) (active : 
     · simpa only [compileFrom, ha, ↓reduceIte] using
         ih state (offset+1) hs.2.2 hf (skip_domain _ state offset hd (hs.2.1 ha))
 
-/-- Every nonpivot input role actually disappears from the live frontier after
-its value is gathered; it is neither retained nor assigned to a new consumer. -/
-theorem allocate_retired_role {ι : Type*} (state : State) (index : ℕ) (node : Node ι)
-    (consumers : List Port) (hf : Frontier state) (hi : InputsReady state index node)
-    (r : ℕ) (hr : r ∈ (allocate state index node consumers).gate.inputs.tail) :
-    r ∉ (allocate state index node consumers).state.live.map Prod.snd := by
-  cases node with
-  | mk kind support =>
-    cases kind with
-    | input label => simp [allocate] at hr
-    | add left right =>
-      have he : r = slot state.live (.gate index true) := by simpa [allocate] using hr
-      subst r
-      intro hm
-      change slot state.live (.gate index true) ∈
-        ((consumers.zip (allocate state index ⟨.add left right,support⟩ consumers).gate.outputs ++
-          retained state index).map Prod.snd) at hm
-      rw [List.map_append] at hm
-      rcases List.mem_append.mp hm with hm | hm
-      · obtain ⟨entry, he, hslot⟩ := List.mem_map.mp hm
-        have hout := (List.of_mem_zip he).2
-        rw [hslot] at hout
-        have hp := (allocate_shared_pivot state index ⟨.add left right,support⟩ consumers hf hi
-          (slot state.live (.gate index true))).mp ⟨by simp [allocate], hout⟩
-        have hpq := hf.slot_ne (.gate index false) (.gate index true) hi.1 hi.2 (by simp)
-        exact hpq hp.symm
-      · obtain ⟨entry, he, hslot⟩ := List.mem_map.mp hm
-        have howner := hf.slot_owner (.gate index true) hi.2 entry (List.mem_filter.mp he).1 hslot
-        exact retired_absent state index true entry he howner
-
 end IntegerMultBounds.Networks.DAGAllocator

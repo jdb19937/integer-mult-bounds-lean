@@ -18,11 +18,6 @@ open ActiveRepairLayoutRecordsData (Array)
 open ActiveTargetHighestPairLayoutGeometry (sourceHigh)
 variable {s : Shape} {p : Parameters s} {offset rows : ℕ}
 
-theorem destination_eq (d : Inputs s p offset rows)
-    (hfit : offset+p.f*p.q≤p.before) (hsource : 0<sourceHigh s p offset) (x : Address s p rows) :
-    ActiveRepairLayoutRecordsFullEarlyData.destination d hfit hsource x=
-      ActiveTargetHighestLayoutFullSelected.earlyDestination s p offset rows hfit hsource x := rfl
-
 theorem entry (d : Inputs s p offset rows) (hfit : offset+p.f*p.q≤p.before)
     (hsource : 0<sourceHigh s p offset) (hH : 1≤s.H) (array : Array s rows) (x : Address s p rows) :
     ActiveRepairLayoutRecordsFullEarlyData.result d hfit hsource hH array

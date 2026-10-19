@@ -52,20 +52,5 @@ theorem original_header (d : Inputs s) (x : ActiveRepairLayoutRecordsData.Array 
     simpa only [CleanSubbank.bank,Tapes.append,Fin.addCases_left] using h
   | right j => simp [CleanSubbank.bank,Tapes.append,SharedBank.empty]
 
-def earlyRaw : Fin ActivePrefixStageFullEarlyRun.count :=
-  Fin.castAdd ActivePrefixStageFullEarlyRun.privateCount (65 : Fin 66)
-def lateRaw : Fin ActivePrefixStageFullLateRun.count :=
-  Fin.castAdd ActivePrefixStageFullLateRun.privateCount (65 : Fin 66)
-
-theorem early_raw (d : Inputs s) (x : ActiveRepairLayoutRecordsData.Array s d.rows) :
-    (ActivePrefixStageFullEarlyRun.bank d x).head earlyRaw=0 ∧
-      (ActivePrefixStageFullEarlyRun.bank d x).tape earlyRaw=ActiveTargetRotation.word x := by
-  constructor <;> rfl
-
-theorem late_raw (d : Inputs s) (x : ActiveRepairLayoutRecordsData.Array s d.rows) :
-    (ActivePrefixStageFullLateRun.bank d x).head lateRaw=0 ∧
-      (ActivePrefixStageFullLateRun.bank d x).tape lateRaw=ActiveTargetRotation.word x := by
-  constructor <;> rfl
-
 end
 end IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint

@@ -90,13 +90,6 @@ theorem bval_drop (k : ℕ) (v : List Bool) (hk : k ≤ v.length) : bval (v.drop
   have hlt : bval (v.take k) < 2 ^ k := by have := bval_lt (v.take k); rwa [hl] at this
   rw [h, Nat.add_mul_div_left _ _ (Nat.two_pow_pos k), Nat.div_eq_of_lt hlt, zero_add]
 
-theorem bval_take (k : ℕ) (v : List Bool) (hk : k ≤ v.length) : bval (v.take k) = bval v % 2 ^ k := by
-  have h := bval_take_drop k v
-  have hl : (v.take k).length = k := by simp; omega
-  rw [hl] at h
-  have hlt : bval (v.take k) < 2 ^ k := by have := bval_lt (v.take k); rwa [hl] at this
-  rw [h, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hlt]
-
 theorem bval_replicate_append (t : ℕ) (w : List Bool) :
     bval (List.replicate t false ++ w) = 2 ^ t * bval w := by
   rw [bval_append, bval_replicate_false]; simp

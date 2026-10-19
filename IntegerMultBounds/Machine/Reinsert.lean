@@ -282,22 +282,6 @@ def fill : List Record → List Record → List Record
     rcases rec with ⟨b, payload⟩
     cases b <;> cases replacements <;> simp [fill, ih]
 
-/-- Applying a repair to the selected records and reinserting that stream is
-exactly pointwise repair at the flagged slots, even if repairs change key bits. -/
-theorem fill_repair (repair : Record → Record) (records : List Record) :
-    fill records ((records.filter (fun rec => rec.key)).map repair) =
-      records.map (fun rec => if rec.key then repair rec else rec) := by
-  induction records with
-  | nil => rfl
-  | cons rec rest ih =>
-    rcases rec with ⟨b, payload⟩
-    cases b <;> simp [fill, ih]
-
-/-- Reinserting the unmodified selected stream restores the original exactly. -/
-theorem fill_selected (records : List Record) :
-    fill records (records.filter (fun rec => rec.key)) = records := by
-  simpa using fill_repair id records
-
 /-- The output contains every retained original and every supplied replacement
 exactly once, so encoded volume is additive without equal-width assumptions. -/
 theorem fill_volume (records replacements : List Record)
@@ -423,27 +407,6 @@ theorem stream_exact (records replacements : List Record)
         (r + (encode (fill records replacements)).length) 0) = none := by
   refine ⟨stream_run records replacements f h g p q r hc, halt _ _ _ _ _ _ ?_⟩
   rw [putWord_outside _ _ _ _ (Or.inr le_rfl), hend]
-
-/-- Blank-backed streams yield the complete output tape, blank outside the exact
-encoded result, while both input tapes are retained everywhere. -/
-theorem stream_blank (records replacements : List Record)
-    (hc : replacements.length = holes records) :
-    run program ((encode records).length + (encode replacements).length)
-      (cfg false (wordTape (encode records)) (wordTape (encode replacements))
-        (fun _ => blank) 0 0 0 0) =
-      some (cfg false (wordTape (encode records)) (wordTape (encode replacements))
-        (wordTape (encode (fill records replacements)))
-        (encode records).length (encode replacements).length
-        (encode (fill records replacements)).length 0) ∧
-    step program (cfg false (wordTape (encode records)) (wordTape (encode replacements))
-        (wordTape (encode (fill records replacements)))
-        (encode records).length (encode replacements).length
-        (encode (fill records replacements)).length 0) = none := by
-  have hw (xs : List (Fin 4)) : putWord (fun _ => blank) 0 xs = wordTape xs := by
-    funext j
-    simpa using putWord_blank 0 j xs
-  simpa only [hw, zero_add] using stream_exact records replacements
-    (fun _ => blank) (fun _ => blank) (fun _ => blank) 0 0 0 hc rfl
 
 /-- A full-tape Hoare contract with the actual transition count. -/
 theorem stream_hoare (records replacements : List Record)

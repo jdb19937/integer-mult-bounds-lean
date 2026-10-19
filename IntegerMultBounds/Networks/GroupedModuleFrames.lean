@@ -61,21 +61,6 @@ def network (wires : List ι) (input output : ι → L) (vs : List (Vertex ι L 
   compile frameOf input vs ++ FramedCircuit.edges (profile frameOf (finalLabels input vs))
     (profile frameOf output) wires
 
-/-- All intermediate module frames cancel along the complete physical
-network, including scratch and spectator wires. -/
-theorem network_identity (wires : List ι) (hall : ∀ i, i ∈ wires)
-    (input output : ι → L) (vs : List (Vertex ι L R)) (stored : ι → E) :
-    FramedCircuit.run (network frameOf wires input output vs) stored =
-      FramedCircuit.encode (profile frameOf output)
-        (FramedCircuit.moduleRun (compileGroups (vs.map Vertex.group))
-          (FramedCircuit.decode (profile frameOf input) stored)) := by
-  have hfinal : FramedCircuit.afterEdges (profile frameOf (finalLabels input vs))
-      (profile frameOf output) wires = profile frameOf output := by
-    funext i
-    simp [FramedCircuit.afterEdges_apply, hall i]
-  conv_lhs => rw [← FramedCircuit.encode_decode (profile frameOf input) stored]
-  rw [network, FramedCircuit.run_append, compile_invariant, FramedCircuit.edges_invariant, hfinal]
-
 /-- The label history is literally the existing global rank-accounting trace;
 it is independent of the module that holds the wire values. -/
 abbrev networkUpdates := GroupedFrames.networkUpdates (ι := ι) (L := L) (R := R)
@@ -105,55 +90,6 @@ omit [DecidableEq ι] [DecidableEq R] in
   induction rows with
   | nil => rfl
   | cons g gs ih => exact ih
-
-omit [DecidableEq R] in
-/-- The profile update is exactly the same physical wire-label update. -/
-theorem profile_update (current : ι → L) (i : ι) (next : L) :
-    Function.update (profile frameOf current) i (frameOf next) =
-      profile frameOf (Function.update current i next) := by
-  funext j
-  by_cases hj : j = i <;> simp [profile, hj]
-
-omit [DecidableEq R] in
-/-- Every alignment instruction contributes its actual consecutive labels,
-including repeated incidences and the identity changes they generate. -/
-theorem edgePairs_edges (current desired : ι → L) (wires : List ι) :
-    edgePairs (FramedCircuit.edges (profile frameOf current) (profile frameOf desired) wires) =
-      (RankTrace.edges current (wires.map fun i => (i, desired i))).map
-        (fun p => (frameOf p.1, frameOf p.2)) := by
-  induction wires generalizing current with
-  | nil => rfl
-  | cons i wires ih =>
-    simp only [FramedCircuit.edges, edgePairs, List.map_cons, RankTrace.edges]
-    change (frameOf (current i), frameOf (desired i)) :: _ = _
-    rw [show profile frameOf desired i = frameOf (desired i) from rfl, profile_update, ih]
-
-/-- Grouped compilation's ordered frame edges coincide with the existing
-rank-accounting edge list, without adding edges for internal gate rows. -/
-theorem edgePairs_compile (current : ι → L) (vs : List (Vertex ι L R)) :
-    edgePairs (compile frameOf current vs) =
-      (RankTrace.edges current (updates vs)).map (fun p => (frameOf p.1, frameOf p.2)) := by
-  induction vs generalizing current with
-  | nil => rfl
-  | cons v vs ih =>
-    rw [compile, edgePairs_append, GroupedCircuit.compileFramed, edgePairs_append, edgePairs_gates,
-      List.append_nil, ih]
-    have he : edgePairs (FramedCircuit.edges (profile frameOf current)
-        (fun _ => frameOf v.label) (touched v.group)) =
-        (RankTrace.edges current (touches v)).map (fun p => (frameOf p.1, frameOf p.2)) :=
-      edgePairs_edges frameOf current (fun _ => v.label) (touched v.group)
-    rw [he]
-    simp only [updates, List.flatMap_cons, RankTrace.edges_append, List.map_append, after]
-
-/-- Exact ordered correspondence between the module compiler's physical
-frame instructions and the complete global trace used by rank factors. -/
-theorem edgePairs_network (wires : List ι) (input output : ι → L) (vs : List (Vertex ι L R)) :
-    edgePairs (network frameOf wires input output vs) =
-      (RankTrace.edges input (networkUpdates wires output vs)).map
-        (fun p => (frameOf p.1, frameOf p.2)) := by
-  rw [network, edgePairs_append, edgePairs_compile, edgePairs_edges]
-  simp only [networkUpdates, GroupedFrames.networkUpdates, RankTrace.edges_append,
-    List.map_append, finalLabels_trace]
 
 end Compiler
 
@@ -236,14 +172,6 @@ theorem moduleRun_coefficients (p : Circuit.Program ι R) (x : ι → E) (i : ι
   intro j _
   rw [runLinear_apply, hsingle]
 
-/-- Equality on all scalar inputs transfers to every module-valued input,
-while retaining the literal same finite programs and scalar coefficients. -/
-theorem moduleRun_eq_of_scalar_eq (p q : Circuit.Program ι R)
-    (h : ∀ x : ι → R, Circuit.run p x = Circuit.run q x) (x : ι → E) :
-    FramedCircuit.moduleRun p x = FramedCircuit.moduleRun q x := by
-  funext i
-  simp only [moduleRun_coefficients, h]
-
 /-- A scalar routing identity transfers directly to arbitrary module values. -/
 theorem moduleRun_route (p : Circuit.Program ι R) (route : ι → ι)
     (h : ∀ x : ι → R, Circuit.run p x = fun i => x (route i)) (x : ι → E) :
@@ -252,30 +180,9 @@ theorem moduleRun_route (p : Circuit.Program ι R) (route : ι → ι)
   rw [moduleRun_coefficients]
   simp [h, Pi.single_apply]
 
-/-- Signed scalar bank routes lift without altering coefficients or the
-compiled wire schedule. This includes the rational signed exchange. -/
-theorem moduleRun_signed_route (p : Circuit.Program ι R) (route : ι → ι) (sign : ι → R)
-    (h : ∀ x : ι → R, Circuit.run p x = fun i => sign i * x (route i)) (x : ι → E) :
-    FramedCircuit.moduleRun p x = fun i => sign i • x (route i) := by
-  funext i
-  rw [moduleRun_coefficients]
-  simp [h, Pi.single_apply, mul_ite]
-
 end Transfer
 section RoutedNetwork
 variable [Fintype ι] [DecidableEq R] (frameOf : L → FramedCircuit.Frame R E)
-
-/-- A proved scalar signed routing identity yields the full common-frame
-network identity on every module-valued wire, with the same grouped gates. -/
-theorem network_signed_route (wires : List ι) (hall : ∀ i, i ∈ wires)
-    (input output : ι → L) (vs : List (Vertex ι L R)) (route : ι → ι) (sign : ι → R)
-    (h : ∀ x : ι → R, runGroups (vs.map Vertex.group) x = fun i => sign i * x (route i))
-    (stored : ι → E) :
-    FramedCircuit.run (network frameOf wires input output vs) stored =
-      fun i => frameOf (output i) (sign i • (frameOf (input (route i))).symm (stored (route i))) := by
-  rw [network_identity frameOf wires hall,
-    moduleRun_signed_route _ route sign (fun x => by rw [compileGroups_run]; exact h x)]
-  rfl
 
 end RoutedNetwork
 

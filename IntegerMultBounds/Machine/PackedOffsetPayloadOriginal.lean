@@ -62,25 +62,5 @@ theorem runs (V : List Bool) (w n B : ℕ) (hV : V.length=n*w) (hB : 0 < B)
   rw [generated] at h₂
   exact ((h₀.seq h₁).seq h₂).consequence (fun _ h => h) (fun _ h => h) (by simp only [Nat.add_mul]; omega)
 
-/-- With at least one fiber, power synthesis is charged to payload volume. -/
-theorem runs_nonempty (V : List Bool) (w n B : ℕ) (hV : V.length=n*w)
-    (hB : 0 < B) (hnpos : 0 < n) (f g : ℤ → Fin 4) (p s : ℤ)
-    (hf : f (p-1)=blank) (hg : g (s-1)=blank) (bs ns ws : List Bool)
-    (hb : Counter.value bs=B) (hn : Counter.value ns=n) (hw : Counter.value ws=w)
-    (cb : GrowingCounterData.Canonical bs) (cn : GrowingCounterData.Canonical ns)
-    (cw : GrowingCounterData.Canonical ws) (a : Fin (n*(2^w*B)) → Bool) :
-    HoareTime program
-      (fun z => z=bank (putWord f p (List.ofFn (fun i => bitSymbol (a i))))
-        (putWord g s (V.map bitSymbol)) p s bs ns ws)
-      (fun z => z=bank (putWord f p (PackedOffsetPayload.result V w n B a))
-        (putWord g s (V.map bitSymbol)) p s bs ns ws)
-      ((FixedBasePowerDescriptor.constant 2+608)*(n*(2^w*B))+152) := by
-  have hpow : 2^w ≤ n*(2^w*B) :=
-    (Nat.le_mul_of_pos_right _ hB).trans (Nat.le_mul_of_pos_left _ hnpos)
-  apply (runs V w n B hV hB f g p s hf hg bs ns ws hb hn hw cb cn cw a).consequence
-    (fun _ h => h) (fun _ h => h)
-  have := Nat.mul_le_mul_left (FixedBasePowerDescriptor.constant 2+8) hpow
-  nlinarith
-
 end
 end IntegerMultBounds.Machine.PackedOffsetPayloadOriginal

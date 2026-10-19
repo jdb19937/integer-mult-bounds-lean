@@ -51,11 +51,5 @@ theorem output_tape (d : Data) (c : ℕ) (records : List Partition.Record) :
       (Partition.encode (Reinsert.fill (RepairScan.flagged (flag d c) 0 records)
         (RepairStage.replacements d.geom.addressBits (RepairScan.items (flag d c) (bits d c) 0 records)))) := rfl
 
-theorem output_scratch (d : Data) (c : ℕ) (records : List Partition.Record) (i : Fin 175) :
-    (output d c records).head (Fin.natAdd 14 i)=(scratch d).head i ∧
-    (output d c records).tape (Fin.natAdd 14 i)=(scratch d).tape i := by
-  simp only [output,Tapes.append,Fin.addCases_right]
-  exact ⟨trivial,trivial⟩
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineRun

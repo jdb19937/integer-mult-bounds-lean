@@ -103,19 +103,5 @@ theorem disjoint_iff (weight : α → Finset β) (domain s t : Finset α)
 section Values
 variable [AddCommMonoid A]
 
-omit [DecidableEq α] in
-/-- Actual weighted sums are preserved by disjoint support interpretation. -/
-theorem sum_interpret (weight : α → Finset β) (domain atoms : Finset α)
-    (hw : DisjointOn weight domain) (hs : atoms ⊆ domain) (input : β → A) :
-    (∑ b ∈ interpret weight atoms, input b) = ∑ a ∈ atoms, ∑ b ∈ weight a, input b := by
-  exact Finset.sum_biUnion (hw.mono hs)
-
-omit [DecidableEq α] in
-theorem supportSum_interpret (weight : α → Finset β) (domain atoms : Finset α)
-    (hw : DisjointOn weight domain) (hs : atoms ⊆ domain) (input : β → A) :
-    DisjointCircuit.supportSum input (interpret weight atoms) =
-      DisjointCircuit.supportSum (fun a => DisjointCircuit.supportSum input (weight a)) atoms :=
-  sum_interpret weight domain atoms hw hs input
-
 end Values
 end IntegerMultBounds.Networks.SupportInterpretation

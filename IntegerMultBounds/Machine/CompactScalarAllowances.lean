@@ -31,13 +31,6 @@ open Sizes TimeBound Parameters
   norm_num only [Nat.cast_ofNat]
   nlinarith [sq_nonneg ((b n:ℝ)-1)]
 
- theorem original_axis_cubic (n D : ℕ) (hD : D≤d n) :
-    ((D*K n+3:ℕ):ℝ)≤precision n^3 := by
-  have hp : (1:ℝ)≤precision n := by linarith [six_le_precision n]
-  have hh := mul_le_mul_of_nonneg_left hp (sq_nonneg (precision n))
-  rw [mul_one,←pow_succ] at hh
-  exact (original_axis_size n D hD).trans hh
-
  theorem selected_count (n f : ℕ) (hf : f≤d n) : ((f-1:ℕ):ℝ)≤precision n := by
   have hh : f-1≤b n := (Nat.sub_le f 1).trans (hf.trans (d_le_b n))
   have hr : ((f-1:ℕ):ℝ)≤b n := by exact_mod_cast hh
@@ -100,26 +93,6 @@ allowance; no independent sufficiently-large-chunk premise is supplied. -/
   have hh : ((8*guardLog n+16:ℕ):ℝ)≤K n := by
     push_cast
     nlinarith only [hceil,hlog,hg,hk]
-  exact_mod_cast hh
-
-/-- Original polynomial record bits pay the complete padded repair address.
-Only the literal record-width comparison remains, rather than a free repair
-width assumption for each node. -/
- theorem eventually_record_allowance : ∀ᶠ n : ℕ in atTop,
-    ∀ D payload : ℕ, D≤d n → 6*b n*2^ℓ n≤payload → D*K n+3≤payload := by
-  filter_upwards [eventually_axis_ge_precision] with n hr D payload hD hpayload
-  have hs := original_axis_size n D hD
-  have hp : 0≤precision n := (precision_pos n).le
-  have hmul := mul_le_mul_of_nonneg_left hr hp
-  have hpay : precision n*r n≤(payload:ℝ) := by
-    have hh : ((6*b n*2^ℓ n:ℕ):ℝ)≤payload := by exact_mod_cast hpayload
-    simpa only [Nat.cast_mul,Nat.cast_ofNat,Nat.cast_pow,precision_eq,r] using hh
-  have hh : ((D*K n+3:ℕ):ℝ)≤payload := by
-    calc
-      _ ≤ precision n^2 := hs
-      _ = precision n*precision n := by ring
-      _ ≤ precision n*r n := hmul
-      _ ≤ _ := hpay
   exact_mod_cast hh
 
 end

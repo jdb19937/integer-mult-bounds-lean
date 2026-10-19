@@ -214,24 +214,5 @@ theorem copies_runtime_linear (d : Inputs s p offset rows) (hrows : 0<rows) (hp 
   unfold ActiveRepairLayoutRecordsBankHeaders.runtime
   nlinarith
 
-theorem copies_runs_linear {a : ℕ} (d : Inputs s p offset rows) (hrows : 0<rows) (hp : 0<s.payload)
-    (hfit : offset+p.f*p.q≤p.after) :
-    HoareTime (ActiveRepairLayoutRecordsBankHeaders.program (a := a))
-      (fun v => v=ActiveRepairLayoutRecordsBankHeaders.input d)
-      (fun v => v=ActiveRepairLayoutRecordsBankHeaders.output d)
-      ((constant+451)*volume s rows) :=
-  (ActiveRepairLayoutRecordsBankHeaders.runs d).consequence (fun _ h => h) (fun _ h => h)
-    (copies_runtime_linear d hrows hp hfit)
-
-theorem original_runs_linear {a : ℕ} (d : Inputs s p offset rows) (hrows : 0<rows) (hp : 0<s.payload)
-    (hfit : offset+p.f*p.q≤p.after) :
-    HoareTime (ActiveRepairLayoutRecordsHeadersCount.program (a := a))
-      (fun v => v=ActiveRepairLayoutRecordsHeadersRun.originalInput d)
-      (fun v => v=bank (ActiveRepairLayoutRecordsHeadersCount.ready d))
-      (constant*volume s rows) := by
-  have h := runs_linear (a := a) d hrows hp hfit
-  rw [ActiveRepairLayoutRecordsHeadersRun.input_eq] at h
-  exact h
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersAfterBudget

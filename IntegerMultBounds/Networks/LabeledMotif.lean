@@ -642,56 +642,6 @@ theorem opposite_histories_comparable (target : Fin a → Fin n)
   rw [hi]
   exact inverse_histories_comparable g t owner G J H target hJ hneigh i
 
-/-- The actual forward RankTrace edges satisfy the projection-rank premise. -/
-theorem forward_edges_comparable (target : Fin a → Fin n)
-    (hJ : ∀ i p, J i p ≠ 0 ↔ target p = i)
-    (hneigh : ∀ p, g.current (t (owner p)) (t (target p)) = 0) :
-    ∀ p ∈ RankTrace.edges (input (s := s) g t) (updates (forward g t owner G J H)),
-      Comparable p.1 p.2 :=
-  edges_history_rel Comparable (fun _ => Or.inl le_rfl) _ _
-    (forward_histories_comparable g t owner G J H target hJ hneigh)
-
-/-- The middle opposite-inverse trace satisfies the same actual premise. -/
-theorem opposite_edges_comparable (target : Fin a → Fin n)
-    (hJ : ∀ i p, J i p ≠ 0 ↔ target p = i)
-    (hneigh : ∀ p, g.current (t (target p)) (t (owner p)) = 0) :
-    ∀ p ∈ RankTrace.edges (input (s := s) g t) (updates (opposite g t owner G J H)),
-      Comparable p.1 p.2 :=
-  edges_history_rel Comparable (fun _ => Or.inl le_rfl) _ _
-    (opposite_histories_comparable g t owner G J H target hJ hneigh)
-
-/-- Including explicit output edges, every forward projection difference has
-comparable actual endpoint subspaces. -/
-theorem forward_network_comparable (target : Fin a → Fin n)
-    (hJ : ∀ i p, J i p ≠ 0 ↔ target p = i)
-    (hneigh : ∀ p, g.current (t (owner p)) (t (target p)) = 0)
-    (wires : List (Role n a c s)) :
-    ∀ p ∈ RankTrace.edges (input g t)
-      (networkUpdates wires (output g t) (forward g t owner G J H)), Comparable p.1 p.2 := by
-  intro p hp
-  rw [networkUpdates, RankTrace.edges_append, List.mem_append] at hp
-  rcases hp with hp | hp
-  · exact forward_edges_comparable g t owner G J H target hJ hneigh p hp
-  · apply edges_endpoints_rel Comparable (fun _ => Or.inl le_rfl) _ _ wires _ p hp
-    intro i _
-    rw [← finalLabels_trace]
-    exact Or.inl (forward_final_le_output g t owner G J H i)
-
-theorem opposite_network_comparable (target : Fin a → Fin n)
-    (hJ : ∀ i p, J i p ≠ 0 ↔ target p = i)
-    (hneigh : ∀ p, g.current (t (target p)) (t (owner p)) = 0)
-    (wires : List (Role n a c s)) :
-    ∀ p ∈ RankTrace.edges (input g t)
-      (networkUpdates wires (output g t) (opposite g t owner G J H)), Comparable p.1 p.2 := by
-  intro p hp
-  rw [networkUpdates, RankTrace.edges_append, List.mem_append] at hp
-  rcases hp with hp | hp
-  · exact opposite_edges_comparable g t owner G J H target hJ hneigh p hp
-  · apply edges_endpoints_rel Comparable (fun _ => Or.inl le_rfl) _ _ wires _ p hp
-    intro i _
-    rw [← finalLabels_trace]
-    exact Or.inl (opposite_final_le_output g t owner G J H i)
-
 end Comparability
 
 section Loss
@@ -867,35 +817,6 @@ theorem opposite_loss_le (target : Fin a → Fin n)
       c * finrank K F := by
   rw [opposite_loss_eq_inverse]
   exact inverse_loss_le g t owner G J H target hJ hneigh
-
-omit [Nontrivial R] in
-/-- Explicit output edges contribute zero additional loss in the forward motif. -/
-theorem forward_network_loss (wires : List (Role n a c s)) :
-    RankTrace.loss (fun U : Submodule K (E ⊗[K] F) => finrank K U) (input g t)
-      (networkUpdates wires (output g t) (forward (s := s) g t owner G J H)) =
-    RankTrace.loss (fun U : Submodule K (E ⊗[K] F) => finrank K U) (input g t)
-      (updates (forward (s := s) g t owner G J H)) := by
-  rw [networkUpdates, loss_append, loss_align]
-  have hz : ∀ i : Role n a c s, (fun U : Submodule K (E ⊗[K] F) => finrank K U) (RankTrace.finish (input g t) (updates (forward (s := s) g t owner G J H)) i) -
-      finrank K (output g t i) = 0 := by
-    intro i
-    rw [← finalLabels_trace]
-    exact Nat.sub_eq_zero_of_le (Submodule.finrank_mono (forward_final_le_output g t owner G J H i))
-  simp [hz]
-
-/-- Output completion also contributes zero loss for the actual middle inverse. -/
-theorem opposite_network_loss (wires : List (Role n a c s)) :
-    RankTrace.loss (fun U : Submodule K (E ⊗[K] F) => finrank K U) (input g t)
-      (networkUpdates wires (output g t) (opposite (s := s) g t owner G J H)) =
-    RankTrace.loss (fun U : Submodule K (E ⊗[K] F) => finrank K U) (input g t)
-      (updates (opposite (s := s) g t owner G J H)) := by
-  rw [networkUpdates, loss_append, loss_align]
-  have hz : ∀ i : Role n a c s, (fun U : Submodule K (E ⊗[K] F) => finrank K U) (RankTrace.finish (input g t) (updates (opposite (s := s) g t owner G J H)) i) -
-      finrank K (output g t i) = 0 := by
-    intro i
-    rw [← finalLabels_trace]
-    exact Nat.sub_eq_zero_of_le (Submodule.finrank_mono (opposite_final_le_output g t owner G J H i))
-  simp [hz]
 
 end Loss
 

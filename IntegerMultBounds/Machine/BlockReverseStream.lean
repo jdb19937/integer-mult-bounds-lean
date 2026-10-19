@@ -111,26 +111,4 @@ private theorem canonical_width_le (bs : List Bool) (h : GrowingCounterData.Cano
   have hl := Nat.log2_le_self (Counter.value bs)
   omega
 
-/-- Canonical prepared descriptors give a genuine linear-volume bound for the
-complete machine, including clock scans, body cleanup and every head movement. -/
-theorem reverse_hoare_linear (source dest : ℤ → Fin 4) (p q : ℤ) (blocks : List (List (Fin 4)))
-    (B : ℕ) (hu : BlockRotationData.Uniform B blocks) (hB : 1 ≤ B) (bs countBits : List Bool)
-    (hb : Counter.value bs = B) (hn : Counter.value countBits = blocks.length)
-    (cb : GrowingCounterData.Canonical bs) (cn : GrowingCounterData.Canonical countBits) :
-    HoareTime program
-      (fun v => v = CountedLoop.bank
-        (bank (putWord source p blocks.flatten) dest bs p q) CountedCopyReuse.empty countBits)
-      (fun v => v = CountedLoop.bank
-        (bank (putWord source p blocks.flatten) (putWord dest q (blocks.map List.reverse).flatten) bs
-          (p+((blocks.length*B : ℕ) : ℤ)) (q+((blocks.length*B : ℕ) : ℤ))) CountedCopyReuse.empty
-        (List.replicate countBits.length true)) (119*blocks.flatten.length+4) := by
-  have wb := canonical_width_le bs cb
-  have wn := canonical_width_le countBits cn
-  rw [hb] at wb
-  rw [hn] at wn
-  have hbound := linear_bound B blocks.length bs countBits hB wb wn
-  rw [← BlockRotationData.uniform_volume B blocks hu] at hbound
-  exact (reverse_hoare source dest p q blocks B hu bs countBits hb hn).consequence
-    (fun _ h => h) (fun _ h => h) hbound
-
 end IntegerMultBounds.Machine.BlockReverseStream

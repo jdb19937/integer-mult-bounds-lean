@@ -109,21 +109,5 @@ theorem realizes (g : PointwiseRoleGate.Gate t) (roles : Tapes t prime)
   · exact common_frame g roles hs bs aux _
   · exact PointwiseBinaryNormalized.array_hoare PointwiseBinary.xorSymbol _ _ 0 0 x y bs hn
 
-/-- On encoded binary field streams, the physical operation is the literal
-one-source gate `destination ← destination + source`. -/
-theorem realizes_bits (g : PointwiseRoleGate.Gate t) (roles : Tapes t prime)
-    (hs : Fin 6 → List Bool) (bs : List Bool) (aux : Tapes u prime) (x y : Fin n → ZMod 2)
-    (hhx : roles.head g.src = 0) (hhy : roles.head g.dst = 0)
-    (htx : roles.tape g.src = word (fun i => SparseRoleCircuit.encode (x i)))
-    (hty : roles.tape g.dst = word (fun i => SparseRoleCircuit.encode (y i)))
-    (hn : Counter.value bs = n) :
-    HoareTime (program (u := u) g)
-      (fun w => w = CleanSubbank.bank (common roles hs ((controls bs).append aux)))
-      (fun w => w = CleanSubbank.bank
-        (common (updated roles g (fun i => SparseRoleCircuit.encode (y i+x i))) hs ((controls bs).append aux)))
-      (14*n+14*bs.length+33) := by
-  simpa only [SparseRoleCircuit.encode_add] using realizes g roles hs bs aux
-    (fun i => SparseRoleCircuit.encode (x i)) (fun i => SparseRoleCircuit.encode (y i)) hhx hhy htx hty hn
-
 end
 end IntegerMultBounds.Machine.RecursiveXorRoleBank

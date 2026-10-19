@@ -77,33 +77,10 @@ theorem translate_hoare (Q a B : ℕ) (ha : a ≤ Q) (hB : 0 < B)
 /-- First invocation can start with every writable metadata tape fully blank. -/
 def initialProgram : Program 12 219 0 := seq TranslationPreparedExecution.program cleanupProgram
 
-theorem initial_translate_hoare (Q a B : ℕ) (ha : a ≤ Q) (hB : 0 < B)
-    (source dest : ℤ → Fin 4) (p q : ℤ) (blocks : List (List (Fin 4)))
-    (hlen : blocks.length = Q) (hwidth : BlockRotationData.Uniform B blocks) (bs qs as : List Bool)
-    (hb : Counter.value bs = B) (hq : Counter.value qs = Q) (ha' : Counter.value as = a)
-    (cb : GrowingCounterData.Canonical bs) (cq : GrowingCounterData.Canonical qs)
-    (ca : GrowingCounterData.Canonical as) :
-    HoareTime initialProgram
-      (fun v => v = TranslationPreparedExecution.input source dest p q blocks bs qs as)
-      (fun v => v = output Q a B source dest p q blocks bs qs as)
-      (207*(Q*B)+243) := by
-  have h := (TranslationPreparedExecution.translate_hoare Q a B ha hB source dest p q blocks hlen hwidth
-    bs qs as hb hq ha' cb cq ca).seq (cleanup_hoare Q a B ha hB source dest p q blocks bs qs as hq ha' cq ca)
-  exact h.consequence (fun _ hv => hv) (fun _ hv => hv) (by omega)
-
 /-- The literal destination is independent of the restored numeric workspaces. -/
 theorem output_tape (Q a B : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ) (blocks : List (List (Fin 4)))
     (bs qs as : List Bool) :
     (output Q a B source dest p q blocks bs qs as).tape 11 =
       putWord dest q (BlockRotationData.rotate a blocks).flatten := rfl
-
-/-- Complete metadata equality makes subsequent calls with a newly supplied
-canonical offset descriptor possible without a derived-descriptor oracle. -/
-theorem output_metadata (Q a B : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ) (blocks : List (List (Fin 4)))
-    (bs qs as : List Bool) :
-    Placement.active (Equiv.refl (Fin (10+2))) (output Q a B source dest p q blocks bs qs as) =
-      TranslationDescriptors.bank (fun _ => []) bs qs as (fun _ => blank) 0 := by
-  unfold Placement.active output bank TranslationPreparedExecution.bank
-  congr 1 <;> funext i <;> simp [Tapes.append] <;> rfl
 
 end IntegerMultBounds.Machine.TranslationExecutionReuse

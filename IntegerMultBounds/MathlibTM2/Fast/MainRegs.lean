@@ -246,31 +246,6 @@ lemma mnLayE_inj : Function.Injective mnLayE := by
   · rw [mnLayE_of_ne hi, mnLayE_of_ne hj] at h
     exact (regEquiv SXReg).symm.injective (mnLay_inj h)
 
-/-- Off `lreg .io`, the layer file is outside the stage registers. -/
-lemma mnLayE_ne_rg {i : Fin (nT SXReg)} (hi : i ≠ mnLio) (r : MnR) : mnLayE i ≠ mnRg r := by
-  rw [mnLayE_of_ne hi]; exact fun h => mnRg_ne_lay r _ h.symm
-
-/-- Every stage register other than `src (.v .io)` is outside the layer file. -/
-lemma mnRg_ne_layE {r : MnR} (hr : r ≠ .src (.v .io)) (i : Fin (nT SXReg)) :
-    mnRg r ≠ mnLayE i := by
-  by_cases hi : i = mnLio
-  · rw [hi, mnLayE_io]; exact fun h => hr (mnRg_inj h)
-  · exact (mnLayE_ne_rg hi r).symm
-
-lemma mnLayE_ne_ι (i : Fin (nT SXReg)) (j : Fin 64) : mnLayE i ≠ mnι j := by
-  by_cases hi : i = mnLio
-  · rw [hi, mnLayE_io]; exact mnRg_ne_ι _ j
-  · rw [mnLayE_of_ne hi]; exact fun h => mnι_ne_lay j _ h.symm
-
-/-- Every register is a stage register, a multiplier register or a reserved layer register. -/
-lemma mn_reg_cases (k : Fin mnT) :
-    (∃ r, k = mnRg r) ∨ (∃ j, k = mnι j) ∨ ∃ x, k = mnLay x := by
-  obtain ⟨y, rfl⟩ := mnEq.surjective k
-  rcases y with r | j | x
-  · exact Or.inl ⟨r, rfl⟩
-  · exact Or.inr (Or.inl ⟨j, rfl⟩)
-  · exact Or.inr (Or.inr ⟨x, rfl⟩)
-
 lemma mn_card_le_of_inj {α : Type} [Fintype α] {f : α → MnAll} (hf : Function.Injective f) :
     Fintype.card α ≤ mnT :=
   Fintype.card_le_of_injective f hf
@@ -371,8 +346,6 @@ variable {A : ℕ}
 
 /-- Host programs of the fast multiplier. -/
 abbrev MnPr (A : ℕ) := Pr MnProc mnT mnQ A Unit
-
-lemma mnProc_lay_inj : Function.Injective MnProc.lay := fun _ _ h => MnProc.lay.inj h
 
 /-- The procedure table: `mainP` as the main procedure, `Lb f` as the layer procedure `f`. -/
 def mnBody (Lb : LProc → MnPr A) (mainP : MnPr A) : MnProc → MnPr A

@@ -406,20 +406,8 @@ theorem output_tape {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) 
   rw [output,Placement.combine_tape_active]
   exact ScalingExecutionReuse.output_tape _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-/-- The spare tape's full contents and head are retained, not discarded. -/
-theorem output_spare {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) (p : ℤ)
-    (background : Fin c → ℤ → Fin 4) (origins : Fin c → ℤ) (dest : ℤ → Fin 4) (q : ℤ)
-    (bs qs : List Bool) (modulus current : Tapes c 0) (payload : ℕ → List (Fin 4)) :
-    Placement.extra (executionPlacement c)
-      (output hc Q B source p background origins dest q bs qs modulus current payload) = spare :=
-  Placement.extra_combine _ _ _
-
 theorem tapeCount_eq (c : ℕ) : TapeCount c = 11+4*c := by
   dsimp [TapeCount,SynthesisTapes,FrameTapes]
-  omega
-
-theorem stateCount_eq (c : ℕ) : SynthesisStates c+2+ExecutionStates c = 117*c+85 := by
-  simp only [SynthesisStates,ExecutionStates,ScalingSplit.states_eq,ScalingBuffersReset.states_eq]
   omega
 
 end IntegerMultBounds.Machine.ScalingPreparedExecution

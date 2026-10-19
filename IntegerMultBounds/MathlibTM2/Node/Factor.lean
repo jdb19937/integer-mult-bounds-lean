@@ -1179,15 +1179,6 @@ def FactorSpecL (body : P → Pr P (nT BReg) Q A U) (prog : Pr P (nT BReg) Q A U
       (∀ x, R' (reg (.wire x)) = encZ A w (execM e child Tc (.factor fw g) B x)) ∧
       ∀ i, (∀ x, i ≠ reg (.wire x)) → R' i = S.R i
 
-/-- `FactorSpec` implies `FactorSpecL`. -/
-lemma FactorSpec.factorSpecL {body : P → Pr P (nT BReg) Q A U} {prog : Pr P (nT BReg) Q A U}
-    {bcRest : BReg → List (Fin (A + 4)) → Prop} {j u K ρ a₀ L rows n r w : ℕ} {R k : ℕ}
-    {e : Fin (m * k) → Fin n} {child : Fin m → ZArr (Fin R × Fin r) n → ZArr (Fin R × Fin r) n}
-    {Tc : ℕ} {fw : NWire} {g : ZMod 4 × BinaryWalsh.Address m} {cf : ℕ}
-    (h : FactorSpec body prog bcRest j u K ρ a₀ L rows n r w e child Tc fw g cf) :
-    FactorSpecL body prog bcRest j u K ρ a₀ L rows n r w e child Tc fw g cf :=
-  fun B v S _ hN hB => h B v S hN hB
-
 /-- `FactorSpecL` is monotone in the step bound. -/
 lemma FactorSpecL.mono {body : P → Pr P (nT BReg) Q A U} {prog : Pr P (nT BReg) Q A U}
     {bcRest : BReg → List (Fin (A + 4)) → Prop} {j u K ρ a₀ L rows n r w : ℕ} {R k : ℕ}

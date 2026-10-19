@@ -139,12 +139,10 @@ theorem slyRg_cM : slyRg .cM = sreg (.ly 19) := rfl
 theorem slyRg_tM : slyRg .tM = sreg (.ly 20) := rfl
 theorem slyRg_cX : slyRg .cX = sreg (.ly 21) := rfl
 theorem slyRg_tX : slyRg .tX = sreg (.ly 22) := rfl
-theorem slyRg_tmp : slyRg .tmp = sreg (.ly 11) := rfl
 theorem slyLr_dM : slyLr .dM = slyT 0 := rfl
 theorem slyLr_dX : slyLr .dX = slyT 1 := rfl
 theorem slyLr_cN : slyLr .cN = slyT 2 := rfl
 theorem slyLr_cW : slyLr .cW = slyT 3 := rfl
-theorem slyLr_tA : slyLr .tA = slyT 4 := rfl
 theorem slyLr_tB : slyLr .tB = slyT 5 := rfl
 theorem slyLr_tS : slyLr .tS = slyT 6 := rfl
 

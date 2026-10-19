@@ -43,32 +43,4 @@ theorem original_volume (c m d D G K payload : ℕ) (hK : 0 < K)
   rw [← Nat.mul_assoc,← pow_add]
   exact congrArg (fun b => 2^b*payload) (original_bits c m d D G K payload hK hD)
 
-theorem padded_volume (c m d D G K payload : ℕ) (hc : 0 < c) (hK : 0 < K)
-    (hD : reservedAxes c m d G K ≤ D) :
-    2^(D*K)*payload ≤ initialRows c m d K*(shape c m d D G K payload).recordWidth ∧
-    initialRows c m d K*(shape c m d D G K payload).recordWidth ≤ 2*(2^(D*K)*payload) := by
-  have hb := initial_bounds c m d K hc hK
-  rw [← original_volume c m d D G K payload hK hD]
-  constructor
-  · exact Nat.mul_le_mul_right _ hb.1
-  · calc
-      _ ≤ (2*originalRows c m d K)*(shape c m d D G K payload).recordWidth :=
-        Nat.mul_le_mul_right _ hb.2.2.1
-      _ = _ := by ring
-
-/-- All reserved axes are original axes, bounded by the global axis count. -/
-theorem reserved_le_global (c m d D G K : ℕ)
-    (hD : reservedAxes c m d G K ≤ D) (hDd : D ≤ d) : reservedAxes c m d G K ≤ d :=
-  hD.trans hDd
-
-theorem active_le_global (c m d D G K payload : ℕ) (hDd : D ≤ d) :
-    (shape c m d D G K payload).active ≤ (shape c m d D G K payload).axes :=
-  (Nat.sub_le _ _).trans hDd
-
-/-- Both front fields and the back field retain sufficient capacity at every
-node; carving never uses the row index bits. -/
-theorem node_capacity (c m d D G K payload f : ℕ) (hf : f ≤ d) :
-    (shape c m d D G K payload).width (f-1) ≤ (shape c m d D G K payload).H :=
-  (shape c m d D G K payload).carved_le (f-1) (by simpa only [shape] using (Nat.sub_le f 1).trans hf)
-
 end IntegerMultBounds.Machine.CompactGlobalReservation

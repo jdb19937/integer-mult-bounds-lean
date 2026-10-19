@@ -42,13 +42,6 @@ def compactMainTransportTable (legacy : MnProc → MnPr A)
     (compact : LProc → CompactMnPr CompactMainProc A) (f : MnProc) :
     compactMainTransportTable legacy compact (compactMainOldProc f)=compactMainTransport (legacy f) := rfl
 
-/-- Concrete executable wrappers for unchanged main stages. -/
-def compactMainRead : CompactMnPr CompactMainProc A := compactMainStage mnRead
-def compactMainParams : CompactMnPr CompactMainProc A := compactMainStage mnParams
-def compactMainPoint : CompactMnPr CompactMainProc A := compactMainStage mnPoint
-def compactMainRound : CompactMnPr CompactMainProc A := compactMainStage mnRound
-def compactMainOut : CompactMnPr CompactMainProc A := compactMainStage mnOut
-
 def compactMainStateDown (v : HS compactMnT compactMnQ A Unit) : HS mnT mnQ A Unit :=
   stateLiftDown mnQ_pos (embDn compactMnLegacyReg v)
 

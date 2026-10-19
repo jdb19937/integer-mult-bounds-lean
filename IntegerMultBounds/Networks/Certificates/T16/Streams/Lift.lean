@@ -79,9 +79,6 @@ noncomputable def lift9Equiv (T : Arrays 9 ≃ₗ[ℂ] Arrays 9) : Arrays 73 ≃
         ext g; simp
       rw [this, lift9_id] }
 
-theorem lift9Equiv_apply (T : Arrays 9 ≃ₗ[ℂ] Arrays 9) (f : Arrays 73) :
-    lift9Equiv T f = lift9 T.toLinearMap f := rfl
-
 /-- Pad a local vector by zeros. -/
 def padLow (v : Address 9) : Addr := joinAddr v 0
 

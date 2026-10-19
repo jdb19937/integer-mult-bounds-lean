@@ -9,10 +9,6 @@ No frame operators, wrapper semantics, or dirty routing theorem are asserted. -/
 @[expose] public section
 namespace IntegerMultBounds.Networks.Certificates.T16.Trace
 
-theorem both_orientations_valid :
-    Valid forwardInitial forwardEvents ∧ Valid backwardInitial backwardEvents :=
-  ⟨forward_valid, backward_valid⟩
-
 theorem same_initial_state : forwardInitial = backwardInitial := rfl
 
 /-- Every native register exists in the initial label trie. -/
@@ -21,9 +17,6 @@ theorem initial_contains (i : ℕ) (hi : i < 712) :
   have h : checkRegisters 712 (fun j => forwardInitial.labels.contains j) = true := by
     decide
   exact checkRegisters_sound h i hi
-
-/-- Both complete native traces end after the tenth phase marker. -/
-theorem final_phases : forwardFinal.phase = 10 ∧ backwardFinal.phase = 10 := by decide
 
 /-- The two orientations end at the same local label profile; private labels may differ. -/
 theorem final_local_labels (i : ℕ) (hi : i < 704) :

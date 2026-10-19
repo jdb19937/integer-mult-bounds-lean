@@ -50,12 +50,6 @@ theorem cleans (caller : Tapes t a) (focus : Fin 4 → Fin t) (hf : Function.Inj
     (fun _ h => h) (fun _ h => h) (by unfold cost; omega)
 
 
-theorem cleared_outputs (caller : Tapes t a) (focus : Fin 4 → Fin t) (hf : Function.Injective focus) :
-    ∀ i, (cleared caller focus).tape (focus i) = (fun _ => blank) ∧
-      (cleared caller focus).head (focus i) = 0 := by
-  intro i
-  fin_cases i <;> simp [cleared,setTape,hf.eq_iff]
-
 theorem frame (caller : Tapes t a) (focus : Fin 4 → Fin t) (i : Fin t)
     (hi : ∀ j, i ≠ focus j) :
     (cleared caller focus).tape i = caller.tape i ∧
@@ -107,17 +101,6 @@ theorem carved_cost_bound (s : Shape) (rows w : ℕ) (f : Front)
   cost_bound _ _ (by unfold Shape.recordWidth; positivity)
     (CompactGadgetReservationHeadersCarvedRouting.header_canonical s rows w f)
     (header_values_le s rows w f hr hp hw)
-
-theorem cleans_result (caller : Tapes t a) (focus : Fin 12 → Fin t) (hf : Function.Injective focus)
-    (s : Shape) (rows w : ℕ) (f : Front) :
-    HoareTime (program (a := a) (CompactGadgetReservationHeadersCarvedPlacedRun.outputFocus focus))
-      (fun v => v = CompactGadgetReservationHeadersCarvedPlacedRun.result caller focus s rows w f)
-      (fun v => v = cleared (CompactGadgetReservationHeadersCarvedPlacedRun.result caller focus s rows w f)
-        (CompactGadgetReservationHeadersCarvedPlacedRun.outputFocus focus))
-      (cost (CompactGadgetReservationHeadersCarvedRouting.headerWords s rows w f)) :=
-  cleans _ _ (CompactGadgetReservationHeadersCarvedPlacedRun.output_injective focus hf) _
-    (CompactGadgetReservationHeadersCarvedPlacedRun.result_headers caller focus hf s rows w f).1
-    (CompactGadgetReservationHeadersCarvedPlacedRun.result_headers caller focus hf s rows w f).2
 
 end
 end IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup

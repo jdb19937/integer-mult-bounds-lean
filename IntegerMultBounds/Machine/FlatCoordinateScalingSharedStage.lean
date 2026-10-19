@@ -53,10 +53,6 @@ theorem stage_skeleton (r : ℚ) (hr : Shared50AffineCoefficients.ScaleOccurs r)
     (b W : ℕ) (hW : 0 < W) :
     SharedBankSkeleton.ofStage (stage r hr t b W hW) = skeleton r hr t := rfl
 
-theorem metadata_empty (r : ℚ) (hr : Shared50AffineCoefficients.ScaleOccurs r) (t : Fin d)
-    (b W : ℕ) (hW : 0 < W) :
-    (stage r hr t b W hW).metadata = SharedBank.empty (stage r hr t b W hW).tapes prime := rfl
-
 theorem stage_transport (r : ℚ) (hr : Shared50AffineCoefficients.ScaleOccurs r) (t : Fin d)
     (b W : ℕ) (hW : 0 < W) (a : FlatCoordinateStages.Array d b W)
     (x : Fin d → ZMod (modulus b)) (j : Fin W) :

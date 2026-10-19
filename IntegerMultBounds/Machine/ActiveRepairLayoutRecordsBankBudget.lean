@@ -19,15 +19,6 @@ open ActiveRepairLayoutRecordsHeadersSchedule ActiveRepairLayoutRecordsHeadersCo
 open ActiveRepairRankHeadersCommands
 variable {s : Shape} {p : Parameters s} {offset rows : ℕ}
 
-theorem prepares_linear (d : Inputs s p offset rows) (rs : List Partition.Record)
-    (hrows : 0<rows) (hp : 0<s.payload) (hfit : offset+p.f*p.q≤p.before) :
-    HoareTime ActiveRepairLayoutRecordsBankPlaced.prepareProgram
-      (fun v => v=ActiveRepairLayoutRecordsBankPlaced.originalInput d rs)
-      (fun v => v=ActiveRepairLayoutRecordsBankPlaced.output d rs)
-      ((constant+451)*volume s rows) := by
-  apply (ActiveRepairLayoutRecordsBankPlaced.prepares d rs).consequence (fun _ h => h) (fun _ h => h)
-  exact copies_runtime_linear d hrows hp hfit
-
 theorem ready_bound (d : Inputs s p offset rows) (hrows : 0<rows) (hp : 0<s.payload)
     (hfit : offset+p.f*p.q≤p.before) : Bounded (ready d) (2*volume s rows+1) := by
   intro i
@@ -45,15 +36,6 @@ theorem erase_runtime_linear (d : Inputs s p offset rows) (hrows : 0<rows) (hp :
     (2*volume s rows+1) (ready_bound d hrows hp hfit)
   unfold ActiveRepairLayoutRecordsHeadersErase.runtime eraseConstant
   nlinarith
-
-theorem erase_runs_linear {a : ℕ} (d : Inputs s p offset rows) (hrows : 0<rows) (hp : 0<s.payload)
-    (hfit : offset+p.f*p.q≤p.before) :
-    HoareTime (ActiveRepairLayoutRecordsHeadersErase.program (a := a))
-      (fun v => v=bank (ready d)) (fun v => v=ActiveRepairLayoutRecordsHeadersRun.originalInput d)
-      (eraseConstant*volume s rows) := by
-  have hh := ActiveRepairLayoutRecordsHeadersErase.runs (a := a) d
-  rw [ActiveRepairLayoutRecordsHeadersRun.input_eq] at hh
-  exact hh.consequence (fun _ h => h) (fun _ h => h) (erase_runtime_linear d hrows hp hfit)
 
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankBudget

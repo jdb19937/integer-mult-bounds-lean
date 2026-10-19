@@ -55,15 +55,6 @@ def inputs (order : Order) (v : Stage s) (rows : ℕ) (hG : 1≤s.guard) (hGK : 
   hg := hG
   hrecord := hrecord
 
-theorem consumer_inputs (order : Order) (v : Stage s) (rows : ℕ) (hG : 1≤s.guard)
-    (hGK : s.guard+1≤s.chunk) (hrows : 0<rows) (hrecord : s.bits+1≤s.payload) :
-    SharedBank.payload (ActivePrefixStageHeadersRouting.caller (a := a) (finished order v rows)) consumerSlots=
-      ((FixedHeaderBankCopy.headerBank (inputs order v rows hG hGK hrows hrecord).gs).append
-        (FixedHeaderBankCopy.headerBank (fun _ : Fin 1 => (inputs order v rows hG hGK hrows hrecord).bw))).append
-          (FixedHeaderBankCopy.headerBank (inputs order v rows hG hGK hrows hrecord).hs) := by
-  rw [consumer]
-  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-
 theorem originals (order : Order) (v : Stage s) (rows : ℕ) (i : Fin 13) :
     finished order v rows (Fin.castAdd 52 i)=some (originalValues v rows i) := by
   simp [ActivePrefixStageHeadersPlaced.finished,i.isLt]

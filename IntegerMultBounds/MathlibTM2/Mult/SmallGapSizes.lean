@@ -19,32 +19,7 @@ def uSG (n : ℕ) : ℕ := Nat.clog 2 (8*p n)
 
 theorem two_pow_uSG (n : ℕ) : 8*p n ≤ 2^uSG n := Nat.le_pow_clog one_lt_two _
 
-private theorem four_sq_le (c : ℕ) (hc : 10 ≤ c) : 4*c^2 ≤ 3*2^(c-1) := by
-  induction c, hc using Nat.le_induction with
-  | base => norm_num
-  | succ c hc ih =>
-    have h2 : 2^(c+1-1)=2*2^(c-1) := by
-      rw [show c+1-1=(c-1)+1 by omega, pow_succ]; ring
-    rw [h2]
-    nlinarith
-
 variable {n : ℕ}
-
-/-- `u² ≤ 36 b` at the large sizes. -/
-theorem Big.uSG_sq_le (h : Big n) : uSG n^2≤36*b n := by
-  have hb : 16≤b n := h.sixteen_le_b
-  have hp : 8*p n=48*b n := by unfold p; ring
-  have hlt : 2^(uSG n-1)<48*b n := by
-    have := Nat.pow_pred_clog_lt_self one_lt_two (show 1<8*p n by omega)
-    simpa [uSG, hp, Nat.pred_eq_sub_one] using this
-  have hc : 10≤uSG n := by
-    by_contra hlt10
-    have hle : 8*p n≤2^9 := (two_pow_uSG n).trans (Nat.pow_le_pow_right (by norm_num) (by omega))
-    have := d_le_b n
-    have := h.2
-    nlinarith
-  have := four_sq_le _ hc
-  nlinarith
 
 /-- `u d ≤ p`: `u ≤ ⌈log₂ p⌉ + 3` and the Gaussian width room `64 d (⌈log₂ p⌉ + 3) ≤ b`. -/
 theorem Big.uSG_mul_d_le (h : Big n) : uSG n*d n≤p n := by

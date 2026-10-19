@@ -124,17 +124,6 @@ theorem borrowSteps_of_zero (bs : List Bool) (h : Counter.value bs = 0) :
       have ht : Counter.value bs = 0 := by simpa [Counter.value] using h
       simp [borrowSteps,ih ht]
 
-theorem borrowSteps_of_pos (bs : List Bool) (h : 0 < Counter.value bs) :
-    borrowSteps bs = flips bs := by
-  induction bs with
-  | nil => simp [Counter.value] at h
-  | cons b bs ih =>
-    cases b with
-    | true => rfl
-    | false =>
-      have ht : 0 < Counter.value bs := by simpa [Counter.value] using h
-      simp [borrowSteps,flips,ih ht]
-
 /-- The actual visited-digit count telescopes against zero bits. -/
 theorem decrement_potential (bs : List Bool) (h : 0 < Counter.value bs) :
     borrowSteps bs + zeroWeight (decrement bs) = 2+zeroWeight bs := by

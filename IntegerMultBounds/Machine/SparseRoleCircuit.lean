@@ -77,20 +77,6 @@ theorem copies_hoare {α β : Type*} (dst : α → Fin t) (src : β → Fin t)
   rw [execute_encoded,gates_scalar] at hh
   simpa only [program,gates,List.length_map] using hh
 
-/-- An explicit pointwise sum postcondition for the physical sparse XOR list. -/
-theorem copies_sum_hoare {α β : Type*} (dst : α → Fin t) (src : β → Fin t)
-    (separate : ∀ x y, dst x ≠ src y) (entries : List (α × β))
-    (background : Fin t → ℤ → Fin (a+4)) (origins : Fin t → ℤ)
-    (data : Fin t → Fin n → ZMod 2) (bs : List Bool) (hn : Counter.value bs = n) :
-    HoareTime (program dst src separate entries)
-      (fun w => w = PointwiseRoleGate.bank background origins (encoded data) bs)
-      (fun w => w = PointwiseRoleGate.bank background origins
-        (encoded (fun k i => data k i+
-          (entries.map (fun e => if dst e.1 = k then data (src e.2) i else 0)).sum)) bs)
-      (entries.length*(14*n+14*bs.length+34)) := by
-  simpa only [Networks.SparseCircuit.copies_run dst src entries separate] using
-    copies_hoare dst src separate entries background origins data bs hn
-
 /-- A fixed sparse list has linear stream-volume cost, including normalization
 and every real sequence join. -/
 theorem cost_linear (gateCount n : ℕ) (bs : List Bool) (hn : Counter.value bs = n)

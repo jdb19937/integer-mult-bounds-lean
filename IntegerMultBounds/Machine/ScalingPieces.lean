@@ -34,10 +34,6 @@ theorem piece_lt {Q c y : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hy : y < Q) :
 theorem decomposition (Q c y : ℕ) : output Q c y + piece Q c y * Q = c * y := by
   simpa only [output,piece,Nat.mul_comm (c * y / Q) Q] using Nat.mod_add_div (c * y) Q
 
-theorem restore_output {Q c : ℕ} (hc : 0 < c) (y : ℕ) :
-    restore Q c (output Q c y) (piece Q c y) = y := by
-  rw [restore,decomposition,Nat.mul_div_cancel_left _ hc]
-
 /-- Multiplication by a unit is injective on canonical source addresses. -/
 theorem output_injective {Q c : ℕ} (hcop : c.Coprime Q) {x y : ℕ}
     (hx : x < Q) (hy : y < Q) (h : output Q c x = output Q c y) : x = y := by
@@ -117,62 +113,5 @@ theorem restore_lt_iff {Q c z w j : ℕ} (hc : 0 < c)
 then replace each address by its scaled output. -/
 def stream (Q c j : ℕ) (xs : List ℕ) : List ℕ :=
   (xs.filter (fun y => decide (piece Q c y = j))).map (output Q c)
-
-theorem mem_stream {Q c j z : ℕ} {xs : List ℕ} :
-    z ∈ stream Q c j xs ↔ ∃ y ∈ xs, piece Q c y = j ∧ output Q c y = z := by
-  simp only [stream,List.mem_map,List.mem_filter,decide_eq_true_eq]
-  constructor
-  · rintro ⟨y,⟨hy,hp⟩,ho⟩
-    exact ⟨y,hy,hp,ho⟩
-  · rintro ⟨y,hy,hp,ho⟩
-    exact ⟨y,⟨hy,hp⟩,ho⟩
-
-/-- A source-sorted piece is already sorted by its output addresses; it needs no
-additional sorting before the multi-stream merge. -/
-theorem stream_sorted {Q c j : ℕ} (hc : 0 < c) {xs : List ℕ}
-    (hs : xs.Pairwise (· < ·)) : (stream Q c j xs).Pairwise (· < ·) := by
-  rw [stream,List.pairwise_map]
-  apply List.Pairwise.imp_of_mem _ (hs.filter _)
-  intro x y hx hy hxy
-  have hxj : piece Q c x = j := of_decide_eq_true (List.mem_filter.mp hx).2
-  have hyj : piece Q c y = j := of_decide_eq_true (List.mem_filter.mp hy).2
-  exact (output_lt_iff hc (hxj.trans hyj.symm)).mpr hxy
-
-/-- The payload's source address is recovered entry-for-entry in every piece. -/
-theorem restore_stream {Q c j : ℕ} (hc : 0 < c) (xs : List ℕ) :
-    (stream Q c j xs).map (fun z => restore Q c z j) =
-      xs.filter (fun y => decide (piece Q c y = j)) := by
-  rw [stream,List.map_map]
-  calc
-    _ = (xs.filter (fun y => decide (piece Q c y = j))).map id := by
-      apply List.map_congr_left
-      intro y hy
-      have hp : piece Q c y = j := of_decide_eq_true (List.mem_filter.mp hy).2
-      exact hp ▸ restore_output hc y
-    _ = _ := List.map_id _
-
-/-- For the complete input address range, a piece stream contains exactly its
-admissible output addresses. -/
-theorem mem_range_stream_iff {Q c j z : ℕ} (hQ : 0 < Q) (hc : 0 < c) :
-    z ∈ stream Q c j (List.range Q) ↔ z < Q ∧ AdmissiblePiece Q c z j := by
-  rw [mem_stream]
-  constructor
-  · rintro ⟨y,hy,hj,rfl⟩
-    refine ⟨output_lt hQ,?_⟩
-    rw [← hj]
-    exact source_piece hQ hc (List.mem_range.mp hy)
-  · rintro ⟨hz,hj⟩
-    exact ⟨restore Q c z j,List.mem_range.mpr (restore_lt hc hz hj),
-      piece_restore hQ hz hj,output_restore hz hj⟩
-
-/-- The streams partition the complete output address range: no output is lost
-or occurs in two different pieces, even when the multiplier exceeds the modulus. -/
-theorem existsUnique_output_stream {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c)
-    (hcop : c.Coprime Q) {z : ℕ} (hz : z < Q) :
-    ∃! j, z ∈ stream Q c j (List.range Q) := by
-  obtain ⟨j,hj,hunique⟩ := existsUnique_piece hQ hc hcop hz
-  refine ⟨j,(mem_range_stream_iff hQ hc).mpr ⟨hz,hj⟩,?_⟩
-  intro k hk
-  exact hunique k ((mem_range_stream_iff hQ hc).mp hk).2
 
 end IntegerMultBounds.Machine.ScalingPieces

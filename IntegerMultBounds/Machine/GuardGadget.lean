@@ -73,12 +73,6 @@ def oneC3 : Fin (1 + 6) ≃ Fin 7 where
   left_inv := by decide +kernel
   right_inv := by decide +kernel
 
-def oneF : Fin (1 + 6) ≃ Fin 7 where
-  toFun := fun i => if i = 0 then 6 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else 5
-  invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else 0
-  left_inv := by decide +kernel
-  right_inv := by decide +kernel
-
 theorem cmpV1_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((GuardTest.bank f0 f2 f5 p0 p2 p5).append (⟨fun i => if i = 0 then p1 else if i = 1 then p3 else if i = 2 then p4 else p6, fun i => if i = 0 then f1 else if i = 1 then f3 else if i = 2 then f4 else f6⟩ : Tapes 4 a)).reindex cmpV1 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append GuardTest.bank bank cmpV1
@@ -117,11 +111,6 @@ theorem oneC2_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 
 theorem oneC3_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((⟨fun _ => p4, fun _ => f4⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p5 else p6, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f5 else f6⟩ : Tapes 6 a)).reindex oneC3 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append  bank oneC3
-  congr 1 <;> apply List.ofFn_injective <;> rfl
-
-theorem oneF_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
-    ((⟨fun _ => p6, fun _ => f6⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else p5, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else f5⟩ : Tapes 6 a)).reindex oneF = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
-  unfold Tapes.reindex Tapes.append  bank oneF
   congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def cmpV1Part (d : ℕ) (a : ℕ) := reindex (extend (iterate (cmpCell a) d) 4) cmpV1

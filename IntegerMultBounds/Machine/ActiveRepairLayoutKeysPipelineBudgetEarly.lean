@@ -66,19 +66,5 @@ theorem runs_linear (R D : ℕ) (hrows : 0<rows) (hdata : ∀ x,(data x).length�
       (records_payloads E S data R hdata) hR
       (sparse d h s before after rows offset width rowBits he hw ha hp hf hr data D hd))
 
-include h he hw ha hp hf hr in
-theorem runs_dyadic (R : ℕ) (hrows : 0<rows) (hdata : ∀ x,(data x).length≤R)
-    (hR : d.geom.addressBits+1≤R) (p : ℝ) (ell K : ℕ)
-    (hq : d.q=K) (hb : d.b=4*ell+6) (hpos : 0<p) (hn : (d.n:ℝ)≤p)
-    (hell : p≤(2:ℝ)^ell) (hK : 8*ell+16≤K) (hA : (d.geom.addressBits:ℝ)+1≤p^3) :
-    HoareTime (ActiveRepairEarlyOriginalPipelineEndpoint.program d.side)
-      (fun v => v=ActiveRepairEarlyOriginalPipelineEndpoint.input d (repairRecords E S data))
-      (fun v => v=ActiveRepairEarlyOriginalPipelineEndpoint.output d (repairRecords E S data) ∧
-        v.tape 10=RepairStage.encTape (Partition.encode (stream E B (data ∘ (T).symm))))
-      (ActiveRepairEarlyOriginalPipelineBudget.volumeConstant 1*((repairRecords E S data).length*R)) := by
-  apply runs_linear d h s before after rows offset width rowBits he hw ha hp hf hr data R 1 hrows hdata hR
-  rw [hq,hb]
-  simpa only [Nat.cast_one] using ActiveRepairLayoutDensityArithmetic.dyadic_early_paid p d.n ell K d.geom.addressBits hpos hn hell hK hA
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetEarly

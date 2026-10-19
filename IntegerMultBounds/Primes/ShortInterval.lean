@@ -45,9 +45,6 @@ theorem chebyshevPsi_eq (x : ℝ) : Erdos970.ChebyshevPsi x = Chebyshev.psi x :=
     simp [Chebyshev.psi, h1, h2]
   · rw [Nat.floor_add_one hx, Nat.range_succ_eq_Icc_zero, ← Chebyshev.psi_eq_sum_Icc]
 
-theorem chebyshevPsi_eq_psi : Erdos970.ChebyshevPsi = Chebyshev.psi :=
-  funext chebyshevPsi_eq
-
 /-- The strong PNT as an explicit bound on `Chebyshev.psi`. -/
 theorem psi_strong_bound : ∃ c > 0, ∃ C > 0, ∃ X : ℝ, ∀ x ≥ X,
     |Chebyshev.psi x - x| ≤ C * x * exp (-c * log x ^ ((1 : ℝ) / 2)) := by

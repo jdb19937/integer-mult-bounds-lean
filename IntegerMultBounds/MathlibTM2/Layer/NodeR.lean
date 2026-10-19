@@ -285,17 +285,6 @@ noncomputable def errRun (δ : ℝ) : List Instr → ℝ → ℝ
   | .xor _ _ _ :: rest, E => errRun δ rest E
   | .phase _ _ _ :: rest, E => errRun δ rest E
 
-lemma errRun_mono (δ : ℝ) (l : List Instr) {E E' : ℝ} (h : E ≤ E') : errRun δ l E ≤ errRun δ l E' := by
-  induction l generalizing E E' with
-  | nil => exact h
-  | cons i rest ih =>
-    cases i with
-    | factor w g => exact ih (by linarith)
-    | gate g => exact ih (mul_le_mul_of_nonneg_left h (by have := one_le_gateLip g; linarith))
-    | trans w v => exact ih h
-    | xor w i j => exact ih h
-    | phase w i c => exact ih h
-
 /-- The product of twice the gate constants of a program. -/
 noncomputable def lipProd : List Instr → ℝ
   | [] => 1

@@ -123,17 +123,6 @@ theorem compactSynFwdCoreR_runs (park : List (Fin (prime+Ka+4))) (hPk : Pk park)
     unfold cvFwdOutQ; rw [fwdRoundsQ_eq_synIterF F hFq]; rfl
   simpa only [compactSynFwdCoreR,R₁,Function.update_idem,ite_true,hout] using he
 
-theorem compactSynFwdCoreR_spec :
-    SynFwdSpecQ (compactMainBodyR legacy ds) (compactSynFwdCoreR ds layP) (compactMnRg (.src (.v .io)))
-      (compactSynPreReady M Pk v₀) W p l a (synPi (layPerm (List.ofFn a) ℓ K)) F
-      ((1+cL)+compactSynLoopFCostR (Ka := Ka) ds M K (List.ofFn a) ℓ W l (nRounds a)
-        (synStashCostW v₀ synXS+6*nRounds a+6)) := by
-  intro Z vv S hPre hdisk hio
-  obtain ⟨hleft,hr,park,hPk,hR⟩ := hPre
-  rw [hio] at hR
-  exact compactSynFwdCoreR_runs legacy ds hbody a H hAl hLoop hinv F hFq v₀ hv₀ hvh hvt hvc hcb Pk layP cL hLay
-    park hPk Z hdisk S.R hR hr vv S hleft rfl
-
 end
 
 section
@@ -246,17 +235,6 @@ theorem compactSynOppCoreR_runs (park : List (Fin (prime+Ka+4))) (hPk : Pk park)
   dsimp only [L] at hout
   have he := hs.seq hl
   simpa only [compactSynOppCoreR,R₁,Function.update_idem,hout,Bool.false_eq_true,ite_false] using he
-
-theorem compactSynOppCoreR_spec :
-    SynOppSpecQ (compactMainBodyR legacy ds) (compactSynOppCoreR ds layQ) (compactMnRg (.src (.v .io)))
-      (compactSynPreReady M Pk v₀) W p l a (synPi (layPerm (List.ofFn a) ℓ K)) O
-      (compactSynLoopOCostR (Ka := Ka) ds M K (List.ofFn a) ℓ W l (nRounds a)
-        (synStashCostW v₀ synXS+6*nRounds a+6)+(1+cL)) := by
-  intro V vv S hPre hdisk hio
-  obtain ⟨hleft,hr,park,hPk,hR⟩ := hPre
-  rw [hio] at hR
-  exact compactSynOppCoreR_runs legacy ds hbody a H hAl hLoop hinv O hOq v₀ hv₀ hvh hvt hvc hcb Pk layQ cL hLay
-    park hPk V hdisk S.R hR hr vv S hleft rfl
 
 end
 

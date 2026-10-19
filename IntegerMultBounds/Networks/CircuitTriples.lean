@@ -105,15 +105,5 @@ theorem complex_reconstruct {h n a : ℕ} {L : Fin n → Finset (Fin h)}
   rw [complexCoefficient_eq _ _ (hcard s) (hcard t)]
   simp only [hinj.eq_iff]
 
-/-- The complex motif executed over rational scalars, with arbitrary dirty side and
-central banks. The only premises describe which finite physical wires exist. -/
-theorem complex_dirty_run {h n a s : ℕ} {L : Fin n → Finset (Fin h)}
-    (e : Fin a ≃ ComplexPair L) (hinj : Function.Injective L)
-    (hcard : ∀ i, (L i).card = 3) (X Y : Fin n → ℚ)
-    (A : Fin a → ℚ) (C : Fin (h + 1) → ℚ) (S : Fin s → ℚ) :
-    run (dirty (complexCopy e) (complexGather L) (complexInject e) (complexScatter L))
-      (banks X Y A C S) = banks X (Y + X) A C S := by
-  exact dirty_run_shear _ _ _ _ (complex_reconstruct e hinj hcard) X Y A C S
-
 end IntegerMultBounds.Networks.Circuit
 

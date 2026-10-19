@@ -373,10 +373,5 @@ theorem complexProgram_run {h n a : ℕ} (eB : Fin n ≃ Triple h) (eA : Fin a �
   · exact Subtype.val_injective.comp eB.injective
   · exact fun i => (eB i).property
 
-theorem complexProgram_length {h n a : ℕ} (eB : Fin n ≃ Triple h)
-    (eA : Fin a ≃ ComplexPairs h) :
-    (complexProgram eB eA).length = 3 * n ^ 2 * (4 * n + 2 * a + 2 * (h + 1)) :=
-  program_length _ _ _ _ _ _ _
-
 end Complex
 end IntegerMultBounds.Networks.GlobalCircuit

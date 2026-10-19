@@ -201,12 +201,6 @@ theorem crtBox_cons (j : Fin d) (o : List (Fin d)) (C : (Fin d → ℕ) → α) 
   refine List.flatMap_congr fun y _ => ?_
   simp [crtDec_cons]
 
-theorem crtBox_congr (o : List (Fin d)) {C C' : (Fin d → ℕ) → α} (x : Fin d → ℕ)
-    (h : ∀ n < 2 ^ crtW a o, C (crtDec a o n x) = C' (crtDec a o n x)) :
-    crtBox a o C x = crtBox a o C' x := by
-  rw [crtBox, crtBox]
-  exact List.map_congr_left fun n hn => h n (List.mem_range.1 hn)
-
 lemma crtBox_flatten_length (o : List (Fin d)) (C : (Fin d → ℕ) → List α) (x : Fin d → ℕ)
     (B : ℕ) (hC : ∀ y, (C y).length = B) :
     (crtBox a o C x).flatten.length = 2 ^ crtW a o * B := by

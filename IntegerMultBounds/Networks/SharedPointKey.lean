@@ -94,19 +94,4 @@ theorem key_injective (s t : Finset (Triple h)) (hcore : 2 ≤ (core s).card)
     exact hPsub.trans (core_subset t T hT)
   · exact hv
 
-/-- Any support shared between distinct common-point copies falls within
-that injective branch, so the compressed interning test loses no such sharing. -/
-theorem two_common_points (support : Finset (Triple h)) (c d : Fin h) (hcd : c ≠ d)
-    (hc : ∀ T ∈ support, c ∈ T.val) (hd : ∀ T ∈ support, d ∈ T.val) :
-    2 ≤ (core support).card := by
-  have hsub : ({c, d} : Finset (Fin h)) ⊆ core support := by
-    intro x hx
-    rcases Finset.mem_insert.mp hx with rfl | hx
-    · exact (mem_core _ _).mpr hc
-    · have he := Finset.mem_singleton.mp hx
-      subst x
-      exact (mem_core _ _).mpr hd
-  have hh := Finset.card_le_card hsub
-  simpa [hcd] using hh
-
 end IntegerMultBounds.Networks.SharedPointKey

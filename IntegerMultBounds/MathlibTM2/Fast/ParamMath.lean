@@ -84,13 +84,6 @@ theorem pm_pow_lt_of_lt_clog {x j : ℕ} (h : j < Nat.clog 2 x) : 2 ^ j < x := b
 theorem pm_pow_le_of_iroot {k x j : ℕ} (hk : k ≠ 0) (h : j < iroot k x) : (j + 1) ^ k ≤ x :=
   (le_iroot_iff hk).1 h
 
-/-- `iroot k x` with `k = 2^e` by capped squarings. -/
-theorem pm_capped_iroot {e x j : ℕ} (hj : j ≤ iroot (2 ^ e) x) :
-    (pmSq (x + 1))^[e] (j + 1) < x + 1 ↔ j < iroot (2 ^ e) x := by
-  have hx : iroot (2 ^ e) x ≤ x := iroot_le_self (by positivity) x
-  rw [pmSq_iter_lt_iff (by omega)]
-  exact (le_iroot_iff (by positivity)).symm
-
 /-! ### The least fourth-power bound -/
 
 /-- `a` is the least natural number with `t ≤ a^4`. -/
@@ -98,12 +91,6 @@ def PmQuart (t a : ℕ) : Prop := t ≤ a ^ 4 ∧ ∀ j < a, j ^ 4 < t
 
 theorem pmQuart_alpha (n : ℕ) : PmQuart (alphaU n ^ 2) (alpha n) :=
   ⟨alpha_spec n, fun _ hj => alpha_min n hj⟩
-
-theorem pmQuart_unique {t a a' : ℕ} (h : PmQuart t a) (h' : PmQuart t a') : a = a' := by
-  rcases lt_trichotomy a a' with hl | he | hl
-  · have := h'.2 a hl; have := h.1; omega
-  · exact he
-  · have := h.2 a' hl; have := h'.1; omega
 
 /-! ### Sizes for every `n ≥ 2` -/
 
@@ -167,10 +154,6 @@ theorem pm_modulus_le_bound (N x₀ a i : ℕ) : modulus N x₀ a i ≤ pmModBou
   · nlinarith
   · have : i - a ≤ i := Nat.sub_le _ _
     nlinarith
-
-theorem pm_one_le_modulus (N x₀ a i : ℕ) : 1 ≤ modulus N x₀ a i := by
-  unfold modulus modA modB
-  split_ifs <;> omega
 
 theorem pm_S_prod (n : ℕ) : S n = ∏ i ∈ range (d n), srcLen n i :=
   Fin.prod_univ_eq_prod_range (fun i => srcLen n i) (d n)

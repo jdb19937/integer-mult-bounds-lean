@@ -147,12 +147,6 @@ theorem ds_ar_pow (B : ℕ) (hB : 1 ≤ B) : B ≤ B ^ 2 ∧ B ^ 2 ≤ B ^ 3 ∧
   ⟨Nat.le_self_pow (by norm_num) B, Nat.pow_le_pow_right hB (by norm_num),
     Nat.pow_le_pow_right hB (by norm_num)⟩
 
-/-- `x y ≤ c₁ c₂ B^(i+j)` from `x ≤ c₁ B^i`, `y ≤ c₂ B^j`. -/
-theorem ds_ar_mul {x y c₁ c₂ B i j : ℕ} (hx : x ≤ c₁ * B ^ i) (hy : y ≤ c₂ * B ^ j) :
-    x * y ≤ (c₁ * c₂) * B ^ (i + j) := by
-  calc x * y ≤ (c₁ * B ^ i) * (c₂ * B ^ j) := Nat.mul_le_mul hx hy
-    _ = (c₁ * c₂) * B ^ (i + j) := by rw [pow_add]; ring
-
 /-- The axis loop over plain variables. -/
 theorem ds_ar_loop {d W C r T Tr Wt B : ℕ} (hB : 1 ≤ B) (hd : d ≤ B) (hdr : d * r ≤ T)
     (hdTr : d * Tr ≤ T) (hW1 : W ≤ 4 * B + 16) (hC : C ≤ 18600 * B ^ 2) (hWt : Wt ≤ 200 * B) :

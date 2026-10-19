@@ -291,21 +291,4 @@ theorem output_tape {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) 
       (ScalingExecution.destinationSlot c) = putWord dest q (ScalingMerge.outputPrefix hc Q Q payload) := by
   simp [output,finalAuxiliary,auxiliary,controls,ScalingExecution.destinationSlot,Tapes.append,CountedCopyReuse.bank]
 
-/-- Each temporary buffer is restored literally, including outside cells. -/
-theorem output_buffer {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) (p : ℤ)
-    (background : Fin c → ℤ → Fin 4) (origins : Fin c → ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (descriptors : Fin c → List Bool)
-    (bs countBits : List Bool) (modulus current : Tapes c 0) (payload : ℕ → List (Fin 4)) (j : Fin c) :
-    let v := output hc Q B source p background origins dest q descriptors bs countBits modulus current payload
-    let slot := Fin.castAdd (AuxTapes c) (ScalingSplit.outputSlot j)
-    v.tape slot = background j ∧ v.head slot = origins j := by
-  simp [output,ScalingSplit.bank,ScalingSplit.outputSlot,Tapes.append]
-
-/-- Fixed finite control, independent of the number and width of payload blocks. -/
-theorem stateCount_eq (c : ℕ) :
-    20+((ScalingSplit.states c+ScalingSplit.states c)+(7+(c*16+1+2+5)+4))+ScalingBuffersReset.states c =
-      98*c+42 := by
-  rw [ScalingExecution.stateCount_eq,ScalingBuffersReset.states_eq]
-  omega
-
 end IntegerMultBounds.Machine.ScalingExecutionReuse

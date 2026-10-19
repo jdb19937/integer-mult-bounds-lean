@@ -155,8 +155,6 @@ theorem ds_w_B (n : ℕ) : p n + 2 ≤ dsW n := by unfold dsW; omega
 
 theorem ds_w_lt_WT (n : ℕ) : dsW n < dsWW n := by unfold dsWW; omega
 
-theorem ds_w_le_WT (n : ℕ) : dsW n ≤ dsWW n := (ds_w_lt_WT n).le
-
 /-- The convolution: `Σ aᵢ ≤ w`. -/
 theorem ds_conv_w (hn : 2 ≤ n) : (List.ofFn (ConvSt.cvAx (t n))).sum ≤ dsW n := by
   rw [ds_sum_cvAx hn]; unfold dsW; omega
@@ -240,13 +238,6 @@ theorem ds_A_W (hbig : Big n) (i : Fin (d n)) :
     alpha n ^ 2 * ((s n i + t n i) * (Pipeline.windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ dsWW n :=
   ds_tab_W hbig (ds_windowA_le hbig) i
-
-/-- The `B̃₀` loader: the table entries fit `W` bits. -/
-theorem ds_B_W (hbig : Big n) (i : Fin (d n)) :
-    alpha n ^ 2 * ((s n i + t n i) * (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 *
-      2 ^ (13 * p n + 8) < 2 ^ dsWW n := by
-  have := FastB0.fastWindow_le_third (two_le_alpha hbig.1) hbig.thirteen_le_p
-  exact ds_tab_W hbig (by omega) i
 
 /-- The banded `B̃₀` loader: the folded-row tables at precision `5p` and window `8m` fit `W`
 bits. -/

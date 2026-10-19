@@ -186,11 +186,5 @@ theorem prepared_headers (radix u : ℕ) (source dest : ℤ → Fin (a+4))
       RadixZeroFill.encodedBinary (headerWords radix u hs i) := by
   fin_cases i <;> exact ⟨rfl,rfl⟩
 
-theorem prepared_work_blank (radix u : ℕ) (source dest : ℤ → Fin (a+4))
-    (hs : Fin 4 → List Bool) (i : Fin 19) (hi : 9 ≤ i.val) :
-    (prepared radix u source dest hs).head i = 0 ∧
-    (prepared radix u source dest hs).tape i = fun _ => blank := by
-  fin_cases i <;> first | exact ⟨rfl,rfl⟩ | solve | norm_num at hi
-
 end
 end IntegerMultBounds.Machine.BinaryRadixRangePrepareAlphabet

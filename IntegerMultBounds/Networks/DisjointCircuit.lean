@@ -54,16 +54,6 @@ def checkFrom (prior : List (Finset ι)) : List (Node ι) → Bool
 
 def check (nodes : List (Node ι)) : Bool := checkFrom [] nodes
 
-/-- The computable checker accepts exactly the structural validity predicate. -/
-theorem checkFrom_eq_true (prior : List (Finset ι)) (nodes : List (Node ι)) :
-    checkFrom prior nodes = true ↔ ValidFrom prior nodes := by
-  induction nodes generalizing prior with
-  | nil => simp [checkFrom, ValidFrom]
-  | cons node nodes ih => simp [checkFrom, ValidFrom, ih]
-
-theorem check_eq_true (nodes : List (Node ι)) : check nodes = true ↔ Valid nodes :=
-  checkFrom_eq_true [] nodes
-
 /-- Concatenating finite construction lists preserves the exact prior support
 bank passed to the second construction. -/
 theorem validFrom_append (prior : List (Finset ι)) (p q : List (Node ι)) :
@@ -137,32 +127,6 @@ theorem eval_eq (input : ι → A) (nodes : List (Node ι)) (hv : Valid nodes) :
     eval input nodes = nodes.map (fun node => supportSum input node.support) := by
   simpa [eval, List.map_map, Function.comp_def] using evalFrom_eq input [] nodes hv
 
-omit [DecidableEq ι] in
-theorem eval_append (input : ι → A) (prior : List A) (p q : List (Node ι)) :
-    evalFrom input prior (p ++ q) = evalFrom input (evalFrom input prior p) q := by
-  induction p generalizing prior with
-  | nil => rfl
-  | cons node p ih => exact ih _
-
-theorem eval_length (input : ι → A) (nodes : List (Node ι)) (hv : Valid nodes) :
-    (eval input nodes).length = nodes.length := by rw [eval_eq input nodes hv]; simp
-
-/-- The value at each valid node identifier is its certified support sum. -/
-theorem eval_getElem (input : ι → A) (nodes : List (Node ι)) (hv : Valid nodes)
-    (i : ℕ) (hi : i < nodes.length) :
-    (eval input nodes)[i]'(by rw [eval_length input nodes hv]; exact hi) =
-      supportSum input nodes[i].support := by
-  simp [eval_eq input nodes hv]
-
-/-- Equal supports suffice to replace one already computed node by another,
-even if their recursive constructions and node identifiers differ. -/
-theorem equal_support_eval (input : ι → A) (nodes : List (Node ι)) (hv : Valid nodes)
-    (i j : ℕ) (hi : i < nodes.length) (hj : j < nodes.length)
-    (hs : nodes[i].support = nodes[j].support) :
-    (eval input nodes)[i]'(by rw [eval_length input nodes hv]; exact hi) =
-      (eval input nodes)[j]'(by rw [eval_length input nodes hv]; exact hj) := by
-  rw [eval_getElem input nodes hv i hi, eval_getElem input nodes hv j hj, hs]
-
 end Evaluation
 
 /-- A simple executable support lookup, sufficient to justify optimized
@@ -209,25 +173,5 @@ theorem intern_support (nodes : List (Node ι)) (node : Node ι) :
   split
   next i hi => exact findSupport_sound node.support (nodes.map Node.support) i hi
   next hi => simp
-
-/-- Actual evaluation of the interned reference equals the proposed node's
-support sum, covering both reuse and newly appended construction. -/
-theorem intern_eval [AddCommMonoid A] (input : ι → A) (nodes : List (Node ι)) (node : Node ι)
-    (hv : Valid nodes) (hn : node.Valid (nodes.map Node.support)) :
-    (eval input (intern nodes node).1)[(intern nodes node).2]? = some (supportSum input node.support) := by
-  rw [eval_eq input _ (intern_valid nodes node hv hn)]
-  have hs := intern_support nodes node
-  have hm := congrArg (Option.map (supportSum input)) hs
-  simpa only [← List.getElem?_map, List.map_map, Function.comp_def, Option.map_some] using hm
-
-/-- A successful support lookup permits immediate reuse without constructing
-or validating a new addition node. -/
-theorem reuse_eval [AddCommMonoid A] (input : ι → A) (nodes : List (Node ι))
-    (hv : Valid nodes) (support : Finset ι) (i : ℕ)
-    (hf : findSupport support (nodes.map Node.support) = some i) :
-    (eval input nodes)[i]? = some (supportSum input support) := by
-  rw [eval_eq input nodes hv]
-  have hs := congrArg (Option.map (supportSum input)) (findSupport_sound support _ i hf)
-  simpa only [← List.getElem?_map, List.map_map, Function.comp_def, Option.map_some] using hs
 
 end IntegerMultBounds.Networks.DisjointCircuit

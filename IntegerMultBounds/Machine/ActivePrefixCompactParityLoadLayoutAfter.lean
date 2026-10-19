@@ -104,35 +104,4 @@ theorem after_swap_entry {rows : ℕ} (array : Fin (rows*s.recordWidth) → Bool
   rw [ActivePrefixLayoutSwap.split_swap] at h
   exact h
 
-/-- The whole compact rotation fiber occupies the original full back range,
-regardless of the width carved out for T. -/
-theorem containing_fiber :
-    2^ActivePrefixCompactParityLoadData.width (shape s p offset hfit)*suffix s p=
-      2^(s.H+s.B)*s.payload := by
-  change 2^(p.n*p.b)*(2^(s.H-p.n*p.b+s.B)*s.payload)=_
-  rw [←Nat.mul_assoc,←back_size s (p.n*p.b) p.compactFits]
-
-/-- Paid execution on the actual layout. The remaining size absorption is
-stated on the original whole back fiber, with no wide-target capacity premise. -/
-theorem runs_layout {a rows : ℕ} (hrows : 0<rows) (hp : 0<s.payload)
-    (habs : backWidth s (p.n*p.q) p.before p.after+1≤2^(s.H+s.B)*s.payload)
-    (hs : Fin 8 → List Bool) (rs bs : List Bool) (array : Fin (rows*s.recordWidth) → Bool)
-    (hv : ∀ i, Counter.value (hs i)=ActivePrefixParityOnlyBank.values (shape s p offset hfit) i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hr : Counter.value rs=rows) (cr : GrowingCounterData.Canonical rs)
-    (hb : Counter.value bs=suffix s p) (cb : GrowingCounterData.Canonical bs) :
-    HoareTime (ActivePrefixCompactParityLoad.program (a := a))
-      (fun v => v=ActivePrefixCompactParityLoadHeaders.bank
-        (ActivePrefixCompactParityLoadData.base (shape s p offset hfit) rows (suffix s p) hs rs bs
-          (view s p offset hfit array)))
-      (fun v => v=ActivePrefixCompactParityLoadHeaders.bank
-        (ActivePrefixCompactParityLoadData.base (shape s p offset hfit) rows (suffix s p) hs rs bs
-          (ActivePrefixCompactParityLoad.result (shape s p offset hfit) rows (suffix s p)
-            (view s p offset hfit array))))
-      (ActivePrefixCompactParityLoad.constant*(rows*s.recordWidth)) := by
-  have h := ActivePrefixCompactParityLoad.runs_linear (a := a) (shape s p offset hfit) rows (suffix s p)
-    hrows (by unfold suffix compactSuffix; positivity)
-    (by rw [containing_fiber]; exact habs) hs rs bs (view s p offset hfit array) hv hc hr cr hb cb
-  rwa [volume_eq] at h
-
 end IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayoutAfter

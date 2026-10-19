@@ -93,8 +93,6 @@ theorem tbl_ev_od_bound (m q : ℕ) (hm : 2 ≤ m) :
       rcases Nat.mod_two_eq_zero_or_one j with h | h <;> simp [h] <;> omega
     omega
 
-theorem tbl_dSeq0_le (m q : ℕ) : dSeq m q 0 ≤ 2 ^ q := Nat.div_le_self _ _
-
 /-! ### Correctness -/
 
 /-- The variables written by `tblAtanCode` besides its output. -/
@@ -281,23 +279,6 @@ section Host
 
 variable {T Q A : ℕ} {U : Type} {P' : Type} {body : P' → IntegerMultBounds.MathlibTM2.Host.Pr P' T Q A U}
   {rg : TblR 18 → Fin T}
-
-/-- **The `π` machine on the host.** From registers carrying a state with `P ≥ 2` in `tblPiIn`
-and all values below `2 ^ W`, `W = 5 P + 16`, the host program `tblCompile rg tblPiCode` reaches
-registers carrying a state with `piQ P` in `tblPiOut` (as a natural number, `tblPi_eq_piQ`) and
-`acc` unchanged, in at most `(150 P + 400) (32 (5 P + 20)² + 8 w)` steps, every register
-outside the layout unchanged. -/
-theorem tblPi_host (hrg : Function.Injective rg) {P w : ℕ} (wl nl : List (Fin (A + 4)))
-    (hwl : wl.length = 5 * P + 16) (hnl : nl.length = w) (hw : w ≤ 5 * P + 16)
-    (st : TblSt 18 A) (hst : ∀ j, st.val j < 2 ^ (5 * P + 16)) (hP : 2 ≤ P)
-    (hin : st.val tblPiIn = P) :
-    ∃ st', (st'.val tblPiOut : ℤ) = WeightTable.piQ P ∧ st'.acc = st.acc ∧
-      tblRuns body rg (tblCompile rg tblPiCode) (tblRho (5 * P + 16) wl nl st)
-        (tblRho (5 * P + 16) wl nl st') ((150 * P + 400) * (32 * (5 * P + 20) ^ 2 + 8 * w)) := by
-  obtain ⟨st', ⟨h1, h2⟩, hr⟩ := (tblPi_do (A := A) (W := 5 * P + 16) (w := w) st hP hin le_rfl).host
-    (body := body) hrg wl nl hwl hnl hw hst
-  refine ⟨st', by rw [h1, tblPi_eq_piQ P hP], h2, hr.mono (le_of_eq ?_)⟩
-  simp only [tblC]
 
 end Host
 

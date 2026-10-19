@@ -40,22 +40,6 @@ theorem result_move :
   exact (congrArg (fun j : Fin (rows*s.recordWidth) => ActivePrefixDirtyControlSequenceData.later g array j)
     (f.apply_symm_apply i).symm).trans hh
 
-theorem data_result :
-    data s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize
-      (ActivePrefixDirtyControlSequenceData.later g array)=
-    data s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize array ∘ (Q).symm := by
-  apply data_after s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize
-    array _
-  · exact ActiveRepairLayoutRecordsPermutation.late_actual s p.q p.b p.n p.before p.after rows p.rho offset (p.f*p.q) ActiveRepairRankHeadersData.SourceSide.after (ActivePrefixDirtyControlLateGlobal.positive s p)
-  · exact ActivePrefixDirtyControlLateGlobal.entry s p offset hfit hn hb hrecord hrows hK hd hg array
-
-theorem records_result :
-    records s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize
-      (ActivePrefixDirtyControlSequenceData.later g array)=
-    repairRecords E Q (data s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize array) := by
-  unfold records repairRecords
-  rw [data_result]
-
 theorem runs (d : ActivePrefixDirtyControlSequenceData.Inputs s g) :
     HoareTime ActivePrefixDirtyControlSequenceRun.program
       (fun v => v=ActivePrefixDirtyControlSequenceStages.bank (ActivePrefixDirtyControlSequenceData.caller d array))
@@ -65,20 +49,6 @@ theorem runs (d : ActivePrefixDirtyControlSequenceData.Inputs s g) :
       (ActivePrefixDirtyControlSequenceRun.cost s g) := by
   rw [←result_move s p offset rows hfit hn hb hrecord hrows hK hd hg array]
   exact ActivePrefixDirtyControlSequenceRun.runs d array
-
-theorem original_runs (d : ActivePrefixEarlySequenceOriginalInputs.Inputs s p offset rows) :
-    HoareTime ActivePrefixDirtyControlSequenceOriginalRun.program
-      (fun v => v=SharedBankStageInput.raw
-        (ActivePrefixDirtyControlSequenceOriginalData.base d.gs d.bw d.hs array)
-        ActivePrefixDirtyControlSequenceOriginalRun.count)
-      (fun v => v=SharedBankStageInput.raw
-        (ActivePrefixDirtyControlSequenceOriginalData.base d.gs d.bw d.hs
-          (ActiveRepairLayoutRecordsMove.move s (p.n*p.b) (p.n*p.q) p.before p.after rows
-            p.compactFits p.activeSize P array)) ActivePrefixDirtyControlSequenceOriginalRun.count)
-      (ActivePrefixDirtyControlSequenceOriginalRun.cost hfit hn hb d) := by
-  have hh := ActivePrefixDirtyControlSequenceOriginalRun.runs hfit hn hb d array
-  rw [result_move s p offset rows hfit hn hb d.hrecord d.hr d.hK d.hd d.hg array] at hh
-  exact hh
 
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsLate

@@ -101,19 +101,9 @@ theorem compare_hoare (xs ys : List Bool) :
   rw [he] at h2
   exact (((hc'.seq h0).seq h1).seq h2).consequence (fun _ h => h) (fun _ h => h) (by unfold cost; omega)
 
-theorem compare_linear (xs ys : List Bool) :
-    HoareTime (program (q := q)) (fun v => v = input xs ys) (fun v => v = output xs ys)
-      (2*(xs.length+ys.length)+11) := by
-  have hm : max xs.length ys.length ≤ xs.length+ys.length := by omega
-  exact (compare_hoare xs ys).consequence (fun _ h => h) (fun _ h => h) (by unfold cost; omega)
-
 /-- The reusable comparison result is one actual bit at the blank flag origin. -/
 theorem result_at_zero (xs ys : List Bool) :
     (output (q := q) xs ys).tape 2 0 = bitSymbol (decide (Counter.value xs < Counter.value ys)) := by rfl
-
-theorem result_heads (xs ys : List Bool) :
-    (output (q := q) xs ys).head 0 = 1 ∧ (output (q := q) xs ys).head 1 = 1 ∧ (output (q := q) xs ys).head 2 = 0 :=
-  ⟨rfl,rfl,rfl⟩
 
 /-- A separate paid transition erases the flag and restores the exact reusable
 comparison input, without touching either operand or moving any head. -/

@@ -48,13 +48,6 @@ theorem shear_product_finrank (U V : Submodule F Address) :
       Module.finrank F U + Module.finrank F V := by
   rw [phaseShear.finrank_map_eq, (U.prodEquiv V).finrank_eq, Module.finrank_prod]
 
-theorem frameLagrangian_finrank (U : Submodule F Address) :
-    Module.finrank F (frameLagrangian U) = 9 := by
-  rw [frameLagrangian, shear_product_finrank, binaryOrthogonal_finrank]
-  have h : Module.finrank F U ≤ 9 := by
-    simpa [Address, F] using Submodule.finrank_le U
-  omega
-
 /-- Inclusion gives an exact intersection formula, including degenerate subspaces. -/
 theorem frameLagrangian_inf {U V : Submodule F Address} (h : U ≤ V) :
     frameLagrangian U ⊓ frameLagrangian V =
@@ -73,20 +66,6 @@ theorem frameLagrangian_inf_finrank {U V : Submodule F Address} (h : U ≤ V) :
 /-- The alternating pairing on the doubled binary address space. -/
 def symplecticPair (p q : PhaseAddress) : F :=
   Labels.binary 9 p.1 q.2 + Labels.binary 9 p.2 q.1
-
-/-- Every source-specific frame subspace is isotropic for the doubled pairing. -/
-theorem frameLagrangian_isotropic (U : Submodule F Address)
-    {p q : PhaseAddress} (hp : p ∈ frameLagrangian U)
-    (hq : q ∈ frameLagrangian U) : symplecticPair p q = 0 := by
-  obtain ⟨u, hu, v, hv, rfl⟩ := (mem_frameLagrangian U p).mp hp
-  obtain ⟨w, hw, z, hz, rfl⟩ := (mem_frameLagrangian U q).mp hq
-  have huz : Labels.binary 9 u z = 0 := hz u hu
-  have hwv : Labels.binary 9 w v = 0 := hv w hw
-  have hvw : Labels.binary 9 v w = 0 := by
-    rw [Labels.binary, Labels.form_symm]
-    exact hwv
-  simp only [symplecticPair, map_add, LinearMap.add_apply, huz, hvw, add_zero]
-  exact CharTwo.add_self_eq_zero _
 
 /-- The dimension deficit later needed for a separate symplectic B-block theorem. -/
 theorem frameLagrangian_inf_deficit {U V : Submodule F Address} (h : U ≤ V) :

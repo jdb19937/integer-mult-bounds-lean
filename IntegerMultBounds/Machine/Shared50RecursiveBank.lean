@@ -218,21 +218,5 @@ by
   simp only [slot,Fin.val_natAdd] at he
   omega
 
-theorem slot_control (i : Fin 3) :
-    slot (t := t) (u := u) (Fin.castAdd 4 i) = RecursiveCallBank.controlSlot (u := 1+(1+u)) i := by
-  apply Fin.ext
-  have hi := i.isLt
-  simp only [slot,auxiliarySlot,Fin.val_castAdd,Fin.val_natAdd,RecursiveCallBank.controlSlot]
-  split_ifs <;> omega
-
-theorem slot_return (i : Fin 2) : slot (t := t) (u := u) (Fin.natAdd 5 i) = returnSlot i := by
-  apply Fin.ext
-  simp only [slot,auxiliarySlot,returnSlot,Fin.val_natAdd]
-  split_ifs <;> omega
-
-theorem returnSlot_pc :
-    Fin.castAdd 40 (returnSlot (t := t) (u := u) 1) =
-      RecursiveChildReturnRoleBank.pcSlot (t := t) (u := 3+(1+(1+u))) := rfl
-
 end
 end IntegerMultBounds.Machine.Shared50RecursiveBank

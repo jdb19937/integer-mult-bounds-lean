@@ -156,24 +156,6 @@ theorem remaining_step {α : Type*} {c : ℕ} (hc : 0 < c) (Q z : ℕ)
   · simp only [Function.update_of_ne (Ne.symm hj),remaining,popCount_succ,ite_eq_right hj,
       Nat.add_zero]
 
-/-- No source blocks remain after the complete merge, even for empty pieces. -/
-theorem remaining_complete {α : Type*} {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c)
-    (hcop : c.Coprime Q) (payload : ℕ → α) (j : ℕ) :
-    remaining hc Q Q payload j = [] := by
-  rw [remaining,complete_count hQ hc hcop]
-  have hlen : (blocks Q c j payload).length =
-      boundary Q c (j + 1) - boundary Q c j := by
-    simp [blocks]
-  rw [← hlen,List.drop_length]
-
-/-- In forward coordinates the destination selected by multiplication
-contains exactly the original source payload. -/
-theorem restored_output {Q c y : ℕ} (hQ : 0 < Q) (hc : 0 < c)
-    (hcop : c.Coprime Q) (hy : y < Q) :
-    restore Q c (output Q c y) (select hc Q (output Q c y)).val = y := by
-  rw [← select_unique hQ hc hcop (output_lt hQ) (source_piece hQ hc hy)]
-  exact restore_output hc y
-
 /-- A literal sequential list merge: read and remove one selected head, then
 recurse to the next output. Failure represents reading an exhausted stream. -/
 def merge {α : Type*} {c : ℕ} (hc : 0 < c) (Q : ℕ) :
@@ -199,19 +181,5 @@ theorem merge_remaining {α : Type*} {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c)
     simp only [merge,selected_head hQ hc hcop hz,remaining_step]
     rw [ih (z + 1) (by omega)]
     simp [List.range'_succ]
-
-/-- End-to-end pure merge correctness, starting with the contiguous source
-streams. Whole payload values are returned unchanged. -/
-theorem merge_blocks {α : Type*} {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c)
-    (hcop : c.Coprime Q) (payload : ℕ → α) :
-    merge hc Q 0 Q (fun j => blocks Q c j payload) =
-      some ((List.range Q).map
-        (fun z => payload (restore Q c z (select hc Q z).val))) := by
-  have hh := merge_remaining hQ hc hcop payload Q 0 (by omega)
-  have hzero : remaining hc Q 0 payload = fun j => blocks Q c j payload := by
-    funext j
-    simp [remaining,popCount]
-  rw [hzero] at hh
-  simpa only [List.range_eq_range'] using hh
 
 end IntegerMultBounds.Machine.ScalingMergeData

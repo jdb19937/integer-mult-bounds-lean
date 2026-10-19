@@ -107,9 +107,6 @@ theorem weightPhase_odd {v : Addr} (hv : Labels.binary 73 v v = 1) :
   · left; rw [← ZMod.natCast_mod n 4, h]; rfl
   · right; rw [← ZMod.natCast_mod n 4, h]; rfl
 
-theorem phaseExp_std (x : Addr) : phaseExp stdBasis (fun _ => 1) x = weightPhase x := by
-  simp [phaseExp, stdBasis, binary_single, weightPhase]
-
 /-- `wt(u) = wt(g u) + 2 [g u · δ(g)]` modulo four, for orthogonal `g`. -/
 theorem weight_cover {g : Addr ≃ₗ[ZMod 2] Addr} (hg : IsOrth g) (u : Addr) :
     weightPhase u = 2 * bitLift (Labels.binary 73 (g u) (fun i => coverDelta g i)) +
@@ -143,15 +140,5 @@ theorem weight_cover {g : Addr ≃ₗ[ZMod 2] Addr} (hg : IsOrth g) (u : Addr) :
     rfl
   rw [hd, add_comm]
   rfl
-
-/-- **Cover correction.** For orthogonal `g`, `P_g C_all = C_all X_δ(g) P_g`. -/
-theorem cover_correction {g : Addr ≃ₗ[ZMod 2] Addr} (hg : IsOrth g) (f : Arrays 73) :
-    permOp g (cAll f) = cAll (kernel 2 (fun i => coverDelta g i) (permOp g f)) := by
-  refine eq_of_chars_fun (A := fun f => permOp g (cAll f))
-    (B := fun f => cAll (kernel 2 (fun i => coverDelta g i) (permOp g f)))
-    (by simp) (fun x y => by simp) (fun z x => by simp) (by simp) (fun x y => by simp)
-    (fun z x => by simp) (fun u => ?_) f
-  rw [cAll, basisOp_char, map_smul, permOp_char hg, kernel_char, map_smul, basisOp_char,
-    phaseExp_std, phaseExp_std, smul_smul, ← phase_add, ← weight_cover hg]
 
 end IntegerMultBounds.Networks.Certificates.T16.Streams

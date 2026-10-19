@@ -62,15 +62,5 @@ theorem volume_lower (q : ℕ) (_hq : 2 ≤ q) (v : Descriptor) (hp : v.Positive
       rw [he]
       ring
 
-/-- A single fixed coefficient bounds high-row metadata on every positive
-array, regardless of whether its width takes the fast or fallback branch. -/
-theorem uniform_volume_bound (q : ℕ) (hq : 2 ≤ q) :
-    ∃ C : ℕ, 0 < C ∧ ∀ v : Descriptor, v.Positive → rounded q v.width ≤ C*volume q v := by
-  obtain ⟨cutoff,hcut⟩ := ArbitraryWidthHighGuard.bounded_fallback q hq
-  refine ⟨constant q cutoff,by unfold constant; omega,?_⟩
-  intro v hp
-  have h := rounded_bound q cutoff v.width hq (fun n hn => (hcut n hn).2.le)
-  exact h.trans (Nat.mul_le_mul_left _ (volume_lower q hq v hp))
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighMetadataBudget

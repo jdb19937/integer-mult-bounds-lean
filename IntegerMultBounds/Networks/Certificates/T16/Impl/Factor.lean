@@ -16,8 +16,6 @@ open BinaryWalsh BinaryPhase Streams Multiplicative
 
 theorem lowPart_add (x y : Addr) : lowPart (x + y) = lowPart x + lowPart y := rfl
 
-theorem highPart_add (x y : Addr) : highPart (x + y) = highPart x + highPart y := rfl
-
 theorem joinAddr_add_high (l : Address 9) (h : Address 64) (w : Addr) (hw : lowPart w = 0) :
     joinAddr l h + w = joinAddr l (h + highPart w) := by
   conv_lhs => rw [← join_parts w, hw]

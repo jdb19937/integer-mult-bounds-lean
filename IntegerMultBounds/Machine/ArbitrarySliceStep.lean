@@ -46,9 +46,5 @@ theorem offset_value (ts : List Bool) (t b : ℕ) (ht : Counter.value ts = t) :
     Counter.value (GrowingCounterData.advance b ts) = t+b := by
   rw [GrowingCounterData.advance_value,ht]
 
-theorem offset_canonical (ts : List Bool) (b : ℕ) (ct : GrowingCounterData.Canonical ts) :
-    GrowingCounterData.Canonical (GrowingCounterData.advance b ts) :=
-  GrowingCounterData.advance_canonical b ts ct
-
 end
 end IntegerMultBounds.Machine.ArbitrarySliceStep

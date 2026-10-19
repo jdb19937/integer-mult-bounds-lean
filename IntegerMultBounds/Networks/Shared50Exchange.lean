@@ -65,12 +65,6 @@ theorem inverse_run (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2)
   rw [inverse, inverseSchedule_run _ _ _ _ _ _ Shared50Finite.reverse_run,
     Shared50Dirty.readout_execution, reconstruct]
 
-/-- The explicit reversed block schedule really inverts the actual invocation. -/
-theorem inverse_restores (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2)
-    (A : Fin 509194 → ZMod 2) (C : Fin 50 → ZMod 2) (S : Fin s → ZMod 2) :
-    run (inverse e) (run (Shared50Invocation.program e) (banks X Y A C S)) = banks X Y A C S := by
-  rw [Shared50Invocation.program_run, inverse_run, add_assoc, double, add_zero]
-
 /-- Opposite orientation is a static register renaming of the inverse list. -/
 def opposite (e : Fin n ≃ Triple 50) : Program (Role n 509194 50 s) (ZMod 2) :=
   rename (exchangeRoles n 509194 50 s) (inverse e)

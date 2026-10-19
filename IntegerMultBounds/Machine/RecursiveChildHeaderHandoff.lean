@@ -44,11 +44,6 @@ theorem hands_off (old child : Fin 6 → List Bool) (v : Tapes 38 q)
       fin_cases i <;> simpa [sourceSlots,generated,BinaryDescriptorStackRoundtrip.descriptor_encoded] using hh)
   exact hi.seq hc
 
-theorem sources_blank (child : Fin 6 → List Bool) (v : Tapes 38 q) (i : Fin 5) :
-    (output child v).head (sourceSlots i) = 0 ∧
-      (output child v).tape (sourceSlots i) = fun _ => blank :=
-  BinaryDescriptorCleanupList.cleared_slot sources (by decide) _ _ (List.mem_ofFn.mpr ⟨i,rfl⟩)
-
 theorem installed (child : Fin 6 → List Bool) (v : Tapes 38 q) (i : Fin 5) :
     (output child v).head (destSlots i) = 1 ∧
       (output child v).tape (destSlots i) = RadixZeroFill.encodedBinary (child i.succ) := by

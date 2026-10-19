@@ -55,25 +55,6 @@ theorem restore_hoare (roles : Tapes t prime) (old hs : Fin 6 → List Bool)
   simp only [RecursiveChildReturnRoleBank.bank,SharedBankRawCompose.bank_eq_raw] at h
   exact h
 
-/-- Bound restoration by the original role-parent volume, with same-row child
-headers. No original-parent row split is repeated at a recursive call. -/
-theorem restore_linear (b : ℕ) (v : Descriptor) (i j : Fin m) (hw : v.width=m*b)
-    (hp : v.Positive) (old hs : Fin 6 → List Bool)
-    (ho : RecursiveDimensionBank.Headers v old)
-    (hc : RecursiveDimensionBank.Headers (child prime 1 b v i j) hs)
-    (roles : Tapes t prime) (f : ℤ → Fin (prime+4)) (p : ℤ)
-    (node scalar : Tapes 1 prime) (aux : Tapes u prime) (st : Tapes 2 prime)
-    (code : FiniteReturnStack.Code k) (hd : RecursiveStackAllocation.Available 0 st) :
-    HoareTime (restore (t := t) (u := u)).program
-      (fun w => w = raw (bank roles hs f p node scalar aux (RecursiveChildCallSetup.savedStacks old st code))
-        (restore (t := t) (u := u)).tapes)
-      (fun w => w = raw (bank roles old f p node scalar aux (RecursiveChildCallReturn.pending st code))
-        (restore (t := t) (u := u)).tapes)
-      (127*volume prime v) :=
-  (restore_hoare roles old hs f p node scalar aux st code hd).consequence
-    (fun _ h => h) (fun _ h => h)
-    (RecursiveRoleChildCallSetup.restore_cost_le Shared50ModularControl.prime_prime.two_le b v i j hw hp old hs ho hc)
-
 theorem pending_pc (roles : Tapes t prime) (hs : Fin 6 → List Bool)
     (f : ℤ → Fin (prime+4)) (p : ℤ) (node scalar : Tapes 1 prime)
     (aux : Tapes u prime) (st : Tapes 2 prime) (code : FiniteReturnStack.Code k) :

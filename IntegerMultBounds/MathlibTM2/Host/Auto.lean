@@ -238,18 +238,6 @@ lemma cols_succ (L : Fin ni → List (Fin (A + 4))) (len w : ℕ) :
   congr 2
   ring
 
-/-- Inside a stream of `nw` words, the columns of word `w` are read off by plain indexing. -/
-lemma getElem_cols {L : Fin ni → List (Fin (A + 4))} {len nw w t : ℕ}
-    (hL : ∀ i, (L i).length = nw * len) (hw : w < nw) (ht : t < len) (i : Fin ni) :
-    ((cols L len w)[t]'(by simpa [cols] using ht)) i =
-      (L i)[w * len + t]'(by rw [hL]; nlinarith) := by
-  have hb : w * len + t < (L i).length := by rw [hL]; nlinarith
-  have h₁ : (cols L len w)[t]? = some fun i => (L i).getD (w * len + t) blank := by
-    simp [cols, ht]
-  rw [List.getElem?_eq_getElem (by simpa [cols] using ht), Option.some.injEq] at h₁
-  rw [h₁]
-  simp [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hb]
-
 @[simp] lemma outCol_zero (L : Fin ni → List (Fin (A + 4))) (len : ℕ) (j : Fin no) :
     M.outCol L len 0 j = [] := rfl
 

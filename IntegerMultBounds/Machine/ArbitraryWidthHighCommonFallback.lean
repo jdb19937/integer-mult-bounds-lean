@@ -117,32 +117,5 @@ actual elementary run leaves both unused metadata banks literally blank. -/
 def zeroProgram (headers : Fin 6 → Fin t) (source : Fin t) :=
   ArbitraryWidthElementaryInitializedRun.program (fun i => sourceSlot (headers i)) (sourceSlot source)
 
-theorem zero_width_hoare (caller : Tapes t prime) (headers : Fin 6 → Fin t) (source : Fin t)
-    (d : Descriptor) (hs : Fin 6 → List Bool) (hp : d.Positive) (hw : d.width = 0)
-    (hv : RecursiveDimensionBank.Headers d hs)
-    (ht : ∀ i, caller.tape (headers i) = RadixZeroFill.encodedBinary (hs i))
-    (hh : ∀ i, caller.head (headers i) = 1)
-    (x : Fin (volume prime d) → ZMod 2)
-    (hf : caller.tape source = sourceWord x) (hhead : caller.head source = 0) :
-    HoareTime (zeroProgram headers source) (fun w => w = input caller)
-      (fun w => w = input (setTape caller source
-        (sourceWord (Shared50RecursiveNodeRows.transpose (one_dvd d.rows) x)) 0))
-      ((ArbitraryWidthElementary.coefficient+116)*volume prime d) := by
-  have h := ArbitraryWidthElementaryInitializedRun.bounded_hoare 0
-    (ArbitraryWidthHighCommonPrepare.input caller)
-    (fun i => sourceSlot (headers i)) (sourceSlot source) d hs hp hv (by omega)
-    (by intro i; simpa only [ArbitraryWidthHighCommonPrepare.input,sourceSlot,Tapes.append,Fin.addCases_left] using ht i)
-    (by intro i; simpa only [ArbitraryWidthHighCommonPrepare.input,sourceSlot,Tapes.append,Fin.addCases_left] using hh i)
-    x (by simpa only [ArbitraryWidthHighCommonPrepare.input,sourceSlot,Tapes.append,Fin.addCases_left] using hf)
-    (by simpa only [ArbitraryWidthHighCommonPrepare.input,sourceSlot,Tapes.append,Fin.addCases_left] using hhead)
-  have hout : setTape (ArbitraryWidthHighCommonPrepare.input caller) (sourceSlot source)
-      (sourceWord (Shared50RecursiveNodeRows.transpose (one_dvd d.rows) x)) 0 =
-      ArbitraryWidthHighCommonPrepare.input (setTape caller source
-        (sourceWord (Shared50RecursiveNodeRows.transpose (one_dvd d.rows) x)) 0) := by
-    unfold ArbitraryWidthHighCommonPrepare.input sourceSlot
-    rw [SharedPlacementAlphabet.setTape_append_left,SharedPlacementAlphabet.setTape_append_left]
-  rw [hout] at h
-  simpa only [zeroProgram,input,Nat.zero_add,Nat.mul_one] using h
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallback

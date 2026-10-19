@@ -113,11 +113,6 @@ def states : ℕ → ℕ
   | 0 => 1
   | n+1 => states n+5
 
-theorem states_eq (n : ℕ) : states n = 5*n+1 := by
-  induction n with
-  | zero => rfl
-  | succ n ih => simp only [states,ih]; omega
-
 /-- Fixed finite control; n copies use exactly n+1 physical tapes. -/
 def program (q : ℕ) : (n : ℕ) → Program (n+1) (states n) q
   | 0 => skip 1 q (by decide)
@@ -144,15 +139,6 @@ theorem copies_hoare (q n : ℕ) (xs : List Bool) :
       rw [Placement.replace,extra_unchanged,← active_after q n xs]
       exact Placement.view _ _
     exact (hp.seq hc').consequence (fun _ h => h) (fun _ h => h) (le_of_eq (by ring))
-
-/-- Canonical descriptors give the usual logarithmic bound in their value. -/
-theorem copies_hoare_canonical (q n : ℕ) (xs : List Bool) (hx : GrowingCounterData.Canonical xs) :
-    HoareTime (program q n) (fun v => v = input q n xs) (fun v => v = output q n xs)
-      (n*(2*(Counter.value xs).log2+8)) := by
-  apply (copies_hoare q n xs).consequence (fun _ h => h) (fun _ h => h) ?_
-  apply Nat.mul_le_mul_left
-  have hh := GrowingCounterData.canonical_width xs hx
-  omega
 
 end
 end IntegerMultBounds.Machine.BinaryDescriptorCopies

@@ -127,24 +127,6 @@ theorem joined_index (q P e r G B : ℕ) (a : Coordinate P (q^r) (q^(e-r)) G B) 
   rw [he]
   ring
 
-/-- The middle transpose leaves the joined row d+/h+ fixed and exchanges
-only h−/d− at their actual numeric addresses. -/
-theorem low_index (q P e r G B : ℕ) (a : Coordinate P (q^r) (q^(e-r)) G B) :
-    (joinedEquiv q P e r G B (lowSwap a)).val = RecursiveInterchangeLayout.index q
-      (joinedDescriptor q P e r G B) a.pre.val
-      (a.highD.val*q^r+a.highH.val) 0 a.lowD.val a.middle.val a.lowH.val a.after.val :=
-  joined_index q P e r G B (lowSwap a)
-
-/-- Separation and the final high exchange produce the exact full swapped
-scalar address, rather than an equality only of coordinate tuples. -/
-theorem final_index (q P e r G B : ℕ) (hr : r ≤ e)
-    (a : Coordinate P (q^r) (q^(e-r)) G B) :
-    (originalEquiv q P e r G B hr (fullSwap a)).val = RecursiveInterchangeLayout.index q
-      (originalDescriptor P e G B) a.pre.val 0 0
-      (a.highD.val*q^(e-r)+a.lowD.val) a.middle.val
-      (a.highH.val*q^(e-r)+a.lowH.val) a.after.val :=
-  original_index q P e r G B hr (fullSwap a)
-
 def joinedAddress (P e r G B : ℕ) (a : Coordinate P (prime^r) (prime^(e-r)) G B) :
     RecursiveInterchangeScaling.Address (joinedDescriptor prime P e r G B) where
   beforeRows := a.pre
@@ -248,25 +230,6 @@ theorem exchange_transpose_separate {α : Type*} (P e r G B : ℕ) (hr : r ≤ e
   funext z
   obtain ⟨a,rfl⟩ := (originalEquiv prime P e r G B hr).surjective z
   rw [separateExchange_entry,transpose_joined,exchangeJoin_entry,swap_commute,transpose_original]
-
-/-- Actual row padding followed by the proved low transpose and crop retains
-the exact full-width swap after both high-field exchanges and separation. -/
-theorem padded_exchange_transpose_separate {α : Type*} (P e r G B R' : ℕ) (hr : r ≤ e)
-    (hrows : (joinedDescriptor prime P e r G B).rows ≤ R') (zero : α)
-    (x : Fin (volume prime (originalDescriptor P e G B)) → α) :
-    separateExchange P e r G B hr
-      (RecursiveRowPadding.cropArray hrows
-        (Shared50RecursiveNodeRows.transpose (one_dvd _)
-          (RecursiveRowPadding.padArray R' zero (exchangeJoin P e r G B hr x)))) =
-      Shared50RecursiveNodeRows.transpose (one_dvd _) x := by
-  rw [RecursiveRowPadding.cropArray_transpose_padArray,exchange_transpose_separate]
-
-/-- Selecting rho by the exact high-row algorithm yields the manuscript's
-dominating joined row range and its strict q² overshoot bound. -/
-theorem selected_rows (q P e D G B : ℕ) (hq : 2 ≤ q) (hD : 0 < D) :
-    D ≤ (joinedDescriptor q P e (ArbitraryWidthHighRows.rho q D) G B).rows ∧
-      (joinedDescriptor q P e (ArbitraryWidthHighRows.rho q D) G B).rows < q*q*D :=
-  ⟨ArbitraryWidthHighRows.dominates q D hq,ArbitraryWidthHighRows.row_lt q D hq hD⟩
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighLayout

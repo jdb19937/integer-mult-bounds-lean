@@ -222,20 +222,6 @@ section Node
 
 variable {Y : Type} [Fintype Y] {n k : ℕ}
 
-lemma norm_toComplex_prod_signZ (x : Fin k → ZMod 2) :
-    ‖GaussianInt.toComplex (∏ c, signZ (x c))‖ = 1 := by
-  rw [toComplex_prod_signZ, norm_prod]
-  refine Finset.prod_eq_one fun c _ => ?_
-  unfold BinaryWalsh.sign; split_ifs <;> simp
-
-lemma l2_signM (e : Fin (m * k) → Fin n) (u : BinaryWalsh.Address m) (g : ZArr Y n) :
-    l2 (toC (signM e u g)) = l2 (toC g) := by
-  have h : toC (signM e u g) = fun p =>
-      GaussianInt.toComplex (∏ c : Fin k, signZ (Labels.binary m u (colBits e c p.2))) * toC g p := by
-    funext p; simp only [toC, signM, map_mul]
-  rw [h]
-  exact l2_mul_of_norm_one _ (fun p => norm_toComplex_prod_signZ _) _
-
 lemma bl2_view (e : Fin (m * k) → Fin n) (he : Function.Injective e) (B : NWire → ZArr Y n) :
     bl2 (fun w => view e (toC (B w))) = √(2 ^ (m * k)) * bl2 (fun w => toC (B w)) := by
   have h1 := bl2_sq (fun w => view e (toC (B w)))

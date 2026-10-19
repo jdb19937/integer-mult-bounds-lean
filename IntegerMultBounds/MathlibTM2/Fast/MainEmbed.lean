@@ -107,11 +107,6 @@ lemma mnσ_park : mnσ P₀ v₀ .park = P₀ := by
   rw [mnσ_of_not_wire _ _ (by simp)]
   simp [synIdle]
 
-/-- The (unused) copy of `lreg .io` is empty. -/
-lemma mnσ_io : mnσ P₀ v₀ .io = [] := by
-  rw [mnσ_of_not_wire _ _ (by simp)]
-  simp [synIdle]
-
 /-- Every other register is empty. -/
 lemma mnσ_eq_nil {y : LReg SXReg} (hy : ∀ v, y ≠ .wire v) (hp : y ≠ .park) :
     mnσ P₀ v₀ y = [] := by

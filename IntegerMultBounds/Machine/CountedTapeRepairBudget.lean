@@ -116,15 +116,5 @@ theorem count_bound (q b : ℕ) (Z : List Bool) (data : Address q b Z → List B
     fullCost q b Z data≤bound q b Z w D :=
   (full_cost_le q b Z data w hw).trans (by unfold bound; exact Nat.add_le_add_left (Nat.mul_le_mul_right _ hD) _)
 
-theorem density_bound (q b : ℕ) (Z : List Bool) (data : Address q b Z → List Bool)
-    (w numerator denominator : ℕ) (hw : ∀ x,(data x).length≤w)
-    (hD : denominator*badCount q b Z≤numerator*Mi q b Z) :
-    denominator*fullCost q b Z data≤denominator*base q b Z w+
-      numerator*Mi q b Z*coefficient q b Z w := by
-  have h1 := Nat.mul_le_mul_left denominator (full_cost_le q b Z data w hw)
-  have h2 := Nat.mul_le_mul_right (coefficient q b Z w) hD
-  unfold bound at h1
-  nlinarith
-
 end
 end IntegerMultBounds.Machine.CountedTapeRepairBudget

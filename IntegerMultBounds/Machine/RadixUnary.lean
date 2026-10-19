@@ -126,23 +126,4 @@ theorem hoare (start : Fin s) (next : Table q s) (xs : List (Fin q))
   obtain ⟨hr,hh⟩ := exact_run start start next xs f out p r hf
   exact ⟨xs.length,_,le_rfl,hr,hh,rfl⟩
 
-/-- Blank initialization gives a complete output word with a globally blank tail. -/
-theorem to_blank (start : Fin s) (next : Table q s) (xs : List (Fin q)) :
-    run (program q s start next) xs.length
-      (cfg (wordTape (xs.map digitSymbol)) (fun _ => blank) 0 0 start) =
-      some (cfg (wordTape (xs.map digitSymbol))
-        (wordTape ((outputs next start xs).map digitSymbol))
-        xs.length xs.length (finalState next start xs)) ∧
-    step (program q s start next)
-      (cfg (wordTape (xs.map digitSymbol))
-        (wordTape ((outputs next start xs).map digitSymbol))
-        xs.length xs.length (finalState next start xs)) = none := by
-  have hw (ds : List (Fin q)) : putWord (fun _ => (blank : Fin (q+4))) 0 (ds.map digitSymbol) =
-      wordTape (ds.map digitSymbol) := by
-    funext j
-    simpa using putWord_blank 0 j (ds.map digitSymbol)
-  have h := exact_run start start next xs (fun _ => (blank : Fin (q+4)))
-    (fun _ => blank) 0 0 readDigit_blank
-  simpa only [hw,zero_add] using h
-
 end IntegerMultBounds.Machine.RadixUnary

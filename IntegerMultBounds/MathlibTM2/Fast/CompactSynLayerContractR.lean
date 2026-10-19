@@ -139,39 +139,6 @@ def CompactSynLayerContractR (legacy : MnProc → MnPr (prime+Ka))
           (cstream (prime+Ka) W (rpStream (2^es.sum) Y')))
         (compactSynLayerCostR (Ka := Ka) ds M K es ℓ W l h (synStashCostW v synXS))
 
-theorem compactSynLayerContractR_eventually (hA : 21≤prime+Ka)
-    (hA9 : 9^4≤prime+Ka+4) (hNW : NW≤prime+Ka+4) :
-    ∀ᶠ M : ℕ in Filter.atTop,
-    ∀ (ds : ComplexFramedExecution.Directions),ComplexPhaseBudget.Realizes ds →
-      (∀ g,Instr.gate g∈program ds → (2*gateBound g+1)^(2*(gateWires g).length)≤prime+Ka+4) →
-    ∀ (legacy : MnProc → MnPr (prime+Ka)),
-      (∀ f,legacy (.lay f)=embProg mnLayE MnProc.lay (layerTable (Ka := Ka) (U := Unit) mnQ_layer ds f)) →
-    ∀ (es : List ℕ) (ℓ W l p : ℕ),CompactSynGeometry M es ℓ W l p →
-      CompactSynFitsR ds M (Mult.Sizes.K M) es ℓ W l p →
-      CompactSynLayerContractR legacy ds M (Mult.Sizes.K M) es ℓ W l p := by
-  filter_upwards [compactSynDispatchR_eventually_exec_stream hA hA9 hNW] with M hexec
-  intro ds hd hgate legacy hbody es ℓ W l p hg hfits h hh v hv P₀ u hu Y hY R hR hr
-  let L := layPerm es ℓ (Mult.Sizes.K M)
-  let Ym := synMask (2^es.sum) Y
-  have hR' : compactSynView R=synG (synIdle (cstream (prime+Ka) W (rpStream (2^es.sum) Ym)) P₀) v := by
-    simp only [Ym,rpStream_synMask]; exact hR
-  have he := hexec ds hd hgate legacy hbody es ℓ W l h p hg.depth hg.layout.K_pos hg.layout hh
-    (fun _ => hg.reservation) hg.dimension hg.precision hg.multiplicity hg.width hg.numerator
-    hfits v hv P₀ Ym (synMask_norm hY hu) R
-    hR'
-    (by simpa only [compactMnLayerReg_private] using hr.blank)
-    (by simpa only [compactMnLayerReg_private] using hr.depth)
-    (by simpa only [compactMnLayerReg_private] using hr.guard)
-  refine ⟨_,?_,he⟩
-  unfold compactSynLQ
-  by_cases hc : synChunk ℓ (Mult.Sizes.K M) h
-  · simp only [hc,ite_true]
-    have hm : Ym=synMask (2^es.sum) (synYnum p L u) := synMask_ynum hY
-    rw [hm]
-    exact synNum_dec p L _
-  · simp only [hc,ite_false]
-    exact synNum_trunc es L p h (synNum_mask hY)
-
 
 theorem compactSynUniformLayerContractR_eventually (hA : 21≤prime+Ka)
     (hA9 : 9^4≤prime+Ka+4) (hNW : NW≤prime+Ka+4) :

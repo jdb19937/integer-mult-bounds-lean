@@ -74,36 +74,4 @@ theorem opposite_run {n a c s : ℕ} (V : Fin a → Fin n → R)
   have hk := congrFun h (exchangeRoles n a c s k)
   rcases k with i | i | i | i | i <;> exact hk
 
-/-- Three finite instruction lists, with no run-time relabeling operation. -/
-def signedExchangeProgram {n a c s : ℕ} (V : Fin a → Fin n → R)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R) :
-    Program (Role n a c s) R :=
-  dirty V G J H ++ rename (exchangeRoles n a c s) (dirtyInverse V G J H) ++ dirty V G J H
-
-theorem signedExchangeProgram_run {n a c s : ℕ} (V : Fin a → Fin n → R)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (reconstruct : ∀ X, mv J (mv V X) + mv H (mv G X) = X)
-    (X Y : Fin n → R) (A : Fin a → R) (C : Fin c → R) (S : Fin s → R) :
-    run (signedExchangeProgram V G J H) (banks X Y A C S) = banks (-Y) X A C S := by
-  simp only [signedExchangeProgram, run_append, dirty_run_shear V G J H reconstruct,
-    opposite_run V G J H reconstruct]
-  congr 1 <;> abel
-
-theorem signedExchangeProgram_length {n a c s : ℕ} (V : Fin a → Fin n → R)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R) :
-    (signedExchangeProgram (s := s) V G J H).length = 3 * (4 * n + 2 * a + 2 * c) := by
-  simp [signedExchangeProgram]
-  omega
-
-/-- Instantiate all three executable stages with the neighboring-pair motif.
-The premises specify wire enumeration and labels, not a circuit correctness
-contract. This remains a rational scalar circuit, without a tape cost claim. -/
-theorem complex_signedExchange_run {h n a s : ℕ} {L : Fin n → Finset (Fin h)}
-    (e : Fin a ≃ ComplexPair L) (hinj : Function.Injective L)
-    (hcard : ∀ i, (L i).card = 3) (X Y : Fin n → ℚ)
-    (A : Fin a → ℚ) (C : Fin (h + 1) → ℚ) (S : Fin s → ℚ) :
-    run (signedExchangeProgram (complexCopy e) (complexGather L)
-      (complexInject e) (complexScatter L)) (banks X Y A C S) = banks (-Y) X A C S := by
-  exact signedExchangeProgram_run _ _ _ _ (complex_reconstruct e hinj hcard) X Y A C S
-
 end IntegerMultBounds.Networks.Circuit

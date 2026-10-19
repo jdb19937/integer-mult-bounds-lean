@@ -19,8 +19,6 @@ open NLogN
 
 /-! ### Addresses -/
 
-theorem undigits_nil (ds : ℕ → ℕ) : undigits [] ds = 0 := by simp [undigits]
-
 theorem undigits_cons (t : ℕ) (ts : List ℕ) (ds : ℕ → ℕ) :
     undigits (t :: ts) ds = ds 0 * ts.prod + undigits ts (fun i => ds (i + 1)) := by
   simp only [undigits, List.length_cons, List.range_succ_eq_map, List.map_cons, List.map_map,

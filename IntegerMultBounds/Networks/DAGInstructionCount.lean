@@ -45,21 +45,6 @@ theorem compileFrom_program_count (all : List (Node ι)) (active : Finset ℕ) (
       omega
     · simpa only [compileFrom, ha, ↓reduceIte, usesFrom, zero_add] using ih state (offset+1)
 
-/-- The source list contains precisely one entry for each active input node. -/
-theorem compileFrom_sources_length (all : List (Node ι)) (active : Finset ℕ) (outputs : List ℕ)
-    (state : State) (offset : ℕ) (nodes : List (Node ι)) :
-    (compileFrom all active outputs state offset nodes).sources.length =
-      sourcesFrom active offset nodes := by
-  induction nodes generalizing state offset with
-  | nil => rfl
-  | cons node nodes ih =>
-    by_cases ha : offset ∈ active
-    · simp only [compileFrom, ha, ↓reduceIte, List.length_append, List.length_map,
-        sourcesFrom, ih]
-      cases node with
-      | mk kind support => cases kind <;> simp [allocate, sourceCount]
-    · simpa only [compileFrom, ha, ↓reduceIte, sourcesFrom, zero_add] using ih state (offset+1)
-
 variable [DecidableEq ι]
 
 /-- Exact scalar cost of the actual compiled DAG, including repeated requested
@@ -75,16 +60,6 @@ theorem compile_program_count (nodes : List (Node ι)) (outputs : List ℕ)
   rw [marked_uses_count nodes outputs hv ho] at hh
   exact hh
 
-/-- Equivalent exact balance between instructions, source entries, actual
-allocated roles, and active additions. -/
-theorem compile_program_roles (nodes : List (Node ι)) (outputs : List ℕ)
-    (hv : Valid nodes) (ho : ∀ i ∈ outputs, i < nodes.length) :
-    (compile nodes outputs).program.length + (compile nodes outputs).sources.length =
-      (compile nodes outputs).state.next +
-        DisjointPruning.additionCountFrom 0 (DisjointPruning.mark nodes outputs.toFinset) nodes := by
-  rw [compile_program_count nodes outputs hv ho, compile_roles nodes outputs hv ho]
-  omega
-
 /-- A certificate's total addition count bounds the actual scalar program even
 when backward pruning discards dead certificate nodes. -/
 theorem compile_program_le_additions (nodes : List (Node ι)) (outputs : List ℕ)
@@ -92,14 +67,6 @@ theorem compile_program_le_additions (nodes : List (Node ι)) (outputs : List �
     (compile nodes outputs).program.length ≤ 2 * additionCount nodes + outputs.length := by
   have hh := compile_program_count nodes outputs hv ho
   have hm := marked_additions_le nodes (DisjointPruning.mark nodes outputs.toFinset) 0
-  omega
-
-/-- The actual allocated role count itself bounds scalar instruction count. -/
-theorem compile_program_le_roles (nodes : List (Node ι)) (outputs : List ℕ)
-    (hv : Valid nodes) (ho : ∀ i ∈ outputs, i < nodes.length) :
-    (compile nodes outputs).program.length ≤ 2 * (compile nodes outputs).state.next := by
-  have hh := compile_program_roles nodes outputs hv ho
-  have hr := compile_roles nodes outputs hv ho
   omega
 
 end IntegerMultBounds.Networks.DAGAllocator

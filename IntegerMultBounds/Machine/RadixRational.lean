@@ -93,39 +93,4 @@ theorem output_ratMod (r : ℚ) (hden : r.den < q) (xs : List (Fin q)) :
     simpa only [Nat.cast_pow] using ZMod.natCast_self (q ^ xs.length)
   simpa only [Int.cast_mul,Int.cast_natCast,Int.cast_add,Int.cast_pow,hz,zero_mul,add_zero] using hh
 
-/-- Full literal-machine contract for one arbitrary rational coefficient. -/
-theorem rational_hoare (r : ℚ) (hden : r.den < q) (xs : List (Fin q))
-    (source out : ℤ → Fin (q + 4)) (p t : ℤ) (hf : source (p + xs.length) = blank) :
-    HoareTime (program q r.num r.den)
-      (fun v => v = (cfg (putWord source p (xs.map digitSymbol)) out p t (initial r.num r.den)).tapes)
-      (fun v => ∃ result : List (Fin q),
-        (value result : ZMod (q ^ xs.length)) =
-          Swap.Modular.ratMod (q ^ xs.length) r * (value xs : ZMod (q ^ xs.length)) ∧
-        result.length = xs.length ∧ v =
-          (cfg (putWord source p (xs.map digitSymbol)) (putWord out t (result.map digitSymbol))
-            (p + xs.length) (t + xs.length) (initial r.num r.den)).tapes)
-      xs.length := by
-  rintro v rfl
-  obtain ⟨hr,hh⟩ := rational_exact (initial r.num r.den) xs source out p t hf
-  exact ⟨_,_,le_rfl,hr,hh,digits (initial r.num r.den) xs,output_ratMod r hden xs,
-    digits_length _ _,rfl⟩
-
-/-- Complete blank-output execution, with the same ratMod coefficient used by
-the modular network and exactly one charged transition per source digit. -/
-theorem rational_to_blank (r : ℚ) (hden : r.den < q) (xs : List (Fin q)) :
-    let result := digits (initial r.num r.den) xs
-    let finalCarry := overflow (initial r.num r.den) xs
-    (value result : ZMod (q ^ xs.length)) =
-      Swap.Modular.ratMod (q ^ xs.length) r * (value xs : ZMod (q ^ xs.length)) ∧
-    result.length = xs.length ∧
-    run (program q r.num r.den) xs.length
-      (cfg (wordTape (xs.map digitSymbol)) (fun _ => blank) 0 0 (initial r.num r.den)) =
-      some (cfg (wordTape (xs.map digitSymbol)) (wordTape (result.map digitSymbol))
-        xs.length xs.length finalCarry) ∧
-    step (program q r.num r.den)
-      (cfg (wordTape (xs.map digitSymbol)) (wordTape (result.map digitSymbol))
-        xs.length xs.length finalCarry) = none := by
-  refine ⟨output_ratMod r hden xs,digits_length _ _,?_⟩
-  simpa only [program,outputs_eq,finalState_eq] using RadixUnary.to_blank (initial r.num r.den) next xs
-
 end IntegerMultBounds.Machine.RadixRational

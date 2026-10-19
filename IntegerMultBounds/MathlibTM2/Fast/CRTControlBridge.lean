@@ -98,18 +98,6 @@ theorem crtControlOffsets_runs {rg : TblR 10 → Fin T}
   rw [hsum] at hu
   exact crtRuns_of_tbl hrg ((hr.seq hu).mono (by omega)) R hR
 
-/-- Unary counter lengths and the exact scratch-restoration contract. -/
-theorem crtControlUnary10Rho_spec (W : ℕ) (wl nl : List (Fin (A + 4)))
-    (st : TblSt 10 A) :
-    (crtControlUnary10Rho W wl nl st (.z 0)).length = st.val 3 ∧
-    (crtControlUnary10Rho W wl nl st (.z 1)).length = st.val 4 ∧
-    (∀ j : Fin 12, j ≠ 0 → j ≠ 1 → crtControlUnary10Rho W wl nl st (.z j) = []) ∧
-    (∀ j, crtControlUnary10Rho W wl nl st (.v j) = binSyms W (st.val j)) := by
-  simp only [crtControlUnary10Rho]
-  refine ⟨by simp, by simp, ?_, by intro j; simp⟩
-  intro j h0 h1
-  simp [h0, h1]
-
 /-- Clear the materialized counters after a rotation that preserves them. -/
 def crtControlUnary10Clear (rg : TblR 10 → Fin T) : Pr P T Q A U :=
   .seq (bclear (rg (.z 0))) (bclear (rg (.z 1)))

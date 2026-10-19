@@ -153,10 +153,6 @@ theorem mrO_synS_le_synW2 (es : List ℕ) (ℓ K G F w h : ℕ) :
     synS es ℓ K G F h ≤ synW2 es ℓ K G F w h := by
   unfold synW2; omega
 
-theorem mrO_length_le_synW2 (es : List ℕ) (ℓ K G F w h : ℕ) :
-    es.length ≤ synW2 es ℓ K G F w h := by
-  unfold synW2; omega
-
 /-! ### The size parameter -/
 
 /-- The size parameter of a round. -/

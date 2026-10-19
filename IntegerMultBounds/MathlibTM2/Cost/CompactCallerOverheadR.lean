@@ -25,20 +25,6 @@ open IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.LayerMachin
 open IntegerMultBounds.MathlibTM2.Fast CompactGadgetReservationCapacity Filter
 noncomputable section
 
-/-- With no factor term every level scale is at most `D+G`. -/
-theorem synE_zero_le (G D t : ℕ) : synE G 0 D t≤t*(D+G) := by
-  unfold synE
-  have h : ∀ j∈Finset.range t,
-      (if synDg D j=0 then 0 else expSeq G 0 (synDg D j) j)≤D+G := by
-    intro j _
-    split_ifs
-    · omega
-    · cases j with
-      | zero => have := synDg_le D 0; simp only [expSeq]; omega
-      | succ j => simp only [expSeq]; omega
-  have hs := Finset.sum_le_card_nsmul _ _ _ h
-  simpa only [Finset.card_range,smul_eq_mul] using hs
-
 /-- Every level scale is below `m + G`: the lowest digit is below the radix `m`. -/
 theorem synE_zero_le_radix (G D t : ℕ) : synE G 0 D t≤t*(m+G) := by
   unfold synE

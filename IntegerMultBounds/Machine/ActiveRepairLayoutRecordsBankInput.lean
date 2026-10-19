@@ -18,8 +18,6 @@ open ActiveRepairLayoutRecordsHeadersData ActiveRepairLayoutRecordsBankHeaders
 variable {s : Shape} {p : Parameters s} {offset rows : ℕ}
 
 def destinations : Fin 15 → Fin 183 := ![44,45,46,47,48,49,50,51,52,53,27,28,29,30,31]
-theorem destinations_injective : Function.Injective destinations := by decide
-
 def raw (rs : List Partition.Record) : Tapes 183 1 :=
   ⟨fun _ => 0,fun i => if i=11 then RepairScan.srcTape rs else fun _ => blank⟩
 

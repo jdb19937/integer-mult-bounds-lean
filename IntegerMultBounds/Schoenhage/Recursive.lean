@@ -60,11 +60,6 @@ theorem recomb_lt (N M : ℕ) (cs : List ℤ) : recomb N M cs < Fm N := by
   have h2 := Int.emod_lt_of_pos ((poly cs).eval (2 ^ M : ℤ)) hF
   omega
 
-theorem ssMul_lt (N x y : ℕ) : ssMul N x y < Fm N := by
-  rw [ssMul_eq]; split_ifs
-  · exact Nat.mod_lt _ (Fm_pos N)
-  · exact recomb_lt _ _ _
-
 theorem descale_lt (N k w : ℕ) : descale N k w < Fm N := Nat.mod_lt _ (Fm_pos N)
 
 theorem xs_length (N x : ℕ) : (xs N x).length = 2 ^ kOf N := by
@@ -85,20 +80,6 @@ theorem pieces_lt {N x : ℕ} (hN : N0 ≤ N) (hk : 2 ^ kOf N ∣ N) (hx : x < F
 theorem xs_lt {N x : ℕ} (hN : N0 ≤ N) (hk : 2 ^ kOf N ∣ N) (hx : x < Fm N) :
     ∀ u ∈ xs N x, u < Fm (nextN N) :=
   fwdIter_lt _ _ _ _ _ (pieces_lt hN hk hx)
-
-theorem prods_lt (N : ℕ) (U V : List ℕ) : ∀ p ∈ List.zipWith (ssMul (nextN N)) U V, p < Fm (nextN N) := by
-  intro p hp
-  obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.mp hp
-  simp only [List.getElem_zipWith]
-  exact ssMul_lt _ _ _
-
-theorem prods_length (N x y : ℕ) :
-    (List.zipWith (ssMul (nextN N)) (xs N x) (xs N y)).length = 2 ^ kOf N := by
-  simp [xs_length]
-
-theorem invIter_out_lt (N : ℕ) (P : List ℕ) (hP : ∀ p ∈ P, p < Fm (nextN N)) :
-    ∀ w ∈ invIter (nextN N) (kOf N) (kOf N) P, w < Fm (nextN N) :=
-  invIter_lt _ _ _ _ hP
 
 /-! ### Correctness -/
 

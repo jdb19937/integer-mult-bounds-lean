@@ -160,23 +160,5 @@ theorem unit_recipe {r : ℚ} (hr : ScaleOccurs r) (b : ℕ) :
   rw [Swap.Modular.ratMod,numerator_sign]
   ring
 
-/-- Exact literal arithmetic for every actual affine coefficient; the denominator
-condition is discharged by the schedule rather than supplied by the caller. -/
-theorem coefficient_to_blank (r : ℚ) (hr : Occurs r) (xs : List (Fin prime)) :
-    let result := Machine.RadixRationalData.digits (Machine.RadixRationalData.initial r.num r.den) xs
-    let finalCarry := Machine.RadixRationalData.overflow (Machine.RadixRationalData.initial r.num r.den) xs
-    (value result : ZMod (prime ^ xs.length)) =
-      Swap.Modular.ratMod (prime ^ xs.length) r * (value xs : ZMod (prime ^ xs.length)) ∧
-    result.length = xs.length ∧
-    Machine.run (Shared50CoefficientMachines.coefficientProgram r) xs.length
-      (Machine.RadixRational.cfg (Machine.wordTape (xs.map digitSymbol)) (fun _ => Machine.blank)
-        0 0 (Machine.RadixRationalData.initial r.num r.den)) =
-      some (Machine.RadixRational.cfg (Machine.wordTape (xs.map digitSymbol))
-        (Machine.wordTape (result.map digitSymbol)) xs.length xs.length finalCarry) ∧
-    Machine.step (Shared50CoefficientMachines.coefficientProgram r)
-      (Machine.RadixRational.cfg (Machine.wordTape (xs.map digitSymbol))
-        (Machine.wordTape (result.map digitSymbol)) xs.length xs.length finalCarry) = none :=
-  Machine.RadixRational.rational_to_blank r (denominator_bound hr) xs
-
 end
 end IntegerMultBounds.Networks.Shared50AffineCoefficients

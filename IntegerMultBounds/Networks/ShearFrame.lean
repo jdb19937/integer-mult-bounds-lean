@@ -22,11 +22,6 @@ def address (M : E →ₗ[K] E) : (E × E) ≃ (E × E) where
   left_inv := by intro p; simp
   right_inv := by intro p; simp
 
-theorem address_add (M N : E →ₗ[K] E) (p : E × E) :
-    address N (address M p) = address (N + M) p := by
-  simp only [address, Equiv.coe_fn_mk, LinearMap.add_apply]
-  congr 1; abel
-
 /-- An array entry follows the address permutation, so evaluation uses its
 inverse. This convention is the manuscript's physical movement convention. -/
 def frame (M : E →ₗ[K] E) : ((E × E) → R) ≃ₗ[R] ((E × E) → R) where
@@ -68,17 +63,6 @@ theorem full_shear (f : (E × E) → R) (p : E × E) :
 
 section Endpoints
 variable {F V : Type*} [Field F] [AddCommGroup V] [Module F V] [FiniteDimensional F V]
-
-/-- The X-to-Y endpoint route applies the same full shear as the other
-manuscript routes. Its negative source label is accounted for exactly. -/
-theorem projection_endpoint (B : LinearMap.BilinForm F V) (hs : B.IsSymm)
-    (hn : B.Nondegenerate) (U : Submodule F V) (hu : (B.restrict U).Nondegenerate)
-    (f : (V × V) → R) :
-    frame (ProjectionRank.project B hs (B.orthogonal U)
-      (ProjectionRank.orthogonal_nondegenerate B hs hn U hu))
-      ((frame (-ProjectionRank.project B hs U hu)).symm f) =
-        frame (LinearMap.id : V →ₗ[F] V) f := by
-  rw [frame_change, ProjectionRank.routed_endpoint B hs hn U hu]
 
 end Endpoints
 

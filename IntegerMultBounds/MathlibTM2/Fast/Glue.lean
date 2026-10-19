@@ -69,14 +69,6 @@ theorem mulInTime_of_host [Fintype P] [Fintype U] (body : P → Pr P T Q A U) (p
   erw [List.map_id, List.map_id]
   exact o
 
-/-- With `0 < κ`, a host program as in `mulInTime_of_host` gives the statement. -/
-theorem statement_of_host [Fintype P] [Fintype U] (body : P → Pr P T Q A U) (pm : P)
-    (v₀ : HS T Q A U) (time : ℕ → ℕ) {κ : ℝ} (hκ : 0 < κ)
-    (hrun : ∀ x y, HostMulWithin body pm v₀ time x y)
-    (htime : (fun n => (time n : ℝ)) =O[atTop] fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - κ)) :
-    Statement :=
-  ⟨κ, hκ, mulInTime_of_host body pm v₀ time hrun htime⟩
-
 end Glue
 
 /-! ### Stores with one nonempty stack -/
@@ -240,8 +232,6 @@ def onBuf (g : B → B) (v : HS T Q A (U × B)) : HS T Q A (U × B) :=
 
 @[simp] lemma withBuf_user (v : HS T Q A U) (b : B) : (withBuf v b).user = (v.user, b) := rfl
 
-lemma splitUser_symm (v : HS T Q A U) (b : B) : (splitUser B).symm (v, b) = withBuf v b := rfl
-
 end Split
 
 /-! ### The buffer -/
@@ -271,8 +261,6 @@ lemma cons_val (c : α) {l : BList α n} (h : l.1.length < n) : (l.cons c).1 = c
 /-- Drop the first symbol. -/
 def tail (l : BList α n) : BList α n :=
   ⟨l.1.tail, by have := l.2; simp only [List.length_tail]; omega⟩
-
-lemma tail_val (l : BList α n) : l.tail.1 = l.1.tail := rfl
 
 end BList
 

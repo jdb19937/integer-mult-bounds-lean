@@ -146,11 +146,6 @@ def leaves : Expr c → ℕ
   | .term _ _ => 1
   | .add l r => leaves l+leaves r
 
-theorem leaves_pos (e : Expr c) : 0 < leaves e := by
-  induction e with
-  | term => simp [leaves]
-  | add l r hl hr => simp only [leaves]; omega
-
 /-- Uniform word-width bound, including stale words of shorter lengths. -/
 theorem runtime_le (e : Expr c) (xs old : ℕ → List (Fin q)) (b : ℕ)
     (hn : ∀ i : Fin c, (xs i.val).length ≤ b) (ho : ∀ i : Fin c, (old i.val).length ≤ b) :
@@ -163,11 +158,5 @@ theorem runtime_le (e : Expr c) (xs old : ℕ → List (Fin q)) (b : ℕ)
 def ofList (seed : Fin c) : List (Fin c × ℚ) → Expr c
   | [] => .term seed 0
   | (i,r)::rest => .add (.term i r) (ofList seed rest)
-
-theorem ofList_leaves (seed : Fin c) (terms : List (Fin c × ℚ)) :
-    leaves (ofList seed terms) = terms.length+1 := by
-  induction terms with
-  | nil => rfl
-  | cons term terms ih => rcases term with ⟨i,r⟩; simp [ofList,leaves,ih]; omega
 
 end IntegerMultBounds.Machine.RadixLinearCombinationRefresh

@@ -323,24 +323,9 @@ theorem output_tape {Q a d B : ℕ} (hQ : 0 < Q) (ha : 0 < a) (hd : 0 < d)
     exact SignedScalingExecution.unsigned_output_tape ha hd A D Q B source p middle r dest q payload
   · simp [output,destinationSlot,negativeOutput,Tapes.append,signBank,BlockNegationReuse.bank]
 
-/-- The additional shared intermediate is restored completely after negation. -/
-theorem negative_output_middle {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (A : Controls a) (D : Controls d)
-    (S : SignControls) (Q B : ℕ) (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ)
-    (signMiddle : ℤ → Fin 4) (t : ℤ) (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) :
-    let v := negativeOutput ha hd A D S Q B source p middle r signMiddle t dest q payload
-    let slot := Fin.castAdd 5 (coreSlot a d)
-    v.tape slot = signMiddle ∧ v.head slot = t := by
-  simp [negativeOutput,coreSlot,Tapes.append,setTape]
-
 theorem tapeCount_eq (a d : ℕ) : TapeCount a d = 38+4*(a+d) := by
   dsimp only [TapeCount]
   rw [SignedScalingExecution.tapeCount_eq]
   omega
-
-theorem stateCount_eq (a d : ℕ) (negative : Bool) :
-    states a d negative = 98*(a+d)+(if negative then 545 else 213) := by
-  dsimp only [states,CoreStates]
-  rw [SignedScalingExecution.unsigned_stateCount_eq]
-  cases negative <;> simp
 
 end IntegerMultBounds.Machine.SignedScalingSign

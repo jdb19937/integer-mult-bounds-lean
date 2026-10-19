@@ -52,27 +52,5 @@ theorem result_iff_bad (q b n : ℕ) (V W C1 C2 C3 : List Bool) (bs ns qs : List
   exact flags_any q b n V W C1 C2 C3 hV hW hbq hc1 hc2 hc3 hv1 hv2 hv3
     (first_bound q n V hV (by omega)) (word_bound W n b hW)
 
-/-- Full paid tape execution, with the actual exceptional-membership bit in
-the postcondition. Original canonical descriptors are retained and all private
-storage is restored as specified by CountedGuardGadget.output. -/
-theorem runs_decides (q b n : ℕ) (V W C1 C2 C3 : List Bool) (bs ns qs : List Bool)
-    (hq : Counter.value qs=q) (cq : GrowingCounterData.Canonical qs)
-    (hb : Counter.value bs=b) (cb : GrowingCounterData.Canonical bs)
-    (hn : Counter.value ns=n) (cn : GrowingCounterData.Canonical ns)
-    (hV : V.length=n*q) (hW : W.length=n*b) (hbq : b+3 ≤ q)
-    (hc1 : C1.length=q-1) (hc2 : C2.length=q-1) (hc3 : C3.length=b)
-    (hv1 : value C1=2^(b+1)) (hv2 : value C2+2^(b+1)+1=2^(q-1)) (hv3 : value C3+2=2^b) :
-    HoareTime (CountedGuardGadget.program (a := a))
-      (fun v => v=CountedGuardGadget.input V W C1 C2 C3 bs ns qs)
-      (fun v => v=CountedGuardGadget.output q b n V W C1 C2 C3 bs ns qs ∧
-        ((v.tape 14 0=bitSymbol true) ↔ ¬ earlyGood ((2 : ℤ)^b) ((2 : ℤ)^(q-1)) n
-          (address q b n V W hV hW (by omega))))
-      (350*(n+1)*(q+b+1)) := by
-  have h := CountedGuardGadget.runs (a := a) q b n V W C1 C2 C3 bs ns qs
-    (by omega) hq cq hb cb hn cn hV hW hc1 hc2 hc3
-  refine h.consequence (fun _ h => h) ?_ (CountedGuardGadget.cost_volume q b n)
-  rintro v rfl
-  exact ⟨rfl,result_iff_bad q b n V W C1 C2 C3 bs ns qs hV hW hbq hc1 hc2 hc3 hv1 hv2 hv3⟩
-
 end
 end IntegerMultBounds.Machine.CountedGuardGadgetValue

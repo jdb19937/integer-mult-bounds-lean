@@ -97,11 +97,4 @@ theorem view_Cfull (e : Fin k → Fin n) (he : Function.Injective e) (f : Arr Y 
   rw [Cfull_eq_map, prod_view e he]
   simp only [view, merge_extract e]
 
-/-- `C` on every bit is the product of `C` on the pieces of any partition of the bits. -/
-theorem Cfull_pieces (pieces : List (List (Fin n))) (hperm : pieces.flatten.Perm (List.finRange n))
-    (f : Arr X n) :
-    Cfull X n f = (pieces.map fun l => (l.map (kBit (X := X) 1)).prod).prod f := by
-  rw [← prod_perm_Cfull _ hperm, List.map_flatten, List.prod_flatten, List.map_map]
-  rfl
-
 end IntegerMultBounds.MathlibTM2.Layer

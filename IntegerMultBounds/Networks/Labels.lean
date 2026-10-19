@@ -164,18 +164,4 @@ theorem line_nondegenerate {K E : Type*} [Field K] [AddCommGroup E] [Module K E]
     apply Subtype.ext
     simp [ha]
 
-theorem rational_line_nondegenerate (S : Finset (Fin h)) (hs : S.card = 3) :
-    ((rational h).domRestrict₁₂ (Submodule.span ℚ {indicator S})
-      (Submodule.span ℚ {indicator S})).Nondegenerate := by
-  apply line_nondegenerate
-  rw [rational_self S hs]
-  norm_num
-
-theorem binary_line_nondegenerate (S : Finset (Fin h)) (hs : S.card = 3) :
-    ((binary h).domRestrict₁₂ (Submodule.span (ZMod 2) {indicator S})
-      (Submodule.span (ZMod 2) {indicator S})).Nondegenerate := by
-  apply line_nondegenerate
-  rw [binary_self S hs]
-  exact one_ne_zero
-
 end IntegerMultBounds.Networks.Labels

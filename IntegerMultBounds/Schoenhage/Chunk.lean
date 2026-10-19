@@ -34,45 +34,6 @@ theorem cut_cons {w : ℕ} {x : List Bool} (hx : x ≠ []) (hw : w ≠ 0) :
     cut w x = x.take w :: cut w (x.drop w) := by
   rw [cut]; simp [hx, hw]
 
-theorem cut_flatten (w : ℕ) (x : List Bool) : (cut w x).flatten = x := by
-  by_cases hx : x = []
-  · simp [hx]
-  by_cases hw : w = 0
-  · rw [cut]; simp [hx, hw]
-  rw [cut_cons hx hw, List.flatten_cons, cut_flatten w (x.drop w), List.take_append_drop]
-termination_by x.length
-decreasing_by have := List.length_pos_of_ne_nil hx; simp; omega
-
-theorem cut_lengths {w : ℕ} (hw : 1 ≤ w) (x : List Bool) (hx : w ∣ x.length) :
-    ∀ c ∈ cut w x, c.length = w := by
-  by_cases h0 : x = []
-  · simp [h0]
-  have hpos := List.length_pos_of_ne_nil h0
-  have hle : w ≤ x.length := Nat.le_of_dvd hpos hx
-  rw [cut_cons h0 (by omega)]
-  intro c hc
-  rcases List.mem_cons.mp hc with rfl | hc
-  · simp; omega
-  · exact cut_lengths hw (x.drop w) (by rw [List.length_drop]; exact Nat.dvd_sub hx (dvd_refl w)) c hc
-termination_by x.length
-decreasing_by simp; omega
-
-theorem length_cut {w : ℕ} (hw : 1 ≤ w) (x : List Bool) (hx : w ∣ x.length) :
-    (cut w x).length = x.length / w := by
-  by_cases h0 : x = []
-  · simp [h0]
-  have hpos := List.length_pos_of_ne_nil h0
-  have hle : w ≤ x.length := Nat.le_of_dvd hpos hx
-  rw [cut_cons h0 (by omega), List.length_cons,
-    length_cut hw (x.drop w) (by rw [List.length_drop]; exact Nat.dvd_sub hx (dvd_refl w)), List.length_drop]
-  obtain ⟨k, hk⟩ := hx
-  rw [hk, show w * k - w = w * (k - 1) by rw [Nat.mul_sub, mul_one], Nat.mul_div_cancel_left _ (by omega),
-    Nat.mul_div_cancel_left _ (by omega)]
-  have : 1 ≤ k := Nat.pos_of_ne_zero (fun h => by subst h; rw [mul_zero] at hk; omega)
-  omega
-termination_by x.length
-decreasing_by simp; omega
-
 theorem cells_cons (c : List Bool) (cs : List (List Bool)) :
     cells (a := a) (c :: cs) = c.map bitSymbol ++ [separator] ++ cells cs := by
   simp [cells, syms_cons, sym, Function.comp_def]

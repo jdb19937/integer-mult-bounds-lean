@@ -124,11 +124,6 @@ private theorem double {ι : Type*} (f : ι → ZMod 2) : f + f = 0 := by
   funext i
   simpa only [Pi.add_apply, Pi.zero_apply, ZMod.neg_eq_self_mod_two] using add_neg_cancel (f i)
 
-theorem inverse_restores (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2)
-    (A : Fin 509194 → ZMod 2) (C : Fin 50 → ZMod 2) (S : Fin s → ZMod 2) :
-    run (inverse e) (run (program e) (banks X Y A C S)) = banks X Y A C S := by
-  rw [program_run, inverse_run, add_assoc, double, add_zero]
-
 private theorem renamed_run {n a c s : ℕ} (p : Program (Role n a c s) (ZMod 2))
     (hp : ∀ X Y A C S, run p (banks X Y A C S) = banks X (Y + X) A C S)
     (X Y : Fin n → ZMod 2) (A : Fin a → ZMod 2) (C : Fin c → ZMod 2) (S : Fin s → ZMod 2) :
@@ -151,15 +146,6 @@ theorem opposite_run (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2)
 /-- Three actual sparse invocation lists, sharing the same restored scratch. -/
 def exchange (e : Fin n ≃ Triple 50) : Program (Role n 509194 50 s) (ZMod 2) :=
   program e ++ (opposite e ++ program e)
-
-theorem exchange_run (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2)
-    (A : Fin 509194 → ZMod 2) (C : Fin 50 → ZMod 2) (S : Fin s → ZMod 2) :
-    run (exchange e) (banks X Y A C S) = banks Y X A C S := by
-  simp only [exchange, run_append, program_run, opposite_run]
-  have hx : X + (Y + X) = Y := by
-    have hh := double X
-    linear_combination hh
-  rw [hx, add_assoc Y X Y, add_comm X Y, ← add_assoc, double, zero_add]
 
 @[simp] theorem load_length (e : Fin n ≃ Triple 50) :
     (load (s := s) e).length = SharedPointExecution.code.sources.length := by
@@ -201,18 +187,5 @@ theorem instruction_bound (e : Fin n ≃ Triple 50) : (program (s := s) e).lengt
 theorem instruction_bound50 (e : Fin 19600 ≃ Triple 50) :
     (program (s := s) e).length ≤ 5209540 := by
   simpa using instruction_bound (s := s) e
-
-theorem exchange_length (e : Fin n ≃ Triple 50) :
-    (exchange (s := s) e).length = 3 *
-      (4 * Shared50Finite.program.length + 2 * SharedPointExecution.code.sources.length + 18*n) := by
-  simp only [exchange, opposite, List.length_append, rename_length, program_length, inverse_length]
-  omega
-
-theorem exchange_instruction_bound50 (e : Fin 19600 ≃ Triple 50) :
-    (exchange (s := s) e).length ≤ 15628620 := by
-  have hp := instruction_bound50 (s := s) e
-  rw [program_length] at hp
-  rw [exchange_length]
-  exact Nat.mul_le_mul_left 3 hp
 
 end IntegerMultBounds.Networks.Shared50SparseInvocation

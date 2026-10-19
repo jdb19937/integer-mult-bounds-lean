@@ -284,32 +284,6 @@ lemma compactSynLayerRecordsOutR_compact
   rw [embExt_off _ _ (fun i => compactLegacyReg_ne_compact_bc i z)]
   exact compactSynLayerSourcesOut_compact R Ro v h (layB ℓ K) K es.length d g z
 
-/-- The round's native shape is derived, including its non-row address width. -/
-theorem compactSynLayerPrepareR_basis
-    (R : Fin (nT CompactHostBReg) → List (Fin (A+4)))
-    (Ro : Fin (nT SXReg) → List (Fin (A+4))) (v : SynW → List (Fin (A+4)))
-    (es : List ℕ) (ℓ K W l h G cG d g payload : ℕ)
-    (hK : 0<K) (hfit : CompactReservationFits d g K es.length)
-    (hblank : ∀ z : CompactBReg,z≠.work 13 → z≠.work 14 → R (reg (BReg := CompactHostBReg) (.bc (.inl z)))=[])
-    (hd : (R (reg (BReg := CompactHostBReg) (.bc (.inl (.work 13))))).length=d)
-    (hg : (R (reg (BReg := CompactHostBReg) (.bc (.inl (.work 14))))).length=g) :
-    ∀ z,compactBasisRest (compactReservationShape d g K es.length payload)
-      (K*((h-layB ℓ K)/K*es.length)) (2^l) z
-      (compactSynSourceClearOut (compactSynLayerRefreshOutR R Ro v es ℓ K W l h G cG d g)
-        (reg (BReg := CompactHostBReg) (.bc (.inl z)))) := by
-  let R₂ := compactSynLayerRecordsOutR R Ro v es ℓ K W l h G cG d g
-  have hoff (z : CompactBReg) : R₂ (reg (BReg := CompactHostBReg) (.bc (.inl z)))=
-      R (reg (BReg := CompactHostBReg) (.bc (.inl z))) :=
-    compactSynLayerRecordsOutR_compact R Ro v es ℓ K W l h G cG d g z
-  have hh := compactBasisRefresh_actual_rest (shape := compactReservationShape d g K es.length payload)
-    R₂ d g K es.length (K*((h-layB ℓ K)/K*es.length)) (2^l)
-    (by intro z h13 h14; rw [hoff]; exact hblank z h13 h14)
-    (by rw [hoff]; exact hd) (by rw [hoff]; exact hg)
-    (compactReservation_back d g K es.length payload hK) rfl
-    (compactReservation_bits hK hfit) rfl rfl
-  intro z
-  rw [compactSynSourceClear_compact]
-  exact hh (.inl z)
 def compactSynLayerPrepareRCost (G cG N d g K D o W r h b l : ℕ) :=
   (compactSynChunkSourceCost h b K D+(((4*d+4)+(4*g+4))+1))+
     (compactTopOriginalRCost G cG N d g K D o W 1 l+

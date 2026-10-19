@@ -30,7 +30,6 @@ theorem two_runs {t a q r b c : ℕ} {M : Program t q a} {N : Program t r a}
 
 def program := two lowProgram repairProgram
 def outputSlot : Fin count := Fin.castAdd lowCount (Fin.castAdd 8 (223 : Fin 235))
-theorem outputSlot_value : outputSlot.val=223 := rfl
 def cost (d : Inputs s p offset rows) (x : Array s rows) :=
   ActivePrefixEarlySequenceOriginalRun.cost s p rows+
   ActiveRepairLayoutRecordsAssemblyOriginalEarly.cost d

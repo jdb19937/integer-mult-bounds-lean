@@ -93,20 +93,5 @@ theorem input_private (qs bs : List Bool) (i : Fin 8)
     (input (a := a) qs bs).tape i=(fun _ => blank) ∧ (input (a := a) qs bs).head i=0 := by
   rcases hi with rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl,rfl⟩
 
-theorem exact_constants (q b : ℕ) (qs bs : List Bool) :
-    (output (a := a) q b qs bs).tape 2=word (c1 q b) ∧ (output (a := a) q b qs bs).head 2=0 ∧
-    (output (a := a) q b qs bs).tape 3=word (c2 q b) ∧ (output (a := a) q b qs bs).head 3=0 ∧
-    (output (a := a) q b qs bs).tape 4=word (c3 b) ∧ (output (a := a) q b qs bs).head 4=0 :=
-  ⟨rfl,rfl,rfl,rfl,rfl,rfl⟩
-
-theorem retains_headers (q b : ℕ) (qs bs : List Bool) :
-    (output (a := a) q b qs bs).tape 0=CountedLoopReuseAlphabet.binary qs ∧ (output (a := a) q b qs bs).head 0=1 ∧
-    (output (a := a) q b qs bs).tape 1=CountedLoopReuseAlphabet.binary bs ∧ (output (a := a) q b qs bs).head 1=1 :=
-  ⟨rfl,rfl,rfl,rfl⟩
-
-theorem private_clean (q b : ℕ) (qs bs : List Bool) (i : Fin 8) (hi : i=5 ∨ i=6 ∨ i=7) :
-    (output (a := a) q b qs bs).tape i=(fun _ => blank) ∧ (output (a := a) q b qs bs).head i=0 := by
-  rcases hi with rfl | rfl | rfl <;> exact ⟨rfl,rfl⟩
-
 end
 end IntegerMultBounds.Machine.CountedGuardConstants

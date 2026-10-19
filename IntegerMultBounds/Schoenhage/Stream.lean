@@ -225,9 +225,6 @@ def adv (v : Tapes (r + 2) a) (hd : Fin (r + 2) → ℤ) (o : Option (Option Boo
     else if i = drv then 1
     else if (decode (v.tape i (hd i))).isSome ∧ advOf fl i then 1 else 0
 
-theorem tp_tape_out (v : Tapes (r + 2) a) (hd) (g : ℤ → Fin (a + 4)) :
-    (tp v hd g).tape out = g := by simp [tp]
-
 theorem tp_tape_in (v : Tapes (r + 2) a) (hd) (g : ℤ → Fin (a + 4)) (i : Fin (r + 2)) (hi : i ≠ out) :
     (tp v hd g).tape i = v.tape i := by simp [tp, hi]
 

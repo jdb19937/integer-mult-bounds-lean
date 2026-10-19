@@ -272,46 +272,10 @@ theorem pmSqrtC_do (st : TblSt 4 A) {x : ℕ} (hx : st.val 0 = x) (hW : 3 * x + 
 
 /-! ### `oddProd` -/
 
-/-- The partial product `∏_{i < j} (2 i + 1)`. -/
-def pmOddPart (j : ℕ) : ℕ := ∏ i ∈ range j, (2 * i + 1)
-
-theorem pmOddPart_succ (j : ℕ) : pmOddPart (j + 1) = pmOddPart j * (2 * j + 1) :=
-  Finset.prod_range_succ _ _
-
-theorem pmOddPart_mono {j m : ℕ} (h : j ≤ m) : pmOddPart j ≤ pmOddPart m :=
-  Finset.prod_le_prod_of_subset_of_one_le (Finset.range_subset_range.2 h) (fun _ _ _ => by omega)
-
 /-- `N := oddProd d`: `d` in `0`, `N` in `1`, the counter in `2`, `2d` in `3`, `2i + 1` in `4`. -/
 def pmOddC : TblCode 5 :=
   tblBlock 5 [.add 0 0 3, .zero 1] (.inc 1) ;;
     tblFor 2 3 (tblBlock 5 [.add 2 2 4, .inc 4] (.mul 1 4 1))
-
-theorem pmOddC_do (st : TblSt 5 A) {d : ℕ} (hd : st.val 0 = d)
-    (hW : oddProd d + 4 * d + 2 ≤ 2 ^ W) :
-    TblDo A W w pmOddC st (fun s => s.val 0 = d ∧ s.val 1 = oddProd d ∧ s.acc = st.acc)
-      (12 * d + 6) := by
-  have hW0 : W ≠ 0 := pm_W_ne (by omega)
-  have hblock : TblDo A W w (tblBlock 5 [.add 0 0 3, .zero 1] (.inc 1)) st
-      (fun s => s.val 0 = d ∧ s.val 1 = 1 ∧ s.val 3 = 2 * d ∧ s.acc = st.acc) 3 := by
-    refine TblDo.block _ _ ?_ ?_
-    · simp [tblFitsList, TblIns.fits, TblIns.exact, hd]; omega
-    · simp [tblExactList, TblIns.exact, hd]; ring
-  refine (hblock.seq (K₂ := 1 + (2 * d * (3 + 1 + 2) + 2)) (fun s ⟨h0, h1, h3, hac⟩ => ?_)).mono
-    (fun _ h => h) (le_of_eq (by ring))
-  refine TblDo.for (2 * d) 3 h3 (by omega) (by decide)
-    (fun j s => s.val 0 = d ∧ s.val 1 = pmOddPart j ∧ s.val 3 = 2 * d ∧
-      s.acc = st.acc) ⟨by simp [h0], by simp [h1, pmOddPart], by simp [h3], hac⟩ ?_ ?_
-  · rintro j hj s ⟨h0, h1, h3, hac⟩ hi hn
-    have hm := pmOddPart_mono (show j + 1 ≤ 2 * d by omega)
-    rw [pmOddPart_succ] at hm
-    have hodd : oddProd d = pmOddPart (2 * d) := rfl
-    have e : j + j + 1 = 2 * j + 1 := by ring
-    refine TblDo.block _ _ ?_ ?_
-    · simp [tblFitsList, TblIns.fits, TblIns.exact, hi, h1, e]
-      omega
-    · simp [tblExactList, TblIns.exact, hi, hn, h0, h1, hac, e, pmOddPart_succ]
-  · rintro s ⟨h0, h1, h3, hac⟩ - -
-    exact ⟨h0, h1, hac⟩
 
 /-! ### The source lengths -/
 
@@ -359,64 +323,11 @@ theorem pmModC_do (st : TblSt 6 A) {N x₀ a i : ℕ} (h0 : st.val 0 = N) (h1 : 
 /-- `∏_{i < d} modulus N x₀ a i`. -/
 def pmSProd (N x₀ a d : ℕ) : ℕ := ∏ i ∈ range d, modulus N x₀ a i
 
-theorem pmSProd_succ (N x₀ a d : ℕ) :
-    pmSProd N x₀ a (d + 1) = pmSProd N x₀ a d * modulus N x₀ a d := Finset.prod_range_succ _ _
-
-theorem pmSProd_mono (N x₀ a : ℕ) {j m : ℕ} (h : j ≤ m) : pmSProd N x₀ a j ≤ pmSProd N x₀ a m :=
-  Finset.prod_le_prod_of_subset_of_one_le (Finset.range_subset_range.2 h)
-    (fun _ _ _ => pm_one_le_modulus _ _ _ _)
-
-theorem pmSProd_pos (N x₀ a d : ℕ) : 0 < pmSProd N x₀ a d :=
-  Finset.prod_pos fun _ _ => pm_one_le_modulus _ _ _ _
-
 /-- `S := ∏_{i < d} modulus N x₀ a i`: `N` in `0`, `x₀` in `1`, `a` in `2`, `d` in `3`, `S` in
 `4`, the counter in `5`, the modulus in `6`, scratch `7`. -/
 def pmProdSC : TblCode 8 :=
   tblBlock 8 [.zero 4] (.inc 4) ;;
     tblFor 5 3 (pmModC.rename ![0, 1, 2, 5, 6, 7] ;; .ins (.mul 4 6 4))
-
-theorem pmProdSC_do (st : TblSt 8 A) {N x₀ a d : ℕ} (h0 : st.val 0 = N) (h1 : st.val 1 = x₀)
-    (h2 : st.val 2 = a) (h3 : st.val 3 = d) (hN : 1 ≤ N)
-    (hW1 : ∀ i < d, pmModBound N x₀ i < 2 ^ W) (hW2 : pmSProd N x₀ a d < 2 ^ W)
-    (hdW : d < 2 ^ W) :
-    TblDo A W w pmProdSC st (fun s => s.val 0 = N ∧ s.val 1 = x₀ ∧ s.val 2 = a ∧ s.val 3 = d ∧
-      s.val 4 = pmSProd N x₀ a d ∧ s.acc = st.acc) (13 * d + 5) := by
-  have hpos := pmSProd_pos N x₀ a d
-  have hW0 : W ≠ 0 := pm_W_ne (by omega)
-  have hblock : TblDo A W w (tblBlock 8 [.zero 4] (.inc 4)) st
-      (fun s => s.val 0 = N ∧ s.val 1 = x₀ ∧ s.val 2 = a ∧ s.val 3 = d ∧ s.val 4 = 1 ∧
-        s.acc = st.acc) 2 := by
-    refine TblDo.block _ _ ?_ ?_
-    · simp [tblFitsList, TblIns.fits, TblIns.exact]; omega
-    · simp [tblExactList, TblIns.exact, h0, h1, h2, h3]
-  refine (hblock.seq (K₂ := 1 + (d * (10 + 1 + 2) + 2)) (fun s ⟨h0, h1, h2, h3, h4, hac⟩ => ?_)).mono
-    (fun _ h => h) (le_of_eq (by ring))
-  have hf : Function.Injective (![0, 1, 2, 5, 6, 7] : Fin 6 → Fin 8) := by decide
-  refine TblDo.for d 10 h3 hdW (by decide)
-    (fun j s => s.val 0 = N ∧ s.val 1 = x₀ ∧ s.val 2 = a ∧ s.val 3 = d ∧
-      s.val 4 = pmSProd N x₀ a j ∧ s.acc = st.acc)
-    ⟨by simp [h0], by simp [h1], by simp [h2], by simp [h3], by simp [h4, pmSProd], hac⟩ ?_ ?_
-  · rintro j hj s ⟨h0, h1, h2, h3, h4, hac⟩ hi hn
-    have hmod := pmModC_do (A := A) (W := W) (w := w) (N := N) (x₀ := x₀) (a := a) (i := j)
-      (s.restrict ![0, 1, 2, 5, 6, 7])
-      (by simp [h0]) (by simp [h1]) (by simp [h2]) (by simp [hi]) hN (hW1 j hj)
-    refine ((TblDo.rename hf hmod).seq (K₂ := 1) (fun s₁ ⟨⟨hv, hfr, hac₁⟩, hout⟩ => ?_)).mono
-      (fun _ h => h) le_rfl
-    simp only [TblSt.restrict_val, TblSt.restrict_acc] at hv hfr hac₁
-    have e0 : s₁.val 0 = N := by have := hfr 0 (by decide) (by decide); simp at this; rw [this, h0]
-    have e1 : s₁.val 1 = x₀ := by have := hfr 1 (by decide) (by decide); simp at this; rw [this, h1]
-    have e2 : s₁.val 2 = a := by have := hfr 2 (by decide) (by decide); simp at this; rw [this, h2]
-    have e5 : s₁.val 5 = j := by have := hfr 3 (by decide) (by decide); simp at this; rw [this, hi]
-    have e6 : s₁.val 6 = modulus N x₀ a j := by simpa using hv
-    have e3 : s₁.val 3 = d := by rw [hout 3 (by decide), h3]
-    have e4 : s₁.val 4 = pmSProd N x₀ a j := by rw [hout 4 (by decide), h4]
-    have hm := pmSProd_mono N x₀ a (show j + 1 ≤ d by omega)
-    rw [pmSProd_succ] at hm
-    refine TblDo.insX _ (by simp [TblIns.fits, e4, e6]; omega) ?_
-    refine ⟨by simp [TblIns.exact, e5], by simp [TblIns.exact, e3], ?_⟩
-    simp [TblIns.exact, e0, e1, e2, e3, e4, e6, hac₁, hac, pmSProd_succ]
-  · rintro s ⟨h0, h1, h2, h3, h4, hac⟩ - -
-    exact ⟨h0, h1, h2, h3, h4, hac⟩
 
 /-! ### Emission -/
 
@@ -646,30 +557,6 @@ in `3`, scratch `4`, `5`. -/
 def pmStartC : TblCode 6 :=
   tblBlock 6 [.add 0 0 4, .zero 5, .inc 5, .sub 4 5 4, .mul 4 1 4, .add 0 0 5, .add 5 5 5,
     .mul 5 2 5, .div 4 5 4, .inc 4] (.add 4 4 3)
-
-theorem pmStartC_do (st : TblSt 6 A) {d R N : ℕ} (hd : st.val 0 = d) (hR : st.val 1 = R)
-    (hN : st.val 2 = N) (hd1 : 1 ≤ d) (hN1 : 1 ≤ N) (hW : 4 * d * N + 4 * d * R + 4 ≤ 2 ^ W) :
-    TblDo A W w pmStartC st (fun s => s.val 0 = d ∧ s.val 1 = R ∧ s.val 2 = N ∧
-      s.val 3 = start d N R ∧ s.acc = st.acc) 11 := by
-  have e1 : (d + d - 1) * R ≤ 4 * d * R := by
-    have : d + d - 1 ≤ 4 * d := by omega
-    exact Nat.mul_le_mul_right _ this
-  have e2 : (d + d + (d + d)) * N = 4 * d * N := by ring
-  have e3 : (d + d - 1) * R / (4 * d * N) ≤ (d + d - 1) * R := Nat.div_le_self _ _
-  have e4 : d + d + (d + d) ≤ 4 * d * N := by nlinarith
-  have e6 : (d + d - 1) * R / (4 * d * N) ≤ R := by
-    apply Nat.div_le_of_le_mul
-    have : d + d ≤ 4 * d * N := by nlinarith
-    have : d + d - 1 ≤ 4 * d * N := by omega
-    calc (d + d - 1) * R ≤ 4 * d * N * R := Nat.mul_le_mul_right _ this
-      _ = _ := by ring
-  have e7 : 2 * R ≤ 4 * d * R := by nlinarith
-  have hW0 : W ≠ 0 := pm_W_ne (by omega)
-  refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, hd, hR, hN, e2]; omega
-  · have e5 : d + d - 1 = 2 * d - 1 := by omega
-    simp [tblExactList, TblIns.exact, hd, hR, hN, e2, e5, start]
-    ring
 
 /-! ### Composite forms -/
 

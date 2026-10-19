@@ -267,31 +267,4 @@ theorem edge_factor_product {h k : ℕ} (q r : BinaryWalsh.Address h → ZMod 4)
     rw [he, kernelRun_eq_frame]
   rw [← tensorColumns_mul, hop, tensorColumns_kernel_prod]
 
-/-- A nested nondegenerate edge on `k` binary columns consists of exactly the
-residual dimension many all-column factors. Each factor uses a single residual
-vector and the forward or inverse two-term kernel in every column. The reverse
-edge uses the same list with signs negated. -/
-theorem exists_edge_factors {h k : ℕ} (hs : (Labels.binary h).IsSymm)
-    (U V : Submodule (ZMod 2) (BinaryWalsh.Address h))
-    (hu : ((Labels.binary h).restrict U).Nondegenerate)
-    (hv : ((Labels.binary h).restrict V).Nondegenerate) (hUV : U ≤ V)
-    (hunit : ProjectionRank.residual (Labels.binary h) U V = ⊥ ∨
-      ∃ v : ProjectionRank.residual (Labels.binary h) U V, Labels.binary h v v = 1) :
-    ∃ gs : List (ZMod 4 × BinaryWalsh.Address h),
-      (gs.map (vectorFactor k)).length = finrank (ZMod 2) V - finrank (ZMod 2) U ∧
-      (∀ g ∈ gs, g.1 = 1 ∨ g.1 = -1) ∧
-      (tensorColumns k (frame (fun x => weightPhase
-          (ProjectionRank.project (Labels.binary h) hs V hv x))).toLinearMap *
-        tensorColumns k (frame (fun x => weightPhase
-          (ProjectionRank.project (Labels.binary h) hs U hu x))).symm.toLinearMap =
-        (gs.map (vectorFactor k)).prod) ∧
-      (tensorColumns k (frame (fun x => weightPhase
-          (ProjectionRank.project (Labels.binary h) hs U hu x))).toLinearMap *
-        tensorColumns k (frame (fun x => weightPhase
-          (ProjectionRank.project (Labels.binary h) hs V hv x))).symm.toLinearMap =
-        ((negateKernels gs).map (vectorFactor k)).prod) := by
-  obtain ⟨gs, hlen, hsigns, hfwd, hrev⟩ := exists_edge_kernels hs U V hu hv hUV hunit
-  exact ⟨gs, by simpa only [List.length_map] using hlen, hsigns,
-    edge_factor_product _ _ gs hfwd, edge_factor_product _ _ (negateKernels gs) hrev⟩
-
 end IntegerMultBounds.Networks.BinaryColumns

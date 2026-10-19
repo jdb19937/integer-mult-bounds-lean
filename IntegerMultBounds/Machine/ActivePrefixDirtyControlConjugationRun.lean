@@ -19,11 +19,6 @@ def tProgram (kind : Kind) := seq (seq ActivePrefixDirtyControlConjugationSwap.t
   (ActivePrefixDirtyControlConjugationMiddle.program kind)) ActivePrefixDirtyControlConjugationSwap.tProgram
 def uProgram (kind : Kind) := seq (seq ActivePrefixDirtyControlConjugationSwap.uProgram
   (ActivePrefixDirtyControlConjugationMiddle.program kind)) ActivePrefixDirtyControlConjugationSwap.uProgram
-def tPureProgram := tProgram .tPure
-def tNegativeProgram := tProgram .tNegative
-def uPureProgram := uProgram .uPure
-def uNegativeProgram := uProgram .uNegative
-
 def loaded (kind : Kind) (s : Shape) (l : LoadShape) (rows B : ℕ)
     (hvol : rows*s.recordWidth=ActivePrefixDirtyControlLoadData.volume (m := .pure) l rows B)
     (x : FullArray s rows) : FullArray s rows := view hvol.symm (loadResult kind l rows B (view hvol x))
@@ -102,80 +97,8 @@ theorem u_runs (kind : Kind) (s : Shape) (n rows b : ℕ)
     (by unfold uCost; rw [hvol]; omega)
 
 
-theorem tPure_runs (s : Shape) (n rows b : ℕ)
-    (gs : Fin 7 → List Bool) (bw : List Bool) (hs : Fin 6 → List Bool) (rs bs : List Bool)
-    (gv : ∀ i, Counter.value (gs i)=CompactGadgetReservationHeadersCarvedSchedule.originalValues s n rows i)
-    (gc : ∀ i, GrowingCounterData.Canonical (gs i))
-    (gb : Counter.value bw=b) (cb : GrowingCounterData.Canonical bw) (hbp : 0<b)
-    (hrows : 0<rows) (hK : 0<s.chunk) (hd : 0<s.axes) (hg : 0<s.guard) (hp : 0<s.payload) (hw : n*b≤s.H)
-    (l : LoadShape) (B : ℕ) (hB : 0<B) (habs : l.W+l.n*l.q+l.q+l.b+1≤2^(l.n*l.b)*B)
-    (hvol : rows*s.recordWidth=ActivePrefixDirtyControlLoadData.volume (m := .pure) l rows B)
-    (hv : ∀ i, Counter.value (hs i)=ActivePrefixDirtyControlData.values l i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hr : Counter.value rs=rows) (cr : GrowingCounterData.Canonical rs)
-    (hb : Counter.value bs=B) (cs : GrowingCounterData.Canonical bs) (x : FullArray s rows) :
-    HoareTime tPureProgram (fun v => v=bank (base gs bw hs rs bs x))
-      (fun v => v=bank (base gs bw hs rs bs (result .tPure s l rows (n*b) B hw hvol x)))
-      (cost .tPure s rows (n*b)) :=
-  t_runs .tPure s n rows b gs bw hs rs bs gv gc gb cb hbp hrows hK hd hg hp hw
-    l B hB habs hvol hv hc hr cr hb cs x
 
 
-theorem tNegative_runs (s : Shape) (n rows b : ℕ)
-    (gs : Fin 7 → List Bool) (bw : List Bool) (hs : Fin 6 → List Bool) (rs bs : List Bool)
-    (gv : ∀ i, Counter.value (gs i)=CompactGadgetReservationHeadersCarvedSchedule.originalValues s n rows i)
-    (gc : ∀ i, GrowingCounterData.Canonical (gs i))
-    (gb : Counter.value bw=b) (cb : GrowingCounterData.Canonical bw) (hbp : 0<b)
-    (hrows : 0<rows) (hK : 0<s.chunk) (hd : 0<s.axes) (hg : 0<s.guard) (hp : 0<s.payload) (hw : n*b≤s.H)
-    (l : LoadShape) (B : ℕ) (hB : 0<B) (habs : l.W+l.n*l.q+l.q+l.b+1≤2^(l.n*l.b)*B)
-    (hvol : rows*s.recordWidth=ActivePrefixDirtyControlLoadData.volume (m := .pure) l rows B)
-    (hv : ∀ i, Counter.value (hs i)=ActivePrefixDirtyControlData.values l i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hr : Counter.value rs=rows) (cr : GrowingCounterData.Canonical rs)
-    (hb : Counter.value bs=B) (cs : GrowingCounterData.Canonical bs) (x : FullArray s rows) :
-    HoareTime tNegativeProgram (fun v => v=bank (base gs bw hs rs bs x))
-      (fun v => v=bank (base gs bw hs rs bs (result .tNegative s l rows (n*b) B hw hvol x)))
-      (cost .tNegative s rows (n*b)) :=
-  t_runs .tNegative s n rows b gs bw hs rs bs gv gc gb cb hbp hrows hK hd hg hp hw
-    l B hB habs hvol hv hc hr cr hb cs x
-
-
-theorem uPure_runs (s : Shape) (n rows b : ℕ)
-    (gs : Fin 7 → List Bool) (bw : List Bool) (hs : Fin 6 → List Bool) (rs bs : List Bool)
-    (gv : ∀ i, Counter.value (gs i)=CompactGadgetReservationHeadersCarvedSchedule.originalValues s n rows i)
-    (gc : ∀ i, GrowingCounterData.Canonical (gs i))
-    (gb : Counter.value bw=b) (cb : GrowingCounterData.Canonical bw) (hbp : 0<b)
-    (hrows : 0<rows) (hK : 0<s.chunk) (hd : 0<s.axes) (hg : 0<s.guard) (hp : 0<s.payload) (hw : n*b≤s.H)
-    (l : LoadShape) (B : ℕ) (hB : 0<B) (habs : l.W+l.n*l.q+l.q+l.b+1≤2^(l.n*l.b)*B)
-    (hvol : rows*s.recordWidth=ActivePrefixDirtyControlLoadData.volume (m := .pure) l rows B)
-    (hv : ∀ i, Counter.value (hs i)=ActivePrefixDirtyControlData.values l i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hr : Counter.value rs=rows) (cr : GrowingCounterData.Canonical rs)
-    (hb : Counter.value bs=B) (cs : GrowingCounterData.Canonical bs) (x : FullArray s rows) :
-    HoareTime uPureProgram (fun v => v=bank (base gs bw hs rs bs x))
-      (fun v => v=bank (base gs bw hs rs bs (result .uPure s l rows (n*b) B hw hvol x)))
-      (cost .uPure s rows (n*b)) :=
-  u_runs .uPure s n rows b gs bw hs rs bs gv gc gb cb hbp hrows hK hd hg hp hw
-    l B hB habs hvol hv hc hr cr hb cs x
-
-
-theorem uNegative_runs (s : Shape) (n rows b : ℕ)
-    (gs : Fin 7 → List Bool) (bw : List Bool) (hs : Fin 6 → List Bool) (rs bs : List Bool)
-    (gv : ∀ i, Counter.value (gs i)=CompactGadgetReservationHeadersCarvedSchedule.originalValues s n rows i)
-    (gc : ∀ i, GrowingCounterData.Canonical (gs i))
-    (gb : Counter.value bw=b) (cb : GrowingCounterData.Canonical bw) (hbp : 0<b)
-    (hrows : 0<rows) (hK : 0<s.chunk) (hd : 0<s.axes) (hg : 0<s.guard) (hp : 0<s.payload) (hw : n*b≤s.H)
-    (l : LoadShape) (B : ℕ) (hB : 0<B) (habs : l.W+l.n*l.q+l.q+l.b+1≤2^(l.n*l.b)*B)
-    (hvol : rows*s.recordWidth=ActivePrefixDirtyControlLoadData.volume (m := .pure) l rows B)
-    (hv : ∀ i, Counter.value (hs i)=ActivePrefixDirtyControlData.values l i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hr : Counter.value rs=rows) (cr : GrowingCounterData.Canonical rs)
-    (hb : Counter.value bs=B) (cs : GrowingCounterData.Canonical bs) (x : FullArray s rows) :
-    HoareTime uNegativeProgram (fun v => v=bank (base gs bw hs rs bs x))
-      (fun v => v=bank (base gs bw hs rs bs (result .uNegative s l rows (n*b) B hw hvol x)))
-      (cost .uNegative s rows (n*b)) :=
-  u_runs .uNegative s n rows b gs bw hs rs bs gv gc gb cb hbp hrows hK hd hg hp hw
-    l B hB habs hvol hv hc hr cr hb cs x
 
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationRun

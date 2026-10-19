@@ -57,9 +57,6 @@ variable {s : Shape} {T Q K : ℕ} {U F : Type}
 noncomputable def compactEarlyHostConst (T D : ℕ) : ℝ :=
   Classical.choose (compactStageEarlyHost_uniform T ActivePrefixStageFullEarlyRun.count D)
 
-theorem compactEarlyHostConst_pos (T D : ℕ) : 0 < compactEarlyHostConst T D :=
-  (Classical.choose_spec (compactStageEarlyHost_uniform T ActivePrefixStageFullEarlyRun.count D)).1
-
 theorem compactEarlyProg_exec_le (body : F → Pr F T Q (_root_.IntegerMultBounds.Networks.Shared50ModularControl.prime+K) U)
     (hQ : compactEarlyStates ≤ Q)
     (ι : Fin ActivePrefixStageFullEarlyRun.count → Fin T) (hι : Function.Injective ι)
@@ -95,9 +92,6 @@ theorem compactEarlyProg_exec_le (body : F → Pr F T Q (_root_.IntegerMultBound
 /-- Fixed host coefficient for the complete late compact stage. -/
 noncomputable def compactLateHostConst (T D : ℕ) : ℝ :=
   Classical.choose (compactStageLateHost_uniform T ActivePrefixStageFullLateRun.count D)
-
-theorem compactLateHostConst_pos (T D : ℕ) : 0 < compactLateHostConst T D :=
-  (Classical.choose_spec (compactStageLateHost_uniform T ActivePrefixStageFullLateRun.count D)).1
 
 theorem compactLateProg_exec_le (body : F → Pr F T Q (_root_.IntegerMultBounds.Networks.Shared50ModularControl.prime+K) U)
     (hQ : compactLateStates ≤ Q)

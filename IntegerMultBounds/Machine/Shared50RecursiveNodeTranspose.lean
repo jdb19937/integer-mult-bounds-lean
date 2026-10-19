@@ -37,19 +37,5 @@ theorem transpose_all {α : Type*} (hc : 0 < c) (hd : c ∣ v.rows)
   rw [ha,hs] at ht
   exact ht
 
-/-- Swapping complete field vectors packs to precisely the same physical H/D swap. -/
-theorem packed_swap {b : ℕ} (hw : v.width=125000*b)
-    (a : RecursiveScalarCoordinates.Address 125000 b v) :
-    RecursiveScalarCoordinates.packed hw {a with h := a.d,d := a.h} =
-      swapAddress (RecursiveScalarCoordinates.packed hw a) := rfl
-
-theorem transpose_fields_all {α : Type*} {b : ℕ} (hw : v.width=125000*b)
-    (hc : 0 < c) (hd : c ∣ v.rows) (x : Fin (volume prime v) → α)
-    (a : RecursiveScalarCoordinates.Address 125000 b v) :
-    transpose hd x (RecursiveScalarCoordinates.index hw {a with h := a.d,d := a.h}) =
-      x (RecursiveScalarCoordinates.index hw a) := by
-  simpa only [RecursiveScalarCoordinates.index,packed_swap] using
-    transpose_all hc hd x (RecursiveScalarCoordinates.packed hw a)
-
 end
 end IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose

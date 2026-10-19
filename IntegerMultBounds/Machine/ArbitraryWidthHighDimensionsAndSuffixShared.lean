@@ -121,18 +121,5 @@ theorem suffix_value (q e r G B : ℕ) :
       ArbitraryWidthHighPaddingSuffix.rowLength q e r G B :=
   ArbitraryWidthHighPaddingSuffix.bits_value q e r G B
 
-theorem suffix_canonical (q e r G B : ℕ) :
-    GrowingCounterData.Canonical (ArbitraryWidthHighPaddingSuffix.bits q e r G B) :=
-  ArbitraryWidthHighPaddingSuffix.bits_canonical q e r G B
-
-theorem blank_remaining (q P G B e r : ℕ) (hs : Fin 5 → List Bool)
-    (i : Fin 17) (hi : 11 ≤ i.val) (hne : i ≠ 12) :
-    (output (a := a) q P G B e r hs).head i = 0 ∧
-    (output (a := a) q P G B e r hs).tape i = fun _ => blank := by
-  fin_cases i <;> first
-  | exact ⟨rfl,rfl⟩
-  | solve | norm_num at hi
-  | exact (hne rfl).elim
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsAndSuffixShared

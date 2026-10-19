@@ -19,10 +19,6 @@ def initial (sources : List (ℕ × ℕ)) (value : ℕ → ZMod 2) (role : ℕ) 
 
 @[simp] theorem initial_nil (value : ℕ → ZMod 2) (role : ℕ) : initial [] value role = 0 := rfl
 
-theorem initial_append (left right : List (ℕ × ℕ)) (value : ℕ → ZMod 2) (role : ℕ) :
-    initial (left ++ right) value role = initial left value role + initial right value role := by
-  simp [initial]
-
 theorem initial_below (sources : List (ℕ × ℕ)) (value : ℕ → ZMod 2) (bound role : ℕ)
     (hs : ∀ p ∈ sources, bound ≤ p.2) (hr : role < bound) : initial sources value role = 0 := by
   have he : sources.filter (fun p => p.2 == role) = [] := by

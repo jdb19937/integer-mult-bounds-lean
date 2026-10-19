@@ -262,28 +262,4 @@ theorem output_canonical (r : ℚ) (xs : List (Fin q)) :
     GrowingCounterData.Canonical (RadixToBinaryData.output (result r xs)) :=
   RadixToBinaryData.output_canonical _
 
-/-- Literal binary tape, using the reserved four symbols of the radix alphabet. -/
-theorem output_binary (r : ℚ) (xs : List (Fin q)) :
-    (output r xs).head 0 = 1 ∧ (output r xs).tape 0 =
-      fun z => (RadixToBinary.binaryEncoding (q := q)).encode
-        (CountedCopyReuse.binary (RadixToBinaryData.output (result r xs)) z) := ⟨rfl,rfl⟩
-
-/-- All temporary radix storage is blank and its heads have returned to zero. -/
-theorem workspace_restored (r : ℚ) (xs : List (Fin q)) :
-    (output r xs).tape 1 = (fun _ => blank) ∧ (output r xs).head 1 = 0 ∧
-    (output r xs).tape 2 = (fun _ => blank) ∧ (output r xs).head 2 = 0 ∧
-    (output r xs).tape 3 = source xs ∧ (output r xs).head 3 = 1 := by
-  exact ⟨rfl,rfl,rfl,rfl,rfl,rfl⟩
-
-theorem compute_hoare_fiber (r : ℚ) (xs : List (Fin q)) (B : ℕ) (hB : 0 < B) :
-    HoareTime (program r) (fun v => v = input xs) (fun v => v = output r xs) (47*(q^xs.length*B)) := by
-  apply (compute_hoare r xs).consequence (fun _ h => h) (fun _ h => h) _
-  have hv := value_lt (Fact.out : q.Prime).two_le (result r xs)
-  have hw := RadixToBinaryData.width_le_power (Fact.out : q.Prime).two_le xs.length
-  have hlen : (result r xs).length = xs.length := RadixRationalData.digits_length _ _
-  rw [hlen] at hv
-  have hp : 1 ≤ q^xs.length := Nat.one_le_pow _ _ (by have := (Fact.out : q.Prime).two_le; omega)
-  have hm : q^xs.length ≤ q^xs.length*B := by nlinarith
-  omega
-
 end IntegerMultBounds.Machine.RadixRationalBinary

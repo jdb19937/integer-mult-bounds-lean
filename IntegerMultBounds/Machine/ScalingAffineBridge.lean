@@ -29,18 +29,6 @@ def positiveBlocks {α : Type*} {c : ℕ} (hc : 0 < c) (Q : ℕ) (payload : ℕ 
 def inverseBlocks {α : Type*} (Q c : ℕ) (payload : ℕ → α) : List α :=
   (List.range Q).map (fun (y : ℕ) => payload (ScalingPieces.output Q c y))
 
-theorem execution_output {c : ℕ} (hc : 0 < c) (Q : ℕ) (payload : ℕ → List (Fin 4)) :
-    ScalingMerge.outputPrefix hc Q Q payload = (positiveBlocks hc Q payload).flatten := rfl
-
-theorem stream_output {c : ℕ} (hc : 0 < c) (Q n : ℕ) (payload : ℕ → ℕ → List (Fin 4)) :
-    ScalingStream.outputPrefix hc Q n payload =
-      ((List.range n).map (fun i => (positiveBlocks hc Q (payload i)).flatten)).flatten := rfl
-
-theorem inverse_output {c : ℕ} (hc : 0 < c) (Q : ℕ) (payload : ℕ → List (Fin 4)) :
-    (((List.range c).map (fun j => ScalingMergeData.blocks Q c j
-      (fun y => payload (ScalingPieces.output Q c y)))).flatten).flatten =
-      (inverseBlocks Q c payload).flatten := ScalingPartitionData.inverse_blocks hc payload
-
 /-- Natural modular multiplication is the same multiplication in ZMod. -/
 theorem output_cast (Q c y : ℕ) :
     (ScalingPieces.output Q c y : ZMod Q) = (c : ZMod Q)*(y : ZMod Q) := by
@@ -90,22 +78,6 @@ theorem stages_commute {α : Type*} {Q a : ℕ} (hQ : 0 < Q) (ha : 0 < a)
   change payload (inverseAddress ha Q (ScalingPieces.output Q d y)) = _
   rw [inverseAddress_output hQ ha hcop d]
 
-/-- Pointwise list semantics of positive payload transport, with no assumptions
-on the payload beyond its indexing by canonical modular addresses. -/
-theorem positive_get {α : Type*} {Q c z : ℕ} (hc : 0 < c) (hcop : c.Coprime Q)
-    (hz : z < Q) (payload : ZMod Q → α) :
-    (positiveBlocks hc Q (fun y => payload (y : ZMod Q)))[z]? =
-      some (payload ((c : ZMod Q)⁻¹*(z : ZMod Q))) := by
-  rw [positiveBlocks,List.getElem?_map,List.getElem?_range hz,Option.map_some,inverseAddress_cast hc hcop]
-
-theorem inverse_get {α : Type*} {Q c z : ℕ} (hz : z < Q) (payload : ZMod Q → α) :
-    (inverseBlocks Q c (fun y => payload (y : ZMod Q)))[z]? =
-      some (payload ((c : ZMod Q)*(z : ZMod Q))) := by
-  rw [inverseBlocks,List.getElem?_map,List.getElem?_range hz,Option.map_some,output_cast]
-
-theorem inverse_execution_output (Q c : ℕ) (payload : ℕ → List (Fin 4)) :
-    ScalingInverseExecution.outputWord Q c payload = (inverseBlocks Q c payload).flatten := rfl
-
 /-- Pointwise natural address negation, with address zero fixed. -/
 def negAddress (Q y : ℕ) : ℕ := (Q-y)%Q
 
@@ -151,15 +123,6 @@ theorem positive_modular {α : Type*} {c : ℕ} (hc : 0 < c) (Q : ℕ) (hcop : c
   intro y _
   change payload (inverseAddress hc Q y : ZMod Q) = _
   rw [inverseAddress_cast hc hcop]
-
-theorem inverse_modular {α : Type*} (Q c : ℕ) (payload : ZMod Q → α) :
-    inverseBlocks Q c (fun y => payload (y : ZMod Q)) =
-      (List.range Q).map (fun (y : ℕ) => payload ((c : ZMod Q)*(y : ZMod Q))) := by
-  unfold inverseBlocks
-  apply List.map_congr_left
-  intro y _
-  change payload (ScalingPieces.output Q c y : ZMod Q) = _
-  rw [output_cast]
 
 /-- Exact opaque-block composition: inverse-denominator output feeds positive
 numerator scaling, followed by the actual block-negation recipe when needed. -/
@@ -232,57 +195,6 @@ variable {ι : Type*} [LinearOrder ι] {Q : ℕ}
 include all later-coordinate blocks without inspecting their internal order. -/
 def fiber (x : ι → ZMod Q) (target : ι) (y : ZMod Q) : ι → ZMod Q :=
   Function.update x target y
-
-/-- OrderedAffine scaling acts on the varying fiber coordinate alone. -/
-theorem execute_fiber (x : ι → ZMod Q) (target : ι) (a y : ZMod Q) :
-    OrderedAffine.execute (.scale target a) (fiber x target y) = fiber x target (a*y) := by
-  simp only [OrderedAffine.execute,fiber,Function.update_self,Function.update_idem]
-
-/-- Forward block destination is exactly the address update of OrderedAffine. -/
-theorem positive_destination (x : ι → ZMod Q) (target : ι) (c y : ℕ) :
-    OrderedAffine.execute (.scale target (c : ZMod Q)) (fiber x target (y : ZMod Q)) =
-      fiber x target (ScalingPieces.output Q c y : ZMod Q) := by
-  rw [execute_fiber,output_cast]
-
-/-- The block stored at a destination is read from its inverse affine address. -/
-theorem positive_affine_get {α : Type*} {c z : ℕ} (hc : 0 < c) (hcop : c.Coprime Q)
-    (hz : z < Q) (x : ι → ZMod Q) (target : ι) (payload : (ι → ZMod Q) → α) :
-    (positiveBlocks hc Q (fun y => payload (fiber x target (y : ZMod Q))))[z]? =
-      some (payload (OrderedAffine.execute (.scale target (c : ZMod Q)⁻¹)
-        (fiber x target (z : ZMod Q)))) := by
-  rw [execute_fiber]
-  exact positive_get hc hcop hz (fun y => payload (fiber x target y))
-
-/-- Inverse scatter implements coefficient c inverse, whose inverse-address
-lookup is multiplication by c. This fixes the orientation of the inverse path. -/
-theorem inverse_affine_get {α : Type*} {c z : ℕ} (hz : z < Q)
-    (x : ι → ZMod Q) (target : ι) (payload : (ι → ZMod Q) → α) :
-    (inverseBlocks Q c (fun y => payload (fiber x target (y : ZMod Q))))[z]? =
-      some (payload (OrderedAffine.execute (.scale target (c : ZMod Q))
-        (fiber x target (z : ZMod Q)))) := by
-  rw [execute_fiber]
-  exact inverse_get hz (fun y => payload (fiber x target y))
-
-/-- Composition of target scalings multiplies coefficients in execution order. -/
-theorem execute_scale_scale (x : ι → ZMod Q) (target : ι) (a b : ZMod Q) :
-    OrderedAffine.execute (.scale target b) (OrderedAffine.execute (.scale target a) x) =
-      OrderedAffine.execute (.scale target (b*a)) x := by
-  simp only [OrderedAffine.execute,Function.update_self,Function.update_idem,mul_assoc]
-
-/-- Actual rational-schedule coefficients are realized by denominator-inverse,
-positive numerator, then optional sign. Every magnitude is a fixed positive
-unit, as derived from the actual Shared50 schedule membership. -/
-theorem actual_scale_recipe {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r) (b : ℕ)
-    (x : ι → ZMod (Shared50ModularControl.prime^b)) (target : ι) :
-    OrderedAffine.run
-      [.scale target (r.den : ZMod (Shared50ModularControl.prime^b))⁻¹,
-       .scale target (r.num.natAbs : ZMod (Shared50ModularControl.prime^b)),
-       .scale target (if 0 ≤ r.num then 1 else -1)] x =
-      OrderedAffine.execute (.scale target (Swap.Modular.ratMod (Shared50ModularControl.prime^b) r)) x := by
-  have hrule := (Shared50AffineCoefficients.unit_recipe hr b).2.2.2.2
-  simp only [OrderedAffine.run,List.foldl_cons,List.foldl_nil,OrderedAffine.execute,
-    Function.update_self,Function.update_idem]
-  rw [← hrule]
 
 end Coordinate
 

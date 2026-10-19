@@ -95,8 +95,4 @@ theorem destination (op : Fin (a+4) → Fin (a+4) → Fin (a+4)) (v : Tapes 2 a)
 def xorSymbol (x y : Fin (a+4)) : Fin (a+4) :=
   if x = bitSymbol true then if y = bitSymbol true then bitSymbol false else bitSymbol true else y
 
-theorem xorSymbol_bits (x y : Bool) :
-    xorSymbol (a := a) (bitSymbol x) (bitSymbol y) = bitSymbol (Bool.xor x y) := by
-  cases x <;> cases y <;> simp [xorSymbol,bitSymbol]
-
 end IntegerMultBounds.Machine.PointwiseBinary

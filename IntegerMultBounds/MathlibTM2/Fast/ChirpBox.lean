@@ -315,8 +315,6 @@ def cstTP (q : ℕ) : List GaussianInt → GaussianInt
   | [] => ⟨2 ^ q, 0⟩
   | N :: Ns => Ns.foldl (fun acc M => tdivN q (acc * M)) N
 
-theorem cstTP_single (q : ℕ) (N : GaussianInt) : cstTP q [N] = N := rfl
-
 theorem cstTP_append (q : ℕ) : ∀ (Ns : List GaussianInt), Ns ≠ [] → ∀ M : GaussianInt,
     cstTP q (Ns ++ [M]) = tdivN q (cstTP q Ns * M)
   | N :: Ns, _, M => by simp [cstTP, List.foldl_append]

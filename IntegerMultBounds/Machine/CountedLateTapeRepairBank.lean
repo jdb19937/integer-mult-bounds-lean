@@ -77,12 +77,5 @@ theorem capacity (q b : ℕ) (Z : List Bool) (hq : 1≤q) : lateMi q b Z≤2^(wi
 theorem output_ideal (q b : ℕ) (Z : List Bool) (hs : Fin 3 → List Bool) (data : Address q b Z → List Bool) :
     (output q b Z hs data).tape 10=RepairStage.encTape (Partition.encode (ideal q b Z data)) := rfl
 
-theorem output_scratch (q b : ℕ) (Z : List Bool) (hs : Fin 3 → List Bool) (data : Address q b Z → List Bool)
-    (i : Fin 32) :
-    (output q b Z hs data).tape (Fin.natAdd 14 i)=(CountedLateRepairScanBank.scratch Z hs).tape i ∧
-      (output q b Z hs data).head (Fin.natAdd 14 i)=(CountedLateRepairScanBank.scratch Z hs).head i := by
-  simp only [output,Tapes.append,Fin.addCases_right]
-  exact ⟨trivial,trivial⟩
-
 end
 end IntegerMultBounds.Machine.CountedLateTapeRepairBank

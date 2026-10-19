@@ -37,35 +37,6 @@ theorem roles_update (data : Data payloadCount v) (k : Fin payloadCount) (out : 
   · subst j; simp only [roles,Function.update_self]
   · simp only [roles,Function.update_of_ne hj]
 
-/-- A binary child result keeps every World stream binary, including arbitrary
-original dirty work-role bits; the separate I/O stream is retained literally. -/
-theorem encoded_update (bits : World → Fin (volume prime v) → ZMod 2)
-    (extra : Fin (volume prime v) → Fin 4) (w : World) (out : Fin (volume prime v) → ZMod 2) :
-    Function.update (Shared50NodeGates.encoded bits extra) (worldSlot w)
-      (fun z => SparseRoleCircuit.encode (a := 0) (out z)) =
-      Shared50NodeGates.encoded (Function.update bits w out) extra := by
-  funext k z
-  induction k using Fin.addCases with
-  | left k =>
-    by_cases hk : roleEquiv k = w
-    · have he : Fin.castAdd 1 k = worldSlot w := by rw [← hk]; simp only [worldSlot,Equiv.symm_apply_apply]
-      simp only [he,Function.update_self,Shared50NodePieceTransport.encoded_entry]
-    · have hn : Fin.castAdd 1 k ≠ worldSlot w := by
-        intro he
-        have he' := Fin.castAdd_injective _ _ he
-        have hh := congrArg roleEquiv he'
-        exact hk (hh.trans (roleEquiv.apply_symm_apply w))
-      simp only [Function.update_of_ne hn,Shared50NodeGates.encoded,Shared50NodeGates.extend,
-        Fin.addCases_left,Shared50RecursiveGates.encoded,Function.update_of_ne hk]
-  | right k =>
-    have he : Fin.natAdd roleCount k = io := by
-      apply Fin.ext; have hk := k.isLt; simp only [io,Fin.val_natAdd,Fin.val_last]; omega
-    rw [he,Function.update_of_ne (Shared50NodePieceTransport.io_ne_worldSlot w)]
-    change Shared50NodeGates.extend _ extra io z = Shared50NodeGates.extend _ extra io z
-    have hi : io = Fin.natAdd roleCount (0 : Fin 1) := by apply Fin.ext; simp [io]
-    rw [hi]
-    simp only [Shared50NodeGates.extend,Fin.addCases_right]
-
 
 /-- Exact updated-parent entry endpoint in the canonical array serialization. -/
 theorem entered_data_updated (w : World) (data : Data payloadCount v)

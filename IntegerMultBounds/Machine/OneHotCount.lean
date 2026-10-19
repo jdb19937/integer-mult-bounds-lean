@@ -73,18 +73,4 @@ theorem count_hoare (hc : 0 < c) (v : Tapes c 0) (bs : List Bool) (N : ℕ)
   simp only [Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one]
   omega
 
-/-- Canonical count data gives a linear bound with no positivity requirement
-on N. In particular an empty descriptor correctly constructs residue zero. -/
-theorem count_hoare_linear (hc : 0 < c) (v : Tapes c 0) (bs : List Bool) (N : ℕ)
-    (hcount : Counter.value bs = N) (hcanonical : GrowingCounterData.Canonical bs) :
-    HoareTime (program hc)
-      (fun w => w = CountedLoopReuse.bank v empty (binary bs) 1 1)
-      (fun w => w = CountedLoopReuse.bank (OneHot.bank v (OneHot.residue hc N)) empty (binary bs) 1 1)
-      (14*N+25) := by
-  apply (count_hoare hc v bs N hcount).consequence (fun _ hw => hw) (fun _ hw => hw)
-  have hw := GrowingCounterData.canonical_width bs hcanonical
-  have hl := Nat.log2_le_self (Counter.value bs)
-  rw [hcount] at hw hl
-  omega
-
 end IntegerMultBounds.Machine.OneHotCount

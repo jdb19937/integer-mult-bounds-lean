@@ -109,16 +109,6 @@ theorem circuitUsing_output_count (source : PairedLocalCircuit) :
   rw [circuitUsing, runUsing_output_count]
   simp [initial]
 
-/-- Any supplied constructor computes all its actual shared-point outputs. -/
-theorem circuitUsing_output_value {A : Type*} [AddCommMonoid A] (source : PairedLocalCircuit)
-    (input : Triple 50 → A) (out : Output) (ho : out ∈ (circuitUsing source).outputs) :
-    (eval input (circuitUsing source).nodes)[out.ref]? = some (supportSum input (expected out)) := by
-  have hr := circuitUsing_ready source
-  rw [eval_eq input _ hr.1]
-  have hh := congrArg (Option.map (supportSum input)) (hr.2.2 out ho)
-  simpa only [CorrectOutput, ← List.getElem?_map, List.map_map, Function.comp_def,
-    Option.map_some] using hh
-
 def ContainedFor (source : PairedLocalCircuit) (state : State) : Prop :=
   ∀ s, AdditionSupport state.nodes s →
     s ∈ (SharedPointLocalFamily.domain source).image (SharedPointLocalFamily.support source)
@@ -190,78 +180,10 @@ theorem importStep_keys (source : PairedLocalCircuit) (state : State) (c : Fin 5
   rw [← source.output_keys]
   simp only [List.map_map, Function.comp_def, key]
 
-theorem runUsing_keys (source : PairedLocalCircuit) (state : State) (common : List (Fin 50)) :
-    (runUsing source state common).outputs.map key = state.outputs.map key ++
-      common.flatMap (fun c => (PairedCircuit.pairs (List.range 49)).map (fun pair => (c,pair))) := by
-  induction common generalizing state with
-  | nil => simp [runUsing]
-  | cons c common ih =>
-    simp only [runUsing, ih, importStep_keys, List.flatMap_cons, List.append_assoc]
-
-theorem circuitUsing_keys (source : PairedLocalCircuit) :
-    (circuitUsing source).outputs.map key = (List.finRange 50).flatMap (fun c =>
-      (PairedCircuit.pairs (List.range 49)).map (fun pair => (c,pair))) := by
-  simpa only [circuitUsing, initial, List.map_nil, List.nil_append] using
-    runUsing_keys source initial (List.finRange 50)
-
 attribute [local irreducible] circuitUsing
 
 /-- The physical program compiled from a supplied local constructor. -/
 def codeUsing (source : PairedLocalCircuit) : DAGAllocator.Code :=
   DAGAllocator.compile (circuitUsing source).nodes ((circuitUsing source).outputs.map Output.ref)
-
-def initialUsing (source : PairedLocalCircuit) (input : Triple 50 → ZMod 2) : ℕ → ZMod 2 :=
-  DAGValueTransfer.initial (codeUsing source).sources
-    (DAGValueTransfer.sourceInput (circuitUsing source).nodes input)
-
-/-- The emitted scalar instructions compute the same supports as the
-constructor's DAG, for every physical output of the supplied implementation. -/
-theorem run_output_for (source : PairedLocalCircuit) (input : Triple 50 → ZMod 2)
-    (i : ℕ) (hi : i < (circuitUsing source).outputs.length) :
-    Circuit.run (codeUsing source).program (initialUsing source input)
-      ((codeUsing source).outputSlot i) = supportSum input (expected (circuitUsing source).outputs[i]) := by
-  have hr := circuitUsing_ready source
-  have ho : ∀ j ∈ (circuitUsing source).outputs.map Output.ref,
-      j < (circuitUsing source).nodes.length := by
-    intro j hj
-    obtain ⟨out, hout, rfl⟩ := List.mem_map.mp hj
-    exact lookup_bound (hr.2.2 out hout)
-  have hi' : i < ((circuitUsing source).outputs.map Output.ref).length := by
-    simpa only [List.length_map] using hi
-  have hb : (circuitUsing source).outputs[i].ref < (circuitUsing source).nodes.length :=
-    ho _ (List.mem_map.mpr ⟨(circuitUsing source).outputs[i], List.getElem_mem hi, rfl⟩)
-  have hs := hr.2.2 (circuitUsing source).outputs[i] (List.getElem_mem hi)
-  simp only [CorrectOutput, List.getElem?_map, List.getElem?_eq_getElem hb, Option.map_some] at hs
-  have hv := DAGValueTransfer.compile_output_input_value (circuitUsing source).nodes
-    ((circuitUsing source).outputs.map Output.ref) input hr.1 ho i hi'
-  have hv' : Circuit.run (codeUsing source).program (initialUsing source input)
-      ((codeUsing source).outputSlot i) =
-      supportSum input ((circuitUsing source).nodes[(circuitUsing source).outputs[i].ref]'hb).support := by
-    simpa only [codeUsing, initialUsing, List.getElem_map] using hv
-  exact hv'.trans (congrArg (supportSum input) (Option.some.inj hs))
-
-/-- All requested partial sums are computed by the supplied implementation's
-actual compiled scalar program, with no concrete-certificate assumption. -/
-theorem run_partial_for (source : PairedLocalCircuit) (input : Triple 50 → ZMod 2)
-    (c : Fin 50) (j : Fin 1176) :
-    ∃ i, ∃ hi : i < (circuitUsing source).outputs.length,
-      (circuitUsing source).outputs[i].common = c ∧
-      (circuitUsing source).outputs[i].pair = PairMask.pairAt 49 j ∧
-      Circuit.run (codeUsing source).program (initialUsing source input)
-        ((codeUsing source).outputSlot i) = supportSum input (Finset.univ.filter
-          (fun T : Triple 50 => T.val ∩ (embedding c j).val = {c})) := by
-  have hm : (c, PairMask.pairAt 49 j) ∈ (circuitUsing source).outputs.map key := by
-    rw [circuitUsing_keys]
-    exact List.mem_flatMap.mpr ⟨c, List.mem_finRange c,
-      List.mem_map.mpr ⟨PairMask.pairAt 49 j, PairMask.pairAt_mem 49 j, rfl⟩⟩
-  obtain ⟨out, hout, hkey⟩ := List.mem_map.mp hm
-  obtain ⟨i, hi, he⟩ := List.mem_iff_getElem.mp hout
-  have hc : (circuitUsing source).outputs[i].common = c := by
-    simpa only [he, key] using congrArg Prod.fst hkey
-  have hp : (circuitUsing source).outputs[i].pair = PairMask.pairAt 49 j := by
-    simpa only [he, key] using congrArg Prod.snd hkey
-  refine ⟨i, hi, hc, hp, ?_⟩
-  rw [run_output_for source input i hi, expected, hc, hp]
-  exact congrArg (supportSum input) (SharedPointOutputMap.lifted_exclusion 49 c j)
 
 end IntegerMultBounds.Networks.SharedPointReplay

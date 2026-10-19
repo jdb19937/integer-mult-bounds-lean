@@ -96,10 +96,6 @@ theorem input_payload (d : Inputs s p offset rows) (x : FullArray s rows) :
     SharedBank.payload (input d x) slots=ActiveRepairLayoutRecordsPayloadLatePlaced.common d x :=
   (append_payload (u:=count) (caller d x)).trans (caller_sources d x)
 
-theorem input_private_blank (d : Inputs s p offset rows) (x : FullArray s rows) :
-    SharedBank.strip (input d x) slots=SharedBank.empty (252+count) prime :=
-  bank_clean d x
-
 theorem output_payload (d : Inputs s p offset rows) (x : FullArray s rows) :
     SharedBank.payload (output d x) slots=ActiveRepairLayoutRecordsPayloadLatePlaced.common d (ideal d x) := by
   exact (append_payload (u:=count) (caller d (ideal d x))).trans (caller_sources d _)

@@ -137,26 +137,6 @@ theorem result_payload (caller : Tapes t a) (focus : Fin 24 → Fin t) (hf : Fun
     SharedBank.payload (result caller focus mode d) focus=outputs mode d :=
   installed_payload caller focus hf _
 
-theorem originals_retained (caller : Tapes t a) (focus : Fin 24 → Fin t)
-    (hf : Function.Injective focus) (mode : Kind) (d : Inputs)
-    (hs : Fin 14 → List Bool) (hsrc : SharedBank.payload caller focus=sources hs)
-    (hv : ∀ i, Counter.value (hs i)=originalValues d i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i)) (j : Fin 14) :
-    (result caller focus mode d).head (focus (Fin.castAdd 10 j))=caller.head (focus (Fin.castAdd 10 j)) ∧
-    (result caller focus mode d).tape (focus (Fin.castAdd 10 j))=caller.tape (focus (Fin.castAdd 10 j)) := by
-  have hout := result_payload caller focus hf mode d
-  have he : (ActivePrefixDirtyControlHeadersEndpoint.input (a := a) hs).head (ports (Fin.castAdd 10 j))=
-      (bank (a := a) (finished mode d)).head (ports (Fin.castAdd 10 j)) ∧
-      (ActivePrefixDirtyControlHeadersEndpoint.input (a := a) hs).tape (ports (Fin.castAdd 10 j))=
-      (bank (a := a) (finished mode d)).tape (ports (Fin.castAdd 10 j)) := by
-    have h := ActivePrefixDirtyControlHeadersEndpoint.originals_retained (a := a) mode d hs hv hc j
-    fin_cases j <;> exact ⟨h.1.symm,h.2.symm⟩
-  have hoh := congrFun (congrArg Tapes.head hout) (Fin.castAdd 10 j)
-  have hot := congrFun (congrArg Tapes.tape hout) (Fin.castAdd 10 j)
-  have hih := congrFun (congrArg Tapes.head hsrc) (Fin.castAdd 10 j)
-  have hit := congrFun (congrArg Tapes.tape hsrc) (Fin.castAdd 10 j)
-  exact ⟨hoh.trans (he.1.symm.trans hih.symm),hot.trans (he.2.symm.trans hit.symm)⟩
-
 /-- The ten consumer words are physically present and their heads are at one. -/
 theorem headers (caller : Tapes t a) (focus : Fin 24 → Fin t) (hf : Function.Injective focus)
     (mode : Kind) (d : Inputs) (j : Fin 10) :

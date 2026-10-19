@@ -37,11 +37,6 @@ theorem actual_preserves_bad (x : α) : bad (S x) ↔ bad x := by
     rw [S.symm_apply_apply] at h
     exact ht (h ▸ hx)
 
-/-- Repair is identity off the exceptional set. -/
-theorem correction_supported (q : α) (hq : ¬bad q) :
-    T (S.symm q) = q := by
-  rw [inverse_agrees_off_bad S T bad hT agree q hq, T.apply_symm_apply]
-
 /-- Extracting and repairing precisely the bad destinations gives the ideal map. -/
 theorem repair_exact [DecidablePred bad] (x : α) :
     (if bad (S x) then T (S.symm (S x)) else S x) = T x := by

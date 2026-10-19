@@ -295,10 +295,6 @@ lemma rep_tick_cons {A : ℕ} (n : ℕ) :
     (tick : Fin (A + 4)) :: List.replicate n tick = List.replicate (n + 1) tick := by
   rw [List.replicate_succ]
 
-lemma rep_append_rep {A : ℕ} (a b : ℕ) :
-    List.replicate a (tick : Fin (A + 4)) ++ List.replicate b tick = List.replicate (a + b) tick := by
-  rw [List.replicate_add]
-
 variable {body : F → Pr F T Q (prime + K) U} {g : RsbR ⊕ RsbX t₀ → Fin T} {ι : Fin 64 → Fin T}
 
 theorem band_preF1 (hg : Function.Injective g) (hι : Function.Injective ι)

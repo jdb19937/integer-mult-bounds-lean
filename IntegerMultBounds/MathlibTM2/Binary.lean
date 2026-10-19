@@ -84,23 +84,6 @@ theorem encodeNat_binaryValue (l : List Bool) :
           List.singleton_append, hz]
         cases b <;> rfl
 
-lemma binaryValue_replicate_append (k : ℕ) (l : List Bool) :
-    binaryValue (List.replicate k false ++ l) = binaryValue l := by
-  induction k with
-  | zero => rfl
-  | succ k ih => simp [List.replicate_succ, binaryValue, ih]
-
-/-- The most-significant-first reading of the reversed Mathlib encoding is the number. -/
-lemma binaryValue_reverse_encodeNat (n : ℕ) : binaryValue (encodeNat n).reverse = n := by
-  induction n using Nat.binaryRec with
-  | zero => rfl
-  | bit b m ih =>
-      by_cases h : b = false ∧ m = 0
-      · obtain ⟨rfl, rfl⟩ := h; rfl
-      · have : encodeNat (Nat.bit b m) = b :: encodeNat m := by
-          rw [encodeNat_bit]; cases b <;> simp_all
-        rw [this, List.reverse_cons, binaryValue_append, ih]
-
 /-- Reads a bit symbol of the machine alphabet. -/
 def decodeBit {a : ℕ} (s : Fin (a + 4)) : Option Bool :=
   if s.val = 1 then some false else if s.val = 2 then some true else none

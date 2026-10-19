@@ -99,28 +99,6 @@ def tableEdges (tX tY : Fin h → ZMod 2) :
    (⊥, g.common), (g.common, g.full),
    (g.full, g.full), (g.yIn tY, g.yIn tY), (g.common, g.common)]
 
-/-- Every listed comparison is genuinely nested with a nondegenerate source. -/
-theorem tableEdges_valid (tX tY : Fin h → ZMod 2)
-    (hx : g.current tX tX ≠ 0) (hy : g.current tY tY ≠ 0)
-    (hxy : g.current tX tY = 0) :
-    ∀ e ∈ tableEdges g tX tY, e.1 ≤ e.2 ∧ (g.pairing.restrict e.1).Nondegenerate := by
-  intro e he
-  simp only [tableEdges, List.mem_cons, List.not_mem_nil, or_false] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  all_goals first
-    | exact ⟨g.xIn_le_middle tX, g.xIn_nondegenerate tX hx⟩
-    | exact ⟨g.middle_le_full tX, g.xMiddle_nondegenerate tX hx⟩
-    | exact ⟨g.yIn_le_common tY, g.yIn_nondegenerate tY hy⟩
-    | exact ⟨g.common_le_yOut tY, g.common_nondegenerate⟩
-    | exact ⟨bot_le, MotifLabels.bot_nondegenerate _⟩
-    | exact ⟨(g.yIn_le_common tY).trans le_sup_left, g.yIn_nondegenerate tY hy⟩
-    | exact ⟨g.side_middle_le_out tX tY hxy, g.xMiddle_nondegenerate tX hx⟩
-    | exact ⟨g.yOut_le_full tY, g.yOut_nondegenerate tY hy⟩
-    | exact ⟨g.common_le_full, g.common_nondegenerate⟩
-    | exact ⟨le_rfl, g.full_nondegenerate⟩
-    | exact ⟨le_rfl, g.yIn_nondegenerate tY hy⟩
-    | exact ⟨le_rfl, g.common_nondegenerate⟩
-
 /-- Triple supports supply every current-factor unit; only the earlier base
 alternative remains abstract here and is discharged by the stage theorems. -/
 theorem tableEdges_good (hcurrent : g.current = Labels.binary h)
@@ -189,32 +167,6 @@ def AllResiduals (D : LinearMap.BilinForm (ZMod 2) H) (q : H)
   Good (g.liftedPairing D) (ProjectionRank.residual (g.liftedPairing D)
     (MotifLabels.Geometry.liftLabel q g.full) ⊤)
 
-theorem allResiduals_of_witnesses (hcurrent : g.current = Labels.binary h)
-    (hbase : Good g.earlier g.base)
-    (D : LinearMap.BilinForm (ZMod 2) H) (hD : D.IsSymm) (q : H) (hq : D q q ≠ 0)
-    (hfuture : Good D (D.orthogonal ((ZMod 2) ∙ q)))
-    (S T : Finset (Fin h)) (hs : S.card = 3) (ht : T.card = 3)
-    (hneigh : Even (S ∩ T).card) (hh : 6 < h) :
-    AllResiduals g D q (Labels.indicator S) (Labels.indicator T) := by
-  have hx : g.current (Labels.indicator S) (Labels.indicator S) ≠ 0 := by
-    rw [hcurrent, Labels.binary_self S hs]; exact one_ne_zero
-  have hy : g.current (Labels.indicator T) (Labels.indicator T) ≠ 0 := by
-    rw [hcurrent, Labels.binary_self T ht]; exact one_ne_zero
-  have hxy : g.current (Labels.indicator S) (Labels.indicator T) = 0 := by
-    rw [hcurrent]; exact Labels.binary_neighbors S T hneigh
-  constructor
-  · intro e he
-    obtain ⟨hle, hnd⟩ := tableEdges_valid g _ _ hx hy hxy e he
-    rw [MotifResiduals.Geometry.lift_residual g D q hq _ _ hnd hle]
-    exact good_tensor _ _ (tableEdges_good g hcurrent hbase S T hs ht hneigh hh e he)
-      (Or.inr (line_unit D q hq))
-  · rw [MotifResiduals.Geometry.scratch_sink_residual g D hD q hq]
-    apply good_tensor _ _ _ hfuture
-    right
-    refine ⟨⟨g.p ⊗ₜ[ZMod 2] Labels.indicator S, Submodule.mem_top⟩, ?_⟩
-    change form g.earlier g.current _ _ = 1
-    simp only [LinearMap.BilinForm.tensorDistrib_tmul,
-      binary_nonzero_eq_one _ g.p_norm, binary_nonzero_eq_one _ hx, smul_eq_mul, mul_one]
 end Future
 end Table
 
@@ -222,75 +174,5 @@ section Stages
 open Labels StageLabels
 variable {h : ℕ}
 
-theorem binary_symm : (binary h).IsSymm := ⟨form_symm 0⟩
-theorem triple_nonzero (S : Finset (Fin h)) (hs : S.card = 3) :
-    binary h (indicator S) (indicator S) ≠ 0 := by
-  rw [binary_self S hs]
-  exact one_ne_zero
-
-/-- Stage one has zero earlier base, and the actual future two-triple line
-complement contains a coordinate tensor of norm one. No residual witness is assumed. -/
-theorem first_allResiduals (A B S T : Finset (Fin h))
-    (ha : A.card = 3) (hb : B.card = 3) (hs : S.card = 3) (ht : T.card = 3)
-    (hneigh : Even (S ∩ T).card) (hh : 6 < h) :
-    AllResiduals (firstGeometry (binary h) binary_symm binary_nondegenerate)
-      (form (binary h) (binary h)) (indicator A ⊗ₜ[ZMod 2] indicator B)
-      (indicator S) (indicator T) := by
-  apply allResiduals_of_witnesses _ rfl
-  · left
-    change (unitForm : LinearMap.BilinForm (ZMod 2) (ZMod 2)).orthogonal
-      ((ZMod 2) ∙ (1 : ZMod 2)) = ⊥
-    rw [scalar_line_one, unit_orthogonal_top]
-  · exact LinearMap.BilinForm.isSymm_iff.mpr
-      ((LinearMap.BilinForm.isSymm_iff.mp binary_symm).tmul
-        (LinearMap.BilinForm.isSymm_iff.mp binary_symm))
-  · simp only [LinearMap.BilinForm.tensorDistrib_tmul,
-      binary_self A ha, binary_self B hb, smul_eq_mul, mul_one, ne_eq, one_ne_zero, not_false_eq_true]
-  · right
-    exact NeighborResidual.square_complement_unit A B ha (by omega)
-  · exact hs
-  · exact ht
-  · exact hneigh
-  · exact hh
-
-/-- Stage two's earlier and future triple complements both have explicit
-coordinate-unit witnesses, giving every actual lifted wire residual. -/
-theorem second_allResiduals (P Q S T : Finset (Fin h))
-    (hp : P.card = 3) (hq : Q.card = 3) (hs : S.card = 3) (ht : T.card = 3)
-    (hneigh : Even (S ∩ T).card) (hh : 6 < h) :
-    AllResiduals (secondGeometry (binary h) binary_symm binary_nondegenerate
-      (indicator P) (triple_nonzero P hp))
-      (binary h) (indicator Q) (indicator S) (indicator T) := by
-  apply allResiduals_of_witnesses _ rfl
-  · right
-    exact NeighborResidual.triple_complement_unit P hp (by omega)
-  · exact binary_symm
-  · exact triple_nonzero Q hq
-  · right
-    exact NeighborResidual.triple_complement_unit Q hq (by omega)
-  · exact hs
-  · exact ht
-  · exact hneigh
-  · exact hh
-
-/-- Stage three's earlier two-triple complement has an explicit tensor unit;
-the empty future factor contributes a zero scratch-sink residual. -/
-theorem third_allResiduals (P Q S T : Finset (Fin h))
-    (hp : P.card = 3) (hq : Q.card = 3) (hs : S.card = 3) (ht : T.card = 3)
-    (hneigh : Even (S ∩ T).card) (hh : 6 < h) :
-    AllResiduals (thirdGeometry (binary h) binary_symm binary_nondegenerate
-      (indicator P) (indicator Q) (triple_nonzero P hp) (triple_nonzero Q hq))
-      unitForm (1 : ZMod 2) (indicator S) (indicator T) := by
-  apply allResiduals_of_witnesses _ rfl
-  · right
-    exact NeighborResidual.square_complement_unit P Q hp (by omega)
-  · exact unit_symm
-  · simp [unitForm]
-  · left
-    rw [scalar_line_one, unit_orthogonal_top]
-  · exact hs
-  · exact ht
-  · exact hneigh
-  · exact hh
 end Stages
 end IntegerMultBounds.Networks.BinaryMotifResiduals

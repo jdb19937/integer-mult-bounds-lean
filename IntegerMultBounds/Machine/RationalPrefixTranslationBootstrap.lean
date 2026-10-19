@@ -129,14 +129,6 @@ private theorem metadata_marked (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs
   rw [metadata_eq]
   exact frame_marked _ _ _ _ _ _ _
 
-/-- Every writable metadata tape is genuinely blank, with its head at zero. -/
-theorem raw_workspace (v : Tapes 17 radix) (i : Fin 17) (hi : workspace i = true) :
-    (raw v).head i = 0 ∧ (raw v).tape i = (fun _ => blank) := by simp [raw,hi]
-
-/-- Both complete supplied descriptor/payload tapes and their heads are retained. -/
-theorem raw_retained (v : Tapes 17 radix) (i : Fin 17) (hi : workspace i = false) :
-    (raw v).head i = v.head i ∧ (raw v).tape i = v.tape i := by simp [raw,hi]
-
 def setup (t : ℕ) : Program (t+17) 2 radix :=
   Placement.placed markerProgram (finAddFlip : Fin (17+t) ≃ Fin (t+17))
 

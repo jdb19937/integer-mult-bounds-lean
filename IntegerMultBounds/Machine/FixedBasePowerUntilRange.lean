@@ -36,11 +36,4 @@ theorem constructs_threshold_linear (B D : ℕ) (hB : 2 ≤ B) (hD : 0 < D)
     (final_power_lt B D hB hD).le
   simpa only [FixedBasePowerUntilBound.rho,Nat.mul_assoc] using hm
 
-theorem paired_exponent (radix D : ℕ) :
-    Nat.clog (radix*radix) D = ArbitraryWidthHighRows.rho radix D := rfl
-
-theorem paired_value (radix D : ℕ) :
-    (radix*radix)^(Nat.clog (radix*radix) D) = ArbitraryWidthHighRows.rowCount radix D :=
-  (ArbitraryWidthHighRows.square_power radix (ArbitraryWidthHighRows.rho radix D)).symm
-
 end IntegerMultBounds.Machine.FixedBasePowerUntilRange

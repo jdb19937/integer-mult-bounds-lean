@@ -442,10 +442,6 @@ private theorem markedRadix_marker (xs : List (Fin q)) : markedRadix xs 0 = sepa
   rw [markedRadix,putRadix_outside _ _ _ _ (Or.inl (by omega))]
   rfl
 
-private theorem markedRadix_end (xs : List (Fin q)) : markedRadix xs (1+xs.length) = blank := by
-  rw [markedRadix,putRadix_outside _ _ _ _ (Or.inr (by omega))]
-  simp [empty,show (1:ℤ)+xs.length ≠ 0 by omega]
-
 private theorem markedRadix_ne_marker (xs : List (Fin q)) (z : ℤ) (hz : 0 < z) : markedRadix xs z ≠ separator := by
   by_cases hi : z < 1+xs.length
   · exact putRadix_ne_separator _ _ _ _ (by omega) hi
@@ -748,38 +744,6 @@ theorem convert_hoare (xs : List (Fin q)) :
       apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (((((initialize_hoare xs).seq (copy_hoare xs)).seq (reset_hoare xs)).seq hc).seq
     (cleanup_hoare hq xs)).consequence (fun _ h => h) (fun _ h => h) _
-  omega
-
-/-- The conversion overhead is absorbed by one nonempty q^b-wide payload fiber. -/
-theorem convert_hoare_power (xs : List (Fin q)) :
-    HoareTime (convertProgram hq) (fun v => v = input xs) (fun v => v = output xs)
-      (16*q^xs.length+14) := by
-  apply (convert_hoare hq xs).consequence (fun _ h => h) (fun _ h => h) _
-  have hv := value_lt hq xs
-  have hw := width_le_power hq xs.length
-  omega
-
-/-- The output slot is the encoded canonical binary word for the radix value. -/
-theorem output_binary (xs : List (Fin q)) :
-    (output xs).head 0 = 1 ∧
-      (output xs).tape 0 = fun z => (binaryEncoding (q := q)).encode
-        (CountedCopyReuse.binary (RadixToBinaryData.output xs) z) := ⟨rfl,rfl⟩
-
-/-- Source cells and their original head position are restored exactly. -/
-theorem source_preserved (xs : List (Fin q)) :
-    (output xs).head 2 = (input xs).head 2 ∧ (output xs).tape 2 = (input xs).tape 2 := ⟨rfl,rfl⟩
-
-/-- Both the work tape and its head return to their original blank condition. -/
-theorem work_restored (xs : List (Fin q)) :
-    (output xs).head 1 = 0 ∧ (output xs).tape 1 = fun _ => blank := ⟨rfl,rfl⟩
-
-/-- For a nonempty payload block, conversion is uniformly linear in fiber volume. -/
-theorem convert_hoare_fiber (xs : List (Fin q)) (B : ℕ) (hB : 0 < B) :
-    HoareTime (convertProgram hq) (fun v => v = input xs) (fun v => v = output xs)
-      (30*(q^xs.length*B)) := by
-  apply (convert_hoare_power hq xs).consequence (fun _ h => h) (fun _ h => h) _
-  have hp : 1 ≤ q^xs.length := Nat.one_le_pow _ _ (by omega)
-  have hm : q^xs.length ≤ q^xs.length*B := by nlinarith
   omega
 
 end IntegerMultBounds.Machine.RadixToBinary

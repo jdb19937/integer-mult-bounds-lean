@@ -39,10 +39,6 @@ def vector (T : Triple) : Base := Labels.indicator T.val
 def cubeForm : LinearMap.BilinForm ℚ Ambient :=
   TensorSubspace.form form (TensorSubspace.form form form)
 
-/-- Padding preserves every actual locally allocated role as a distinct slot. -/
-def sideRoleEmbedding : Fin SharedPointExecution.code.state.next ↪ Side :=
-  Fin.castLEEmb Shared50Certificate.role_bound
-
 theorem form_nondegenerate : form.Nondegenerate :=
   Labels.rational_nondegenerate (by decide : 50 ≠ 9)
 
@@ -66,9 +62,6 @@ theorem triple_card : Fintype.card Triple = 19600 := by
 theorem address_card : Fintype.card Address = 7529536000000 := by
   simp only [Address, GlobalCircuit.Address, Fintype.card_prod, triple_card]
 
-theorem invocation_card : Fintype.card Invocation = 768320000 := by
-  simp only [Invocation, Fintype.card_prod, Fintype.card_fin, triple_card]
-
 theorem scratch_card : Fintype.card Scratch = 391262350080000 := by
   simp only [Scratch, Fintype.card_prod, Fintype.card_sum, Fintype.card_fin, triple_card]
 
@@ -77,12 +70,6 @@ theorem world_card : Fintype.card World = 406321422080000 := by
 
 theorem world_card_eq_W : Fintype.card World = Shared50Parameters.W := by
   rw [world_card, Shared50Parameters.wire_count]
-
-/-- The existing unreused type really has a different cardinality. -/
-theorem unreused_world_card : Fintype.card (GlobalCircuit.World Triple Side Control) =
-    601952597120000 := by
-  simp only [GlobalCircuit.World, GlobalCircuit.Address, GlobalCircuit.Invocation,
-    Fintype.card_sum, Fintype.card_prod, Fintype.card_fin, triple_card]
 
 /-- Exactly the X bank starts on its tensor lines. -/
 def source : World → Submodule ℚ Ambient :=
@@ -209,14 +196,6 @@ theorem branching_of_balance (ordinaryRank loss : ℕ)
     ((ordinaryRank + sourceTotal : ℕ) : ℝ) / Shared50Parameters.W <
       (Shared50Parameters.m : ℝ) ^ Parameters.tau :=
   Shared50Parameters.branching_of_rank_le _ (corrected_rank_budget ordinaryRank loss hb hl)
-
-/-- A concrete signed-rank trace can use the bound once its source correction,
-ordinary balance and loss estimate have all been established. -/
-theorem branching_of_trace_bounds (ordinaryRank signedRank loss : ℕ)
-    (hb : ordinaryRank + sourceTotal = sinkTotal + 2 * loss)
-    (hl : loss ≤ Shared50Parameters.L) (hc : signedRank ≤ ordinaryRank + sourceTotal) :
-    (signedRank : ℝ) / Shared50Parameters.W < (Shared50Parameters.m : ℝ) ^ Parameters.tau :=
-  Shared50Parameters.branching_of_rank_le _ (hc.trans (corrected_rank_budget ordinaryRank loss hb hl))
 
 end
 end IntegerMultBounds.Networks.Shared50GlobalBudget

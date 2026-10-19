@@ -457,24 +457,6 @@ variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U} {tg : TwReg → 
   (htg : Function.Injective tg)
 include htg
 
-/-- `y^(-e)` on a record `Z : Fin (2^ℓ) → GaussianInt`; the new numerators are those of
-`shiftInv e` (`twShiftZ_shiftInv`). -/
-theorem twRecInv_runs_ofFn (hA : 5 ≤ A) {ℓ w e : ℕ} (hw : 1 ≤ w) (ρ : TwReg → List (Fin (A + 4)))
-    (Z : Fin (2 ^ ℓ) → GaussianInt) (rest : List (Fin (A + 4)))
-    (hsrc : ρ .src = cstream A w (List.ofFn Z) ++ rest) (hf : ρ .f = binSyms (ℓ + 1) e)
-    (hhn : (ρ .hn).length = ℓ + 1) (hwn : (ρ .wn).length = w) (hrwn : (ρ .rwn).length = 2 ^ ℓ * w)
-    (hx : ρ .x = []) (htl : ρ .tl = []) (hhd : ρ .hd = []) (hc : ρ .c = []) (hsg : ρ .sg = [])
-    (hz : ρ .z = []) (hg : ρ .g = []) (ht1 : ρ .t1 = []) (ht2 : ρ .t2 = []) (ht3 : ρ .t3 = [])
-    (ht4 : ρ .t4 = []) (ht5 : ρ .t5 = []) :
-    TwRuns body tg (twRecInvP tg) ρ
-      (Function.update (Function.update (Function.update ρ .src rest) .acc
-        ((cstream A w (List.ofFn (twShiftZ ((2 * 2 ^ ℓ - e % (2 * 2 ^ ℓ)) % (2 * 2 ^ ℓ)) Z))).reverse
-          ++ ρ .acc)) .f [])
-      (twNegECost (ℓ + 1) + twRecCost ℓ w) := by
-  have h := twRecInv_runs (body := body) htg hA hw ρ (List.ofFn Z) rest (by simp) hsrc hf hhn hwn
-    hrwn hx htl hhd hc hsg hz hg ht1 ht2 ht3 ht4 ht5
-  rwa [twShiftL_ofFn] at h
-
 end RunsInv
 
 end IntegerMultBounds.MathlibTM2.Fast

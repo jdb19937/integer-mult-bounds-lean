@@ -192,17 +192,6 @@ theorem cycle_exact (n : ℕ) (f : ℤ → Fin (q+4)) (xs : List (Fin q))
     simp only [cycleTime,advance,run_add,hi,Option.bind_some]
     exact ih (increment hq xs) (by simpa [increment_length] using hend)
 
-/-- Arbitrary framed payloads are retained exactly, with the same amortized
-transition bound. No payload or spectator tape head moves during this counter. -/
-theorem framed_cycle {t : ℕ} (frame : Tapes t q) (n : ℕ)
-    (f : ℤ → Fin (q+4)) (xs : List (Fin q))
-    (hzero : f 0 = separator) (hend : f (1+xs.length) = blank) :
-    ∃ k, k ≤ 6*n+2*xs.length ∧
-      run (extend (cycleProgram hq) t) k (((tapes f xs).append frame).start (extend (cycleProgram hq) t)) =
-        some (((tapes f (advance hq n xs)).append frame).start (extend (cycleProgram hq) t)) := by
-  refine ⟨cycleTime hq n xs,cycle_amortized hq n xs,?_⟩
-  exact extend_run (cycleProgram hq) frame (cycle_exact hq n f xs hzero hend)
-
 /-- Every radix control value is exposed at the loop boundary, followed by an
 exact reset to zero after a full Q-state traversal. -/
 theorem enumeration (b n : ℕ) (hn : n < q^b) :

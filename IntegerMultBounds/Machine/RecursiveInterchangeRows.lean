@@ -156,29 +156,6 @@ def roleIndex (q c : ℕ) (v : Descriptor) (i : Fin (groups c v))
     (k : Fin (rowLength q v)) : Fin (volume q (role v c)) :=
   Fin.cast (role_volume q c v).symm (pack i k)
 
-/-- The output entry is the original symbol from the selected cyclic role;
-combined with cyclic_index this gives original row c*g+j literally. -/
-theorem role_entry (q c : ℕ) (v : Descriptor) (hdiv : c ∣ v.rows)
-    (input : Fin (volume q v) → Fin (a+4)) (i : Fin (groups c v))
-    (j : Fin c) (k : Fin (rowLength q v)) :
-    roleArray q c v hdiv input j (roleIndex q c v i k) =
-      input (Fin.cast (volume_split q c v hdiv).symm (pack i (pack j k))) := by
-  have he : Fin.cast (role_volume q c v)
-      (Fin.cast (role_volume q c v).symm (pack i k)) = pack i k := Fin.ext rfl
-  simp only [roleArray,roleIndex]
-  rw [he]
-  simp only [pack,Equiv.symm_apply_apply,view]
-
-theorem role_index_val (q c : ℕ) (v : Descriptor)
-    (aa : Fin v.beforeRows) (g : Fin (v.rows/c))
-    (before : Fin v.beforeH) (h : Fin (q^v.width)) (middle : Fin v.between)
-    (d : Fin (q^v.width)) (after : Fin v.afterD) :
-    (roleIndex q c v (pack aa g) (suffixIndex q v before h middle d after)).val =
-    RecursiveInterchangeLayout.index q (role v c) aa.val g.val before.val h.val middle.val d.val after.val := by
-  change (pack (pack aa g) (suffixIndex q v before h middle d after)).val = _
-  simp only [suffixIndex,pack_val,RecursiveInterchangeLayout.index,role,rowLength]
-  ring
-
 /-- Positive recursive descriptors give the explicit linear bound in their
 literal parent volume for either physical split or merge. -/
 theorem cost_linear (q c : ℕ) (v : Descriptor) (hdiv : c ∣ v.rows)

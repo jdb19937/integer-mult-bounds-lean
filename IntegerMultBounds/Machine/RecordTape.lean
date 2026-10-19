@@ -41,9 +41,6 @@ theorem getD_map (ws : List (List Bool)) (i : ℕ) :
       List.getElem?_eq_none (by rw [List.length_map]; omega), List.getElem?_eq_none (by omega)]
     rfl
 
-theorem length_map_words (ws : List (List Bool)) :
-    (ws.map (List.map (bitSymbol (a := a)))).length = ws.length := List.length_map _
-
 end IntegerMultBounds.Machine.OrderedSelect
 
 namespace IntegerMultBounds.Machine.BackWord

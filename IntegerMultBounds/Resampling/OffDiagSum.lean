@@ -72,9 +72,6 @@ end Terms
 noncomputable def offTermW (p : ℕ) {s : ℕ} (ef : ZMod s → ℤ → ℝ) (u : ZMod s → ℂ) (ℓ : ZMod s) (h : ℤ) : ℂ :=
   rhoC p (rhoC p (ef ℓ h : ℂ) * u (ℓ + h))
 
-theorem offDiagTermNum_eq (p s t : ℕ) [NeZero s] [NeZero t] (α : ℝ) :
-    offDiagTermNum p s t α = offTermW p (fun ℓ h => Real.exp (normExp s t α ℓ.val h)) := rfl
-
 section Bridge
 
 variable (wtWords uWords : List (List Bool)) (s m p w W : ℕ) (ef : ZMod s → ℤ → ℝ)

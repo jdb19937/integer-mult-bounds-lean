@@ -155,9 +155,4 @@ theorem crtControlFiber_shift_runs {flag lo hi ts rb tc tr str acc tA tB : Fin T
     rw [hc'] at h
     simpa only [crtControlFiberDir, crtControlShift, ↓reduceIte, hhi] using h
 
-/-- Power-of-two cost envelope for the conditional physical fiber. -/
-theorem crtControlFiber_cost_le (n k : ℕ) :
-    n * (8 * k + 9) + 18 ≤ 2 ^ 5 * (n * (k + 1) + 1) := by
-  nlinarith
-
 end IntegerMultBounds.MathlibTM2.Fast

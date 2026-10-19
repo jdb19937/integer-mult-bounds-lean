@@ -205,11 +205,6 @@ theorem stream_hoare (erase : Bool) (records : List Partition.Record)
   obtain ⟨hr, hh⟩ := stream_exact erase records f out p q hend
   exact ⟨_, _, le_rfl, hr, hh, rfl⟩
 
-/-- Removing freshly selected flags restores every original bit record. -/
-theorem encode_selected (k : ℕ) (records : List (List Bool)) :
-    encode (records.map (fun xs => ⟨KeySelect.keyAt k xs, xs⟩)) = KeySelect.flagged k records := by
-  rw [encode_partition, KeySelect.flagged_partition]
-
 private theorem erase_background (f : ℤ → Fin 5) (p : ℤ) (xs : List (Fin 5))
     (hblank : ∀ j, p ≤ j → f j = blank) :
     putWord f p (xs.map (retained true)) = f := by
@@ -260,26 +255,5 @@ theorem marked_exact (records : List Partition.Record) (p q : ℤ) :
   have ht := stream_exact true records (PartitionMarked.markedTape p [])
     (PartitionMarked.markedTape q []) p q (marked_empty_after p _ (by omega))
   simpa only [hinput, erase_marked_word] using ht
-
-/-- Direct cancellation of KeySelect's new flag. The machine does not need to
-know which position was selected, and empty original payloads are valid. -/
-theorem selected_exact (erase : Bool) (k : ℕ) (records : List (List Bool))
-    (f out : ℤ → Fin 5) (p q : ℤ)
-    (hend : f (p + (KeySelect.flagged k records).length) = blank) :
-    run (program erase) (KeySelect.flagged k records).length
-      (cfg (putWord f p (KeySelect.flagged k records)) out p q 0) =
-      some (cfg (putWord f p ((KeySelect.flagged k records).map (retained erase)))
-        (putWord out q (KeySelect.encode records))
-        (p + (KeySelect.flagged k records).length) (q + (KeySelect.encode records).length) 0) ∧
-    step (program erase)
-      (cfg (putWord f p ((KeySelect.flagged k records).map (retained erase)))
-        (putWord out q (KeySelect.encode records))
-        (p + (KeySelect.flagged k records).length) (q + (KeySelect.encode records).length) 0) = none := by
-  have henc := encode_selected k records
-  have hpayload : (records.map (fun xs => (⟨KeySelect.keyAt k xs, xs⟩ : Partition.Record))).map
-      Partition.Record.payload = records := by simp [Function.comp_def]
-  have ht := stream_exact erase (records.map (fun xs => ⟨KeySelect.keyAt k xs, xs⟩))
-    f out p q (by simpa only [henc] using hend)
-  simpa only [henc, hpayload] using ht
 
 end IntegerMultBounds.Machine.DropFlag

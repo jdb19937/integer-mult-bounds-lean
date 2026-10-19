@@ -34,14 +34,6 @@ theorem exclusion_label (n : ℕ) (c : Fin (n+1)) (j : Fin (n.choose 2)) :
   rw [SharedPointOutputMap.lifted_exclusion]
   exact filter_label _ c _ (by simp [source_val])
 
-theorem exclusion_nondegenerate (n : ℕ) (c : Fin (n+1)) (j : Fin (n.choose 2)) :
-    ((rational (n+1)).restrict
-      (FanoutFrames.label (fun S : Triple (n+1) => S.val)
-        (lift (pairPayload n) (pairPayload_card n) c
-          (MaskDAG.decode (PairMask.exclusion n (PairMask.pairAt n j).1 (PairMask.pairAt n j).2))))).Nondegenerate := by
-  rw [exclusion_label]
-  exact outputSpan_nondegenerate _ _
-
 /-- Each actual output source span lies in its target line's orthogonal complement. -/
 theorem exclusion_orthogonal (n : ℕ) (c : Fin (n+1)) (j : Fin (n.choose 2)) :
     FanoutFrames.label (fun S : Triple (n+1) => S.val)

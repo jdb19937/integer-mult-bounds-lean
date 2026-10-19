@@ -64,10 +64,5 @@ theorem entry (array : ActivePrefixDirtyControlConjugationData.FullArray s rows)
   rw [←destination_actual s p offset hfit x]
   exact ActivePrefixDirtyControlGlobalSequence.entry s p rows offset hfit hn hb hrecord hrows hK hd hg array x
 
-theorem entry_inverse (array : ActivePrefixDirtyControlConjugationData.FullArray s rows) (x : Address s p rows) :
-    ActivePrefixDirtyControlSequenceData.later g array (ActivePrefixDirtyControlGlobalSwap.index s p x)=
-      array (ActivePrefixDirtyControlGlobalSwap.index s p ((LA).symm x)) := by
-  simpa only [Equiv.apply_symm_apply] using entry s p offset hfit hn hb hrecord hrows hK hd hg array ((LA).symm x)
-
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlLateGlobal

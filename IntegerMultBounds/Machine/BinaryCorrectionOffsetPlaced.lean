@@ -85,11 +85,6 @@ theorem original_header (hs : Fin 3 → List Bool) (Z : List Bool) (i : Fin 3) :
     tapes (a := a) hs Z (Fin.castAdd 2 i)=RadixZeroFill.encodedBinary (hs i) := by
   fin_cases i <;> rfl
 
-theorem output_word (q b n : ℕ) (Z : List Bool) (hb : 1≤b) (hbq : b+1≤q) :
-    mapTape (a := a) (BinaryCorrectionOffsetRow.word (BinaryCorrectionOffsetData.word q b n Z hb hbq))=
-      putWord (fun _ => blank) 0 ((BinaryCorrectionOffsetData.word q b n Z hb hbq).map bitSymbol) :=
-  PackedOffsetPayloadAlphabet.map_bits (fun _ => blank) 0 _
-
 def result (caller : Tapes t a) (focus : Fin 5 → Fin t) (q b n : ℕ) (Z : List Bool) (hb : 1≤b) (hbq : b+1≤q) :=
   setTape caller (focus 4) (mapTape (BinaryCorrectionOffsetRow.word (BinaryCorrectionOffsetData.word q b n Z hb hbq))) 0
 

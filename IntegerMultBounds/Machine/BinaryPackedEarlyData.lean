@@ -86,33 +86,4 @@ theorem agrees {S : Type*} (q b n : ℕ) (Z : List Bool) (hb : 1≤b) (hbq : b+1
     Int.add_emod_emod,Compact.packedEarly,List.length_map,hZ,pow_mul,Nat.mul_comm n q,Nat.mul_comm n b,
     sub_eq_add_neg]
 
-/-- On the guarded set the actual four offsets toggle selected parity bits and
-restore the dirty temporary exactly. No cleanliness is required of spectators. -/
-theorem good_value {S : Type*} (q b n : ℕ) (Z : List Bool) (hb : 1≤b) (hbq : b+1≤q) (hZ : Z.length=n)
-    (x : State q b n S) (ds : List Compact.DigitState)
-    (hcontrols : ds.map Compact.DigitState.z=Z.map Compact.PowerTwo.ctrl)
-    (hv : (x.1.val : ℤ)=pack ((2 : ℤ)^q) (ds.map Compact.DigitState.v))
-    (hw : (x.2.1.val : ℤ)=pack ((2 : ℤ)^b) (ds.map Compact.DigitState.w))
-    (hgood : ∀ d∈ds, d.Good ((2 : ℤ)^b) ((2 : ℤ)^(q-1))) :
-    (((run q b n Z hb hbq x).1.val : ℤ),((run q b n Z hb hbq x).2.1.val : ℤ))=
-      (pack ((2 : ℤ)^q) (ds.map (fun d => Compact.toggle d.v d.z)),(x.2.1.val : ℤ)) := by
-  have hq : 1≤q := by omega
-  have hQ : (2 : ℤ)^q=2*2^(q-1) := by
-    rw [←pow_succ']; congr 1; omega
-  rw [agrees q b n Z hb hbq hZ x,hv,hw,←hcontrols,hQ]
-  exact Compact.packedEarly_correct ((2 : ℤ)^b) ((2 : ℤ)^(q-1))
-    (by exact_mod_cast Nat.one_le_two_pow) (by positivity) ds hgood
-
-theorem good_temp {S : Type*} (q b n : ℕ) (Z : List Bool) (hb : 1≤b) (hbq : b+1≤q) (hZ : Z.length=n)
-    (x : State q b n S) (ds : List Compact.DigitState)
-    (hcontrols : ds.map Compact.DigitState.z=Z.map Compact.PowerTwo.ctrl)
-    (hv : (x.1.val : ℤ)=pack ((2 : ℤ)^q) (ds.map Compact.DigitState.v))
-    (hw : (x.2.1.val : ℤ)=pack ((2 : ℤ)^b) (ds.map Compact.DigitState.w))
-    (hgood : ∀ d∈ds, d.Good ((2 : ℤ)^b) ((2 : ℤ)^(q-1))) :
-    (run q b n Z hb hbq x).2.1=x.2.1 := by
-  apply Fin.ext
-  have h := congrArg Prod.snd (good_value q b n Z hb hbq hZ x ds hcontrols hv hw hgood)
-  dsimp only at h
-  exact_mod_cast h
-
 end IntegerMultBounds.Machine.BinaryPackedEarlyData

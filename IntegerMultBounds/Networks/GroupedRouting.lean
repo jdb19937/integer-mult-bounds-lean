@@ -120,14 +120,6 @@ theorem dirtyInverseGroups_length {n a c s : ℕ} (owner : Fin a → Fin n)
   simp [dirtyInverseGroups, copyGroups, faninGroups]
   omega
 
-/-- This inverse is verified on every state, without assuming reconstruction. -/
-theorem dirtyInverseGroups_run_dirty {n a c s : ℕ} (owner : Fin a → Fin n)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (r : Circuit.Role n a c s → R) :
-    runGroups (dirtyInverseGroups owner G J H) (runGroups (dirtyGroups owner G J H) r) = r := by
-  rw [dirtyInverseGroups_run, dirtyGroups_run]
-  exact Circuit.dirtyInverse_run_dirty _ _ _ _ r
-
 /-- The middle inverse schedule is compiled with exchanged data-bank names. -/
 def oppositeGroups {n a c s : ℕ} (owner : Fin a → Fin n)
     (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R) :
@@ -152,53 +144,6 @@ def signedExchangeGroups {n a c s : ℕ} (owner : Fin a → Fin n)
     List (Group (Circuit.Role n a c s) R) :=
   dirtyGroups owner G J H ++ oppositeGroups owner G J H ++ dirtyGroups owner G J H
 
-/-- Exact scalar refinement to the previously verified elementary exchange. -/
-theorem signedExchangeGroups_refines {n a c s : ℕ} (owner : Fin a → Fin n)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (r : Circuit.Role n a c s → R) :
-    runGroups (signedExchangeGroups owner G J H) r =
-      Circuit.run (Circuit.signedExchangeProgram (copyMatrix owner 1) G J H) r := by
-  simp only [signedExchangeGroups, runGroups_append, dirtyGroups_run, oppositeGroups_run,
-    Circuit.signedExchangeProgram, Circuit.run_append]
-
-theorem signedExchangeGroups_length {n a c s : ℕ} (owner : Fin a → Fin n)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R) :
-    (signedExchangeGroups (s := s) owner G J H).length = 3 * (4 * n + 4) := by
-  simp only [signedExchangeGroups, List.length_append, dirtyGroups_length,
-    oppositeGroups, renameGroups_length, dirtyInverseGroups_length]
-  omega
-
-/-- The compiled zero-free elementary program implements the same exchange. -/
-theorem signedExchangeGroups_compile {n a c s : ℕ} (owner : Fin a → Fin n)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (r : Circuit.Role n a c s → R) :
-    Circuit.run (compileGroups (signedExchangeGroups owner G J H)) r =
-      Circuit.run (Circuit.signedExchangeProgram (copyMatrix owner 1) G J H) r := by
-  rw [compileGroups_run, signedExchangeGroups_refines]
-
-/-- The concrete bit motif swaps both data banks and restores arbitrary dirty
-scratch and every spectator. Only physical wire labels/enumeration are inputs. -/
-theorem bit_exchangeGroups_run {h n a s : ℕ} {L : Fin n → Finset (Fin h)}
-    (e : Fin a ≃ Circuit.BitPair L) (hinj : Function.Injective L)
-    (hcard : ∀ i, (L i).card = 3) (X Y : Fin n → ZMod 2)
-    (A : Fin a → ZMod 2) (C : Fin h → ZMod 2) (S : Fin s → ZMod 2) :
-    runGroups (signedExchangeGroups (fun p => (e p).val.2) (Circuit.bitGather L)
-      (Circuit.bitInject e) (Circuit.bitScatter L)) (Circuit.banks X Y A C S) =
-      Circuit.banks Y X A C S := by
-  rw [signedExchangeGroups_refines]
-  exact Circuit.bit_exchange_run e hinj hcard X Y A C S
-
-/-- The rational motif implements its signed exchange on all banks. -/
-theorem complex_exchangeGroups_run {h n a s : ℕ} {L : Fin n → Finset (Fin h)}
-    (e : Fin a ≃ Circuit.ComplexPair L) (hinj : Function.Injective L)
-    (hcard : ∀ i, (L i).card = 3) (X Y : Fin n → ℚ)
-    (A : Fin a → ℚ) (C : Fin (h + 1) → ℚ) (S : Fin s → ℚ) :
-    runGroups (signedExchangeGroups (fun p => (e p).val.2) (Circuit.complexGather L)
-      (Circuit.complexInject e) (Circuit.complexScatter L)) (Circuit.banks X Y A C S) =
-      Circuit.banks (-Y) X A C S := by
-  rw [signedExchangeGroups_refines]
-  exact Circuit.complex_signedExchange_run e hinj hcard X Y A C S
-
 /-- The total number of group/wire incidences, using each group's actual sparse
 support set. This is neither a depth nor a running-time measure. -/
 def incidenceCount (gs : List (Group ι R)) : ℕ := (gs.map fun g => (support g).card).sum
@@ -218,25 +163,6 @@ theorem dirtyInverseGroups_incidenceCount {n a c s : ℕ} (owner : Fin a → Fin
     incidenceCount (dirtyInverseGroups (s := s) owner G J H) =
       incidenceCount (dirtyGroups (s := s) owner G J H) := by
   simp only [dirtyInverseGroups, dirtyGroups, incidenceCount_append]
-  omega
-
-/-- The middle stage transports every support set by the fixed role exchange. -/
-theorem oppositeGroups_support {n a c s : ℕ} (owner : Fin a → Fin n)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (g : Group (Circuit.Role n a c s) R) (hg : g ∈ oppositeGroups owner G J H) :
-    ∃ old ∈ dirtyInverseGroups (s := s) owner G J H,
-      support g = (support old).image (Circuit.exchangeRoles n a c s) := by
-  obtain ⟨old, hold, rfl⟩ := List.mem_map.mp hg
-  exact ⟨old, hold, support_rename _ old⟩
-
-/-- Three stages triple incidence count exactly; sparse support is not replaced
-by dense zero-coefficient rows in this count. -/
-theorem signedExchangeGroups_incidenceCount {n a c s : ℕ} (owner : Fin a → Fin n)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R) :
-    incidenceCount (signedExchangeGroups (s := s) owner G J H) =
-      3 * incidenceCount (dirtyGroups (s := s) owner G J H) := by
-  simp only [signedExchangeGroups, incidenceCount_append, oppositeGroups,
-    incidenceCount_rename, dirtyInverseGroups_incidenceCount]
   omega
 
 end IntegerMultBounds.Networks.GroupedCircuit

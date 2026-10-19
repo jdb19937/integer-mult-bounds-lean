@@ -102,21 +102,6 @@ theorem block_run {n m : ℕ} (dst : Fin n → ι) (src : Fin m → ι)
   simpa [block, List.map_ofFn, List.sum_ofFn] using
     run_rows dst src M separate (List.ofFn (fun i : Fin n => i)) r k
 
-theorem block_run_target {n m : ℕ} (dst : Fin n → ι) (src : Fin m → ι)
-    (M : Fin n → Fin m → R) (separate : ∀ i j, dst i ≠ src j)
-    (injective : Function.Injective dst) (r : ι → R) (i : Fin n) :
-    run (block dst src M) r (dst i) = r (dst i) + ∑ j, M i j * r (src j) := by
-  rw [block_run dst src M separate]
-  simp [injective.eq_iff]
-
-theorem block_run_other {n m : ℕ} (dst : Fin n → ι) (src : Fin m → ι)
-    (M : Fin n → Fin m → R) (r : ι → R) (k : ι)
-    (outside : ∀ i, dst i ≠ k) : run (block dst src M) r k = r k := by
-  apply run_preserves
-  simp only [block, List.mem_map]
-  rintro g ⟨i, _, rfl⟩
-  exact outside i
-
 /-- Two data banks, side scratch, central scratch, and arbitrary spectators. -/
 abbrev Role (n a c s : ℕ) := Fin n ⊕ Fin n ⊕ Fin a ⊕ Fin c ⊕ Fin s
 
@@ -253,17 +238,6 @@ theorem dirtyInverse_run {n a c s : ℕ} (V : Fin a → Fin n → R)
   simp only [dirtyInverse, run_append, block_y_side, block_y_center, block_side_x,
     block_center_x, mv_neg_matrix, mv_add, mv_neg]
   congr 1 <;> ext i <;> simp only [Pi.add_apply, Pi.neg_apply, Pi.sub_apply] <;> abel
-
-/-- Direct verification of inverse behavior for every possible register state. -/
-theorem dirtyInverse_run_dirty {n a c s : ℕ} (V : Fin a → Fin n → R)
-    (G : Fin c → Fin n → R) (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (r : Role n a c s → R) : run (dirtyInverse V G J H) (run (dirty V G J H) r) = r := by
-  have hr : r = banks (r ∘ x) (r ∘ y) (r ∘ side) (r ∘ center) (r ∘ spectator) := by
-    funext k
-    rcases k with i | i | i | i | i <;> rfl
-  conv_lhs => rw [hr]
-  rw [dirty_run, dirtyInverse_run, add_sub_cancel_right]
-  exact hr.symm
 
 end IntegerMultBounds.Networks.Circuit
 

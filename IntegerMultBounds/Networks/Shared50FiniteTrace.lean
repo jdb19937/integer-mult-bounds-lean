@@ -20,9 +20,6 @@ def restrictUpdates (capacity : ℕ) (xs : List (ℕ × L)) (hb : bounded capaci
     List (Fin capacity × L) :=
   xs.attach.map (fun p => (⟨p.val.1,hb p.val p.property⟩,p.val.2))
 
-theorem restrict_nil (capacity : ℕ) (hb : bounded capacity ([] : List (ℕ × L))) :
-    restrictUpdates capacity [] hb = [] := rfl
-
 theorem restrict_cons (capacity : ℕ) (p : ℕ × L) (xs : List (ℕ × L))
     (hb : bounded capacity (p::xs)) :
     restrictUpdates capacity (p::xs) hb =

@@ -71,14 +71,6 @@ theorem preFields_interchanges : Swap.Shear.interchanges (preFields (ι := ι) (
   rw [preFields,Swap.Shear.interchanges_append,postFields_interchanges]
   rfl
 
-omit [DecidableEq ι] [CommRing R] in
-theorem postFields_length : (postFields (ι := ι) (R := R)).length = Fintype.card ι := by
-  simp [postFields,subDProgram,fields]
-
-theorem preFields_length : (preFields (ι := ι) (R := R)).length = Fintype.card ι + 1 := by
-  rw [preFields,List.length_append,postFields_length]
-  rfl
-
 end FieldPrograms
 
 section Movements

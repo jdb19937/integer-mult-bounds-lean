@@ -47,48 +47,4 @@ def popSlots : Fin (2+1) ≃ Fin 3 where
 def program : Program 3 16 a :=
   seq (Placement.placed push pushSlots) (Placement.placed pop popSlots)
 
-private theorem active_push (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
-    Placement.active pushSlots (bank f g h p q r) = Copy.tapes f g p q := by
-  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-
-private theorem active_pop (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
-    Placement.active popSlots (bank f g h p q r) = Copy.tapes g h q r := by
-  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-
-private theorem replace_push (f g h f' g' : ℤ → Fin (a+4)) (p q r p' q' : ℤ) :
-    Placement.replace pushSlots (bank f g h p q r) (Copy.tapes f' g' p' q') = bank f' g' h p' q' r := by
-  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-
-private theorem replace_pop (f g h g' h' : ℤ → Fin (a+4)) (p q r q' r' : ℤ) :
-    Placement.replace popSlots (bank f g h p q r) (Copy.tapes g' h' q' r') = bank f g' h' p q' r' := by
-  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-
-/-- Both directions run on one fixed bank. All stack contents and its exact
-head are restored, and the copied descriptor is returned at head one. -/
-theorem roundtrip_hoare (xs : List Bool) (f : ℤ → Fin (a+4)) (p : ℤ)
-    (hf : ∀ z, p ≤ z → z < p+1+xs.length → f z = blank) :
-    HoareTime program
-      (fun v => v = bank (descriptor xs) f (fun _ => blank) 1 p 0)
-      (fun v => v = bank (descriptor xs) f (descriptor xs) 1 p 1)
-      (4*xs.length+15) := by
-  have hp := Placement.hoare_at (push_hoare xs f p) pushSlots
-    (bank (descriptor xs) f (fun _ => blank) 1 p 0) (active_push _ _ _ _ _ _)
-  have hp' : HoareTime (Placement.placed push pushSlots)
-      (fun v => v = bank (descriptor xs) f (fun _ => blank) 1 p 0)
-      (fun v => v = bank (descriptor xs) (frame f p xs) (fun _ => blank) 1 (p+1+xs.length) 0)
-      (2*xs.length+7) := by
-    apply hp.consequence (fun _ h => h) _ le_rfl
-    rintro v ⟨w,rfl,rfl⟩
-    exact replace_push _ _ _ _ _ _ _ _ _ _
-  have hq := Placement.hoare_at (pop_hoare xs f p hf) popSlots
-    (bank (descriptor xs) (frame f p xs) (fun _ => blank) 1 (p+1+xs.length) 0) (active_pop _ _ _ _ _ _)
-  have hq' : HoareTime (Placement.placed pop popSlots)
-      (fun v => v = bank (descriptor xs) (frame f p xs) (fun _ => blank) 1 (p+1+xs.length) 0)
-      (fun v => v = bank (descriptor xs) f (descriptor xs) 1 p 1)
-      (2*xs.length+7) := by
-    apply hq.consequence (fun _ h => h) _ le_rfl
-    rintro v ⟨w,rfl,rfl⟩
-    exact replace_pop _ _ _ _ _ _ _ _ _ _
-  exact (hp'.seq hq').consequence (fun _ h => h) (fun _ h => h) (by omega)
-
 end IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip

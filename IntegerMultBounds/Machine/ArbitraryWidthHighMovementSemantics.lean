@@ -132,15 +132,5 @@ theorem separate_eq (P e r G B : ℕ) (hr : r ≤ e)
   obtain ⟨c,rfl⟩ := (originalEquiv prime P e r G B hr).surjective z
   rw [separateArray_entry,separateExchange_entry]
 
-/-- Serialized correctness of exchange, join, low transpose and separation. -/
-theorem exchange_join_transpose_separate (P e r G B : ℕ) (hr : r ≤ e)
-    (x : Fin (volume prime (originalDescriptor P e G B)) → Fin (a+4)) :
-    separateArray prime P e r G B hr
-      (Shared50RecursiveNodeRows.transpose (one_dvd _)
-        (joinArray prime P e r G B hr
-          (ArbitraryWidthHighExchangeSemantics.array (originalDescriptor P e G B) r hr x))) =
-      Shared50RecursiveNodeRows.transpose (one_dvd _) x := by
-  rw [join_after_exchange,separate_eq,exchange_transpose_separate]
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighMovementSemantics

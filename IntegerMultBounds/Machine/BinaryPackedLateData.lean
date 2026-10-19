@@ -65,17 +65,6 @@ theorem unload_value (b n : ℕ) (hb : 1≤b) (X : List Bool) (hX : X.length=n) 
   have h := CountedPackedControlLoadRun.unload_value b hb (row (n*b) u.val) X (by simp [hX])
   simpa only [unload,unloadedWord,BinaryAddressTableData.row_rank _ _ u.isLt,hX] using h
 
-/-- Modular load/unload restores an arbitrary dirty control address. -/
-theorem unload_load (b n : ℕ) (hb : 1≤b) (X : List Bool) (hX : X.length=n) (u : Temp b n) :
-    unload b n hb X hX (load b n hb X hX u)=u := by
-  apply Fin.ext
-  have h := unload_value b n hb X hX (load b n hb X hX u)
-  rw [load_value,Compact.PowerTwo.emod_cancel_add] at h
-  have hu : (u.val : ℤ)<((2 : ℤ)^b)^n := by
-    exact_mod_cast (show u.val<(2^b)^n by simpa [pow_mul,Nat.mul_comm n b] using u.isLt)
-  rw [Int.emod_eq_of_lt (by positivity) hu] at h
-  exact_mod_cast h
-
 def early {S : Type*} (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q) (x : State q b n S) : State q b n S :=
   BinaryPackedEarlyData.run q b n (controls b n x.2.2.1) hb hbq x
 
@@ -113,33 +102,6 @@ theorem agrees {S : Type*} (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q)
   rw [←hf]
   rw [←congrArg Prod.fst hs,←congrArg Prod.snd hs]
   simp only [unload_value,load_value]
-
-/-- Both early stages retain the control while the actual load/unload words
-restore it, without a guard hypothesis. -/
-theorem restored_control {S : Type*} (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q)
-    (X : List Bool) (hX : X.length=n) (x : State q b n S) :
-    (run q b n hb hbq X hX x).2.2.1=x.2.2.1 :=
-  unload_load b n hb X hX x.2.2.1
-
-/-- On the real late guard, the produced rows toggle the selected target
-bits and retain both dirty fields, with all spectator contents arbitrary. -/
-theorem good_value {S : Type*} (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q)
-    (X : List Bool) (hX : X.length=n) (x : State q b n S) (ds : List Compact.LateDigitState)
-    (hcontrols : ds.map Compact.LateDigitState.x=X.map Compact.PowerTwo.ctrl)
-    (hv : (x.1.val : ℤ)=Compact.Radix.pack ((2 : ℤ)^q) (ds.map Compact.LateDigitState.v))
-    (hw : (x.2.1.val : ℤ)=Compact.Radix.pack ((2 : ℤ)^b) (ds.map Compact.LateDigitState.w))
-    (hu : (x.2.2.1.val : ℤ)=Compact.Radix.pack ((2 : ℤ)^b) (ds.map Compact.LateDigitState.u))
-    (hgood : ∀ d∈ds, d.Good ((2 : ℤ)^b) ((2 : ℤ)^(q-1))) :
-    (((run q b n hb hbq X hX x).1.val : ℤ),((run q b n hb hbq X hX x).2.1.val : ℤ),
-      ((run q b n hb hbq X hX x).2.2.1.val : ℤ))=
-      (Compact.Radix.pack ((2 : ℤ)^q) (ds.map (fun d => Compact.toggle d.v d.x)),
-        (x.2.1.val : ℤ),(x.2.2.1.val : ℤ)) := by
-  have hq : 1≤q := by omega
-  have hQ : (2 : ℤ)^q=2*2^(q-1) := by
-    rw [←pow_succ']; congr 1; omega
-  rw [agrees q b n hb hbq X hX x,hv,hw,hu,←hcontrols,hQ]
-  exact Compact.packedLate_correct ((2 : ℤ)^b) ((2 : ℤ)^(q-1))
-    (by exact_mod_cast Nat.one_le_two_pow) (by positivity) ds hgood
 
 theorem spectator {S : Type*} (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q)
     (X : List Bool) (hX : X.length=n) (x : State q b n S) :

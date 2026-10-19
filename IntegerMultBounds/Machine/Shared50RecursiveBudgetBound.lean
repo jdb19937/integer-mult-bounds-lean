@@ -54,10 +54,6 @@ theorem budget_le_normalized (k depth V : ℕ) : (budget k depth V : ℝ) ≤ no
 theorem exponent_range : 0 < Parameters.tau ∧ Parameters.tau < 1 := by
   norm_num [Parameters.tau]
 
-theorem exponent_saving : 1-Parameters.tau = 296/(10^11 : ℝ) := by
-  unfold Parameters.tau
-  ring
-
 theorem branching_bound : (Shared50Parameters.s : ℝ)/roleCount ≤ (125000 : ℝ)^Parameters.tau := by
   rw [Shared50RecursiveNodeLayout.roleCount_eq_W]
   exact Shared50Parameters.branching_bound.le
@@ -94,20 +90,6 @@ theorem power_width_bound (k depth V : ℕ) :
     _ ≤ (constant k*((125000^depth : ℕ) : ℝ)^Parameters.tau)*V :=
       mul_le_mul_of_nonneg_right (normalized_bound k depth) (Nat.cast_nonneg _)
     _ = _ := by ring
-
-/-- The same bound uses the actual runtime descriptor width and logical volume.
-Proving an execution takes at most this budget remains a separate obligation. -/
-theorem descriptor_bound {depth : ℕ} {v : Descriptor} (k : ℕ)
-    (h : Shared50RecursiveDepth.Shape depth v) :
-    (budget k depth (volume prime v) : ℝ) ≤
-      constant k*(volume prime v : ℝ)*(v.width : ℝ)^Parameters.tau := by
-  rw [h.width]
-  exact power_width_bound k depth (volume prime v)
-
-/-- Uniform real bound, with no free schedule/count assumptions. -/
-theorem exists_uniform_bound (k : ℕ) : ∃ C : ℝ, 0 < C ∧ ∀ depth V : ℕ,
-    (budget k depth V : ℝ) ≤ C*(V : ℝ)*((125000^depth : ℕ) : ℝ)^(1-296/(10^11 : ℝ)) :=
-  ⟨constant k,constant_positive k,power_width_bound k⟩
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveBudgetBound

@@ -112,18 +112,6 @@ theorem crtExpose_controlValue {d : ℕ} (a s : Fin (d + 1) → ℕ)
   crtControlValue_eq_crtKI a s i.val (crtExposePrefix i)
     (crtExposePrefix_nodup i) (crtExposePrefix_controls i) F x
 
-/-- Undoing exposure restores the fixed full reverse layout. -/
-theorem crtExpose_restore {d : ℕ} (i : Fin (d + 1)) :
-    crtAxisExchange i 0 (crtExposePrefix i ++ [i]) =
-      crtRevAx (d := d + 1) (d + 1) := by
-  rw [← crtExpose_layout, crtAxisExchange_twice]
-
-/-- Zero already is the innermost axis and requires no exchange. -/
-theorem crtExpose_zero (d : ℕ) :
-    crtExposePrefix (0 : Fin (d + 1)) ++ [0] =
-      crtRevAx (d := d + 1) (d + 1) := by
-  rw [← crtExpose_layout, crtAxisExchange_self]
-
 /-- A concrete route made solely of arbitrary-gap exchanges, counting swaps.
 Each `swap` constructor supplies the five lists/axes needed by the box lemma. -/
 inductive CrtAxisRoute {α : Type*} : List α → List α → ℕ → Prop
@@ -214,11 +202,6 @@ theorem crtAxisRoute_toFinRange (d : ℕ) :
     CrtAxisRoute (crtRevAx (d := d) d) (List.finRange d) (d / 2) := by
   simpa [crtRevAx, List.take_of_length_le (show d ≥ (List.finRange d).length by simp)] using crtAxisRoute_reverse (List.finRange d).reverse [] []
 
-/-- The inverse begins with exactly the same number of paired exchanges. -/
-theorem crtAxisRoute_fromFinRange (d : ℕ) :
-    CrtAxisRoute (List.finRange d) (crtRevAx (d := d) d) (d / 2) := by
-  simpa [crtRevAx, List.take_of_length_le (show d ≥ (List.finRange d).length by simp)] using crtAxisRoute_reverse (List.finRange d) [] []
-
 /-- Exposure and restoration for each nonzero target, then paired reversal. -/
 def crtLinearSwapCount (d : ℕ) : ℕ := 2 * (d - 1) + d / 2
 
@@ -250,9 +233,5 @@ theorem crtLinear_route (d : ℕ) :
 theorem crtLinear_inverse_route (d : ℕ) :
     CrtAxisRoute (List.finRange d) (crtRevAx (d := d) d) (crtLinearSwapCount d) :=
   (crtLinear_route d).symm
-
-theorem crtLinearSwapCount_succ (d : ℕ) :
-    crtLinearSwapCount (d + 1) = 2 * d + (d + 1) / 2 := by
-  simp [crtLinearSwapCount]
 
 end IntegerMultBounds.MathlibTM2.Fast

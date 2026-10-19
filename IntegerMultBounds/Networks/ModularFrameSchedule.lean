@@ -22,21 +22,9 @@ open ShearFrame (address)
 section Reduction
 variable {ι κ : Type*} (m : ℕ)
 
-theorem admissible_add {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissible m B) :
-    Admissible m (A + B) :=
-  fun i j => (denCoprime m).add_mem (hA i j) (hB i j)
-
-theorem admissible_neg {A : Matrix ι κ ℚ} (hA : Admissible m A) : Admissible m (-A) :=
-  fun i j => (denCoprime m).neg_mem (hA i j)
-
 theorem admissible_sub {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissible m B) :
     Admissible m (A - B) :=
   fun i j => (denCoprime m).sub_mem (hA i j) (hB i j)
-
-theorem reduce_add {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissible m B) :
-    reduce m (A + B) = reduce m A + reduce m B := by
-  ext i j
-  exact Modular.ratMod_add m (hA i j) (hB i j)
 
 theorem reduce_neg {A : Matrix ι κ ℚ} (hA : Admissible m A) : reduce m (-A) = -reduce m A := by
   ext i j
@@ -50,13 +38,7 @@ theorem reduce_sub {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissib
     toZMod m ⟨A i j,hA i j⟩ - toZMod m ⟨B i j,hB i j⟩
   exact map_sub (toZMod m) _ _
 
-theorem reduce_zero : reduce m (0 : Matrix ι κ ℚ) = 0 := by
-  ext i j
-  exact Modular.ratMod_zero m
-
 theorem reduce_id [DecidableEq ι] : reduce m (1 : Matrix ι ι ℚ) = 1 := Modular.reduce_one m
-
-theorem admissible_id [DecidableEq ι] : Admissible m (1 : Matrix ι ι ℚ) := Modular.admissible_one m
 
 end Reduction
 

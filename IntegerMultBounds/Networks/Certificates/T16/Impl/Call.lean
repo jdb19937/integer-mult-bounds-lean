@@ -92,16 +92,4 @@ theorem runT_rename (u : ι → κ) (R : Set ι) (hu : Set.InjOn u R) (prog : Li
 def blocks (ws : List κ) (word : κ → List Prim) : List (TInstr κ) :=
   ws.flatMap fun w => (word w).map (TInstr.prim w)
 
-theorem runT_blocks (ws : List κ) (hws : ws.Nodup) (word : κ → List Prim) (y : κ → S) (v : κ) :
-    runT ρ (blocks ws word) y v = if v ∈ ws then ρ (wordLin (word v)) (y v) else y v := by
-  induction ws generalizing y with
-  | nil => simp [blocks, runT]
-  | cons w ws ih =>
-    have hnd := List.nodup_cons.mp hws
-    rw [blocks, List.flatMap_cons, runT_append, ← blocks, ih hnd.2, runT_prims]
-    by_cases hvw : v = w
-    · subst hvw
-      simp [hnd.1]
-    · simp only [Function.update_of_ne hvw, List.mem_cons, hvw, false_or]
-
 end IntegerMultBounds.Networks.Certificates.T16.Impl

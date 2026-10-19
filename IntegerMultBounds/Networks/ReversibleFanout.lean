@@ -71,19 +71,6 @@ omit [DecidableEq ι] in
   List.nodup_cons.mpr ⟨g.pivot_not_output, g.output_nodup⟩
 
 omit [DecidableEq ι] in
-theorem shared_only_pivot (g : Layout ι) (i : ι) :
-    i ∈ g.inputs ∧ i ∈ g.outputs ↔ i = g.pivot := by
-  simp only [inputs, outputs, List.mem_cons]
-  constructor
-  · rintro ⟨hi | hi, ho | ho⟩
-    · exact hi
-    · exact hi
-    · exact ho
-    · exact (g.tails_disjoint hi ho).elim
-  · intro hi
-    exact ⟨Or.inl hi, Or.inl hi⟩
-
-omit [DecidableEq ι] in
 /-- One instruction per nonpivot input and per nonpivot output. -/
 theorem program_length (g : Layout ι) :
     g.program.length = g.inputs.length - 1 + (g.outputs.length - 1) := by
@@ -154,13 +141,6 @@ theorem fresh_outputs (g : Layout ι) (r : ι → ZMod 2)
   · simp
   · simp [hfresh k hk, hk]
 
-/-- Every nonpivot input is preserved even though its value is accumulated. -/
-theorem input_preserved (g : Layout ι) (r : ι → ZMod 2) (k : ι) (hk : k ∈ g.inputTail) :
-    Circuit.run g.program r k = r k := by
-  have hkp : k ≠ g.pivot := by intro he; subst k; exact g.pivot_not_input hk
-  have hko : k ∉ g.outputTail := fun ho => g.tails_disjoint hk ho
-  simp [run_apply, hkp, hko]
-
 /-- Registers outside the declared input/output incidence are untouched. -/
 theorem outside_preserved (g : Layout ι) (r : ι → ZMod 2) (k : ι)
     (hin : k ∉ g.inputs) (hout : k ∉ g.outputs) : Circuit.run g.program r k = r k := by
@@ -188,11 +168,6 @@ theorem run_reverse (p : Circuit.Program ι (ZMod 2))
     simp only [List.reverse_cons, Circuit.run_append, Circuit.run_cons, Circuit.run_nil]
     rw [ih (fun q hq => hp q (by simp [hq])), hp op (by simp)]
 
-/-- Registers actually read or written by nonzero scalar instructions. -/
-def instructionSupport (p : Circuit.Program ι (ZMod 2)) : Finset ι :=
-  (p.flatMap fun op => op.target ::
-    ((op.terms.filter fun term => term.2 ≠ 0).map Prod.fst)).toFinset
-
 namespace Layout
 
 /-- Logical group incidences include the shared pivot even for an identity
@@ -203,58 +178,6 @@ def incidence (g : Layout ι) : Finset ι := (g.inputs ++ g.outputs).toFinset
     k ∈ g.incidence ↔ k = g.pivot ∨ k ∈ g.inputTail ∨ k ∈ g.outputTail := by
   simp only [incidence, inputs, outputs, List.mem_toFinset, List.mem_append, List.mem_cons]
   tauto
-
-/-- Exact support of the elementary gather/scatter lists, retaining whether
-there is any instruction which actually reads or writes the pivot. -/
-theorem mem_instructionSupport (g : Layout ι) (k : ι) :
-    k ∈ instructionSupport g.program ↔
-      (∃ i ∈ g.inputTail, k = g.pivot ∨ k = i) ∨
-      (∃ i ∈ g.outputTail, k = i ∨ k = g.pivot) := by
-  simp [instructionSupport, program, gather, scatter, add]
-
-theorem instructionSupport_subset (g : Layout ι) : instructionSupport g.program ⊆ g.incidence := by
-  intro k hk
-  rw [mem_instructionSupport] at hk
-  rw [mem_incidence]
-  rcases hk with ⟨i, hi, hp | rfl⟩ | ⟨i, hi, rfl | hp⟩
-  · exact Or.inl hp
-  · exact Or.inr (Or.inl hi)
-  · exact Or.inr (Or.inr hi)
-  · exact Or.inl hp
-
-/-- Every nonidentity gate touches exactly its input/output union. -/
-theorem instructionSupport_eq (g : Layout ι)
-    (hactive : g.inputTail ≠ [] ∨ g.outputTail ≠ []) :
-    instructionSupport g.program = g.incidence := by
-  apply Finset.Subset.antisymm (instructionSupport_subset g)
-  intro k hk
-  rw [mem_incidence] at hk
-  rw [mem_instructionSupport]
-  rcases hk with rfl | hk | hk
-  · rcases hactive with hi | ho
-    · obtain ⟨i, hi⟩ := List.exists_mem_of_ne_nil _ hi
-      exact Or.inl ⟨i, hi, Or.inl rfl⟩
-    · obtain ⟨i, hi⟩ := List.exists_mem_of_ne_nil _ ho
-      exact Or.inr ⟨i, hi, Or.inr rfl⟩
-  · exact Or.inl ⟨k, hk, Or.inr rfl⟩
-  · exact Or.inr ⟨k, hk, Or.inl rfl⟩
-
-/-- The only exceptional layout is the declared one-wire identity node. -/
-theorem identity_support (g : Layout ι) (hi : g.inputTail = []) (ho : g.outputTail = []) :
-    g.program = [] ∧ instructionSupport g.program = ∅ ∧ g.incidence = {g.pivot} := by
-  simp [program, gather, scatter, hi, ho, instructionSupport, incidence, inputs, outputs]
-
-/-- Zero-cost identity nodes still declare their pivot incidence for framing. -/
-theorem incidence_eq_support_insert (g : Layout ι) :
-    g.incidence = insert g.pivot (instructionSupport g.program) := by
-  by_cases hi : g.inputTail = []
-  · by_cases ho : g.outputTail = []
-    · rw [(identity_support g hi ho).2.1, (identity_support g hi ho).2.2]
-      rfl
-    · rw [instructionSupport_eq g (Or.inr ho)]
-      exact (Finset.insert_eq_of_mem (by simp)).symm
-  · rw [instructionSupport_eq g (Or.inl hi)]
-    exact (Finset.insert_eq_of_mem (by simp)).symm
 
 theorem inverse_run (g : Layout ι) (r : ι → ZMod 2) :
     Circuit.run g.inverse (Circuit.run g.program r) = r := by

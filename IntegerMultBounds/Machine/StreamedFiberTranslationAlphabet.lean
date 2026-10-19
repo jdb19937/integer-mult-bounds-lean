@@ -70,15 +70,6 @@ theorem destination_bit (ws : List (List Bool)) (Q B : ℕ) (source dest control
   rw [StreamedFiberTranslationArray.destination_entry]
   cases x (FiberLayoutData.index i y j) <;> rfl
 
-/-- The complete original offset stream is retained, including delimiters. -/
-theorem control_tape (ws : List (List Bool)) (Q B : ℕ) (source dest control : ℤ → Fin 4)
-    (p q r : ℤ) (bs qs ns : List Bool) (x : Fin (ws.length*(Q*B)) → Fin 4) (i : ℕ) :
-    (bank (a := a) ws Q B source dest control p q r bs qs ns x i).tape 12 =
-      putWord (mapTape control) r ((StreamedFiberTranslation.encoded ws).map (encoding (a := a)).encode) := by
-  change mapTape ((StreamedFiberTranslationArray.bank ws Q B source dest control p q r bs qs ns x i).tape 12) = _
-  rw [StreamedFiberTranslationArray.control_tape]
-  exact RowPaddingConstructedAlphabet.map_putWord control r (StreamedFiberTranslation.encoded ws)
-
 /-- The three supplied numeric descriptors remain literal binary words. -/
 theorem original_headers (ws : List (List Bool)) (Q B : ℕ) (source dest control : ℤ → Fin 4)
     (p q r : ℤ) (bs qs ns : List Bool) (x : Fin (ws.length*(Q*B)) → Fin 4) (i : ℕ) :

@@ -105,13 +105,4 @@ theorem fill_hoare (symbol : Fin 4) (f : ℤ → Fin 4) (p : ℤ) (bs : List Boo
   have h := CountedLoopReuse.loop_hoare (cell symbol) bs (Counter.value bs) v (fun _ => 1) rfl hb
   simpa [program,bank,v,Nat.mul_succ,show ∀ n : ℕ, n+6*n = 7*n by omega] using h
 
-theorem fill_linear (symbol : Fin 4) (f : ℤ → Fin 4) (p : ℤ) (bs : List Bool)
-    (hc : GrowingCounterData.Canonical bs) :
-    HoareTime (program symbol) (fun v => v = bank f p bs)
-      (fun v => v = bank (filled f p (Counter.value bs) symbol) (p+Counter.value bs) bs)
-      (14*Counter.value bs+23) := by
-  have hw := GrowingCounterData.canonical_width bs hc
-  have hl := Nat.log2_le_self (Counter.value bs)
-  exact (fill_hoare symbol f p bs).consequence (fun _ h => h) (fun _ h => h) (by omega)
-
 end IntegerMultBounds.Machine.CountedRawFill

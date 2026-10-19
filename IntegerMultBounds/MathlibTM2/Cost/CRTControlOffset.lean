@@ -80,34 +80,4 @@ theorem crtControlOffsetUnaryCost_pipeline_le {n : ℕ} (h : Big n)
   exact (crtControlOffsetUnaryCost_total_le a W S ha hW hS).trans
     (Nat.mul_le_mul_left (2 ^ 7 * d n * T n) hLp)
 
-/-- Eventual form for use beside the descriptor arithmetic estimates. -/
-theorem crtControlOffsetUnaryCost_eventually_le :
-    ∀ᶠ n in atTop, ∀ a W S : Fin (d n) → ℕ,
-      (∀ i, a i ≤ logT n) → (∀ i, W i ≤ 3 * logT n + 1) →
-      (∀ i, S i ≤ 2 ^ a i) →
-      (∑ i, 2 ^ (logT n - a i) * crtControlOffsetUnaryCost (W i) (S i)) ≤
-        2 ^ 7 * d n * T n * p n := by
-  filter_upwards [eventually_big] with n h a W S ha hW hS
-  exact crtControlOffsetUnaryCost_pipeline_le h a W S ha hW hS
-
-/-- Compatibility with the current total CRT scale, keeping the tighter
-linear-pass bound available separately. -/
-theorem crtControlOffsetUnaryCost_le_totCRT {n : ℕ} (h : Big n)
-    (a W S : Fin (d n) → ℕ) (ha : ∀ i, a i ≤ logT n)
-    (hW : ∀ i, W i ≤ 3 * logT n + 1) (hS : ∀ i, S i ≤ 2 ^ a i) :
-    ((∑ i, 2 ^ (logT n - a i) * crtControlOffsetUnaryCost (W i) (S i)) : ℝ) ≤
-      2 ^ 7 * totCRT n := by
-  have hc : ((∑ i, 2 ^ (logT n - a i) * crtControlOffsetUnaryCost (W i) (S i)) : ℝ) ≤
-      2 ^ 7 * (d n : ℝ) * T n * p n := by
-    exact_mod_cast crtControlOffsetUnaryCost_pipeline_le h a W S ha hW hS
-  have hd : (d n : ℝ) ≤ (d n : ℝ) ^ 2 := by
-    have hd₁ : (1 : ℝ) ≤ d n := by exact_mod_cast h.one_le_d
-    nlinarith
-  have hmul := mul_le_mul_of_nonneg_left hd (mt_Tp_nonneg n)
-  have hrest : 0 ≤ (T n : ℝ) * p n * (d n : ℝ) ^ 2 * (ℓ n : ℝ) ^ Parameters.tau := by
-    have := Real.rpow_nonneg (Nat.cast_nonneg (ℓ n)) Parameters.tau
-    positivity
-  rw [mt_crt_eq]
-  nlinarith
-
 end IntegerMultBounds.MathlibTM2.Cost

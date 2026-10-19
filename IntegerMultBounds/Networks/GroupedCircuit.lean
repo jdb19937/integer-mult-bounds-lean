@@ -46,10 +46,6 @@ theorem sparseGate_touched (g : Gate ι R) (i : ι) :
     decide_eq_true_eq]
   aesop
 
-omit [DecidableEq ι] in
-theorem sparseGate_nonzero (g : Gate ι R) (p : ι × R) (hp : p ∈ (sparseGate g).terms) :
-    p.2 ≠ 0 := by simpa [sparseGate] using (List.mem_filter.mp hp).2
-
 /-- Sources in every row are disjoint from all destinations in the same group.
 Repeated destinations are harmless: their simultaneous increments are summed. -/
 def Separated (rows : List (Gate ι R)) : Prop :=
@@ -139,15 +135,6 @@ theorem touched_iff (g : Group ι R) (i : ι) :
     exact ⟨old, hold, (sparseGate_touched old i).mp hi⟩
   · rintro ⟨row, hrow, hi⟩
     exact ⟨sparseGate row, ⟨row, hrow, rfl⟩, (sparseGate_touched row i).mpr hi⟩
-
-/-- A wire outside the target rows is preserved, even if it is a nonzero source. -/
-theorem evaluate_preserves (g : Group ι R) (r : ι → R) (i : ι)
-    (hi : ∀ row ∈ g.rows, row.target ≠ i) : evaluate g r i = r i := by
-  rw [← compile_run]
-  apply Circuit.run_preserves
-  intro row hrow
-  obtain ⟨old, hold, rfl⟩ := List.mem_map.mp hrow
-  exact hi old hold
 
 /-- An ordinary disjoint-bank matrix addition as one simultaneous grouped gate. -/
 def matrixGroup {n m : ℕ} (dst : Fin n → ι) (src : Fin m → ι)
@@ -430,29 +417,6 @@ theorem dirtyGroups_run {n a c s : ℕ} (owner : Fin a → Fin n)
     split_ifs <;> simp
   simp only [dirtyGroups, runGroups_append, runGroups, Circuit.dirty, Circuit.run_append]
   simp only [copyGroups_run, faninGroups_run, matrixGroup_evaluate, hm]
-
-/-- Instantiation by the concrete bit motif, with dirty banks and spectators
-restored; no sparse-support or reconstruction premise is assumed. -/
-theorem bit_dirtyGroups_run {h n a s : ℕ} {L : Fin n → Finset (Fin h)}
-    (e : Fin a ≃ Circuit.BitPair L) (hinj : Function.Injective L)
-    (hcard : ∀ i, (L i).card = 3) (X Y : Fin n → ZMod 2)
-    (A : Fin a → ZMod 2) (C : Fin h → ZMod 2) (S : Fin s → ZMod 2) :
-    runGroups (dirtyGroups (fun p => (e p).val.2) (Circuit.bitGather L)
-      (Circuit.bitInject e) (Circuit.bitScatter L)) (Circuit.banks X Y A C S) =
-      Circuit.banks X (Y + X) A C S := by
-  rw [dirtyGroups_run]
-  exact Circuit.bit_dirty_run e hinj hcard X Y A C S
-
-/-- The rational complex motif has the same source-owned copy grouping. -/
-theorem complex_dirtyGroups_run {h n a s : ℕ} {L : Fin n → Finset (Fin h)}
-    (e : Fin a ≃ Circuit.ComplexPair L) (hinj : Function.Injective L)
-    (hcard : ∀ i, (L i).card = 3) (X Y : Fin n → ℚ)
-    (A : Fin a → ℚ) (C : Fin (h + 1) → ℚ) (S : Fin s → ℚ) :
-    runGroups (dirtyGroups (fun p => (e p).val.2) (Circuit.complexGather L)
-      (Circuit.complexInject e) (Circuit.complexScatter L)) (Circuit.banks X Y A C S) =
-      Circuit.banks X (Y + X) A C S := by
-  rw [dirtyGroups_run]
-  exact Circuit.complex_dirty_run e hinj hcard X Y A C S
 
 section Frames
 variable {E : Type*} [AddCommGroup E] [Module R E]

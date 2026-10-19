@@ -78,24 +78,6 @@ theorem linear_bound (d : ℕ) (bs : List Bool) (hcount : Counter.value bs = d)
   rw [hcount] at hw hl
   omega
 
-/-- A convenient canonical-header contract with the same exact bank endpoints. -/
-theorem field_hoare_linear (op : Bool → Bool → Bool) (xs : List Bool) (z : Bool)
-    (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ) (start d : ℕ) (bs : List Bool)
-    (hd : start+d ≤ xs.length) (hz : g pz = bitSymbol z) (hcount : Counter.value bs = d)
-    (hc : GrowingCounterData.Canonical bs) :
-    HoareTime (program op a)
-      (fun v => v = CountedLoopReuseAlphabet.bank
-        (Gather.bank (putWord f px (xs.map bitSymbol)) g h (px+start) pz pt)
-        CountedLoopReuseAlphabet.empty (CountedLoopReuseAlphabet.binary bs) 1 1)
-      (fun v => v = CountedLoopReuseAlphabet.bank
-        (Gather.bank (putWord f px (xs.map bitSymbol)) g
-          (putWord h pt (((Gather.field xs start d).map (fun x => op x z)).map bitSymbol))
-          (px+start+d) pz (pt+d))
-        CountedLoopReuseAlphabet.empty (CountedLoopReuseAlphabet.binary bs) 1 1)
-      (14*d+23) :=
-  (field_hoare op xs z f g h px pz pt start d bs hd hz hcount).consequence
-    (fun _ he => he) (fun _ he => he) (linear_bound d bs hcount hc)
-
 /-- A whole word is the field starting at zero. -/
 theorem field_whole (xs : List Bool) : Gather.field xs 0 xs.length = xs := by
   apply List.ext_getElem

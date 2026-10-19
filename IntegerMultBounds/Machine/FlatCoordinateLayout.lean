@@ -41,9 +41,6 @@ def rankEquiv : (Fin d → ZMod Q) ≃ Fin (Q^d) :=
 /-- The same array index is used before and after every scheduled operation. -/
 def index (x : Fin d → ZMod Q) (j : Fin W) : Fin (Q^d*W) := finProdFinEquiv (rank x,j)
 
-def arrayEquiv : ((Fin d → ZMod Q) × Fin W) ≃ Fin (Q^d*W) :=
-  (Equiv.prodCongr rankEquiv (Equiv.refl (Fin W))).trans finProdFinEquiv
-
 @[simp] theorem index_val (x : Fin d → ZMod Q) (j : Fin W) :
     (index x j).val = (rank x).val*W+j.val := by simp [index,finProdFinEquiv,Nat.mul_comm,Nat.add_comm]
 
@@ -199,22 +196,6 @@ theorem fiberView_index {α : Type*} (a : Fin (Q^d*W) → α) (x : Fin d → ZMo
   congr 1
   apply Fin.ext
   simpa only [Fin.val_cast,FiberLayoutData.index_val] using (index_split x t j).symm
-
-/-- Concrete per-fiber scaling correctness implies common-coordinate transport. -/
-theorem scale_transport {α : Type*} (a : Fin (Q^d*W) → α) (out : List α)
-    (t : Fin d) (u : ZMod Q)
-    (h : ∀ (p : Fin (prefixSize (Q := Q) t)) (y : Fin Q)
-        (j : Fin (suffixSize (Q := Q) (W := W) t)),
-      out[p.val*(Q*suffixSize (Q := Q) (W := W) t)+
-        (u*(y.val : ZMod Q)).val*suffixSize (Q := Q) (W := W) t+j.val]? =
-          some (fiberView a t (FiberLayoutData.index p y j)))
-    (x : Fin d → ZMod Q) (j : Fin W) :
-    out[(index (Networks.OrderedAffine.execute (.scale t u) x) j).val]? =
-      some (a (index x j)) := by
-  have hh := h ⟨prefixIndex x t,prefix_lt x t⟩ ⟨(x t).val,ZMod.val_lt _⟩
-    ⟨suffix x t j,suffix_lt x t j⟩
-  rw [fiberView_index] at hh
-  simpa only [scale_destination,ZMod.natCast_zmod_val] using hh
 
 /-- A physical prefix offset which agrees with its extracted control gives
 exactly the common-coordinate ordered-affine shift. -/

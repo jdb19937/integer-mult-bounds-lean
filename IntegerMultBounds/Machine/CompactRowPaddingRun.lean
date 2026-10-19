@@ -205,13 +205,6 @@ theorem runs_linear (c : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ)
   (runs (a := a) c source dest p q rs ls r l x hr hl cr cl hR hL hc).consequence
     (fun _ h => h) (fun _ h => h) (budget_linear r c l hR hc hL)
 
-/-- In the usual reservation range, rounding costs less than twice the
-original complete-row volume. -/
-theorem volume_le_twice (r c l : ℕ) (hc : 0 < c) (hcr : c ≤ r) :
-    paddedRows r c*l ≤ 2*(r*l) := by
-  have h := (IntegerMultBounds.Compact.Layout.padding_bounds r c hc hcr).2.2.1
-  nlinarith [Nat.mul_le_mul_right l h]
-
 /-- A fixed role count gives a uniform bound against original record volume,
 even when there are fewer original rows than physical roles. -/
 theorem volume_le_original (r c l : ℕ) (hr : 0 < r) (hc : 0 < c) :

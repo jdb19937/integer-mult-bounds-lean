@@ -433,21 +433,6 @@ theorem compactSynLoopsContractR_of_layer (legacy : MnProc → MnPr (prime+Ka))
   · exact compactSynLoopFR_runs legacy ds hbody hA hLayer hAℓ hAl hW v hv hvh hvt hvc hcb P₀ z hz hzg hinv R hR hr
 
 
-theorem compactSynLoopsContractR_eventually (hA : 21≤prime+Ka)
-    (hA9 : 9^4≤prime+Ka+4) (hNW : NW≤prime+Ka+4) :
-    ∀ᶠ M : ℕ in Filter.atTop,
-    ∀ (ds : ComplexFramedExecution.Directions),ComplexPhaseBudget.Realizes ds →
-      (∀ g,Instr.gate g∈program ds → (2*gateBound g+1)^(2*(gateWires g).length)≤prime+Ka+4) →
-    ∀ (legacy : MnProc → MnPr (prime+Ka)),
-      (∀ f,legacy (.lay f)=embProg mnLayE MnProc.lay (layerTable (Ka := Ka) (U := Unit) mnQ_layer ds f)) →
-    ∀ (es : List ℕ) (ℓ W l p : ℕ),CompactSynGeometry M es ℓ W l p →
-      CompactSynFitsR ds M (Mult.Sizes.K M) es ℓ W l p →
-      ∀ fwd,CompactSynLoopContractR legacy ds M (Mult.Sizes.K M) es ℓ W l p fwd := by
-  filter_upwards [compactSynLayerContractR_eventually hA hA9 hNW] with M hLayer
-  intro ds hd hgate legacy hbody es ℓ W l p hg hfits
-  exact compactSynLoopsContractR_of_layer legacy ds hbody (by omega)
-    (hLayer ds hd hgate legacy hbody es ℓ W l p hg hfits) hg.numerator
-
 theorem compactSynUniformLoopsContractR_eventually (hA : 21≤prime+Ka)
     (hA9 : 9^4≤prime+Ka+4) (hNW : NW≤prime+Ka+4) :
     ∀ᶠ M : ℕ in Filter.atTop,

@@ -50,9 +50,6 @@ noncomputable def facImpl (g : ZMod 4 × BinaryWalsh.Address m) (u : Arr Y (m * 
 lemma lift_pullCols (L : BinaryWalsh.Address m → BinaryWalsh.Address m) (u : Arr Y (m * k)) :
     lift (pullCols L) u = pullArr L u := rfl
 
-lemma lift_conjA (u : Arr Y (m * k)) : lift conjA u = conjArr u := by
-  funext p; simp [lift, conjA, conjArr]
-
 lemma lift_vf_single' (j : Fin m) (u : Arr Y (m * k)) :
     lift (fun g => BinaryColumns.vectorFactor k (1, Pi.single j 1) g) u = slotProd j u := by
   rw [lift_vf_single, slotProd, List.ofFn_eq_map]
@@ -143,13 +140,6 @@ noncomputable def runWith (fac : ZMod 4 × BinaryWalsh.Address m → Arr Y (m * 
   | [], x => x
   | i :: rest, x => runWith fac rest (execWith fac i x)
 
-lemma runWith_append (fac : ZMod 4 × BinaryWalsh.Address m → Arr Y (m * k) → Arr Y (m * k))
-    (p q : List Instr) (x : NWire → Arr Y (m * k)) :
-    runWith fac (p ++ q) x = runWith fac q (runWith fac p x) := by
-  induction p generalizing x with
-  | nil => rfl
-  | cons i rest ih => exact ih _
-
 /-! ### The node -/
 
 variable (k)
@@ -176,10 +166,6 @@ lemma slice_lift (y : Y) (T : BinaryColumns.Arrays m k → BinaryColumns.Arrays 
   funext x; simp only [slice, lift, toCols_ofCols]; rfl
 
 lemma slice_add (y : Y) (u v : Arr Y (m * k)) : slice y (u + v) = slice y u + slice y v := rfl
-lemma slice_smul (y : Y) (c : ℚ) (u : Arr Y (m * k)) : slice y (c • u) = c • slice y u := rfl
-lemma slice_neg (y : Y) (u : Arr Y (m * k)) : slice y (-u) = -slice y u := rfl
-lemma slice_csmul (y : Y) (c : ℂ) (u : Arr Y (m * k)) : slice y (c • u) = c • slice y u := rfl
-
 lemma slice_sum (y : Y) (l : List (Arr Y (m * k))) : slice y l.sum = (l.map (slice y)).sum := by
   induction l with
   | nil => rfl

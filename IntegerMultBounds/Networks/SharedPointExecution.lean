@@ -68,33 +68,6 @@ theorem output_covers (c : Fin 50) (j : Fin 1176) :
   exact ⟨i, hi, by simpa only [he, key] using congrArg Prod.fst hk,
     by simpa only [he, key] using congrArg Prod.snd hk⟩
 
-/-- The actual scalar outputs are the full shared-point partial sums over
-all triples meeting the requested triple in precisely the common point. -/
-theorem run_partial (input : Triple 50 → ZMod 2) (c : Fin 50) (j : Fin 1176) :
-    ∃ i, ∃ hi : i < circuit.outputs.length,
-      circuit.outputs[i].common = c ∧ circuit.outputs[i].pair = PairMask.pairAt 49 j ∧
-      Circuit.run code.program (initial input) (code.outputSlot i) =
-        supportSum input (Finset.univ.filter (fun T : Triple 50 =>
-          T.val ∩ (embedding c j).val = {c})) := by
-  obtain ⟨i, hi, hc, hp⟩ := output_covers c j
-  refine ⟨i, hi, hc, hp, ?_⟩
-  rw [run_output input i hi, expected, hc, hp]
-  exact congrArg (supportSum input) (SharedPointOutputMap.lifted_exclusion 49 c j)
-
-/-- Coverage also holds in the intrinsic triple indexing, without assuming
-a caller already possesses an inverse pair index. -/
-theorem run_partial_triple (input : Triple 50 → ZMod 2) (c : Fin 50)
-    (T : Triple 50) (hc : c ∈ T.val) :
-    ∃ i, ∃ hi : i < circuit.outputs.length,
-      circuit.outputs[i].common = c ∧
-      Circuit.run code.program (initial input) (code.outputSlot i) =
-        supportSum input (Finset.univ.filter (fun U : Triple 50 => U.val ∩ T.val = {c})) := by
-  obtain ⟨j, hj⟩ := SharedPointOutputMap.source_covers 49 c T hc
-  obtain ⟨i, hi, hcommon, _, hrun⟩ := run_partial input c j
-  refine ⟨i, hi, hcommon, ?_⟩
-  have he : embedding c j = T := hj
-  simpa only [he] using hrun
-
 /-- Every requested output has a bounded physical register. -/
 theorem output_slot_bound (i : ℕ) (hi : i < 58800) : code.outputSlot i < code.state.next :=
   DAGAllocator.compile_output_bound circuit.nodes outputRefs valid outputRefs_bounds i

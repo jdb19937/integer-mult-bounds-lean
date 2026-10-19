@@ -152,25 +152,5 @@ theorem concatenate_hoare (f g out : ℤ → Fin (a + 4)) (p q r : ℤ)
   obtain ⟨hr, hh⟩ := concatenate_exact f g out p q r xs ys hxs hys hxend hyend
   exact ⟨xs.length + 1 + ys.length, _, le_rfl, hr, hh, rfl⟩
 
-/-- A blank output background gives precisely the concatenated word at the
-chosen output origin and blanks everywhere else, not merely a trailing blank. -/
-theorem concatenate_to_blank (f g : ℤ → Fin (a + 4)) (p q r : ℤ)
-    (xs ys : List (Fin (a + 4))) (hxs : ∀ x ∈ xs, x ≠ blank)
-    (hys : ∀ y ∈ ys, y ≠ blank) (hxend : f (p + xs.length) = blank)
-    (hyend : g (q + ys.length) = blank) :
-    run program (xs.length + 1 + ys.length)
-      (cfg 0 (putWord f p xs) (putWord g q ys) (fun _ => blank) p q r) =
-      some (cfg 1 (putWord f p xs) (putWord g q ys)
-        (fun j => wordTape (xs ++ ys) (j - r))
-        (p + xs.length) (q + ys.length) (r + (xs ++ ys).length)) ∧
-    step program (cfg 1 (putWord f p xs) (putWord g q ys)
-      (fun j => wordTape (xs ++ ys) (j - r))
-      (p + xs.length) (q + ys.length) (r + (xs ++ ys).length)) = none := by
-  have hw : putWord (fun _ => blank) r (xs ++ ys) =
-      fun j => wordTape (xs ++ ys) (j - r) := by
-    funext j
-    exact putWord_blank r j (xs ++ ys)
-  simpa only [hw] using concatenate_exact f g (fun _ => blank) p q r xs ys hxs hys hxend hyend
-
 end IntegerMultBounds.Machine.Concatenate
 

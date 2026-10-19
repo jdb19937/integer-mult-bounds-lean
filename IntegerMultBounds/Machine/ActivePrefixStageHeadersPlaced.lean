@@ -19,9 +19,6 @@ variable {a : ℕ} {s : Shape}
 
 def consumerSources : Fin 22 → Fin 28 := ![0,1,2,20,3,4,5,2,13,14,15,16,17,18,19,0,2,20,10,21,4,5]
 def consumerSlots : Fin 22 → Fin 65 := fun i => ⟨43+i.val,by omega⟩
-theorem consumerSlots_injective : Function.Injective consumerSlots := by
-  intro i j h; apply Fin.ext; have := congrArg Fin.val h; simp [consumerSlots] at this; omega
-
 def lift (st : ActiveRepairRankHeadersCommands.State) : State := fun i =>
   if h : i.val<28 then st ⟨i.val,h⟩ else none
 

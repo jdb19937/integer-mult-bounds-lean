@@ -94,22 +94,6 @@ theorem copy_hoare (stop : Fin (a + 4)) (erase : Bool)
   obtain ⟨hr, hh⟩ := copy_exact stop erase f g p q xs hxs hend
   exact ⟨xs.length, _, le_rfl, hr, hh, rfl⟩
 
-/-- Copying to a blank tape produces the exact whole-tape output convention,
-not merely a word followed by one blank. The source remains unchanged. -/
-theorem copy_to_blank (stop : Fin (a + 4)) (f : ℤ → Fin (a + 4)) (p : ℤ)
-    (xs : List (Fin (a + 4))) (hxs : ∀ x ∈ xs, x ≠ stop)
-    (hend : f (p + xs.length) = stop) :
-    run (program stop false) xs.length (cfg (putWord f p xs) (fun _ => blank) p 0) =
-      some (cfg (putWord f p xs) (wordTape xs) (p + xs.length) xs.length) ∧
-    step (program stop false)
-      (cfg (putWord f p xs) (wordTape xs) (p + xs.length) xs.length) = none := by
-  have hw : putWord (fun _ => blank) 0 xs = wordTape xs := by
-    funext j
-    simpa using putWord_blank 0 j xs
-  have hr : (retained false : Fin (a + 4) → Fin (a + 4)) = id := by funext x; rfl
-  simpa only [hr, List.map_id, hw, zero_add] using
-    copy_exact stop false f (fun _ => blank) p 0 xs hxs hend
-
 end Copy
 
 end IntegerMultBounds.Machine

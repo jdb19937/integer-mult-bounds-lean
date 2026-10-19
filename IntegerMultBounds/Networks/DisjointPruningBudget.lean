@@ -77,26 +77,6 @@ theorem not_marked_of_support (nodes : List (Node ι)) (hv : Valid nodes)
   obtain ⟨r, hr, hs⟩ := marked_support_subset nodes hv roots i hi
   exact h r hr hs
 
-/-- An unrequested node with no actual users is dead. Unlike support
-obstructions, this also handles unused intermediate totals that fit inside an
-output's support but are never referenced by its construction. -/
-theorem not_marked_of_unused (nodes : List (Node ι)) (hv : Valid nodes)
-    (roots : Finset ℕ) (i : ℕ) (hr : i ∉ roots)
-    (hu : ∀ j (hj : j < nodes.length), i < j → i ∉ parents nodes[j]) :
-    i ∉ mark nodes roots := by
-  intro hm
-  have h := markFrom_property 0 nodes roots (fun j => j ≠ i)
-    (fun j hj he => hr (he ▸ hj)) (by
-      intro j hj p hp _ he
-      subst p
-      have hn := DAGValueTransfer.validFrom_get [] nodes hv j hj
-      have hlt := parents_lt ([] ++ (nodes.take j).map Node.support) nodes[j] hn i hp
-      have hij : i < j := by
-        simpa only [List.length_append, List.length_nil, List.length_map,
-          List.length_take, Nat.min_eq_left (Nat.le_of_lt hj), Nat.zero_add] using hlt
-      exact hu j hj hij hp) i hm
-  exact h rfl
-
 omit [DecidableEq ι] in
 /-- Live and certified-dead additions consume disjoint parts of the same budget. -/
 theorem additionCountFrom_add_le (offset : ℕ) (nodes : List (Node ι))
@@ -130,40 +110,6 @@ theorem marked_additions_le_sub (nodes : List (Node ι)) (hv : Valid nodes)
     exact not_marked_of_support nodes hv roots i (hd i hd') hi
   have h := additionCountFrom_add_le 0 nodes (mark nodes roots) dead hdis
   omega
-
-omit [DecidableEq ι] in
-theorem additionCountFrom_mono (offset : ℕ) (nodes : List (Node ι))
-    (active larger : Finset ℕ) (hs : active ⊆ larger) :
-    additionCountFrom offset active nodes ≤ additionCountFrom offset larger nodes := by
-  induction nodes generalizing offset with
-  | nil => simp [additionCountFrom]
-  | cons node nodes ih =>
-    simp only [additionCountFrom]
-    apply Nat.add_le_add _ (ih (offset + 1))
-    by_cases ha : offset ∈ active
-    · simp [ha, hs ha]
-    · simp [ha]
-
-omit [DecidableEq ι] in
-/-- A parent-closed envelope may be proved structurally at a recursive boundary;
-there is no need to enumerate the exact transitive closure. -/
-theorem marked_additions_le_of_closed (nodes : List (Node ι)) (roots active : Finset ℕ)
-    (hr : roots ⊆ active) (hc : ClosedFrom 0 active nodes)
-    (budget : ℕ) (hb : additionCountFrom 0 active nodes ≤ budget) :
-    additionCountFrom 0 (mark nodes roots) nodes ≤ budget := by
-  exact (additionCountFrom_mono 0 nodes _ active
-    (markFrom_subset 0 nodes roots active hr hc)).trans hb
-
-omit [DecidableEq ι] in
-/-- Backwards marking composes across construction stages. The later stage
-supplies exactly the roots needed by the earlier stage. -/
-theorem markFrom_append (offset : ℕ) (before after : List (Node ι)) (roots : Finset ℕ) :
-    markFrom offset (before ++ after) roots =
-      markFrom offset before (markFrom (offset + before.length) after roots) := by
-  induction before generalizing offset with
-  | nil => simp [markFrom]
-  | cons node before ih =>
-    simp [markFrom, ih, Nat.add_assoc, Nat.add_comm]
 
 omit [DecidableEq ι] in
 theorem additionCountFrom_append (offset : ℕ) (before after : List (Node ι))

@@ -85,46 +85,5 @@ theorem execute (d : Inputs s) (i : Address d) :
     simpa only [Networks.BinaryRowColumns.execute,op,Function.update_self] using target d i axis
   · simpa only [Networks.BinaryRowColumns.execute,op,Function.update_of_ne h] using other d i axis slot h
 
-theorem other_bit_position (d : Inputs s) (slot : Fin d.stage.slots) (j : ℕ)
-    (hj : j<slotWidth d.stage) (h : slot≠d.stage.target) :
-    slotLow d.stage slot+j<(geometry d).after ∨
-    (geometry d).after+(geometry d).n*(geometry d).q+1≤slotLow d.stage slot+j := by
-  have hd : slot.val≠d.stage.target.val := fun he => h (Fin.ext he)
-  have hr := d.stage.selectedFits
-  have hf := d.stage.positiveWidth
-  unfold slotWidth at hj
-  by_cases ho : slot.val<d.stage.target.val
-  · right
-    have hl := lower_slot d.stage slot d.stage.target ho
-    have hn : (d.stage.f-1)*s.chunk+s.chunk=d.stage.f*s.chunk := by
-      calc
-        _ = (d.stage.f-1+1)*s.chunk := by ring
-        _ = _ := by rw [Nat.sub_add_cancel hf]
-    change slotLow d.stage d.stage.target+d.stage.rho+(d.stage.f-1)*s.chunk+1≤_
-    omega
-  · left
-    have hl := lower_slot d.stage d.stage.target slot (by omega)
-    change _<slotLow d.stage d.stage.target+d.stage.rho
-    omega
-
-theorem other_slot_bit (d : Inputs s) (i : Address d) (slot : Fin d.stage.slots) (j : ℕ)
-    (hj : j<slotWidth d.stage) (h : slot≠d.stage.target) :
-    (word d (destination d i)).getD (slotLow d.stage slot+j) false=
-      (word d i).getD (slotLow d.stage slot+j) false := by
-  rw [destination_bit]
-  rcases other_bit_position d slot j hj h with hl | hh
-  · rw [mask_below _ _ _ hl,Bool.xor_false]
-  · rw [mask_above _ _ _ hh,Bool.xor_false]
-
-/-- Every bit of every other original slot is preserved, including columns
-which the stage never selects. -/
-theorem other_slot (d : Inputs s) (i : Address d) (slot : Fin d.stage.slots) (h : slot≠d.stage.target) :
-    Gather.field (word d (destination d i)) (slotLow d.stage slot) (slotWidth d.stage)=
-      Gather.field (word d i) (slotLow d.stage slot) (slotWidth d.stage) := by
-  unfold Gather.field
-  apply List.map_congr_left
-  intro j hj
-  exact other_slot_bit d i slot j (List.mem_range.mp hj) h
-
 end
 end IntegerMultBounds.Machine.ActivePrefixStageRuntimeCoordinates

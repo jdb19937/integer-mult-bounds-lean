@@ -37,27 +37,10 @@ def lateWordsAddr (q b : ℕ) (X V W U : List Bool) (hq : 1 ≤ q)
     (⟨(value V : ℤ),by positivity,word_Q_bound q X V hq hV⟩,
       ⟨(value W : ℤ),by positivity,word_B_bound b X W hW⟩))
 
-theorem lateWordsAddr_digits (q b : ℕ) (X V W U : List Bool) (hq : 1 ≤ q)
-    (hV : V.length=X.length*q) (hW : W.length=X.length*b) (hU : U.length=X.length*b) :
-    digits (2*Li q) X.length (lateWordsAddr q b X V W U hq hV hW hU).2.1.val = blockValues V q X.length ∧
-    digits (Bi b) X.length (lateWordsAddr q b X V W U hq hV hW hU).2.2.val = blockValues W b X.length ∧
-    digits (Bi b) X.length (lateWordsAddr q b X V W U hq hV hW hU).1.val = blockValues U b X.length := by
-  simp only [lateWordsAddr,Bi,two_Li q hq]
-  exact ⟨digits_blocks V q X.length hV,digits_blocks W b X.length hW,digits_blocks U b X.length hU⟩
-
 theorem lateAddr_words (q b : ℕ) (X cs : List Bool) (hq : 1 ≤ q) :
     lateAddr q b X cs hq = lateWordsAddr q b X (Vw q X cs) (Ww q b X cs) (Uw q b X cs) hq
       (Machine.Gather.field_length _ _ _) (Machine.Gather.field_length _ _ _) (Machine.Gather.field_length _ _ _) := by
   rfl
-
-/-- Exact digit extraction from every short counter, with no range assumption
-on its original integer. The address consists of the three specified fields. -/
-theorem lateAddr_digits (q b : ℕ) (X cs : List Bool) (hq : 1 ≤ q) :
-    digits (2*Li q) X.length (lateAddr q b X cs hq).2.1.val = blockValues (Vw q X cs) q X.length ∧
-    digits (Bi b) X.length (lateAddr q b X cs hq).2.2.val = blockValues (Ww q b X cs) b X.length ∧
-    digits (Bi b) X.length (lateAddr q b X cs hq).1.val = blockValues (Uw q b X cs) b X.length := by
-  rw [lateAddr_words]
-  exact lateWordsAddr_digits q b X _ _ _ hq _ _ _
 
 /-- A full late address is encoded in literal V/W/U order, even outside the
 guarded set. This is the value identity required by the repaired rank key. -/

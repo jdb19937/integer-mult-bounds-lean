@@ -41,18 +41,6 @@ def Calls (capacity : Fintype.card PC ≤ 2^k) (hw : v.width=125000*b)
         some (entryConfig capacity (successor site) (dataBank hs f p node st
           (Shared50RecursiveChildPermutation.child hw w i j data)))
 
-def entryCoefficient : ℕ :=
-  74+RecursiveRowsNode.rowConstant roleCount+RecursiveRowsNodeRoleBank.constant roleCount
-def exitCoefficient : ℕ := 128+RecursiveRowsNode.rowConstant roleCount
-
-theorem split_block (capacity : Fintype.card PC ≤ 2^k) :
-    block capacity width pcStack (implementation k) .split =
-      Shared50RecursiveBankNodes.entry (u := 0) wires wires_injective := rfl
-
-theorem merge_block (capacity : Fintype.card PC ≤ 2^k) :
-    block capacity width pcStack (implementation k) .merge =
-      Shared50RecursiveBankNodes.exit (u := 0) mergeRoute wires wires_injective := rfl
-
 /-- Shared restoration and exact decoded return, independent of the completed
 node's payload array. This keeps framed stack reduction outside node assembly. -/
 theorem restore_return (capacity : Fintype.card PC ≤ 2^k) (target : PC)

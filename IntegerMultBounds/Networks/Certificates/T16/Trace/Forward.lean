@@ -64,6 +64,4 @@ theorem forward_checked : run forwardInitial forwardEvents = some forwardFinal :
   rw [runChunks, forwardGroup23_flatten_checked, Option.bind_some]
   rw [runChunks, forwardGroup24_flatten_checked, Option.bind_some]
   rfl
-theorem forward_valid : Valid forwardInitial forwardEvents := ⟨forwardFinal, forward_checked⟩
-
 end IntegerMultBounds.Networks.Certificates.T16.Trace

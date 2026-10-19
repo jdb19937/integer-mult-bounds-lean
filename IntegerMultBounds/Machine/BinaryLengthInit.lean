@@ -79,34 +79,11 @@ def inputWord (x y : List Bool) : List (Fin 4) :=
   simp [inputWord]
   omega
 
-private theorem inputWord_nonblank (x y : List Bool) (s : Fin 4) (hs : s ∈ inputWord x y) : s ≠ blank := by
-  simp only [inputWord,List.mem_append,List.mem_map,List.mem_singleton] at hs
-  rcases hs with (⟨b,_,rfl⟩ | rfl) | ⟨b,_,rfl⟩
-  · cases b <;> decide
-  · decide
-  · cases b <;> decide
-
 theorem input_bank (x y : List Bool) :
     input program x y = (blankBank (wordTape (inputWord x y)) 0).start program := by
   unfold input Tapes.start blankBank inputWord
   congr 1
   · apply List.ofFn_injective; rfl
   · apply List.ofFn_injective; rfl
-
-/-- The standard multiplication input now bootstraps its total input-length
-descriptor from the actual blank second tape, including its separator symbol. -/
-theorem input_exact (x y : List Bool) :
-    ∃ c, run program (runtime (x.length+y.length+1)) (input program x y) = some c ∧
-      step program c = none ∧
-      c.tapes = BinaryLength.bank (wordTape (inputWord x y)) (x.length+y.length+1)
-        (GrowingCounterData.advance (x.length+y.length+1) []) := by
-  have hs : ∀ j : ℕ, j < (inputWord x y).length → wordTape (inputWord x y) (0+j) ≠ blank := by
-    intro j hj
-    simpa only [wordTape,zero_add,Int.natCast_nonneg,ite_true,Int.toNat_natCast,
-      List.getElem?_eq_getElem hj,Option.getD_some] using
-      inputWord_nonblank x y _ (List.getElem_mem hj)
-  have he : wordTape (inputWord x y) (0+(inputWord x y).length) = blank := by simp [wordTape]
-  have hh := length_exact (inputWord x y).length (wordTape (inputWord x y)) 0 hs he
-  simpa only [ExactRun,inputWord_length,zero_add,input_bank,Nat.cast_add,Nat.cast_one] using hh
 
 end IntegerMultBounds.Machine.BinaryLengthInit

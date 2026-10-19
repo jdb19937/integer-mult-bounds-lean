@@ -74,31 +74,10 @@ theorem result_iff_bad (q b n : ℕ) (V W : List Bool) (bs ns qs : List Bool)
   exact CountedGuardGadgetValue.result_iff_bad q b n V W (c1 q b) (c2 q b) (c3 b) bs ns qs
     hV hW hbq l1 l2 l3 v1 v2 v3
 
-theorem runs_decides (q b n : ℕ) (V W : List Bool) (bs ns qs : List Bool)
-    (hq : Counter.value qs=q) (cq : GrowingCounterData.Canonical qs)
-    (hvb : Counter.value bs=b) (cb : GrowingCounterData.Canonical bs)
-    (hn : Counter.value ns=n) (cn : GrowingCounterData.Canonical ns)
-    (hb : 1 ≤ b) (hbq : b+3 ≤ q) (hV : V.length=n*q) (hW : W.length=n*b) :
-    HoareTime (program (a := a)) (fun v => v=input V W bs ns qs)
-      (fun v => v=output q b n V W bs ns qs ∧
-        ((v.tape 14 0=bitSymbol true) ↔ ¬ earlyGood ((2 : ℤ)^b) ((2 : ℤ)^(q-1)) n
-          (CountedGuardGadgetValue.address q b n V W hV hW (by omega))))
-      (1000*(n+1)*(q+b+1)) := by
-  have h := runs (a := a) q b n V W bs ns qs hq cq hvb cb hn cn hb hbq hV hW
-  refine h.consequence (fun _ h => h) ?_ (cost_volume q b n)
-  rintro v rfl
-  exact ⟨rfl,result_iff_bad q b n V W bs ns qs hb hbq hV hW⟩
-
 theorem sources (q b n : ℕ) (V W : List Bool) (bs ns qs : List Bool) :
     (output (a := a) q b n V W bs ns qs).tape 0=word V ∧ (output (a := a) q b n V W bs ns qs).head 0=0 ∧
     (output (a := a) q b n V W bs ns qs).tape 1=word W ∧ (output (a := a) q b n V W bs ns qs).head 1=0 :=
   ⟨rfl,rfl,rfl,rfl⟩
-
-theorem private_clean (q b n : ℕ) (V W : List Bool) (bs ns qs : List Bool) (i : Fin 15)
-    (hi : i=2 ∨ i=3 ∨ i=4 ∨ i=5 ∨ i=6 ∨ i=7 ∨ i=8 ∨ i=10 ∨ i=11) :
-    (output (a := a) q b n V W bs ns qs).tape i=(fun _ => blank) ∧
-    (output (a := a) q b n V W bs ns qs).head i=0 := by
-  rcases hi with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl,rfl⟩
 
 theorem headers (q b n : ℕ) (V W : List Bool) (bs ns qs : List Bool) :
     (output (a := a) q b n V W bs ns qs).head 9=1 ∧

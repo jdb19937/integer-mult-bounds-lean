@@ -331,34 +331,7 @@ theorem sub_hoare (xs ys : List Bool) :
   obtain ⟨last,hr,hh,hf⟩ := sub_exact xs ys
   exact ⟨_,last,le_rfl,hr,hh,hf⟩
 
-/-- The output is width-bounded and represents exact natural subtraction. -/
-theorem sub_hoare_value (xs ys : List Bool) (hle : Counter.value ys ≤ Counter.value xs) :
-    HoareTime program
-      (fun v => v = bank xs ys (fun _ => blank) 1 1 0)
-      (fun v => ∃ diff : List Bool, Counter.value diff = Counter.value xs-Counter.value ys ∧
-        diff.length = max xs.length ys.length ∧ v = bank xs ys (binary diff) 1 1 1)
-      (4*max xs.length ys.length+14) := by
-  apply (sub_hoare xs ys).consequence (fun _ hv => hv) _ le_rfl
-  intro v hv
-  exact ⟨difference xs ys,difference_value xs ys hle,digits_length false xs ys,hv⟩
-
 theorem difference_length (xs ys : List Bool) : (difference xs ys).length = max xs.length ys.length :=
   digits_length false xs ys
-
-/-- Canonical immutable inputs bound all subtraction work linearly in the
-minuend value; the result may retain harmless high zero bits. -/
-theorem sub_hoare_linear (xs ys : List Bool) (hle : Counter.value ys ≤ Counter.value xs)
-    (cx : GrowingCounterData.Canonical xs) (cy : GrowingCounterData.Canonical ys) :
-    HoareTime program
-      (fun v => v = bank xs ys (fun _ => blank) 1 1 0)
-      (fun v => v = bank xs ys (binary (difference xs ys)) 1 1 1)
-      (4*Counter.value xs+18) := by
-  apply (sub_hoare xs ys).consequence (fun _ hv => hv) (fun _ hv => hv)
-  have hx := GrowingCounterData.canonical_width xs cx
-  have hy := GrowingCounterData.canonical_width ys cy
-  have lx := Nat.log2_le_self (Counter.value xs)
-  have ly := Nat.log2_le_self (Counter.value ys)
-  dsimp [width]
-  omega
 
 end IntegerMultBounds.Machine.BinarySubReuse

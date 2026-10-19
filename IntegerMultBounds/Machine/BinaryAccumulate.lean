@@ -249,9 +249,6 @@ theorem sumWord_length_le (xs acc : List Bool) : (sumWord xs acc).length ≤ wid
   rw [sumWord_length]
   cases overflow false (pairs xs acc) <;> simp [carryWord]
 
-theorem sumWord_length_ge (xs acc : List Bool) : width xs acc ≤ (sumWord xs acc).length := by
-  rw [sumWord_length]; omega
-
 /-- Exact execution: scan to the common width, write a final carry if any,
 halt. The addend's whole tape is preserved and its head parks on its end. -/
 theorem accumulate_exact (xs acc : List Bool) (f g : ℤ → Fin (a + 4)) (p q : ℤ)

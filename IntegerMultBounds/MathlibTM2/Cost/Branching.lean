@@ -27,18 +27,6 @@ open IntegerMultBounds.MathlibTM2.LayerMachine IntegerMultBounds.MathlibTM2.Laye
 
 /-! ### Factor count of the node program -/
 
-lemma br_factorCount_append (p q : List Instr) :
-    factorCount (p ++ q) = factorCount p + factorCount q := by
-  induction p with
-  | nil => simp [factorCount]
-  | cons i rest ih =>
-      cases i with
-      | factor w g => simp only [List.cons_append, factorCount, ih]; ring
-      | gate g => simp only [List.cons_append, factorCount, ih]
-      | trans w v => simp only [List.cons_append, factorCount, ih]
-      | xor w i j => simp only [List.cons_append, factorCount, ih]
-      | phase w i c => simp only [List.cons_append, factorCount, ih]
-
 lemma br_factorCount_ofK (l : List (Networks.Certificates.T16.Impl.KInstr NWire)) :
     factorCount (l.map ofK) = Networks.Certificates.T16.Impl.kChildren l := by
   induction l with
@@ -92,9 +80,6 @@ theorem br_factorCount_le : factorCount (program brDirs) ≤ 1041408 :=
 /-- The number of data roles. -/
 theorem br_NW_eq : NW = 14336 := NW_eq
 
-theorem br_sigma_lt_one : Parameters.sigma < 1 := by
-  norm_num [Parameters.sigma]
-
 /-- The branching ratio of the T16 node: `F / NW < m ^ (999/1000)`. -/
 theorem br_branching_999 :
     (factorCount (program brDirs) : ℝ) / NW < (m : ℝ) ^ (999 / 1000 : ℝ) := by
@@ -119,13 +104,5 @@ theorem br_logb_lt_999 :
   have hpos : (0 : ℝ) < (factorCount (program brDirs) : ℝ) / NW := by
     rw [br_factorCount_directions, br_NW_eq]; norm_num
   exact (Real.logb_lt_iff_lt_rpow (by norm_num [m]) hpos).2 br_branching_999
-
-/-- Some realizing family of directions makes `1,041,408` child calls per node, with branching
-ratio below `m ^ σ`. -/
-theorem br_exists_branching :
-    ∃ ds : Directions, ComplexPhaseBudget.Realizes ds ∧
-      factorCount (program ds) = 1041408 ∧
-      (factorCount (program ds) : ℝ) / NW < (m : ℝ) ^ Parameters.sigma :=
-  ⟨brDirs, br_directions_realizes, br_factorCount_directions, br_branching⟩
 
 end IntegerMultBounds.MathlibTM2.Cost

@@ -164,9 +164,6 @@ lemma view_smulZ (c : GaussianInt) (u : ZArr Y n) :
     view e (toC (c • u)) = GaussianInt.toComplex c • view e (toC u) := by
   funext p; simp [view, toC, map_mul]
 
-lemma view_negZ (u : ZArr Y n) : view e (toC (-u)) = -view e (toC u) := by
-  funext p; simp [view, toC]
-
 lemma view_pullM (he : Function.Injective e) (L : BinaryWalsh.Address m → BinaryWalsh.Address m)
     (u : ZArr Y n) : view e (toC (pullM e L u)) = pullArr L (view e (toC u)) := by
   funext ⟨⟨y, r⟩, a⟩
@@ -188,26 +185,7 @@ lemma view_child (he : Function.Injective e) (child : Fin m → ZArr Y n → ZAr
   rw [h1, hchild]
   rfl
 
-lemma toComplex_signZ (a : ZMod 2) : GaussianInt.toComplex (signZ a) = BinaryWalsh.sign a := by
-  unfold signZ BinaryWalsh.sign
-  split_ifs <;> simp
-
-lemma toComplex_prod_signZ (x : Fin k → ZMod 2) :
-    GaussianInt.toComplex (∏ c, signZ (x c)) = ∏ c, BinaryWalsh.sign (x c) := by
-  rw [map_prod]
-  simp only [toComplex_signZ]
-
 lemma toComplex_two : GaussianInt.toComplex 2 = 2 := map_ofNat _ 2
-
-lemma view_signM (he : Function.Injective e) (u : BinaryWalsh.Address m) (g : ZArr Y n) :
-    view e (toC (signM e u g)) = lift (fun f => signColumns k u f) (view e (toC g)) := by
-  funext ⟨⟨y, r⟩, a⟩
-  have h1 : view e (toC (signM e u g)) ((y, r), a) = GaussianInt.toComplex
-      ((∏ c : Fin k, signZ ((fun c => Labels.binary m u (colBits e c (merge e r a))) c)) *
-        g (y, merge e r a)) := rfl
-  rw [h1, map_mul, toComplex_prod_signZ]
-  simp only [lift, signColumns_apply, ofCols_toCols, colBits_merge he]
-  rfl
 
 lemma toComplex_dbl (c : ℚ) (hc : (2 * c).den = 1) : GaussianInt.toComplex (dbl c) = 2 * (c : ℂ) := by
   have h : ((2 * c).num : ℚ) = 2 * c := Rat.coe_int_num_of_den_eq_one hc
@@ -306,12 +284,6 @@ lemma runWith_two_pow_smul (l : List Instr) (s : ℕ) (X : NWire → Arr Y (m * 
   induction l generalizing X with
   | nil => rfl
   | cons i rest ih => simp only [runWith, execWith_two_pow_smul, ih]
-
-lemma lift_signColumns_smul (u : BinaryWalsh.Address m) (c : ℂ) (X : Arr Y (m * k)) :
-    lift (fun f => signColumns k u f) (c • X) = c • lift (fun f => signColumns k u f) X := by
-  funext p
-  simp only [lift, Pi.smul_apply, signColumns_apply, smul_eq_mul]
-  ring
 
 /-! #### Transport through the program -/
 

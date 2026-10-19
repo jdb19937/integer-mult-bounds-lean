@@ -169,23 +169,5 @@ theorem forward_hoare (hV : V.length = Z.length * q) (hW : W.length = Z.length *
   omega
 
 
-/-- The machine endpoint realizes the compact arithmetic value specification. -/
-theorem forward_hoare_value (hV : V.length = Z.length*q) (hW : W.length = Z.length*b)
-    (hf : f (p0-1) = blank) (hf' : f (p0+V.length) = blank)
-    (hg : g (p1-1) = blank) (hg' : g (p1+W.length) = blank) (hz : z (p2-1) = blank)
-    (hv : ∀ i, Counter.value (hs i) = CountedPackedShapeHeaders.originalValues q b Z.length i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
-    HoareTime (program a)
-      (fun v => v = bank (PackedArith.input V W Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8) hs)
-      (fun v => v = bank (PackedArith.output q b hb hbq V W Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8) hs ∧
-        ((Counter.value (v2 q b hb hbq V W Z) : ℤ), (Counter.value (w2 q b hb hbq V W Z) : ℤ)) =
-          Compact.packedEarly ((2 : ℤ)^q) ((2 : ℤ)^b) (Z.map Compact.PowerTwo.ctrl)
-            (Counter.value V) (Counter.value W))
-      (2669*((Z.length+1)*(q+b+1))) := by
-  refine (forward_hoare q b hb hbq V W Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8 hs
-    hV hW hf hf' hg hg' hz hv hc).consequence (fun _ h => h) ?_ (le_refl _)
-  intro v h
-  exact ⟨h, Compact.PowerTwo.forward_value q b hb hbq V W Z hV hW⟩
-
 end
 end IntegerMultBounds.Machine.CountedPackedArith

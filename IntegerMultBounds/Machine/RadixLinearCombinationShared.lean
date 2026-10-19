@@ -138,20 +138,6 @@ theorem compute_hoare_linear (e : Expr c) (xs old : ℕ → List (Fin q)) (b : �
   have hm := Nat.mul_le_mul_left (RadixLinearCombinationRefresh.leaves e) hh
   nlinarith
 
-/-- Literal shared controls and heads survive the entire preparation. -/
-theorem output_controls (e : Expr c) (xs : ℕ → List (Fin q)) :
-    Placement.active (Equiv.refl (Fin (c+RadixLinearCombinationBinary.TapeCount e.erase))) (output e xs) = controls xs := by
-  unfold Placement.active output
-  congr 1 <;> funext i <;> simp [Tapes.append] <;> rfl
-
-/-- The actual output slot contains the canonical binary encoding. -/
-theorem output_binary (e : Expr c) (xs : ℕ → List (Fin q)) :
-    let i := Fin.natAdd c (Fin.castAdd (RadixLinearCombination.AuxTapes e.erase) (0 : Fin 3))
-    (output e xs).head i = 1 ∧ (output e xs).tape i =
-      fun z => (RadixToBinary.binaryEncoding (q := q)).encode
-        (CountedCopyReuse.binary (RadixLinearCombinationBinary.bits e.erase xs) z) := by
-  simpa only [output,Tapes.append,Fin.addCases_right] using RadixLinearCombinationBinary.output_binary e.erase xs
-
 /-- Extend an actual finite control bank without introducing any extra physical
 source. Out-of-range mathematical indices alias an explicitly chosen bank slot. -/
 def read (seed : Fin c) (xs : Fin c → List (Fin q)) (i : ℕ) : List (Fin q) :=
@@ -167,17 +153,6 @@ theorem read_width (seed : Fin c) (xs : Fin c → List (Fin q)) (b : ℕ)
   intro i
   unfold read
   split <;> exact hw _
-
-/-- Preparation whose data parameters are only the finitely many physical
-controls and old leaf sources, with no condition on an infinite input family. -/
-theorem compute_finite_hoare (e : Expr c) (seed : Fin c) (xs old : Fin c → List (Fin q)) (b : ℕ)
-    (hw : ∀ i, (xs i).length = b) (ho : ∀ i, (old i).length ≤ b) :
-    HoareTime (program e) (fun v => v = input e (read seed xs) (read seed old))
-      (fun v => v = output e (read seed xs))
-      ((13*RadixLinearCombinationRefresh.leaves e+RadixLinearCombination.linearConstant e.erase+40)*q^b) := by
-  apply compute_hoare_linear e _ _ b (read_width seed xs b hw)
-  intro i
-  simpa using ho i
 
 /-- The computed canonical bits denote the actual rational expression modulo
 q to the common word width. Denominator validity is the explicit side condition. -/

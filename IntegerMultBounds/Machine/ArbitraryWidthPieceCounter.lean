@@ -72,17 +72,6 @@ theorem extract_canonical (B : ℕ) (hB : 2 ≤ B) (ys : List Bool) :
 def constant (B : ℕ) := RecursiveChildQuotientsConstant.cost B+2*(bits B).length+6+
   BinaryDescriptorDivMod.linearConstant (bits B)
 
-theorem extract_linear (B : ℕ) (hB : 2 ≤ B) (ys : List Bool) (hy : GrowingCounterData.Canonical ys) :
-    HoareTime (extract (a := a) B) (fun v => v = input ys)
-      (fun v => v = emitted ys (bits (Counter.value ys/B)) (bits (Counter.value ys%B)))
-      (constant B*(Counter.value ys+1)) := by
-  apply (extract_canonical (a := a) B hB ys).consequence (fun _ h => h) (fun _ h => h)
-  have hd := BinaryDescriptorDivMod.cost_linear ys (bits B) hy
-  have hm := Nat.mul_le_mul_left (RecursiveChildQuotientsConstant.cost B+2*(bits B).length+6)
-    (show 1 ≤ Counter.value ys+1 by omega)
-  unfold extractCost constant
-  nlinarith
-
 def ready (zs rs : List Bool) : Tapes 14 a :=
   setTape (input zs) (6 : Fin 14) (BinaryDescriptorStack.descriptor rs) 1
 

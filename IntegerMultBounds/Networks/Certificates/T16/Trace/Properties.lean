@@ -48,32 +48,6 @@ theorem Labels.get_put_other (labels : Labels) (i j f : ℕ) (h : i ≠ j) :
     · simp [Labels.put, Labels.get, hi, hj]
     · simpa [Labels.put, Labels.get, hi, hj] using iho (i / 2) (j / 2) (by omega)
 
-/-- An accepted scalar addition uses one common frame on both touched wires. -/
-theorem add_touched_frames {s t : State} {target source : ℕ} {n d : ℤ} {f : ℕ}
-    (h : scalarStep s (.add target source n d f) = some t) :
-    s.label target = f ∧ s.label source = f := by
-  simp only [scalarStep] at h
-  split at h <;> simp_all
-
-/-- An accepted scalar scaling uses the declared frame on its touched wire. -/
-theorem scale_touched_frame {s t : State} {target : ℕ} {n d : ℤ} {f : ℕ}
-    (h : scalarStep s (.scale target n d f) = some t) : s.label target = f := by
-  simp only [scalarStep] at h
-  split at h <;> simp_all
-
-/-- Copy overwrites private scratch, while requiring the source's declared frame. -/
-theorem copy_source_frame {s t : State} {target source f : ℕ}
-    (h : scalarStep s (.copy target source f) = some t) : s.label source = f := by
-  simp only [scalarStep] at h
-  split at h <;> simp_all
-
-/-- Successful full traces admit a state at every event boundary. -/
-theorem valid_cons {s : State} {e : Event} {es : List Event} :
-    Valid s (e :: es) ↔ ∃ t, step s e = some t ∧ Valid t es := by
-  unfold Valid
-  simp only [run]
-  cases h : step s e <;> simp
-
 /-- A bounded register check split into shallow blocks for kernel reduction. -/
 def checkRegisters (bound : ℕ) (p : ℕ → Bool) : Bool :=
   (List.range ((bound + 31) / 32)).all fun block =>

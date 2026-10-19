@@ -75,14 +75,6 @@ theorem test_true_iff (caller : Tapes t prime) (headers : Fin 6 → Fin t) (bs :
   simp only [decide_eq_true_eq]
   exact canonical_zero_iff bs hc
 
-theorem test_false_iff (caller : Tapes t prime) (headers : Fin 6 → Fin t) (bs : List Bool)
-    (hc : GrowingCounterData.Canonical bs)
-    (ht : caller.tape (headers 3) = RadixZeroFill.encodedBinary bs)
-    (hh : caller.head (headers 3) = 1) :
-    test headers (input caller).reads = false ↔ 0 < Counter.value bs := by
-  simp only [Bool.eq_false_iff,ne_eq,test_true_iff caller headers bs hc ht hh]
-  omega
-
 theorem zero_hoare (caller : Tapes t prime) (headers : Fin 6 → Fin t) (source : Fin t)
     (d : Descriptor) (hs : Fin 6 → List Bool) (hp : d.Positive) (hw : d.width = 0)
     (hv : RecursiveDimensionBank.Headers d hs)

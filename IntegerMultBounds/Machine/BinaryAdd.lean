@@ -236,26 +236,4 @@ theorem add_hoare (xs ys : List Bool) (hlen : xs.length = ys.length)
     result_length_le false xs ys hlen, rfl⟩
   simpa only [bitValue, Bool.false_eq_true, ↓reduceIte, Nat.add_zero] using result_value false xs ys hlen
 
-/-- Blank output initialization produces a globally blank-tail word, with both
-entire input tapes preserved. This is an executable addition, not a cost oracle. -/
-theorem add_to_blank (xs ys : List Bool) (hlen : xs.length = ys.length) :
-    let sum := result false (xs.zip ys)
-    Counter.value sum = Counter.value xs + Counter.value ys ∧ sum.length ≤ xs.length + 1 ∧
-    run (program a) sum.length (cfg (wordTape (xs.map bitSymbol)) (wordTape (ys.map bitSymbol))
-      (fun _ => blank) 0 0 0 0) =
-      some (cfg (wordTape (xs.map bitSymbol)) (wordTape (ys.map bitSymbol)) (wordTape (sum.map bitSymbol))
-        xs.length ys.length sum.length (finalState (overflow false (xs.zip ys)))) ∧
-    step (program a) (cfg (wordTape (xs.map bitSymbol)) (wordTape (ys.map bitSymbol)) (wordTape (sum.map bitSymbol))
-      xs.length ys.length sum.length (finalState (overflow false (xs.zip ys)))) = none := by
-  have hw (bits : List Bool) : putWord (fun _ => (blank : Fin (a + 4))) 0 (bits.map bitSymbol) =
-      wordTape (bits.map bitSymbol) := by
-    funext j
-    simpa using putWord_blank 0 j (bits.map bitSymbol)
-  obtain ⟨hr, hh⟩ := add_exact false xs ys hlen (fun _ => (blank : Fin (a + 4)))
-    (fun _ => blank) (fun _ => blank) 0 0 0 rfl rfl
-  refine ⟨?_, result_length_le false xs ys hlen, ?_, ?_⟩
-  · simpa only [bitValue, Bool.false_eq_true, ↓reduceIte, Nat.add_zero] using result_value false xs ys hlen
-  · simpa only [hw, zero_add, carryState, Bool.false_eq_true, ↓reduceIte] using hr
-  · simpa only [hw, zero_add] using hh
-
 end IntegerMultBounds.Machine.BinaryAdd

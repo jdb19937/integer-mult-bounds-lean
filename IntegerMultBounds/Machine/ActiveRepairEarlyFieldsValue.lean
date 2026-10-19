@@ -59,16 +59,5 @@ theorem flag_rank (q b : ℕ) (hb : 1≤b) (hbq : b+3≤q) (V W Z : List Bool)
   rw [hv,hw] at h
   exact h
 
-theorem destination_bits (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z : List Bool)
-    (hV : V.length=Z.length*q) (hW : W.length=Z.length*b) :
-    CountedIdealToggle.word q (PackedInverse.v q b hb hbq V W Z) Z ++ PackedInverse.w q b hb hbq V W Z=
-      rankKey (rankEquiv q b Z) (Sperm q b Z) (Tperm q b Z)
-        (Z.length*q+Z.length*b) (Counter.value (V++W)) := by
-  have h := CountedRepairKeyValue.bits_rank q b hb hbq Z (V++W) _
-    (local_bound q b (by omega) V W Z hV hW) rfl
-  obtain ⟨hv,hw⟩ := original_fields q b V W Z hV hW
-  rw [hv,hw] at h
-  exact h
-
 end
 end IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue

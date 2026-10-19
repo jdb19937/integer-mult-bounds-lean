@@ -232,9 +232,6 @@ theorem u_gap_carved (s : Shape) (w m before after : ℕ) (hw : w≤s.H)
     CompactGadgetReservationHeadersCarvedData.gapBits
   rw [←pow_add,←pow_add,←pow_add,←pow_add,←pow_add,←pow_add,he]
 
-theorem compact_suffix_carved (s : Shape) (w : ℕ) :
-    compactSuffix s w=CompactGadgetReservationHeadersCarvedData.suffix s w := rfl
-
 def backPrefix (s : Shape) (w m before after rows : ℕ) :=
   (targetPrefix s w before rows*2^m)*2^after
 

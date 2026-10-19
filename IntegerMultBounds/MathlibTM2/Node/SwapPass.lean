@@ -153,11 +153,6 @@ def swapDims (a b : Fin 3) : ℕ × ℕ × ℕ :=
   else if a ≠ 0 ∧ b ≠ 0 then (N₀ * 2 ^ L * N₁, N₂, N₃)
   else (N₀, N₁ * 2 ^ L * N₂, N₃)
 
-lemma swapDims_comm (a b : Fin 3) :
-    swapDims N₀ N₁ N₂ N₃ L a b = swapDims N₀ N₁ N₂ N₃ L b a := by
-  unfold swapDims
-  simp only [and_comm]
-
 /-- The interchange layout has `R` cells per record. -/
 lemma swapDims_vol (a b : Fin 3) (hab : a ≠ b) (R : ℕ) :
     (swapDims N₀ N₁ N₂ N₃ L a b).1 * 2 ^ L * (swapDims N₀ N₁ N₂ N₃ L a b).2.1 * 2 ^ L *

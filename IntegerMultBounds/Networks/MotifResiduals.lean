@@ -47,15 +47,6 @@ section Tensor
 variable {K E F : Type*} [Field K] [AddCommGroup E] [Module K E]
     [AddCommGroup F] [Module K F] [FiniteDimensional K E] [FiniteDimensional K F]
 
-theorem residual_tensor_left (B : LinearMap.BilinForm K E) (C : LinearMap.BilinForm K F)
-    (hs : B.IsSymm) (U V : Submodule K E) (L : Submodule K F)
-    (hu : (B.restrict U).Nondegenerate) (hl : (C.restrict L).Nondegenerate) (huv : U ≤ V) :
-    ProjectionRank.residual (form B C) (space U L) (space V L) =
-      space (ProjectionRank.residual B U V) L := by
-  apply residual_of_split _ _ _ _ (nondegenerate B C U L hu hl)
-  · exact orthogonal_left B C L L inf_le_right
-  · rw [← sup_left, ProjectionRank.residual_sup B hs U V hu huv]
-
 theorem residual_tensor_right (B : LinearMap.BilinForm K E) (C : LinearMap.BilinForm K F)
     (hs : C.IsSymm) (L : Submodule K E) (U V : Submodule K F)
     (hl : (B.restrict L).Nondegenerate) (hu : (C.restrict U).Nondegenerate) (huv : U ≤ V) :
@@ -186,27 +177,6 @@ theorem side_middle_out (tX tY : F) (htX : g.current tX tX ≠ 0)
 section Future
 variable {H : Type*} [AddCommGroup H] [Module K H] [FiniteDimensional K H]
 
-/-- Every comparable table residual tensors with the same future line. -/
-theorem lift_residual (D : LinearMap.BilinForm K H) (q : H) (hq : D q q ≠ 0)
-    (U V : Submodule K (E ⊗[K] F)) (hu : (g.pairing.restrict U).Nondegenerate)
-    (huv : U ≤ V) :
-    ProjectionRank.residual (g.liftedPairing D)
-      (MotifLabels.Geometry.liftLabel q U) (MotifLabels.Geometry.liftLabel q V) =
-      MotifLabels.Geometry.liftLabel q (ProjectionRank.residual g.pairing U V) :=
-  residual_tensor_left _ _ g.pairing_symm _ _ _ hu
-    (Labels.line_nondegenerate D q hq) huv
-
-/-- The scratch sink exposes exactly the future-line complement. -/
-theorem scratch_sink_residual (D : LinearMap.BilinForm K H) (hs : D.IsSymm)
-    (q : H) (hq : D q q ≠ 0) :
-    ProjectionRank.residual (g.liftedPairing D)
-      (MotifLabels.Geometry.liftLabel q g.full) ⊤ =
-      space (⊤ : Submodule K (E ⊗[K] F)) (D.orthogonal (K ∙ q)) := by
-  change ProjectionRank.residual (form g.pairing D) (space g.full (K ∙ q)) ⊤ = _
-  rw [g.full_eq_top, ← top_top (K := K) (E := E ⊗[K] F) (F := H),
-    residual_tensor_right _ _ hs _ _ _ (top_nondegenerate _ g.pairing_nondegenerate)
-      (Labels.line_nondegenerate D q hq) le_top]
-  simp [ProjectionRank.residual]
 end Future
 end Geometry
 end IntegerMultBounds.Networks.MotifResiduals

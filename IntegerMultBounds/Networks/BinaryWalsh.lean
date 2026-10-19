@@ -161,11 +161,6 @@ theorem walsh_character {h : ℕ} (v : Address h) (f : Arrays h) :
   change (∑ y, chi x y * (chi v y * f y)) = ∑ y, chi (x + v) y * f y
   simp only [chi_add_left, mul_assoc]
 
-/-- Exact conjugation, including the inverse normalization. -/
-theorem character_conjugation {h : ℕ} (v : Address h) (f : Arrays h) :
-    walsh h (characterMultiply v ((walshEquiv h).symm f)) = translation v f := by
-  rw [walsh_character, walsh_inverse]
-
 /-- The genuine translation kernel corresponding to one binary direction. -/
 noncomputable def kernel {h : ℕ} (q : ZMod 4) (v : Address h) : Arrays h →ₗ[ℂ] Arrays h :=
   ((1 + phase q) / 2) • LinearMap.id + ((1 - phase q) / 2) • translation v
@@ -196,12 +191,6 @@ theorem kernel_forward {h : ℕ} (v : Address h) (f : Arrays h) (x : Address h) 
 theorem phase_neg_one : phase (-1) = -Complex.I := by
   change Complex.I ^ 3 = -Complex.I
   norm_num [pow_succ, Complex.I_mul_I]
-
-/-- The inverse-phase kernel exchanges the two manuscript coefficients. -/
-theorem kernel_backward {h : ℕ} (v : Address h) (f : Arrays h) (x : Address h) :
-    kernel (-1) v f x = ((1 - Complex.I) / 2) * f x + ((1 + Complex.I) / 2) * f (x + v) := by
-  rw [kernel_apply, phase_neg_one]
-  ring
 
 /-- A complete phase frame, conjugated by the finite Walsh equivalence. -/
 noncomputable def frame {h : ℕ} (q : Address h → ZMod 4) : Arrays h ≃ₗ[ℂ] Arrays h :=
@@ -277,33 +266,6 @@ noncomputable def edgeKernels {h d : ℕ} {W : Submodule (ZMod 2) (Address h)} (
 @[simp] theorem edgeKernels_length {h d : ℕ} {W : Submodule (ZMod 2) (Address h)}
     (b : Basis (Fin d) (ZMod 2) W) : (edgeKernels b).length = d := List.length_ofFn
 
-theorem edgeKernels_signs {h d : ℕ} {W : Submodule (ZMod 2) (Address h)}
-    (b : Basis (Fin d) (ZMod 2) W)
-    (hgram : ∀ i j, Labels.binary h (b i) (b j) = if i = j then 1 else 0) :
-    ∀ g ∈ edgeKernels b, g.1 = 1 ∨ g.1 = -1 := by
-  intro g hg
-  obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hg
-  exact unit_weightPhase _ (by simpa using hgram i i)
-
-/-- The entire phase-frame edge is a literal sequence of exactly `d` translation
-kernels with the manuscript's forward/inverse coefficients. -/
-theorem edge_kernel_product {h d : ℕ} (hs : (Labels.binary h).IsSymm)
-    (U V : Submodule (ZMod 2) (Address h))
-    (hu : ((Labels.binary h).restrict U).Nondegenerate)
-    (hv : ((Labels.binary h).restrict V).Nondegenerate) (hUV : U ≤ V)
-    (b : Basis (Fin d) (ZMod 2) (ProjectionRank.residual (Labels.binary h) U V))
-    (hgram : ∀ i j, Labels.binary h (b i) (b j) = if i = j then 1 else 0) (f : Arrays h) :
-    frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs V hv x))
-      ((frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs U hu x))).symm f) =
-      kernelRun (edgeKernels b) f := by
-  rw [frame_edge, kernelRun_eq_frame]
-  congr 1
-  apply congrArg frame
-  funext x
-  simp only [Pi.sub_apply, edgeKernels, listPhase_ofFn]
-  rw [weightPhase_difference hs U V hu hv hUV]
-  exact weightPhase_project hs _ _ b hgram x
-
 /-- Negating the phase gives the actual inverse translation kernel. -/
 theorem kernel_inverse {h : ℕ} (q : ZMod 4) (v : Address h) (f : Arrays h) :
     kernel (-q) v (kernel q v f) = f := by
@@ -314,64 +276,5 @@ theorem kernel_inverse {h : ℕ} (q : ZMod 4) (v : Address h) (f : Arrays h) :
     simp [listPhase, neg_mul]
   rw [hz]
   exact frame_zero f
-
-/-- The decreasing-edge list reverses every phase sign. Its scalar kernels
-commute because their common diagonalization is proved above. -/
-def negateKernels {h : ℕ} (gs : List (ZMod 4 × Address h)) : List (ZMod 4 × Address h) :=
-  gs.map fun p => (-p.1, p.2)
-
-theorem listPhase_negate {h : ℕ} (gs : List (ZMod 4 × Address h)) :
-    listPhase (negateKernels gs) = -listPhase gs := by
-  induction gs with
-  | nil => simp [negateKernels, listPhase]
-  | cons p gs ih =>
-    rcases p with ⟨q, v⟩
-    funext x
-    simp only [negateKernels, List.map_cons, listPhase, Pi.add_apply, Pi.neg_apply] at *
-    rw [congrFun ih x]
-    simp only [Pi.neg_apply]
-    ring
-
-theorem edge_kernel_product_reverse {h d : ℕ} (hs : (Labels.binary h).IsSymm)
-    (U V : Submodule (ZMod 2) (Address h))
-    (hu : ((Labels.binary h).restrict U).Nondegenerate)
-    (hv : ((Labels.binary h).restrict V).Nondegenerate) (hUV : U ≤ V)
-    (b : Basis (Fin d) (ZMod 2) (ProjectionRank.residual (Labels.binary h) U V))
-    (hgram : ∀ i j, Labels.binary h (b i) (b j) = if i = j then 1 else 0) (f : Arrays h) :
-    frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs U hu x))
-      ((frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs V hv x))).symm f) =
-      kernelRun (negateKernels (edgeKernels b)) f := by
-  rw [frame_edge, kernelRun_eq_frame, listPhase_negate]
-  congr 1
-  apply congrArg frame
-  funext x
-  simp only [Pi.sub_apply, Pi.neg_apply, edgeKernels, listPhase_ofFn]
-  rw [← weightPhase_project hs _ (ProjectionRank.residual_nondegenerate (Labels.binary h) hs U V hu hv hUV) b hgram x,
-    ← weightPhase_difference hs U V hu hv hUV]
-  abel
-
-/-- A complete scalar edge realization: its literal number of forward/inverse
-translation factors is exactly the residual dimension difference. Nonzero
-residuals must supply their actual norm-one witness. -/
-theorem exists_edge_kernels {h : ℕ} (hs : (Labels.binary h).IsSymm)
-    (U V : Submodule (ZMod 2) (Address h))
-    (hu : ((Labels.binary h).restrict U).Nondegenerate)
-    (hv : ((Labels.binary h).restrict V).Nondegenerate) (hUV : U ≤ V)
-    (hunit : ProjectionRank.residual (Labels.binary h) U V = ⊥ ∨
-      ∃ v : ProjectionRank.residual (Labels.binary h) U V, Labels.binary h v v = 1) :
-    ∃ gs : List (ZMod 4 × Address h),
-      gs.length = finrank (ZMod 2) V - finrank (ZMod 2) U ∧
-      (∀ g ∈ gs, g.1 = 1 ∨ g.1 = -1) ∧
-      (∀ f, frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs V hv x))
-        ((frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs U hu x))).symm f) =
-          kernelRun gs f) ∧
-      (∀ f, frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs U hu x))
-        ((frame (fun x => weightPhase (ProjectionRank.project (Labels.binary h) hs V hv x))).symm f) =
-          kernelRun (negateKernels gs) f) := by
-  obtain ⟨b, hgram, _, hd⟩ := exists_difference_decomposition (Labels.binary h) hs U V hu hv hUV hunit
-  refine ⟨edgeKernels b, ?_, edgeKernels_signs b hgram,
-    edge_kernel_product hs U V hu hv hUV b hgram,
-    edge_kernel_product_reverse hs U V hu hv hUV b hgram⟩
-  rw [edgeKernels_length, hd]
 
 end IntegerMultBounds.Networks.BinaryWalsh

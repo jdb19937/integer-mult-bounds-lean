@@ -72,22 +72,6 @@ def network (wires : List ι) (input output : ι → L) (vs : List (Vertex ι L 
   compile frameOf input vs ++ FramedCircuit.edges (profile frameOf (finalLabels input vs))
     (profile frameOf output) wires
 
-/-- Full grouped common-frame identity on every wire and address, including
-scratch/spectators; the input inverse is interpretation, not preprocessing. -/
-theorem network_identity (wires : List ι) (hall : ∀ i, i ∈ wires)
-    (input output : ι → L) (vs : List (Vertex ι L R)) (stored : ι → Ω → R) :
-    FramedCircuit.run (network frameOf wires input output vs) stored =
-      FramedCircuit.encode (profile frameOf output)
-        (fun i ω => runGroups (vs.map Vertex.group)
-          (fun j => (frameOf (input j)).symm (stored j) ω) i) := by
-  have hfinal : FramedCircuit.afterEdges (profile frameOf (finalLabels input vs))
-      (profile frameOf output) wires = profile frameOf output := by
-    funext i
-    simp [FramedCircuit.afterEdges_apply, hall i]
-  conv_lhs => rw [← FramedCircuit.encode_decode (profile frameOf input) stored]
-  rw [network, FramedCircuit.run_append, compile_invariant, FramedCircuit.edges_invariant, hfinal]
-  rfl
-
 /-- This is the exact label-update history of the compiler, including sinks. -/
 def networkUpdates (wires : List ι) (output : ι → L) (vs : List (Vertex ι L R)) : List (ι × L) :=
   updates vs ++ wires.map fun i => (i, output i)

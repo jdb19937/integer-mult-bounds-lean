@@ -84,13 +84,6 @@ theorem bl_ax {n : ℕ} (hℓ : 1 ≤ ℓ n) :
   split_ifs <;> simp [Nat.log_pow]
   omega
 
-/-- The bit characterization in the form of the assembly. -/
-theorem blE_spec : ∀ᶠ n in atTop, blE n < 2 ^ (d n - 1) ∧
-    ∀ i < d n - 1, ax (List.ofFn (cvAx (t n))) i = ℓ n - 1 + blE n / 2 ^ i % 2 := by
-  filter_upwards [eventually_big] with n hbig
-  have hℓ : 1 ≤ ℓ n := by have := hbig.K_succ_le_ℓ; omega
-  exact ⟨blE_lt n, fun i hi => bl_ax hℓ i (by simpa using hi)⟩
-
 /-! ### The parameters of the layout programs -/
 
 section Params
@@ -201,22 +194,6 @@ theorem blLay_exists (hw : ∀ᶠ n in atTop, 1 ≤ w n)
 end Params
 
 /-! ### At the coefficient width `dsW` -/
-
-/-- The coefficient width `dsW` of `Fast/DistWidth` is positive. -/
-theorem bl_dsW_pos : ∀ᶠ n in atTop, 1 ≤ dsW n :=
-  Eventually.of_forall fun n => by unfold dsW; omega
-
-/-- The layout bundle at the coefficient width `dsW`. -/
-def blLayDs (v₀ : ℕ → SynW → List (Fin (prime + mnKa + 4)))
-    (hv : ∀ᶠ n in atTop,
-      SynV (v₀ n) (List.ofFn (cvAx (t n))) (ℓ n) (K n) (dsW n) (ℓ n) 0
-          (layPerm (List.ofFn (cvAx (t n))) (ℓ n) (K n)) ∧
-        v₀ n (.p .h) = [] ∧ v₀ n (.p .t) = [] ∧ (v₀ n (.p .c)).length = nRounds (cvAx (t n)) ∧
-        blank ∉ v₀ n (.p .c))
-    (hc : ∃ C : ℝ, ∀ᶠ n in atTop,
-      ((mnCF n (dsW n) (blCL dsW v₀ n) (v₀ n) + mnCO n (dsW n) (blCL' dsW v₀ n) (v₀ n) : ℕ) :
-        ℝ) ≤ C * IntegerMultBounds.MathlibTM2.Cost.totConv n) : MnLay dsW :=
-  blLay dsW v₀ bl_dsW_pos hv hc
 
 end
 

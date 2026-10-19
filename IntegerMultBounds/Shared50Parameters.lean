@@ -41,15 +41,9 @@ theorem counts :
 theorem dimension_count : Nat.choose 50 3 = 19600 := counts.1
 theorem arity_count : (50 : ℕ) ^ 3 = 125000 := counts.2.1
 theorem source_count : N = 7529536000000 := counts.2.2.1
-theorem side_role_count : R = 509194 := rfl
 theorem wire_count : W = 406321422080000 := counts.2.2.2.2.1
 theorem loss_count : L = 2881200000000 := counts.2.2.2.2.2.1
-theorem deficit_count : D = 1767136000000 := counts.2.2.2.2.2.2.1
 theorem rank_count : s = 50790175992864000000 := counts.2.2.2.2.2.2.2
-
-theorem wire_formula : W = 2 * N + 2 * v ^ 2 * (R + 50) := rfl
-theorem deficit_balance : D + 2 * L = N := by
-  rw [deficit_count, loss_count, source_count]
 
 theorem rank_formula : s = W * m - N + 2 * L := by
   rw [rank_count, wire_count, source_count, loss_count]
@@ -59,22 +53,7 @@ theorem rank_balance : s + N = W * m + 2 * L := by
   rw [rank_count, wire_count, source_count, loss_count]
   norm_num [m]
 
-theorem positive_deficit : 0 < D ∧ 2 * L < N := by
-  rw [deficit_count, loss_count, source_count]
-  norm_num
-
-theorem rank_range : 2 ≤ s ∧ s < m ^ 5 := by
-  rw [rank_count]
-  norm_num [m]
-
 noncomputable section
-
-/-- The exact normalized deficit and its strict slack over the selected saving. -/
-theorem deficit_fraction :
-    (D : ℝ) / (W * m) = 23 / 661055000 ∧
-      1 - (s : ℝ) / (W * m) = 23 / 661055000 := by
-  rw [deficit_count, wire_count, rank_count]
-  norm_num [m]
 
 theorem deficit_slack :
     (23 / 661055000 : ℝ) - (1 - Parameters.tau) * (11737 / 1000) =

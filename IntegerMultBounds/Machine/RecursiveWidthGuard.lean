@@ -136,10 +136,4 @@ theorem canonical_exact (width : Fin t) (v : Tapes t a) (bs : List Bool)
     split_ifs <;> simp_all [base,recurse]
   exact ⟨cost width v,cost_le width v,he ▸ run_exact width v,he ▸ result_halt width v⟩
 
-theorem guard_hoare (width : Fin t) (v : Tapes t a) :
-    HoareTime (program width) (fun w => w = v) (fun w => w = v) 2 := by
-  intro w hw
-  subst w
-  exact ⟨cost width v,cfg v (result width v),cost_le width v,run_exact width v,result_halt width v,rfl⟩
-
 end IntegerMultBounds.Machine.RecursiveWidthGuard

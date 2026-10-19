@@ -201,16 +201,6 @@ lemma rsaChunkMap_chunk (Q n : ℕ) (f : List α → List α) (hf : ∀ x, (f x)
   rw [List.flatMap_def, rsa_drop_take_flatten _ (by simp [hf]) c (by simp [rsaChunks, hc])]
   simp [rsaChunks, hc]
 
-/-- Two chunkwise maps compose. -/
-lemma rsaChunkMap_comp (Q n : ℕ) (f f' : List α → List α) (hf' : ∀ x, (f' x).length = Q)
-    (l : List α) :
-    rsaChunkMap Q n f (rsaChunkMap Q n f' l) = rsaChunkMap Q n (f ∘ f') l := by
-  conv_lhs => rw [rsaChunkMap_eq]
-  conv_rhs => rw [rsaChunkMap_eq]
-  refine List.flatMap_congr fun c hc => ?_
-  rw [rsaChunkMap_chunk Q n f' hf' l (List.mem_range.1 hc)]
-  rfl
-
 end ChunkLemmas
 
 /-- Block `p` of chunk `c`. -/

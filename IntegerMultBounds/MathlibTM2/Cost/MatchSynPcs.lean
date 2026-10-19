@@ -123,16 +123,6 @@ theorem mrP_eps_logb_le :
   exact add_nonneg zero_le_one
     (div_nonneg zero_le_one (mul_nonneg mrP_eps_pos.le (Real.log_nonneg hm.le)))
 
-/-- `1 + log_m d ≤ C d^{λ'}`. -/
-theorem mrP_one_add_logb_le :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ dd : ℝ, 1 ≤ dd → 1 + Real.logb m dd ≤ C * dd ^ totLam' := by
-  have hm : (1 : ℝ) < m := by exact_mod_cast one_lt_m
-  have hl : 0 < totLam' := by norm_num [totLam']
-  refine ⟨1 + 1 / (totLam' * Real.log m), ?_, fun dd hdd =>
-    IntegerMultBounds.MathlibTM2.Layer.Recurrence.one_add_logb_le hm hdd hl⟩
-  exact add_nonneg zero_le_one
-    (div_nonneg zero_le_one (mul_nonneg hl.le (Real.log_nonneg hm.le)))
-
 /-- `log_m (F / NW) < λ` for the fixed directions (`br_branching`). -/
 theorem mrP_logb_branching :
     Real.logb m ((factorCount (program Cost.brDirs) : ℝ) / NW) < totLam := by

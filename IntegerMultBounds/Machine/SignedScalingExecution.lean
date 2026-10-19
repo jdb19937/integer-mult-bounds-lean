@@ -99,9 +99,6 @@ def numeratorPayload {a : ℕ} (ha : 0 < a) (Q : ℕ) (payload : ℕ → List (F
     (z : ℕ) : List (Fin 4) :=
   payload (ScalingPieces.restore Q a z (ScalingControl.select ha Q z).val)
 
-theorem numerator_input {a : ℕ} (ha : 0 < a) (Q : ℕ) (payload : ℕ → List (Fin 4)) :
-    ScalingScatter.inputWord Q (numeratorPayload ha Q payload) = ScalingMerge.outputPrefix ha Q Q payload := rfl
-
 
 /-- Hoare placement with one physically shared tape and an idle original slot. -/
 theorem shared_hoare {l r states : ℕ} {M : Program r states 0} {w w' : Tapes r 0} {cost : ℕ}
@@ -412,23 +409,9 @@ theorem unsigned_output_tape {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (A : Controls
   exact ScalingInverseExecution.output_tape hd Q B middle r D.background D.origins dest q D.descriptors
     D.blockBits D.countBits D.modulus D.current (numeratorPayload ha Q payload)
 
-/-- The entire shared intermediate background and original head are restored. -/
-theorem unsigned_output_middle {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (A : Controls a) (D : Controls d)
-    (Q B : ℕ) (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) :
-    let v := unsignedOutput ha hd A D Q B source p middle r dest q payload
-    let slot := Fin.castAdd 5 (intermediateSlot a d)
-    v.tape slot = middle ∧ v.head slot = r := by
-  simp [unsignedOutput,intermediateSlot,Tapes.append,setTape]
-
 theorem tapeCount_eq (a d : ℕ) : TapeCount a d = 25+4*(a+d) := by
   dsimp only [TapeCount]
   rw [ScalingExecution.tapeCount_eq,ScalingExecution.tapeCount_eq]
-  omega
-
-theorem unsigned_stateCount_eq (a d : ℕ) : ForwardStates a+32+InverseStates d+98 = 98*(a+d)+213 := by
-  dsimp only [ForwardStates,InverseStates]
-  rw [ScalingExecutionReuse.stateCount_eq,ScalingInverseExecution.stateCount_eq]
   omega
 
 end IntegerMultBounds.Machine.SignedScalingExecution

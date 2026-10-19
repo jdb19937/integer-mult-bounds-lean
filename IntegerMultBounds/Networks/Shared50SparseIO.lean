@@ -96,10 +96,6 @@ def read (e : Fin n ≃ Triple 50) : Program (DirtyLinearCircuit.Register n 5091
 @[simp] theorem load_length (e : Fin n ≃ Triple 50) : (load e).length = SharedPointExecution.code.sources.length := by
   simp [load, sourceEntries]
 
-/-- Sparse loading never writes the same physical source destination twice. -/
-theorem source_targets_nodup (e : Fin n ≃ Triple 50) : ((sourceEntries e).map Prod.fst).Nodup := by
-  simpa only [sourceEntries, List.map_map, Function.comp_def] using source_roles_nodup
-
 theorem load_length_bound (e : Fin n ≃ Triple 50) : (load e).length ≤ 509194 := by
   have hh := source_roles_nodup.length_le_card
   simpa only [List.length_map, List.length_attach, Fintype.card_fin, load_length] using hh
@@ -168,78 +164,6 @@ theorem read_run (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2) (S : Fin 509
       mv (Shared50Dirty.readoutMatrix e) S := funext (read_sum e S)
   rw [he] at hh
   exact hh
-
-/-- Exact sparse loading incidences: only a certified source role is written,
-and its sole coefficient-one source is the matching semantic data input. -/
-theorem load_incidence (e : Fin n ≃ Triple 50)
-    (gate : Gate (DirtyLinearCircuit.Register n 509194) (ZMod 2)) :
-    gate ∈ load e ↔ ∃ entry : Source,
-      gate.target = DirtyLinearCircuit.scratch (sourceRole entry) ∧
-      gate.terms = [(DirtyLinearCircuit.x (e.symm (sourceLabel entry)), 1)] := by
-  rw [load, SparseCircuit.mem_copies]
-  constructor
-  · rintro ⟨p, hp, ht, hs⟩
-    obtain ⟨entry, _, rfl⟩ := List.mem_map.mp hp
-    exact ⟨entry, ht, hs⟩
-  · rintro ⟨entry, ht, hs⟩
-    exact ⟨(sourceRole entry, e.symm (sourceLabel entry)),
-      List.mem_map.mpr ⟨entry, List.mem_attach _ _, rfl⟩, ht, hs⟩
-
-/-- Exact readout incidences: each target's three partial output registers
-are the sole sources of its three XOR updates. -/
-theorem read_incidence (e : Fin n ≃ Triple 50)
-    (gate : Gate (DirtyLinearCircuit.Register n 509194) (ZMod 2)) :
-    gate ∈ read e ↔ ∃ i : Fin n, ∃ c : {c : Fin 50 // c ∈ (e i).val},
-      gate.target = DirtyLinearCircuit.y i ∧
-      gate.terms = [(DirtyLinearCircuit.scratch (Shared50Dirty.partialRole (e i) c), 1)] := by
-  rw [read, SparseCircuit.mem_copies]
-  constructor
-  · rintro ⟨p, hp, ht, hs⟩
-    obtain ⟨i, _, hi⟩ := List.mem_flatMap.mp hp
-    obtain ⟨c, _, rfl⟩ := List.mem_map.mp hi
-    exact ⟨i,c,ht,hs⟩
-  · rintro ⟨i,c,ht,hs⟩
-    refine ⟨(i, Shared50Dirty.partialRole (e i) c), ?_, ht, hs⟩
-    apply List.mem_flatMap.mpr
-    refine ⟨i, List.mem_ofFn.mpr ⟨i,rfl⟩, ?_⟩
-    exact List.mem_map.mpr ⟨c, (Finset.mem_sort _).mpr (Finset.mem_univ _), rfl⟩
-
-/-- Registers outside the real source bank are never targeted by sparse loading. -/
-theorem load_preserves_nonsource (e : Fin n ≃ Triple 50)
-    (state : DirtyLinearCircuit.Register n 509194 → ZMod 2) (role : Fin 509194)
-    (hrole : ∀ entry : Source, sourceRole entry ≠ role) :
-    run (load e) state (DirtyLinearCircuit.scratch role) = state (DirtyLinearCircuit.scratch role) := by
-  apply run_preserves
-  intro gate hg
-  obtain ⟨entry, ht, _⟩ := (load_incidence e gate).mp hg
-  rw [ht]
-  intro he
-  exact hrole entry (Sum.inr.inj (Sum.inr.inj he))
-
-private theorem contents_eta (state : DirtyLinearCircuit.Register n 509194 → ZMod 2) :
-    DirtyLinearCircuit.contents (state ∘ DirtyLinearCircuit.x) (state ∘ DirtyLinearCircuit.y)
-      (state ∘ DirtyLinearCircuit.scratch) = state := by
-  funext role
-  rcases role with i | i | i <;> rfl
-
-/-- Sparse loading and the original dense input matrix block have identical
-execution on every register state, including arbitrary scratch contents. -/
-theorem load_eq_dense (e : Fin n ≃ Triple 50)
-    (state : DirtyLinearCircuit.Register n 509194 → ZMod 2) :
-    run (load e) state = run (block DirtyLinearCircuit.scratch DirtyLinearCircuit.x
-      (Shared50Dirty.inputMatrix e)) state := by
-  conv_lhs => rw [← contents_eta state]
-  conv_rhs => rw [← contents_eta state]
-  rw [load_run, DirtyLinearCircuit.inject_run, Shared50Dirty.inputMatrix_mv]
-
-/-- Sparse readout equals the original dense matrix block on every register state. -/
-theorem read_eq_dense (e : Fin n ≃ Triple 50)
-    (state : DirtyLinearCircuit.Register n 509194 → ZMod 2) :
-    run (read e) state = run (block DirtyLinearCircuit.y DirtyLinearCircuit.scratch
-      (Shared50Dirty.readoutMatrix e)) state := by
-  conv_lhs => rw [← contents_eta state]
-  conv_rhs => rw [← contents_eta state]
-  rw [read_run, DirtyLinearCircuit.read_run]
 
 end Lists
 

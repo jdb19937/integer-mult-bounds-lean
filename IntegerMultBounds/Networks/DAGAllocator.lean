@@ -109,10 +109,6 @@ structure Frontier (state : State) : Prop where
 def sourceCount {ι : Type*} (node : Node ι) : ℕ :=
   match node.kind with | .input _ => 1 | .add _ _ => 0
 
-theorem allocate_inputs_length {ι : Type*} (state : State) (index : ℕ) (node : Node ι)
-    (consumers : List Port) : (allocate state index node consumers).gate.inputs.length = 2 - sourceCount node := by
-  cases node with | mk kind support => cases kind <;> rfl
-
 theorem allocate_outputs_length {ι : Type*} (state : State) (index : ℕ) (node : Node ι)
     (consumers : List Port) (hc : consumers ≠ []) :
     (allocate state index node consumers).gate.outputs.length = consumers.length := by
@@ -125,13 +121,6 @@ theorem allocate_count {ι : Type*} (state : State) (index : ℕ) (node : Node �
     (allocate state index node consumers).state.next + 1 = state.next + sourceCount node + consumers.length := by
   have hp := List.length_pos_iff.mpr hc
   cases node with | mk kind support => cases kind <;> simp [allocate, sourceCount] <;> omega
-
-/-- Fresh output slots are exactly the allocated interval, after the pivot. -/
-theorem allocate_output_tail {ι : Type*} (state : State) (index : ℕ) (node : Node ι)
-    (consumers : List Port) :
-    (allocate state index node consumers).gate.outputs.tail =
-      List.range' (state.next + sourceCount node) (consumers.length - 1) := by
-  cases node with | mk kind support => cases kind <;> simp [allocate, sourceCount]
 
 /-- Each concrete input port of an addition is consumed and removed from the
 remaining frontier before the node's output assignments are added. -/
@@ -205,16 +194,6 @@ theorem allocate_layout {ι : Type*} (state : State) (index : ℕ) (node : Node 
       have he : r = slot state.live (.gate index true) := by simpa using hr
       subst r
       exact not_mem_fresh _ _ _ hql hs
-
-/-- The concrete gate's input/output intersection is precisely its pivot. -/
-theorem allocate_shared_pivot {ι : Type*} (state : State) (index : ℕ) (node : Node ι)
-    (consumers : List Port) (hf : Frontier state) (hi : InputsReady state index node) (slot : ℕ) :
-    (slot ∈ (allocate state index node consumers).gate.inputs ∧
-      slot ∈ (allocate state index node consumers).gate.outputs) ↔
-      slot = (allocate state index node consumers).gate.inputs.headD 0 := by
-  obtain ⟨layout, hins, houts⟩ := allocate_layout state index node consumers hf hi
-  rw [← hins, ← houts, layout.shared_only_pivot]
-  rfl
 
 /-- Increasing the active set only adds consumer ports. -/
 theorem gatePortsFrom_mono {ι : Type*} (nodes : List (Node ι)) (offset : ℕ)

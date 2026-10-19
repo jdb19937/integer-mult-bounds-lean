@@ -246,24 +246,8 @@ theorem pBits_eq_advance (p b : ℕ) : pBits hq p b = GrowingCounterData.advance
   unfold pBits RadixPowerDescriptor.bits RadixToBinaryData.output
   rw [RadixPowerWord.digits_value]
 
-theorem suffixBits_eq_advance (s b : ℕ) : suffixBits hq s b = GrowingCounterData.advance (q^(s*b)) [] := by
-  unfold suffixBits RadixPowerDescriptor.bits RadixToBinaryData.output
-  rw [RadixPowerWord.digits_value]
-
 theorem bBits_eq_advance (s b W : ℕ) : bBits (q := q) s b W =
     GrowingCounterData.advance (q^(s*b)*W) [] := rfl
-
-theorem qBits_value (b : ℕ) : Counter.value (qBits hq b) = q^b :=
-  RadixPowerDescriptor.bits_value hq b
-
-theorem pBits_value (p b : ℕ) : Counter.value (pBits hq p b) = q^(p*b) :=
-  RadixPowerDescriptor.bits_value hq (p*b)
-
-theorem suffixBits_value (s b : ℕ) : Counter.value (suffixBits hq s b) = q^(s*b) :=
-  RadixPowerDescriptor.bits_value hq (s*b)
-
-theorem bBits_value (s b W : ℕ) : Counter.value (bBits (q := q) s b W) = q^(s*b)*W :=
-  DimensionProductDescriptor.bits_value _ _
 
 theorem descriptors_canonical (p s b W : ℕ) :
     GrowingCounterData.Canonical (qBits hq b) ∧
@@ -300,11 +284,6 @@ theorem output_p (p s : ℕ) (bs ws : List Bool) (b W : ℕ) :
     (output hq p s bs ws b W).head pSlot = 1 ∧
     (output hq p s bs ws b W).tape pSlot = RadixZeroFill.encodedBinary (pBits hq p b) := by
   simp [output,bank,descriptors,pSlot,descriptorHead,descriptorTape]
-
-theorem output_suffix (p s : ℕ) (bs ws : List Bool) (b W : ℕ) :
-    (output hq p s bs ws b W).head suffixSlot = 1 ∧
-    (output hq p s bs ws b W).tape suffixSlot = RadixZeroFill.encodedBinary (suffixBits hq s b) := by
-  simp [output,bank,descriptors,suffixSlot,descriptorHead,descriptorTape]
 
 theorem output_b (p s : ℕ) (bs ws : List Bool) (b W : ℕ) :
     (output hq p s bs ws b W).head bSlot = 1 ∧

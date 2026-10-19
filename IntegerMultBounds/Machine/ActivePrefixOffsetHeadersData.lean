@@ -51,18 +51,6 @@ theorem source_heads (caller : Tapes t a) (focus : Fin 10 → Fin t) (hs : Fin 5
   have h := congrFun (congrArg Tapes.head hsrc) (Fin.castAdd 5 i)
   simpa [SharedBank.payload,sources,originalFocus,i.isLt] using h
 
-theorem blank_tapes (caller : Tapes t a) (focus : Fin 10 → Fin t) (hs : Fin 5 → List Bool)
-    (hsrc : SharedBank.payload caller focus=sources hs) : ∀ i, caller.tape (outputFocus focus i)=fun _ => blank := by
-  intro i
-  have h := congrFun (congrArg Tapes.tape hsrc) (Fin.natAdd 5 i)
-  simpa [SharedBank.payload,sources,outputFocus] using h
-
-theorem blank_heads (caller : Tapes t a) (focus : Fin 10 → Fin t) (hs : Fin 5 → List Bool)
-    (hsrc : SharedBank.payload caller focus=sources hs) : ∀ i, caller.head (outputFocus focus i)=0 := by
-  intro i
-  have h := congrFun (congrArg Tapes.head hsrc) (Fin.natAdd 5 i)
-  simpa [SharedBank.payload,sources,outputFocus] using h
-
 theorem result_headers (caller : Tapes t a) (focus : Fin 10 → Fin t) (hf : Function.Injective focus)
     (W q b n f : ℕ) :
     (∀ i, (result caller focus W q b n f).tape (outputFocus focus i)=RadixZeroFill.encodedBinary (words W q b n f i)) ∧

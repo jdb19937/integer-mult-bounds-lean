@@ -274,28 +274,6 @@ theorem TblDo.for {i nv : Fin n} {body : TblCode n} {st : TblSt n A} {P : TblSt 
 /-- `c := k`: zero and `k` increments. -/
 def tblConstL (c : Fin n) (k : ℕ) : List (TblIns n) := .zero c :: List.replicate k (.inc c)
 
-theorem tblRunList_replicate_inc (c : Fin n) (k x : ℕ) (l : List (TblIns n))
-    (σ : Fin n → ℕ) (acc : List (Fin (A + 4))) :
-    tblRunList A W w (List.replicate k (.inc c) ++ l) ⟨Function.update σ c (x % 2 ^ W), acc⟩ =
-      tblRunList A W w l ⟨Function.update σ c ((x + k) % 2 ^ W), acc⟩ := by
-  induction k generalizing x with
-  | zero => rfl
-  | succ k ih =>
-    rw [List.replicate_succ, List.cons_append, tblRunList]
-    have e : TblIns.run A W w (.inc c) (⟨Function.update σ c (x % 2 ^ W), acc⟩ : TblSt n A) =
-        ⟨Function.update σ c ((x + 1) % 2 ^ W), acc⟩ := by
-      simp [TblIns.run, Nat.add_mod]
-    rw [e, ih, Nat.add_assoc, Nat.add_comm 1 k]
-
-/-- The effect of `tblConstL c k` in front of a block. -/
-theorem tblRunList_const (c : Fin n) (k : ℕ) (l : List (TblIns n)) (st : TblSt n A) :
-    tblRunList A W w (tblConstL c k ++ l) st =
-      tblRunList A W w l ⟨Function.update st.val c (k % 2 ^ W), st.acc⟩ := by
-  rw [tblConstL, List.cons_append, tblRunList]
-  have e : TblIns.run A W w (.zero c) st = ⟨Function.update st.val c (0 % 2 ^ W), st.acc⟩ := by
-    simp [TblIns.run]
-  rw [e, tblRunList_replicate_inc, Nat.zero_add]
-
 theorem tblExactList_replicate_inc (c : Fin n) (k x : ℕ) (σ : Fin n → ℕ)
     (acc : List (Fin (A + 4))) :
     tblExactList A w (List.replicate k (.inc c)) ⟨Function.update σ c x, acc⟩ =

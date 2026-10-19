@@ -378,22 +378,4 @@ theorem output_tape {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) 
       (destinationSlot c) = putWord dest q (outputWord Q c payload) := by
   simp [output,destinationSlot,ScalingSplit.bank,Tapes.append,CountedCopyReuse.bank]
 
-theorem output_buffer {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) (p : ℤ)
-    (background : Fin c → ℤ → Fin 4) (origins : Fin c → ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (descriptors : Fin c → List Bool)
-    (bs countBits : List Bool) (modulus current : Tapes c 0) (payload : ℕ → List (Fin 4)) (j : Fin c) :
-    let v := output hc Q B source p background origins dest q descriptors bs countBits modulus current payload
-    let slot := Fin.castAdd (AuxTapes c) (ScalingSplit.outputSlot j)
-    v.tape slot = background j ∧ v.head slot = origins j := by
-  simp [output,ScalingSplit.bank,ScalingSplit.outputSlot,Tapes.append]
-
-theorem stateCount_eq (c : ℕ) :
-    20+(7+(c*16+1+2+5)+4)+ScalingConcatenate.states c+ScalingBuffersReset.states c = 98*c+41 := by
-  have hs : ScalingConcatenate.states c = 1+32*c := by
-    induction c with
-    | zero => rfl
-    | succ c ih => simp only [ScalingConcatenate.states,ih]; omega
-  rw [hs,ScalingBuffersReset.states_eq]
-  omega
-
 end IntegerMultBounds.Machine.ScalingInverseExecution

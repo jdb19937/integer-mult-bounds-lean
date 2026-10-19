@@ -52,12 +52,6 @@ theorem rounded_eq_ceiling (R D : ℕ) (hR : 0 < R) (hD : 0 < D) :
 theorem rounded_dvd (R D : ℕ) : D ∣ rounded R D := by
   exact dvd_mul_left _ _
 
-theorem rounded_le_multiple (R D n : ℕ) (hR : 0 < R) (hn : R ≤ n*D) : rounded R D ≤ n*D := by
-  by_cases hd : D = 0
-  · simp [rounded,hd]
-  · have hquot : (R-1)/D < n := (Nat.div_lt_iff_lt_mul (by omega)).mpr (by omega)
-    exact Nat.mul_le_mul_right D (by omega)
-
 def hd : Option (List Bool) → ℤ
   | none => 0
   | some _ => 1

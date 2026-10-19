@@ -47,25 +47,4 @@ theorem additions_le_card (nodes : List (Node α)) (budget : Finset (Finset α))
   rw [← additionSupports_card nodes hn]
   exact Finset.card_le_card hs
 
-/-- A replay introduces no support outside the exact old/new support union. -/
-theorem replay_supports_subset (rename : α ↪ β) (target : List (Node β))
-    (source : List (Node α)) :
-    additionSupports (replay rename target source).1 ⊆
-      additionSupports target ∪ (additionSupports source).image (Finset.map rename) := by
-  intro support hs
-  rcases replay_additionSupport rename target source support
-    ((mem_additionSupports _ _).mp hs) with hold | ⟨localSupport, hlocal, he⟩
-  · exact Finset.mem_union_left _ ((mem_additionSupports _ _).mpr hold)
-  · exact Finset.mem_union_right _ (Finset.mem_image.mpr
-      ⟨localSupport, (mem_additionSupports _ _).mpr hlocal, he⟩)
-
-/-- The actual replayed circuit is bounded by the number of distinct supports,
-so a duplicate certificate applies to its physical addition count. -/
-theorem replay_additions_le (rename : α ↪ β) (target : List (Node β))
-    (source : List (Node α)) (hn : (target.map Node.support).Nodup) :
-    DAGAllocator.additionCount (replay rename target source).1 ≤
-      (additionSupports target ∪ (additionSupports source).image (Finset.map rename)).card :=
-  additions_le_card _ _ (replay_nodup rename target source hn)
-    (replay_supports_subset rename target source)
-
 end IntegerMultBounds.Networks.DAGReplayBudget

@@ -142,14 +142,6 @@ noncomputable def embTabExt {P P' : Type} (ι : P → P') (body : P → Pr P T Q
     (other : P' → Pr P' T' Q A U) : P' → Pr P' T' Q A U :=
   Function.extend ι (fun f => embProg e ι (body f)) other
 
-theorem embTab_apply {P : Type} (body : P → Pr P T Q A U) (f : P) :
-    embTab e body (id f) = embProg e id (body f) := rfl
-
-theorem embTabExt_apply {P P' : Type} {ι : P → P'} (hι : Function.Injective ι)
-    (body : P → Pr P T Q A U) (other : P' → Pr P' T' Q A U) (f : P) :
-    embTabExt e ι body other (ι f) = embProg e ι (body f) :=
-  hι.extend_apply _ _ f
-
 end Progs
 
 /-! ### Lemmas on the maps -/
@@ -282,14 +274,6 @@ theorem embStk_L (S' : Stacks T' A) (i : Fin T) : (embStk e S').L i = S'.L (e i)
 
 theorem embStk_R (S' : Stacks T' A) (i : Fin T) : (embStk e S').R i = S'.R (e i) := rfl
 
-/-- Stacks agreeing on `inp`, `out`, the left stacks and the image registers agree along `e`. -/
-theorem embStk_congr {S S' : Stacks T' A} (hi : S'.inp = S.inp) (ho : S'.out = S.out)
-    (hL : S'.L = S.L) (hR : ∀ i, S'.R (e i) = S.R (e i)) : embStk e S' = embStk e S := by
-  simp only [embStk, hi, ho, hL]
-  congr 1
-  funext i
-  exact hR i
-
 /-- The big stacks over themselves. -/
 theorem embOvr_stk (S' : Stacks T' A) : embOvr e (embStk e S').get S' = S' := by
   rcases S' with ⟨i, o, L, R⟩
@@ -308,25 +292,6 @@ theorem embStk_ovr (he : Function.Injective e) (S : Stacks T A) (B : Stacks T' A
 theorem embOvr_off (f : ∀ k : HK T, List (HΓ A k)) (B : Stacks T' A) {j : Fin T'}
     (hj : ∀ i, e i ≠ j) : (embOvr e f B).L j = B.L j ∧ (embOvr e f B).R j = B.R j :=
   ⟨embExt_off _ _ hj, embExt_off _ _ hj⟩
-
-/-- Stacks equal to the small ones along `e` and to the background off its image. -/
-theorem embOvr_eq {S₁ : Stacks T A} {B X : Stacks T' A} (hX : embStk e X = S₁)
-    (hoff : ∀ j, (∀ i, e i ≠ j) → X.L j = B.L j ∧ X.R j = B.R j) :
-    X = embOvr e S₁.get B := by
-  subst hX
-  rcases X with ⟨i, o, L, R⟩
-  simp only [embOvr, embStk, Stacks.get]
-  congr 1
-  · funext j
-    unfold embExt
-    cases h : embInv e j with
-    | none => exact (hoff j (embInv_none h)).1
-    | some i' => simp [embInv_some h]
-  · funext j
-    unfold embExt
-    cases h : embInv e j with
-    | none => exact (hoff j (embInv_none h)).2
-    | some i' => simp [embInv_some h]
 
 /-- A change of one register of the small file is a change of its image. -/
 theorem embOvr_updR (he : Function.Injective e) (S : Stacks T A) (B : Stacks T' A) (x : Fin T)

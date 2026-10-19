@@ -159,8 +159,6 @@ def cExp : ℕ := 2 ^ 32
 theorem rootExp_ne : rootExp ≠ 0 := by decide
 theorem upperPower_ne : upperPower ≠ 0 := by decide
 theorem cExp_ne : cExp ≠ 0 := by unfold cExp; positivity
-theorem one_le_cExp : 1 ≤ cExp := by unfold cExp; norm_num
-
 /-- The dyadic dimension exponent `31/64`. -/
 noncomputable def epsilon : ℝ := (rootNumerator : ℝ) / rootExp
 
@@ -185,19 +183,6 @@ theorem iroot_eq_floor {k : ℕ} (hk : k ≠ 0) (x : ℕ) :
   · have h : (x : ℝ) < ((iroot k x : ℝ) + 1) ^ k := by exact_mod_cast lt_succ_iroot_pow hk x
     have h' := Real.rpow_lt_rpow (Nat.cast_nonneg _) h hk'
     rwa [Real.pow_rpow_inv_natCast (by positivity) hk] at h'
-
-/-- `⌈X^(1/k)⌉ = m` when `(m - 1)^k < X ≤ m^k`. -/
-theorem ceil_root_eq {k m X : ℕ} (hk : k ≠ 0) (hm : 1 ≤ m) (h1 : (m - 1) ^ k < X)
-    (h2 : X ≤ m ^ k) : ⌈(X : ℝ) ^ ((k : ℝ)⁻¹)⌉₊ = m := by
-  have hk' : (0 : ℝ) < (k : ℝ)⁻¹ := inv_pos.2 (by exact_mod_cast Nat.pos_of_ne_zero hk)
-  rw [Nat.ceil_eq_iff (by omega)]
-  constructor
-  · have h : (((m - 1 : ℕ) : ℝ)) ^ k < X := by exact_mod_cast h1
-    have h' := Real.rpow_lt_rpow (by positivity) h hk'
-    rwa [Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) hk] at h'
-  · have h : (X : ℝ) ≤ (m : ℝ) ^ k := by exact_mod_cast h2
-    have h' := Real.rpow_le_rpow (Nat.cast_nonneg _) h hk'.le
-    rwa [Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) hk] at h'
 
 /-! ### The parameters -/
 
@@ -383,11 +368,6 @@ theorem bT_lt (hn : 2 ≤ n) : b n * T n < 8 * n := by
     rw [e]
     have : b n * (2 * 2 ^ (logT n - 1)) = 2 * (b n * 2 ^ (logT n - 1)) := by ring
     omega
-
-theorem logT_le_b (hn : 2 ≤ n) (hb : 4 ≤ b n) : logT n ≤ b n := by
-  rw [logT_le_iff hn]
-  have := le_two_pow_b n
-  nlinarith
 
 /-- `T < 2^b` once `b ≥ 8`. -/
 theorem logT_lt_b (hn : 2 ≤ n) (hb : 8 ≤ b n) : logT n < b n := by
@@ -640,16 +620,6 @@ theorem gamma_eq_ceil (n : ℕ) :
 
 /-- `K = ⌊d^c⌋`. -/
 theorem K_eq_floor (n : ℕ) : K n = ⌊(d n : ℝ) ^ cParam⌋₊ := iroot_eq_floor cExp_ne _
-
-/-- `T` is the power of two in `[4n/b, 8n/b)`. -/
-theorem T_bounds_real (hn : 2 ≤ n) :
-    4 * (n : ℝ) / b n ≤ T n ∧ (T n : ℝ) < 8 * n / b n := by
-  have hb : (0 : ℝ) < b n := by exact_mod_cast one_le_b hn
-  have h1 : (4 * n : ℝ) ≤ b n * T n := by exact_mod_cast four_mul_le_bT hn
-  have h2 : (b n * T n : ℝ) < 8 * n := by exact_mod_cast bT_lt hn
-  constructor
-  · rw [div_le_iff₀ hb]; linarith
-  · rw [lt_div_iff₀ hb]; linarith
 
 /-- `log₂ p ≤ 3 + 2^35 ⌈log₂ (K + 1)⌉`. -/
 theorem clog_p_le (n : ℕ) : Nat.clog 2 (p n) ≤ 3 + cExp * upperPower * Nat.clog 2 (K n + 1) := by
@@ -934,8 +904,6 @@ variable {n : ℕ}
 
 theorem Big.one_le_d (h : Big n) : 1 ≤ d n := by have := h.2; omega
 
-theorem Big.two_le_d (h : Big n) : 2 ≤ d n := by have := h.2; omega
-
 theorem Big.bigFacts (h : Big n) : BigFacts n := bigFacts_of_bigDim_le (by have := h.2; omega)
 
 theorem Big.sixteen_le_b (h : Big n) : 16 ≤ b n := by
@@ -948,12 +916,6 @@ theorem Big.logT_bounds (h : Big n) : b n ≤ 2 * logT n ∧ logT n < b n :=
 
 theorem Big.one_le_logT (h : Big n) : 1 ≤ logT n :=
   one_le_logT_of h.1 (by have := h.sixteen_le_b; omega)
-
-/-- `b ≤ 2 d ℓ`. -/
-theorem Big.b_le_two_dℓ (h : Big n) : b n ≤ 2 * (d n * ℓ n) := by
-  have := h.logT_bounds.1
-  have := logT_le_dℓ h.one_le_d
-  omega
 
 theorem Big.primeSupply (h : Big n) : PrimeSupply n := h.bigFacts.1
 
@@ -1031,10 +993,6 @@ coprime, `(1 - 2η) t_i < s_i ≤ (1 - η) t_i`, `T/2 < S < T`. -/
 theorem Big.good (h : Big n) : Good (s n) (t n) :=
   good_of_primeSupply h.primeSupply
 
-theorem Big.bounds_real (h : Big n) (i : Fin (d n)) :
-    (1 - 2 * eta n) * t n i < s n i ∧ (s n i : ℝ) ≤ (1 - eta n) * t n i :=
-  (h.good.bounds i).real h.one_le_d
-
 theorem Big.S_lt_T (h : Big n) : S n < T n := by
   have := h.good.prod_lt
   rwa [prod_t h.one_le_d] at this
@@ -1042,10 +1000,6 @@ theorem Big.S_lt_T (h : Big n) : S n < T n := by
 theorem Big.T_lt_two_S (h : Big n) : T n < 2 * S n := by
   have := h.good.prod_gt
   rwa [prod_t h.one_le_d] at this
-
-theorem Big.half_T_lt_S (h : Big n) : (T n : ℝ) / 2 < S n := by
-  have : (T n : ℝ) < 2 * S n := by exact_mod_cast h.T_lt_two_S
-  linarith
 
 theorem Big.two_dvd_t (h : Big n) (i : Fin (d n)) : 2 ∣ t n i := by
   have := h.two_le_ℓ
@@ -1174,13 +1128,6 @@ theorem Big.two_q_le (h : Big n) : 2 * q n ≤ S n + 1 := by
   have h5 : b n * (T n + 5) ≤ b n * (4 * q n) := Nat.mul_le_mul_left _ h4
   have e1 : b n * (T n + 5) = b n * T n + 5 * b n := by ring
   have e2 : b n * (4 * q n) = 4 * (b n * q n) := by ring
-  omega
-
-theorem Big.two_q_sub_two_lt (h : Big n) : 2 * q n - 2 < S n := by
-  have := h.two_q_le
-  have : 0 < S n := by
-    have := h.T_lt_two_S
-    omega
   omega
 
 /-- The digit-count hypothesis `hS` of `ExactRecovery.exact_product` at `k = b`. -/

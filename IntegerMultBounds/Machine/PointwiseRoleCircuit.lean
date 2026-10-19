@@ -49,10 +49,5 @@ theorem cost_linear (gs : List (Gate t)) (bs : List Bool) (hc : GrowingCounterDa
   have hh := PointwiseBinaryNormalized.cost_linear bs hc
   exact Nat.mul_le_mul_left gs.length (by omega)
 
-theorem states_eq (k : ℕ) : states k = 36*k+1 := by
-  induction k with
-  | zero => rfl
-  | succ k ih => simp only [states,ih]; omega
-
 end
 end IntegerMultBounds.Machine.PointwiseRoleCircuit

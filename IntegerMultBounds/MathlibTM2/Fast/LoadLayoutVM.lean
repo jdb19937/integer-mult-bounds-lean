@@ -71,12 +71,6 @@ theorem ldwPack_field {R : ℕ} (hR : 0 < R) {f : ℕ → ℕ} :
         rw [ldwPack, Nat.add_mul_div_right _ _ (by positivity), Nat.div_eq_of_lt hlo, zero_add,
           Nat.mod_eq_of_lt (hf i (by omega))]
 
-theorem ldwPack_le {R : ℕ} {f : ℕ → ℕ} {M M' : ℕ} (hM : M ≤ M') :
-    ldwPack R f M ≤ ldwPack R f M' := by
-  induction hM with
-  | refl => exact le_refl _
-  | step _ ih => exact ih.trans (by rw [ldwPack]; omega)
-
 /-! ### Frames -/
 
 variable {n A W w : ℕ}

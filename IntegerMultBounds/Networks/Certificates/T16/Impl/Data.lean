@@ -52,11 +52,6 @@ theorem ChartSplit.local_toLinearMap {χ : Addr ≃ₗ[ZMod 2] Addr} {B : Fin 73
     {f : Fin 73 → ZMod 4} (s : ChartSplit χ B f) : s.local.toLinearMap = kernelList s.gs :=
   LinearMap.ext fun g => kernelListRealization_scalar s.gs g
 
-theorem lift9_equiv_mul_symm (T : Arrays 9 ≃ₗ[ℂ] Arrays 9) :
-    lift9 T.toLinearMap * lift9 T.symm.toLinearMap = 1 := by
-  rw [← lift9Hom_apply, ← lift9Hom_apply, ← map_mul,
-    show T.toLinearMap * T.symm.toLinearMap = 1 from by ext f; simp, map_one]
-
 theorem lift9_equiv_symm_mul (T : Arrays 9 ≃ₗ[ℂ] Arrays 9) :
     lift9 T.symm.toLinearMap * lift9 T.toLinearMap = 1 := by
   rw [← lift9Hom_apply, ← lift9Hom_apply, ← map_mul,
@@ -153,15 +148,6 @@ noncomputable def ChartSplit.ofLocal (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOr
     by_cases h : k ∈ L
     · simp [h] at hk
     · exact hext k h (by simpa [h] using hk)
-
-theorem ChartSplit.ofLocal_gs (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
-    (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup) (hloc) (hext) :
-    (ChartSplit.ofLocal χ hχ B f L hL hloc hext).gs = L.map fun k => (f k, lowPart (χ.symm (B k))) :=
-  rfl
-
-theorem ChartSplit.ofLocal_ext (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
-    (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup) (hloc) (hext) :
-    (ChartSplit.ofLocal χ hχ B f L hL hloc hext).ext = fun k => if k ∈ L then 0 else f k := rfl
 
 /-! ### Registers wrapped by adapters -/
 

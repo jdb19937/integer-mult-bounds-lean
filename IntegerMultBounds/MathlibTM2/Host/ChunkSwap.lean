@@ -593,12 +593,6 @@ abbrev swapStates {t₀ : ℕ} (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : 
     ℕ :=
   stateCount (BinaryInterchangeRun.program hd pay hi)
 
-/-- The state count does not depend on the chosen tapes. -/
-lemma swapStates_eq {t₀ : ℕ} (hd hd' : Fin 5 → Fin t₀) (pay pay' : Fin t₀)
-    (hi : Function.Injective hd) (hi' : Function.Injective hd') :
-    swapStates hd pay hi = swapStates hd' pay' hi' := by
-  unfold swapStates stateCount; rfl
-
 /-- The interchange machine over the host alphabet `Fin (prime + K + 4)`. -/
 def swapMachine {t₀ : ℕ} (K : ℕ) (hd : Fin 5 → Fin t₀) (pay : Fin t₀)
     (hi : Function.Injective hd) :=
@@ -867,34 +861,6 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
       simp only [List.mem_finRange, ite_true]
       exact filter_window (S₂.L j) (S₂.R j) _ _ (hfree j)
         (fun z => by rw [← hfinal j z]; exact hrep' j z)
-
-/-- `swapProg_exec` with the payload output as a list function of the payload input. -/
-theorem swapProg_exec_list {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t₀) Q (prime + K) U)
-    (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
-    (hQ : swapStates hd pay hi ≤ Q)
-    (P G B h d : ℕ) (hs : Fin 5 → List Bool) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G B h d k)
-    (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
-    (x : Fin (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ d) B) → Bool)
-    (v : HS (swapT t₀) Q (prime + K) U) (S : Stacks (swapT t₀) (prime + K))
-    (hL : ∀ j, S.L j = [])
-    (hpriv : ∀ j : Fin (swapT t₀), t₀ ≤ j.val → S.R j = [])
-    (hhdr : ∀ k, S.R (reg (hd k)) = separator :: (hs k).map bitSymbol)
-    (hpay : S.R (reg pay) = List.ofFn fun i => bitSymbol (x i))
-    (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) → ∀ s ∈ S.R (reg i), s ≠ blank ∧ s.val < prime + 4) :
-    ∃ v' m, v'.user = v.user ∧
-      m ≤ (13 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G B h d hs +
-        6 * ∑ j, (S.R j).length + 6 * swapT t₀ + 13 ∧
-      Exec body (swapProg hd pay hi hQ) (mk v S) m
-        (mk v' { S with
-          L := fun _ => []
-          R := Function.update S.R (reg pay)
-            (swapList P (2 ^ h) G (2 ^ d) B blank (S.R (reg pay))) }) := by
-  obtain ⟨v', m, hu, hm, he⟩ := swapProg_exec body hd pay hi hQ P G B h d hs hhd hdh hv hc
-    hP hG hB x v S hL hpriv hhdr hpay hother
-  refine ⟨v', m, hu, hm, ?_⟩
-  rw [hpay, ← transpose_bits_eq_swapList]
-  exact he
 
 end
 

@@ -69,42 +69,7 @@ theorem parser_after_values (s : Shape) (w m before after offset width rho : ℕ
     ActiveRepairRankFieldsGeometry.uStart,ActiveRepairRankFieldsGeometry.tailBits]
   all_goals constructor <;> omega
 
-def parserSlot (i : Fin 8) : Fin 43 := ⟨10+i.val,by omega⟩
-def patchSlot (i : Fin 7) : Fin 43 := ⟨18+i.val,by omega⟩
-
-theorem parser_headers (side : SourceSide) (d : Widths) :
-    ∀ i, (bank (a := a) (finished side d)).tape (parserSlot i)=
-        RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits (parserValues side d i)) ∧
-      (bank (a := a) (finished side d)).head (parserSlot i)=1 := by
-  intro i
-  fin_cases i <;> constructor <;> rfl
-
-theorem patch_headers (side : SourceSide) (d : Widths) :
-    ∀ i, (bank (a := a) (finished side d)).tape (patchSlot i)=
-        RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits (patchValues d i)) ∧
-      (bank (a := a) (finished side d)).head (patchSlot i)=1 := by
-  intro i
-  fin_cases i <;> constructor <;> rfl
-
 def originalSlot (i : Fin 10) : Fin 43 := Fin.castAdd 33 i
-def temporarySlot (i : Fin 3) : Fin 43 := ⟨25+i.val,by omega⟩
-
-theorem originals_retained (side : SourceSide) (d : Widths) (hs : Fin 10 → List Bool)
-    (hv : ∀ i, Counter.value (hs i)=originalValues d i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
-    ∀ i, (bank (a := a) (finished side d)).tape (originalSlot i)=RadixZeroFill.encodedBinary (hs i) ∧
-      (bank (a := a) (finished side d)).head (originalSlot i)=1 := by
-  intro i
-  have he := CompactGadgetReservationHeadersCore.canonical_bits (hs i) (originalValues d i) (hc i) (hv i)
-  rw [he]
-  fin_cases i <;> constructor <;> rfl
-
-theorem temporaries_blank (side : SourceSide) (d : Widths) :
-    ∀ i, (bank (a := a) (finished side d)).tape (temporarySlot i)=(fun _ => blank) ∧
-      (bank (a := a) (finished side d)).head (temporarySlot i)=0 := by
-  intro i
-  fin_cases i <;> constructor <;> rfl
-
 theorem workspace_blank (side : SourceSide) (d : Widths) :
     ∀ i : Fin 15, (bank (a := a) (finished side d)).tape (Fin.natAdd 28 i)=(fun _ => blank) ∧
       (bank (a := a) (finished side d)).head (Fin.natAdd 28 i)=0 := by

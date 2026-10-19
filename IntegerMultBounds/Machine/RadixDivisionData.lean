@@ -76,11 +76,4 @@ theorem digits_value (hdpos : 0 < d) (hdq : d < q) (c : Fin d) (xs : List (Fin q
     simp only [digits,overflow,value,List.length_cons,pow_succ]
     nlinarith
 
-/-- The output divides the input modulo the exact word modulus. -/
-theorem divides_mod (hdpos : 0 < d) (hdq : d < q) (xs : List (Fin q)) :
-    (d * value (digits ⟨0,hdpos⟩ xs)) % q ^ xs.length = value xs := by
-  have hv := digits_value hdpos hdq ⟨0,hdpos⟩ xs
-  simp only [Nat.add_zero] at hv
-  rw [hv,Nat.add_mul_mod_self_left,Nat.mod_eq_of_lt (value_lt (Fact.out : q.Prime).two_le xs)]
-
 end IntegerMultBounds.Machine.RadixDivisionData

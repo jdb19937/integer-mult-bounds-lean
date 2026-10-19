@@ -21,8 +21,6 @@ def blocks (m N i : ℕ) : List ℕ :=
 
 def offset (m N i : ℕ) := (blocks m N i).sum
 
-theorem blocks_zero (m N : ℕ) : blocks m N 0 = [] := rfl
-
 theorem blocks_succ (m N i : ℕ) :
     blocks m N (i+1) = blocks m N i ++ List.replicate (digit m N i) (m^i) := by
   simp [blocks,List.range_succ,List.flatMap_append]
@@ -65,16 +63,6 @@ theorem offset_count (m N : ℕ) (hm : 2 ≤ m) : offset m N (count m N) = N := 
 theorem sum_count (m N : ℕ) (hm : 2 ≤ m) : (blocks m N (count m N)).sum = N :=
   offset_count m N hm
 
-theorem zero_blocks (m i : ℕ) : blocks m 0 i = [] := by
-  simp [blocks,digit,remaining]
-
-theorem zero_offset (m i : ℕ) : offset m 0 i = 0 := by rw [offset,zero_blocks]; rfl
-
-theorem blocks_partition (m N k : ℕ) :
-    blocks m N (k+1) = ArbitraryWidthPieces.widths m N k := by
-  simp [blocks,ArbitraryWidthPieces.widths,ArbitraryWidthPieces.depths,
-    digit,remaining,List.map_flatMap]
-
 theorem selected_power_le (m N i : ℕ) (hm : 2 ≤ m) (hi : i < count m N) : m^i ≤ N := by
   exact (Nat.div_pos_iff.mp (ArbitraryWidthPieceLoop.before m N i hm hi)).2
 
@@ -85,13 +73,6 @@ theorem selected_depth (m N i k : ℕ) (hm : 2 ≤ m)
   by_contra h
   have hki : k+1 ≤ i := by omega
   have hpow := Nat.pow_le_pow_right (by omega : 0 < m) hki
-  omega
-
-/-- All positive repeated slices at a selected level fit individually. -/
-theorem repetition_fit (m N i j : ℕ) (hj : j ≤ digit m N i) :
-    offset m N i+j*m^i ≤ N := by
-  have h := step_fit m N i
-  have hmul := Nat.mul_le_mul_right (m^i) hj
   omega
 
 def images {α : Type*} (m N : ℕ) (v : Descriptor) (i : ℕ) (hN : N ≤ v.width)

@@ -61,9 +61,4 @@ theorem field_value (q b n i : ℕ) (hb : 1 ≤ b) (hbq : b+1 ≤ q) (hi : i<2^(
     (row (n*q) i) (by simp)
   simpa only [List.length_replicate,rowWord,row_rank (n*q) i hi] using hh
 
-/-- Every padded physical offset is in the target field's modular range. -/
-theorem field_bounded (q b n i : ℕ) (hb : 1 ≤ b) (hbq : b+1 ≤ q) :
-    Counter.value (Gather.field (word q b n hb hbq) (i*(n*b)) (n*b)) < 2^(n*b) := by
-  simpa only [Gather.field_length] using Counter.value_lt (Gather.field (word q b n hb hbq) (i*(n*b)) (n*b))
-
 end IntegerMultBounds.Machine.BinaryAddressOffsetValue

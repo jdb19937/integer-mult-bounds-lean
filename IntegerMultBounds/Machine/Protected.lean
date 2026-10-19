@@ -109,27 +109,4 @@ theorem overlay_exact (e : Encoding a b) (M : Program t q a)
     overlay_halt e M region outside hhalt (hregion k d le_rfl h), ?_⟩
   exact fun i j hj => overlay_outside e region outside d i j hj
 
-/-- Tape-only version for contracts, retaining the same arbitrary outside frame. -/
-noncomputable def overlayTapes (e : Encoding a b) (region : Fin t → ℤ → Prop)
-    (outside : Fin t → ℤ → Fin (b + 4)) (v : Tapes t a) : Tapes t b := by
-  classical
-  exact ⟨v.head, fun i j => if region i j then e.encode (v.tape i j) else outside i j⟩
-
-/-- Lift a source contract together with its proved head footprint. The target
-postcondition preserves actual outside symbols, not merely their decodings. -/
-theorem overlay_hoare (e : Encoding a b) {M : Program t q a}
-    (region : Fin t → ℤ → Prop) (outside : Fin t → ℤ → Fin (b + 4))
-    {pre post : TapePred t a} {bound : ℕ} (h : HoareTime M pre post bound)
-    (hregion : ∀ v, pre v → ∀ m z, m ≤ bound → run M m (v.start M) = some z →
-      ∀ i, region i (z.head i)) :
-    HoareTime (program e M)
-      (fun v => ∃ original, pre original ∧ v = overlayTapes e region outside original)
-      (fun v => ∃ original, post original ∧ v = overlayTapes e region outside original)
-      bound := by
-  rintro v ⟨original, hp, rfl⟩
-  obtain ⟨k, c, hk, hr, hh, hpost⟩ := h original hp
-  obtain ⟨hrun, hhalt, _⟩ := overlay_exact e M region outside hr hh
-    (fun m z hm hz => hregion original hp m z (hm.trans hk) hz)
-  exact ⟨k, overlay e region outside c, hk, hrun, hhalt, c.tapes, hpost, rfl⟩
-
 end IntegerMultBounds.Machine.Alphabet

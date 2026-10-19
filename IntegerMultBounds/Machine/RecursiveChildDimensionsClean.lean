@@ -85,27 +85,6 @@ theorem output_headers (v : Descriptor) (hs : Fin 6 → List Bool) (bs rs : List
   rw [hh,ht]
   exact RecursiveChildDimensions.output_headers hq v hs bs rs b i j z
 
-/-- The exact child descriptor and role-stream volume agree with the pure layout. -/
-theorem constructs_child (roles b : ℕ) (v : Descriptor) (hs : Fin 6 → List Bool) (bs rs : List Bool)
-    {m : ℕ} (i j : Fin m) (hv : RecursiveDimensionBank.Headers v hs) (hvpos : v.Positive)
-    (hb : Counter.value bs = b) (cb : GrowingCounterData.Canonical bs)
-    (hrows : Counter.value rs = v.rows/roles) (crows : GrowingCounterData.Canonical rs)
-    (hw : v.width = m*b) (hr : 0 < roles) (hdiv : roles ∣ v.rows) :
-    HoareTime (program hq i j) (fun w => w = input hs bs rs)
-      (fun w => w = output hq v hs bs rs b i j ∧
-        RecursiveDimensionBank.Headers (child q roles b v i j)
-          (RecursiveChildDimensions.childHeaders (q := q) v hs bs rs b i j) ∧
-        (∀ z : Fin 6, w.head (childSlots z) = 1 ∧ w.tape (childSlots z) =
-          RadixZeroFill.encodedBinary (RecursiveChildDimensions.childHeaders (q := q) v hs bs rs b i j z)) ∧
-        volume q (child q roles b v i j) = volume q v/roles)
-      (97*(48*(m-1)+512)*(volume q v/roles)+11756) := by
-  have hvol := RecursiveInterchangeLayout.child_volume_div q roles b v i j hw hr hdiv
-  rw [← hvol]
-  apply (constructs_hoare hq roles b v hs bs rs i j hv hvpos hb cb hr hdiv).consequence (fun _ h => h) _ le_rfl
-  rintro w rfl
-  exact ⟨rfl,RecursiveChildDimensions.child_headers roles b v hs bs rs i j hv hb cb hrows crows,
-    output_headers hq v hs bs rs b i j,rfl⟩
-
 private theorem clean_inputs (hs : Fin 6 → List Bool) (bs rs : List Bool)
     (ds : Fin 8 → Option (List Bool)) (z : Fin 8) :
     (RecursiveChildDimensions.bank (q := q) hs bs rs (cleanDescriptors ds)).head (RecursiveChildDimensions.inputSlot z) =

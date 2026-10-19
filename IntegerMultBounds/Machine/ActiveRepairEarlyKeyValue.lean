@@ -27,14 +27,6 @@ theorem flag_rank (d : Data) (h : Valid d) :
   exact ActiveRepairEarlyFieldsValue.flag_rank d.q d.b d.hb h.hbq3 d.V d.T d.Z
     (by simp [V,hz,h.hV]) (by simp [T,hz,h.hT])
 
-theorem repaired_local (d : Data) (h : Valid d) :
-    d.target++d.recoveredT=rankKey (rankEquiv d.q d.b d.Z) (Sperm d.q d.b d.Z)
-      (Tperm d.q d.b d.Z) (d.n*d.q+d.n*d.b) (Counter.value (d.V++d.T)) := by
-  have hz : d.Z.length=d.n := SelectedSourceBitsData.selected_length _ _ _ _
-  simpa only [Data.target,recoveredT,hz] using
-    ActiveRepairEarlyFieldsValue.destination_bits d.q d.b d.hb d.hbq d.V d.T d.Z
-      (by simp [V,hz,h.hV]) (by simp [T,hz,h.hT])
-
 theorem word_row (xs : List Bool) : xs=row xs.length (Counter.value xs) := by
   apply CountedPackedGuarded.word_eq_of_length_value
   · simp
@@ -71,10 +63,6 @@ theorem generated_word (d : Data) (h : Valid d)
   rw [hA,hsv,hst,hsu,hv,ht,hu]
   exact ActiveRepairDestinationPatchEndpoint.generated_word s (d.widths 1) (d.widths 0)
     before after rows rho hw ha hp hr x d.cs hc (repairedTarget d h) (repairedT d h) x.u
-
-theorem key_tape (d : Data) : d.output.tape 30=
-    FlagCopy.keyTape (FlagCopy.keyWord d.flag d.destination) := by
-  rfl
 
 theorem retained (d : Data) (i : Fin 32) (hi : i≠30) :
     d.output.head i=d.input.head i ∧ d.output.tape i=d.input.tape i := by

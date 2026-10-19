@@ -97,28 +97,6 @@ theorem ofFn_pad {R' : ℕ} (h : R ≤ R') (zero : α) (x : Fin (A*R*L) → α) 
 /-- A crop stream retains exactly the valid span from every prefix group. -/
 def cropped (xs : List (List α)) (valid : ℕ) := xs.map (List.take valid)
 
-theorem crop_padded_groups (zero : α) (x : Fin (A*R*L) → α) (extra : ℕ) :
-    cropped (padded (groups x) extra zero) (R*L) = groups x := by
-  unfold cropped padded
-  rw [List.map_map]
-  calc
-    _ = (groups x).map id := by
-      apply List.map_congr_left
-      intro ys hy
-      rw [← group_length x ys hy]
-      simp
-    _ = _ := List.map_id _
-
-/-- After valid-span movement, the appended padding is discarded and the
-original flat word is recovered; its values may include zero symbols. -/
-theorem crop_padded_word (zero : α) (x : Fin (A*R*L) → α) (extra : ℕ) :
-    (cropped (padded (groups x) extra zero) (R*L)).flatten = List.ofFn x := by
-  rw [crop_padded_groups,groups_flatten]
-
-theorem ofFn_crop_pad {R' : ℕ} (h : R ≤ R') (zero : α) (x : Fin (A*R*L) → α) :
-    List.ofFn (RecursiveRowPadding.crop h (RecursiveRowPadding.pad R' zero x)) = (groups x).flatten := by
-  rw [RecursiveRowPadding.crop_pad,groups_flatten]
-
 section Descriptor
 open Networks
 open Shared50ModularControl (prime)
@@ -134,13 +112,6 @@ theorem rowView_word (x : Fin (volume prime v) → α) :
 theorem descriptor_groups (x : Fin (volume prime v) → α) :
     (groups (RecursiveRowPadding.rowView x)).flatten = List.ofFn x := by
   rw [groups_flatten,rowView_word]
-
-/-- The stream padding contract is exactly the full descriptor zero extension. -/
-theorem padArray_word {R' : ℕ} (h : v.rows ≤ R') (zero : α) (x : Fin (volume prime v) → α) :
-    List.ofFn (RecursiveRowPadding.padArray R' zero x) =
-      (padded (groups (RecursiveRowPadding.rowView x)) ((R'-v.rows)*rowLength prime v) zero).flatten := by
-  rw [← rowView_word (RecursiveRowPadding.padArray R' zero x),RecursiveRowPadding.rowView_padArray]
-  exact ofFn_pad h zero (RecursiveRowPadding.rowView x)
 
 /-- The valid-span crop word after the actual full transpose is the original
 full transpose word, preserving every prefix, row and suffix spectator. -/

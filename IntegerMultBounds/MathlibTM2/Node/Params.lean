@@ -996,12 +996,6 @@ lemma maskRegs_of_ne {k : Fin T} (h1 : k ≠ cnt) (h2 : k ≠ w) (R : Regs T A) 
     maskRegs cnt w n X R p k = R k := by
   simp [maskRegs, Function.update_of_ne h1, Function.update_of_ne h2]
 
-lemma maskRegs_maskRegs (R : Regs T A) (p q : ℕ) :
-    maskRegs cnt w n X (maskRegs cnt w n X R p) q = maskRegs cnt w n X R q := by
-  funext k
-  simp only [maskRegs, Function.update_apply]
-  split_ifs <;> simp_all
-
 lemma maskRegs_self {R : Regs T A} {p : ℕ}
     (h1 : R cnt = List.replicate (n - p) tick) (h2 : R w = (binSyms (min p n) X).reverse) :
     maskRegs cnt w n X R p = R := by

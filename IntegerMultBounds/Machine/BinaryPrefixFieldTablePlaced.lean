@@ -54,12 +54,6 @@ theorem constructs (caller : Tapes t a) (focus : Fin 4 → Fin t) (hf : Function
     simpa only [show (7 : Fin 24)=ports 3 from rfl,CompactGadgetReservationPlacement.strip_set] using native_clean (a := a) hs
   · simp only [result,CompactGadgetReservationPlacement.strip_set]
 
-theorem output_rows (caller : Tapes t a) (focus : Fin 4 → Fin t) (W start d : ℕ) (h : start+d≤W) :
-    (result caller focus W start d h).tape (focus 3) = putWord (fun _ => blank) 0
-      ((((List.range (2^W)).map (fun i => Gather.field (BinaryAddressTableData.row W i) start d)).flatten).map bitSymbol) ∧
-    (result caller focus W start d h).head (focus 3)=0 := by
-  simp [result,setTape,BinaryPrefixFieldTableAlphabet.word,BinaryPrefixFieldTableData.word_rows]
-
 theorem frame (caller : Tapes t a) (focus : Fin 4 → Fin t) (W start d : ℕ) (h : start+d≤W)
     (i : Fin t) (hi : i≠focus 3) :
     (result caller focus W start d h).tape i=caller.tape i ∧

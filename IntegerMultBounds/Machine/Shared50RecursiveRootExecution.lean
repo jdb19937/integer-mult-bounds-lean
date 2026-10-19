@@ -115,26 +115,5 @@ theorem rootBudget_bound (depth V : ℕ) :
   simp only [rootBudget,Nat.cast_add,Nat.cast_mul,constant]
   nlinarith
 
-/-- Actual execution of the one fixed root machine halts in the certified
-sublinear-width exponent bound and restores every cell/head outside its output.
-The shape premises are exactly the current power-width/divisible-row interface. -/
-theorem halts_power_bound (v : Descriptor) (shape : Shared50RecursiveDepth.Shape depth v)
-    (hs : Fin 6 → List Bool) (hv : RecursiveDimensionBank.Headers v hs)
-    (f : ℤ → Fin (prime+4)) (p : ℤ) (node scalar : Tapes 1 prime) (st : Tapes 2 prime)
-    (ready : Ready f p node scalar st) (x : Fin (volume prime v) → ZMod 2) :
-    ∃ n : ℕ, ∃ c, (n : ℝ) ≤ constant*(volume prime v : ℝ)*(v.width : ℝ)^Parameters.tau ∧
-      Machine.run Shared50RecursiveImplementation.program n
-        ((raw (bank (roles (RecursiveRowsSerialization.sourceData wires (encoded x))) hs f p node scalar
-          (SharedBank.empty 0 prime) st) Shared50RecursiveRoot.tapeCount).start Shared50RecursiveImplementation.program) =
-        some c ∧
-      step Shared50RecursiveImplementation.program c = none ∧
-      c.tapes = raw (bank (roles (RecursiveRowsSerialization.sourceData wires
-        (encoded (transpose (one_dvd v.rows) x)))) hs f p node scalar (SharedBank.empty 0 prime) st)
-        Shared50RecursiveRoot.tapeCount := by
-  obtain ⟨n,c,hn,htrace,hhalt,hout⟩ := root_budget_hoare v shape hs hv f p node scalar st ready x _ rfl
-  have hbound := rootBudget_bound depth (volume prime v)
-  rw [← shape.width] at hbound
-  exact ⟨n,c,(by exact_mod_cast hn : (n : ℝ) ≤ rootBudget depth (volume prime v)).trans hbound,htrace,hhalt,hout⟩
-
 end
 end IntegerMultBounds.Machine.Shared50RecursiveRootExecution

@@ -64,40 +64,6 @@ def margin : Fin 7 → ℝ := ![
   1 - delta - epsilon,
   epsilon]
 
-def minimumMargin : ℝ := 333833 / (4 * 10 ^ 15)
-
-theorem minimum_le_margin (i : Fin 7) : minimumMargin ≤ margin i := by
-  fin_cases i <;> norm_num [minimumMargin, margin, epsilon, spacing, tau, lam', delta]
-
-theorem minimum_attained : margin 2 = minimumMargin := by
-  change epsilon * (1 - lam') = minimumMargin
-  norm_num [minimumMargin, epsilon, lam']
-
-theorem absorption_gap : minimumMargin - kappa = 1833 / (4 * 10 ^ 15) := by
-  norm_num [minimumMargin, kappa]
-
-theorem margin_strict (i : Fin 7) : kappa < margin i := by
-  have := minimum_le_margin i
-  have := absorption_gap
-  linarith
-
-theorem dyadic_comparison : (2 : ℝ) ^ (-34 : ℤ) < kappa ∧
-    kappa < (2 : ℝ) ^ (-33 : ℤ) := by
-  norm_num [kappa]
-
-/-- The complex motif counts are recomputed here, rather than imported
-from a Python-generated certificate. This is not a construction of the motif. -/
-theorem complex_counts :
-    Nat.choose 25 3 = 2300 ∧ (25 : ℕ) ^ 3 = 15625 ∧
-    (2300 : ℕ) ^ 3 = 12167000000 ∧
-    Nat.choose 22 3 + 66 = 1606 ∧
-    2 * (2300 : ℕ) ^ 3 + 3 * 2300 ^ 2 * (2300 * 1606 + 26) = 58645352620000 ∧
-    3 * (2300 : ℕ) ^ 2 * 25 * 26 = 10315500000 ∧
-    58645352620000 * (15625 : ℕ) - 2 * 12167000000 + 2 * 10315500000 =
-      916333630984500000 ∧
-    (2 : ℕ) ≤ 916333630984500000 ∧ 916333630984500000 < (15625 : ℕ) ^ 5 := by
-  norm_num [Nat.choose]
-
 theorem complex_deficit :
     (1 : ℝ) - 916333630984500000 / (58645352620000 * 15625) =
       14 / 3464399375 ∧

@@ -69,30 +69,6 @@ theorem suffix_pos (s : Shape) (w : ℕ) (hp : 0 < s.payload) : 0 < suffix s w :
 theorem slot_fits (s : Shape) (w : ℕ) (hw : w ≤ s.H) (t : Slot) :
     s.slotStart t+w ≤ s.bits := by cases t <;> simp only [Shape.slotStart,Shape.bits] <;> omega
 
-theorem slots_disjoint (s : Shape) (w : ℕ) (hw : w ≤ s.H) (u v : Slot)
-    (huv : u ≠ v) (i j : Fin w) : s.slotStart u+i.val ≠ s.slotStart v+j.val := by
-  have hi := i.isLt
-  have hj := j.isLt
-  cases u <;> cases v
-  all_goals first | exact (huv rfl).elim | (simp only [Shape.slotStart]; omega)
-
-theorem packed_width_le (s : Shape) (n b : ℕ) (hn : n ≤ s.axes) (hb : b ≤ s.guard) :
-    n*b ≤ s.H := by
-  change n*b ≤ s.axes*s.guard
-  exact Nat.mul_le_mul hn hb
-
-theorem two_packed_widths (s : Shape) (n b q : ℕ) (hn : n ≤ s.axes)
-    (hb : b ≤ s.guard) (hq : q ≤ s.guard) : n*b ≤ s.H ∧ n*q ≤ s.H :=
-  ⟨packed_width_le s n b hn hb,packed_width_le s n q hn hq⟩
-
-theorem slots_disjoint_mixed (s : Shape) (w₁ w₂ : ℕ) (hw₁ : w₁ ≤ s.H) (hw₂ : w₂ ≤ s.H)
-    (u v : Slot) (huv : u ≠ v) (i : Fin w₁) (j : Fin w₂) :
-    s.slotStart u+i.val ≠ s.slotStart v+j.val := by
-  have hi := i.isLt
-  have hj := j.isLt
-  cases u <;> cases v
-  all_goals first | exact (huv rfl).elim | (simp only [Shape.slotStart]; omega)
-
 def rectangle {a c r : ℕ} (s : Shape) (w : ℕ) (hw : w ≤ s.H) (f : Front) (hc : 0 < c)
     (x : Fin (1*r*s.recordWidth) → Bool) (j : Fin c) :
     Fin (RadixRangePadding.volume (s.prefixRange (rowCount r c) f) (2^w) (gap s w f) (suffix s w)) → Bool :=

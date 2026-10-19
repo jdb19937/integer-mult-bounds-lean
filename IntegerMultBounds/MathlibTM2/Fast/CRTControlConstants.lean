@@ -133,15 +133,4 @@ theorem crtControlConstants_runs {rg : TblR 10 → Fin T} (hrg : Function.Inject
     (by simp [R₁, hrg.eq_iff, hR, tblRho])
   exact crtRuns_mono (crtRuns_seq h₁ h₂) (by omega)
 
-/-- The bridge preserves the scanner's canonical address, weighted value,
-validity and accumulator, and sets the two required constant variables. -/
-theorem crtControlConstantsState_spec (S μ : ℕ) (st : TblSt 10 A) :
-    (crtControlConstantsState S μ st).val 1 = S ∧
-    (crtControlConstantsState S μ st).val 2 = μ ∧
-    (∀ j, j ≠ 1 → j ≠ 2 → (crtControlConstantsState S μ st).val j = st.val j) ∧
-    (crtControlConstantsState S μ st).acc = st.acc := by
-  refine ⟨by simp [crtControlConstantsState], by simp [crtControlConstantsState], ?_, rfl⟩
-  intro j h1 h2
-  simp [crtControlConstantsState, h1, h2]
-
 end IntegerMultBounds.MathlibTM2.Fast

@@ -172,34 +172,10 @@ theorem countdown_zero (hq : 2 ≤ q) (xs : List (Fin q)) :
   have := advance_value hq (value xs) xs le_rfl
   omega
 
-/-- Add the unique terminal underflow and all binary increment carry scans. -/
-def conversionCost (hq : 2 ≤ q) (xs : List (Fin q)) : ℕ :=
-  totalCost hq (value xs) xs+2*borrowSteps (advance hq (value xs) xs)+
-    GrowingCounterData.totalCost (value xs) []
-
-theorem conversion_cost (hq : 2 ≤ q) (xs : List (Fin q)) :
-    conversionCost hq xs ≤ 10*value xs+2*xs.length+2 := by
-  have hp := total_potential hq (value xs) xs le_rfl
-  have hz := zeroWeight_of_zero hq _ (countdown_zero hq xs)
-  have hs := borrowSteps_of_zero hq _ (countdown_zero hq xs)
-  have hw := zeroWeight_le_length xs
-  have hb := GrowingCounterData.amortized_cost (value xs) []
-  rw [advance_length] at hz hs
-  simp only [List.length_nil,Nat.mul_zero,Nat.add_zero] at hb
-  dsimp only [conversionCost]
-  omega
-
 theorem width_le_power (hq : 2 ≤ q) (b : ℕ) : b ≤ q^b := by
   induction b with
   | zero => simp
   | succ b ih => rw [pow_succ]; have := Nat.one_le_pow b q (by omega); nlinarith
-
-theorem conversion_cost_power (hq : 2 ≤ q) (xs : List (Fin q)) :
-    conversionCost hq xs ≤ 12*q^xs.length+2 := by
-  have h := conversion_cost hq xs
-  have hv := value_lt hq xs
-  have hw := width_le_power hq xs.length
-  omega
 
 /-- The final grown binary word represents the source radix value exactly. -/
 def output (xs : List (Fin q)) : List Bool := GrowingCounterData.advance (value xs) []

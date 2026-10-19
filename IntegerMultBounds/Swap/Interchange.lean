@@ -115,59 +115,9 @@ difference, on every wire it touches. -/
 theorem edge_apply (Mold Mnew : E →ₗ[K] E) (f : (E × E) → R) :
     frame Mnew ((frame Mold).symm f) = frame (Mnew - Mold) f := frame_change Mold Mnew f
 
-/-- The routed output of the framed circuit under the finite shear contract: the
-logical circuit permutes the roles by `ρ`, and `M_out (ρ w) - M_in w = I` turns
-the physical output at role `ρ w` into the full shear `H ← H + D` of the
-physical input at role `w`, for every wire including scratch roles. -/
-theorem routed_output (wires : List ι) (hall : ∀ i, i ∈ wires) (Min Mout : ι → E →ₗ[K] E)
-    (vs : List (FramedGate ι R ((E × E) → R))) (ρ : Equiv.Perm ι)
-    (hroute : ∀ x : ι → (E × E) → R,
-      moduleRun (vs.map FramedGate.gate) x = fun w' => x (ρ.symm w'))
-    (hcontract : ∀ w, Mout (ρ w) - Min w = LinearMap.id)
-    (stored : ι → (E × E) → R) (w : ι) :
-    run (compileNetwork wires (fun w => frame (Min w)) (fun w => frame (Mout w)) vs)
-      stored (ρ w) = fun p => stored w (p.1 - p.2, p.2) := by
-  rw [common_frame_identity wires hall, hroute]
-  show frame (Mout (ρ w)) ((frame (Min (ρ.symm (ρ w)))).symm (stored (ρ.symm (ρ w)))) = _
-  rw [Equiv.symm_apply_apply, edge_apply, hcontract]
-  funext p
-  exact full_shear (stored w) p
-
 end Frames
 
 section Cost
-
-/-- The recursion of Proposition 4.3: a node of width `m^(k+1)` and volume `V`
-makes `s` calls of width `m^k` on volume `V / W` and does `C V` further work.
-With `s / W ≤ m^τ` the time is `O(V (m^k)^τ)` with an explicit constant. -/
-theorem recursive_cost {m W s : ℕ} (hm : 2 ≤ m) (hW : 0 < W) {τ : ℝ} (hτ : 0 < τ)
-    (hs : (s : ℝ) / W ≤ (m : ℝ) ^ τ) (time : ℕ → ℝ → ℝ) {L C : ℝ} (hL : 0 ≤ L) (hC : 0 ≤ C)
-    (hbase : ∀ V : ℝ, 0 < V → time 0 V ≤ L * V)
-    (hstep : ∀ (k : ℕ) (V : ℝ), 0 < V → time (k + 1) V ≤ s * time k (V / W) + C * V) :
-    ∀ (k : ℕ) (V : ℝ), 0 < V →
-      time k V ≤ (L + C) * (m : ℝ) ^ τ / ((m : ℝ) ^ τ - 1) * ((m ^ k : ℕ) : ℝ) ^ τ * V := by
-  -- The normalized recurrence `G (k+1) = (s / W) G k + C` bounds `time k V / V`.
-  let G : ℕ → ℝ := fun k => Nat.rec L (fun _ g => (s : ℝ) / W * g + C) k
-  have hG0 : G 0 = L := rfl
-  have hGs : ∀ k, G (k + 1) = (s : ℝ) / W * G k + C := fun _ => rfl
-  have hWpos : (0 : ℝ) < W := by exact_mod_cast hW
-  have hbound : ∀ k V, 0 < V → time k V ≤ G k * V := by
-    intro k
-    induction k with
-    | zero => intro V hV; rw [hG0]; exact hbase V hV
-    | succ k ih =>
-      intro V hV
-      have hV' : 0 < V / W := div_pos hV hWpos
-      calc time (k + 1) V ≤ s * time k (V / W) + C * V := hstep k V hV
-        _ ≤ s * (G k * (V / W)) + C * V := by gcongr; exact ih _ hV'
-        _ = G (k + 1) * V := by rw [hGs]; field_simp
-  have hGle := Recurrence.power_width_bound (F := G) hm hτ (by positivity) hs hL hC hG0.le
-    (fun k => (hGs k).le)
-  intro k V hV
-  calc time k V ≤ G k * V := hbound k V hV
-    _ ≤ (L + C) * (m : ℝ) ^ τ / ((m : ℝ) ^ τ - 1) * ((m ^ k : ℕ) : ℝ) ^ τ * V := by
-      gcongr
-      exact hGle k
 
 end Cost
 

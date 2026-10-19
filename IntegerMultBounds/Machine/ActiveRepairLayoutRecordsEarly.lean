@@ -35,21 +35,5 @@ theorem result_move :
     array (f ((P).symm (f.symm i))) at hh
   simpa only [Equiv.apply_symm_apply,ActiveRepairLayoutRecordsMove.move,f] using hh
 
-theorem data_result :
-    data s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize
-      (ActivePrefixEarlySequenceData.result s p offset hfit rows array)=
-    data s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize array ∘ (Q).symm := by
-  apply data_after s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize
-    array _
-  · exact ActiveRepairLayoutRecordsPermutation.early_actual s p.q p.b p.n p.before p.after rows p.rho offset (p.f*p.q) ActiveRepairRankHeadersData.SourceSide.before (ActivePrefixEarlySequenceGlobal.positive s p)
-  · exact ActivePrefixEarlySequenceGlobal.entry s p offset hfit array
-
-theorem records_result :
-    records s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize
-      (ActivePrefixEarlySequenceData.result s p offset hfit rows array)=
-    repairRecords E Q (data s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize array) := by
-  unfold records repairRecords
-  rw [data_result]
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly

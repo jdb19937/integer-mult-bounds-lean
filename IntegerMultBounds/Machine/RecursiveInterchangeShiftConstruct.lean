@@ -113,25 +113,6 @@ theorem headers_preserved {v : Descriptor} (r : ℚ) (hs : Fin 6 → List Bool)
   simp only [Tapes.append,Fin.addCases_left]
   exact RecursiveDimensionBank.headers_preserved hs _ i
 
-/-- Full physical execution and literal H-controlled D semantics, from sole
-canonical headers and payload rather than a generated metadata premise. -/
-theorem constructs_array {v : Descriptor} (r : ℚ) (hden : r.den < prime) (hs : Fin 6 → List Bool)
-    (a : Fin (volume prime v) → Fin 4) (hv : RecursiveDimensionBank.Headers v hs) (hvpos : v.Positive) :
-    HoareTime (program r) (fun w => w = input hs a)
-      (fun w => w = output r hs a ∧
-        SharedPayload.payload w sourceSlot destSlot = FlatRepeatedControlArray.pair (RecursiveInterchangeShift.array r a) ∧
-        ∀ x : RecursiveInterchangeScaling.Address v,
-          RecursiveInterchangeShift.array r a (RecursiveInterchangeScaling.index (RecursiveInterchangeShift.shiftAddress r x)) =
-            a (RecursiveInterchangeScaling.index x) ∧
-          (RecursiveInterchangeShift.shiftAddress r x).d.val =
-            (x.d.val+(Swap.Modular.ratMod (ActualAffineScaling.modulus v.width) r*
-              (x.h.val : ZMod (ActualAffineScaling.modulus v.width))).val)%ActualAffineScaling.modulus v.width)
-      (1288*volume prime v+186) := by
-  apply (constructs_hoare r hs a hv hvpos).consequence (fun _ h => h) _ le_rfl
-  rintro w rfl
-  exact ⟨rfl,output_payload r hs a,fun x =>
-    ⟨RecursiveInterchangeShift.array_entry r a x,RecursiveInterchangeShift.shiftAddress_d r hden x⟩⟩
-
 
 end
 end IntegerMultBounds.Machine.RecursiveInterchangeShiftConstruct

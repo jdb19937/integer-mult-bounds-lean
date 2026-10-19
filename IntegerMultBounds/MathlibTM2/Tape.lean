@@ -126,19 +126,6 @@ theorem rep_step {t q a : ℕ} {M : Program t q a} {c : Config t q a}
   · simp [hj]
   · simp [hj, sub_eq_zero]
 
-/-- The input configuration is represented by the input word on the right stack of tape 0 and
-empty stacks elsewhere. -/
-theorem rep_input {t q a : ℕ} (M : Program t q a) (x y : List Bool) :
-    Rep (input M x y) (fun _ => [])
-      (fun i => if i.val = 0 then x.map bitSymbol ++ [separator] ++ y.map bitSymbol else []) := by
-  intro i j
-  simp only [IntegerMultBounds.Machine.input, sub_zero]
-  rcases int_cases j with ⟨k, rfl⟩ | ⟨k, rfl⟩
-  · rw [readAt_nonneg]
-    split_ifs <;> simp [wordTape]
-  · rw [readAt_neg]
-    split_ifs <;> simp [wordTape]; omega
-
 /-- The stored cells of a tape, leftmost first, are a contiguous window of the tape. -/
 theorem window_eq (blank : S) (L R : List S) (h : ℤ) (T : ℤ → S)
     (hT : ∀ j, T j = readAt blank L R (j - h)) :
@@ -155,59 +142,5 @@ theorem window_eq (blank : S) (L R : List S) (h : ℤ) (T : ℤ → S)
       show h - (L.length : ℤ) + (i : ℤ) - h = ((i - L.length : ℕ) : ℤ) by omega, readAt_nonneg,
       List.getElem?_eq_getElem (by simp at h₁; omega)]
     simp
-
-/-- Draining a tape that holds exactly a nonempty bit word, keeping the bit symbols, recovers
-the word. -/
-theorem filterMap_window {a : ℕ} (L R : List (Fin (a + 4))) (h : ℤ) (out : List Bool)
-    (hne : out ≠ []) (hT : ∀ j, wordTape (out.map bitSymbol) j = readAt blank L R (j - h)) :
-    (L.reverse ++ R).filterMap decodeBit = out := by
-  rw [window_eq blank L R h _ hT]
-  set lo : ℤ := h - L.length
-  set len := L.length + R.length
-  have hbit : ∀ j : ℕ, j < out.length → wordTape (out.map bitSymbol) j ≠ (blank : Fin (a + 4)) := by
-    intro j hj
-    simp only [wordTape, Nat.cast_nonneg, ite_true, Int.toNat_natCast, List.getElem?_map,
-      List.getElem?_eq_getElem hj, Option.map_some, Option.getD_some]
-    cases out[j] <;> simp [bitSymbol, blank]
-  have hlen : 0 < out.length := List.length_pos_iff.2 hne
-  have hlo : lo ≤ 0 := by
-    by_contra hc
-    apply hbit 0 hlen
-    rw [hT, show ((0 : ℕ) : ℤ) - h = -((h - 1 - L.length).toNat + L.length + 1 : ℕ) by omega,
-      readAt_neg, List.getElem?_eq_none (by omega)]
-    rfl
-  have hlo' : lo = h - L.length := rfl
-  have hlen' : len = L.length + R.length := rfl
-  have hhi : (out.length : ℤ) ≤ lo + len := by
-    by_contra hc
-    apply hbit (out.length - 1) (by omega)
-    rw [hT, show (((out.length - 1 : ℕ)) : ℤ) - h = ((((out.length - 1 : ℕ) : ℤ) - h).toNat : ℕ) by
-        omega, readAt_nonneg, List.getElem?_eq_none (by omega)]
-    rfl
-  have hsplit : (List.range len).map (fun i : ℕ => wordTape (a := a) (out.map bitSymbol) (lo + (i : ℤ))) =
-      List.replicate (-lo).toNat blank ++ out.map bitSymbol ++
-        List.replicate (len - (-lo).toNat - out.length) blank := by
-    apply List.ext_getElem (by simp; omega)
-    intro i h₁ h₂
-    simp only [List.getElem_map, List.getElem_range]
-    by_cases hi : i < (-lo).toNat
-    · rw [List.getElem_append_left (by simp; omega), List.getElem_append_left (by simp; omega),
-        List.getElem_replicate]
-      simp only [wordTape]
-      rw [ite_eq_right (by omega)]
-    · by_cases hi' : i < (-lo).toNat + out.length
-      · rw [List.getElem_append_left (by simp; omega), List.getElem_append_right (by simp; omega)]
-        simp only [wordTape, List.length_replicate]
-        rw [ite_eq_left (by omega), show (lo + i).toNat = i - (-lo).toNat by omega,
-          List.getElem?_eq_getElem (by simp; omega)]
-        rfl
-      · rw [List.getElem_append_right (by simp; omega), List.getElem_replicate]
-        simp only [wordTape]
-        split_ifs with h0
-        · rw [List.getElem?_eq_none (by simp; omega)]
-          rfl
-        · rfl
-  rw [hsplit]
-  simp [List.filterMap_append, List.filterMap_map]
 
 end IntegerMultBounds.MathlibTM2

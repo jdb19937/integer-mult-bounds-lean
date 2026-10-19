@@ -100,18 +100,6 @@ theorem decoded_grid (k g n M : ℕ) (x : Wire → BinaryColumns.Arrays (25^3) k
   rw [prefix_exact,FramedCircuit.decode_encode]
   simpa only [Nat.mul_one,bound] using RationalScalarGrid.bounded (rows g) x n 1 M 52 hx (row_coefficients g) i ω
 
-/-- Applying each role's actually retained frame adds at most the original
-coordinate volume in precision and twice that volume in numerator growth. -/
-theorem stored_grid (k g n M : ℕ) (x : Wire → BinaryColumns.Arrays (25^3) k)
-    (hx : ∀ i ω,BoundedGrid n M (x i ω)) (i : Wire) (ω : BinaryColumns.Address (25^3) k) :
-    BoundedGrid (n+(rows g).length+k*(25^3)) (bound g M*4^(k*(25^3)))
-      (FramedCircuit.run (prefixProgram k g)
-        (FramedCircuit.encode (GroupedModuleFrames.profile (frameOf k) initialLabels) x) i ω) := by
-  rw [prefix_exact]
-  exact bounded_rational_label_frame ComplexPhaseBudget.coordinateSymm _ _
-    (fun ω => by
-      simpa only [Nat.mul_one,bound] using RationalScalarGrid.bounded (rows g) x n 1 M 52 hx (row_coefficients g) i ω) ω
-
 section TracePrefixes
 attribute [local instance] Classical.propDecidable
 
@@ -169,21 +157,6 @@ theorem alignment_exact (k : ℕ) (g : Fin ComplexRank25.program.length) (e : �
   rw [alignmentProgram,FramedCircuit.run_append,prefix_exact,
     FramedCircuit.edges_invariant,alignment_profile]
 
-/-- Alignment changes actual stored frames, without introducing any new
-logical scalar rows or any assumed recursive execution certificate. -/
-theorem alignment_stored_grid (k n M : ℕ) (g : Fin ComplexRank25.program.length)
-    (e : ℕ) (x : Wire → BinaryColumns.Arrays (25^3) k)
-    (hx : ∀ i ω,BoundedGrid n M (x i ω)) (i : Wire)
-    (ω : BinaryColumns.Address (25^3) k) :
-    BoundedGrid (n+(rows g.val).length+k*(25^3)) (bound g.val M*4^(k*(25^3)))
-      (FramedCircuit.run (alignmentProgram k g e)
-        (FramedCircuit.encode (GroupedModuleFrames.profile (frameOf k) initialLabels) x) i ω) := by
-  rw [alignment_exact]
-  exact bounded_rational_label_frame ComplexPhaseBudget.coordinateSymm _ _
-    (fun ω => by
-      simpa only [Nat.mul_one,bound] using RationalScalarGrid.bounded (rows g.val)
-        x n 1 M 52 hx (row_coefficients g.val) i ω) ω
-
 private theorem compile_alignment_prefix {ι L R E : Type*} [DecidableEq ι]
     [CommRing R] [DecidableEq R] [AddCommGroup E] [Module R E]
     (frame : L → FramedCircuit.Frame R E) (current : ι → L)
@@ -233,13 +206,6 @@ theorem alignment_prefix (k : ℕ) (g : Fin ComplexRank25.program.length) (e : �
   exact List.append_assoc _ _ _
 
 end TracePrefixes
-
-/-- Original node geometry derives the frame depth directly. -/
-theorem frame_depth_le {s : CompactGadgetReservationShape.Shape}
-    (v : ActivePrefixStageParameters.Stage s) (hslots : v.slots=25^3) : v.f*(25^3)≤s.active := by
-  have h := v.activeAxes
-  rw [hslots] at h
-  nlinarith
 
 end
 end IntegerMultBounds.Machine.CompactFramedScalarGrid

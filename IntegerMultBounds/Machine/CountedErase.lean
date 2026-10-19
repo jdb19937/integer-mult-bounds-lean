@@ -78,22 +78,4 @@ theorem erased_word (f : ℤ → Fin 4) (p : ℤ) (xs : List (Fin 4))
   · simp only [erased,ite_eq_right hi]
     exact putWord_outside f p z xs (by omega)
 
-theorem erase_word_hoare (f : ℤ → Fin 4) (p : ℤ) (xs : List (Fin 4))
-    (bs : List Bool) (hcount : Counter.value bs = xs.length)
-    (hblank : ∀ z, p ≤ z → z < p+xs.length → f z = blank) :
-    HoareTime program (fun v => v = bank (putWord f p xs) p bs)
-      (fun v => v = bank f (p+xs.length) bs) (7*xs.length+7*bs.length+16) := by
-  have h := erase_hoare (putWord f p xs) p bs
-  simpa only [hcount,erased_word f p xs hblank] using h
-
-/-- Canonical descriptors yield a linear-volume cleanup bound. -/
-theorem erase_hoare_linear (f : ℤ → Fin 4) (p : ℤ) (bs : List Bool)
-    (hc : GrowingCounterData.Canonical bs) :
-    HoareTime program (fun v => v = bank f p bs)
-      (fun v => v = bank (erased f p (Counter.value bs)) (p+Counter.value bs) bs)
-      (14*Counter.value bs+23) := by
-  have hw := GrowingCounterData.canonical_width bs hc
-  have hl := Nat.log2_le_self (Counter.value bs)
-  exact (erase_hoare f p bs).consequence (fun _ h => h) (fun _ h => h) (by omega)
-
 end IntegerMultBounds.Machine.CountedErase

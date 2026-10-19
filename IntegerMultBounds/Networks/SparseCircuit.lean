@@ -39,18 +39,4 @@ theorem copies_run (dst : α → ι) (src : β → ι) (entries : List (α × β
       abel
     · simp [ReversibleFanout.add_run, Function.update_of_ne (Ne.symm hk), hk]
 
-omit [DecidableEq ι] in
-/-- The exact instruction incidences contain only the supplied pair's two roles. -/
-theorem mem_copies (dst : α → ι) (src : β → ι) (entries : List (α × β)) (gate : Gate ι (ZMod 2)) :
-    gate ∈ copies dst src entries ↔ ∃ entry ∈ entries,
-      gate.target = dst entry.1 ∧ gate.terms = [(src entry.2, 1)] := by
-  simp only [copies, List.mem_map]
-  constructor
-  · rintro ⟨entry, he, rfl⟩
-    exact ⟨entry, he, rfl, rfl⟩
-  · rintro ⟨entry, he, ht, hs⟩
-    refine ⟨entry, he, ?_⟩
-    cases gate
-    simp_all [ReversibleFanout.add]
-
 end IntegerMultBounds.Networks.SparseCircuit

@@ -64,16 +64,6 @@ theorem crtControlAllFibersCost_decompose {D W w S L a k : ℕ} (ha : a ≤ L) :
     crtControlScanCost crtControlOffsetUnaryCost
   nlinarith [hdata]
 
-/-- The physical data and unary terms are linear in volume and address width. -/
-theorem crtControlAllFibersCost_le {D W w S L a k : ℕ}
-    (ha : a ≤ L) (hW : W ≤ 3 * L + 1) (hS : S ≤ 2 ^ a) :
-    crtControlAllFibersCost D W w S L a k ≤
-      2 ^ (L - a) * crtControlAllPolynomialCost D W w L +
-      2 ^ 7 * 2 ^ L * (L + 1) + 2 ^ L * (10 * k + 9) := by
-  have h := crtControlAllFibersCost_decompose (D := D) (W := W) (w := w) (S := S) (k := k) ha
-  have hu := crtControlOffsetUnaryCost_fibers_le ha hW hS
-  omega
-
 /-- Summing the actual physical pass costs over all pipeline axes fits a
 linear number of full-volume coefficient passes, plus an absorbed binary term. -/
 theorem crtControlAllFibersCost_pipeline_le (cw : ℕ) :

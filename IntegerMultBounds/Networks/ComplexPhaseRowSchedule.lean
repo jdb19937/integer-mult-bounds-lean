@@ -63,8 +63,6 @@ def slot (e : Edge) (i : Fin (dimension e)) : Fin (25 ^ 3) :=
   BinaryPhaseResidualRowProgram.slot coordinateSymm (low e) (high e)
     (low_nondegenerate e) (high_nondegenerate e) (comparable e) (residual_good e) i
 
-theorem slot_val (e : Edge) (i : Fin (dimension e)) : (slot e i).val = i.val := rfl
-
 /-- No residual certificate is an input: membership in the actual fixed edge
 list determines all of them. The chosen direction records inverse phase. -/
 theorem phase (e : Edge) (x : Fin (25 ^ 3) → ZMod 2) :

@@ -71,13 +71,5 @@ theorem bounded_hoare (cutoff : ℕ) (caller : Tapes t prime) (headers : Fin 6 �
     (Nat.mul_le_mul_left ArbitraryWidthElementary.coefficient (Nat.add_le_add_right hw 1))
   nlinarith
 
-theorem bounded_budget (cutoff e V : ℕ) (τ : ℝ) (he : 0 < e) (hτ : 0 < τ) :
-    (((ArbitraryWidthElementary.coefficient*(cutoff+1)+116)*V : ℕ) : ℝ) ≤
-      ((ArbitraryWidthElementary.coefficient*(cutoff+1)+116 : ℕ) : ℝ)*(V : ℝ)*(e : ℝ)^τ := by
-  have hp : 1 ≤ (e : ℝ)^τ := Real.one_le_rpow (by exact_mod_cast he) hτ.le
-  have h := mul_le_mul_of_nonneg_left hp
-    (show 0 ≤ ((ArbitraryWidthElementary.coefficient*(cutoff+1)+116 : ℕ) : ℝ)*(V : ℝ) by exact mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
-  simpa only [Nat.cast_mul,mul_one] using h
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthElementaryInitializedRun

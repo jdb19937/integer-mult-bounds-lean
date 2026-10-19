@@ -33,12 +33,6 @@ private theorem dispatchBoundR (ell K h : ℕ) (hh : h≤ell) :
   simp only [Bool.false_eq_true,ite_true,ite_false,Nat.sub_zero]
   split_ifs <;> omega
 
-private theorem layer_le_stepR (ds : ComplexFramedExecution.Directions) (es : List ℕ)
-    (ell K w l h s : ℕ) : synLayerCost ds es ell K l w h≤synLayerStepCost ds es ell K w l h s := by
-  unfold synLayerStepCost
-  dsimp only
-  omega
-
 /-- Rounded compact rounds use the stronger layer exponent; the at-most-K boundary
 rounds keep their linear-in-d direct contribution explicit. -/
 theorem compactRetunedR_round_le {Ka : ℕ} :

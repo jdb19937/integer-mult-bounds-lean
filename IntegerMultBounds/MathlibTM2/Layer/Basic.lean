@@ -60,11 +60,6 @@ lemma kBit_commute (q r : ZMod 4) (i j : Fin n) :
 noncomputable def Cfull (X : Type) (n : ℕ) : Arr X n →ₗ[ℂ] Arr X n :=
   (List.ofFn (fun i : Fin n => kBit 1 i)).prod
 
-/-- Kernels ignore the spectator: they commute with reindexing it. -/
-lemma kBit_respec {Z : Type} (φ : Z → X) (q : ZMod 4) (i : Fin n) (f : Arr X n) :
-    (fun p : Z × (Fin n → ZMod 2) => kBit q i f (φ p.1, p.2)) =
-      kBit q i (fun p : Z × (Fin n → ZMod 2) => f (φ p.1, p.2)) := rfl
-
 lemma prod_respec {Z : Type} (φ : Z → X) (q : ZMod 4) (l : List (Fin n)) (f : Arr X n) :
     (fun p : Z × (Fin n → ZMod 2) => (l.map (kBit q)).prod f (φ p.1, p.2)) =
       (l.map (kBit q)).prod (fun p : Z × (Fin n → ZMod 2) => f (φ p.1, p.2)) := by

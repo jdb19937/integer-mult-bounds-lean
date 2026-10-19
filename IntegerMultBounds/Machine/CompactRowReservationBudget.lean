@@ -49,16 +49,6 @@ theorem original_linear (c r l : ℕ) (hc : 0 < c) (hr : 0 < r) (hl : 0 < l) :
       (CompactRowPaddingRun.volume_le_original r c l hr hc)
     _ = _ := by ring
 
-/-- In the usual reservation range, the whole paid machine has at most twice
-the padded-volume coefficient against the original literal word volume. -/
-theorem range_linear (c r l : ℕ) (hc : 0 < c) (hr : 0 < r) (hl : 0 < l) (hcr : c ≤ r) :
-    budget c r l ≤ (2*constant c)*(r*l) := by
-  calc
-    _ ≤ constant c*(paddedRows r c*l) := linear c r l hc hr hl
-    _ ≤ constant c*(2*(r*l)) := Nat.mul_le_mul_left _
-      (CompactRowPaddingRun.volume_le_twice r c l hc hcr)
-    _ = _ := by ring
-
 /-- Exact whole-bank execution, including every preparation and erasure,
 within a constant times the original complete-record binary word volume. -/
 theorem runs (ha : 2 ≤ a) (c : ℕ) (rs ls : List Bool) (r l : ℕ)

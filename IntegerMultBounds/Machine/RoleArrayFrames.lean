@@ -195,12 +195,6 @@ theorem saved_controls (L : Layout t) (ops : List (Role L)) (n : ℕ) (v : Tapes
   | nil => exact hc
   | cons i ops ih => exact ih _ (one_controls L i n bs v hc)
 
-theorem states_eq (L : Layout t) (ops : List (Role L)) :
-    pushStates ops = 46*ops.length+1 ∧ popStates ops = 50*ops.length+1 := by
-  induction ops with
-  | nil => exact ⟨rfl,rfl⟩
-  | cons i ops ih => simp only [pushStates,popStates,List.length_cons]; omega
-
 private theorem canonical_length (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n)
     (hc : GrowingCounterData.Canonical bs) (hp : 0 < n) : bs.length ≤ 2*n := by
   have h := GrowingCounterData.canonical_width bs hc
@@ -231,16 +225,5 @@ theorem pop_hoare_linear (L : Layout t) (ops : List (Role L)) (hu : ops.Nodup) (
   calc
     _ ≤ ops.length*(92*n) := Nat.mul_le_mul_left _ hbound
     _ = _ := by ring
-
-/-- A literal same-bank roundtrip, with all array/clock resets and the join. -/
-theorem roundtrip_hoare_linear (L : Layout t) (ops : List (Role L)) (hu : ops.Nodup) (v : Tapes t a)
-    (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n) (hcanon : GrowingCounterData.Canonical bs)
-    (hp : 0 < n) (hc : Controls L bs v)
-    (hr : ∀ i ∈ ops, v.head i = 0 ∧ RoleArrayStack.Supported (v.tape i) n) (hf : Free L ops n v) :
-    HoareTime (seq (pushProgram L ops) (popProgram L ops)) (fun w => w = v) (fun w => w = v)
-      ((180*ops.length+1)*n) := by
-  have h := (push_hoare_linear L ops hu v bs n hn hcanon hp hc hr).seq
-    (pop_hoare_linear L ops hu v bs n hn hcanon hp hc hr hf)
-  exact h.consequence (fun _ h => h) (fun _ h => h) (by nlinarith)
 
 end IntegerMultBounds.Machine.RoleArrayFrames

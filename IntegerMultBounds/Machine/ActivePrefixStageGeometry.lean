@@ -32,13 +32,6 @@ theorem original_slot_split (v : Stage s) (i : Fin v.slots) :
   have h := congrArg (fun a => a*s.chunk) (axes_split v i)
   simpa only [Nat.add_mul,slotStart,slotWidth,slotLow] using h
 
-/-- High and low retained target intervals are the original slot remnants. -/
-theorem target_slot_split (v : Stage s) :
-    before v=slotStart v v.target+(s.chunk-v.rho) ∧
-    after v=slotLow v v.target+v.rho ∧
-    (s.chunk-v.rho)+(v.f-1)*s.chunk+v.rho=slotWidth v :=
-  ⟨rfl,rfl,width_split v⟩
-
 theorem early_axes (v : Stage s) (horder : v.source.val<v.target.val) :
     highAxes v v.source+v.f+(v.target.val-v.source.val-1)*v.f=highAxes v v.target := by
   have hi : v.source.val+1+(v.target.val-v.source.val-1)=v.target.val := by omega
@@ -82,24 +75,6 @@ theorem late_fits (v : Stage s) (horder : v.target.val<v.source.val) :
   unfold lateOffset slotLow after
   omega
 
-theorem original_disjoint (v : Stage s) :
-    slotStart v v.source+slotWidth v≤slotStart v v.target ∨
-      slotStart v v.target+slotWidth v≤slotStart v v.source := by
-  rcases source_order v with he | hl
-  · left
-    have h := congrArg (fun a => a*s.chunk) (early_axes v he)
-    simp only [Nat.add_mul] at h
-    unfold slotStart slotWidth
-    omega
-  · right
-    have hs := original_slot_split v v.source
-    have ht := original_slot_split v v.target
-    have h := congrArg (fun a => a*s.chunk) (late_axes v hl)
-    simp only [Nat.add_mul] at h
-    unfold slotLow slotWidth at hs ht
-    unfold slotWidth
-    omega
-
 /-- The containing target slot's selected positions become the low gadget's
 stride positions; the last one is activeBefore bit zero. -/
 theorem target_selected_position (v : Stage s) (i : ℕ) :
@@ -137,21 +112,6 @@ theorem early_high_positive (v : Stage s) (horder : v.source.val<v.target.val) :
   have hK : 0<s.chunk := by have := v.selectedFits; omega
   exact Nat.mul_pos (Nat.mul_pos (by omega) hf) hK
 
-theorem early_parameters_fit (v : Stage s) (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk)
-    (horder : v.source.val<v.target.val) :
-    earlyOffset v+(parameters v hG hGK).f*(parameters v hG hGK).q≤(parameters v hG hGK).before :=
-  early_fits v horder
-
-theorem late_parameters_fit (v : Stage s) (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk)
-    (horder : v.target.val<v.source.val) :
-    lateOffset v+(parameters v hG hGK).f*(parameters v hG hGK).q≤(parameters v hG hGK).after :=
-  late_fits v horder
-
-theorem early_parameters_high (v : Stage s) (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk)
-    (horder : v.source.val<v.target.val) :
-    0<ActiveTargetHighestPairLayoutGeometry.sourceHigh s (parameters v hG hGK) (earlyOffset v) :=
-  early_high_positive v horder
-
 /-- Every selected position is inside its original complete f*K-bit slot. -/
 theorem selected_inside_slot (v : Stage s) (j : Fin v.slots) (i : Fin v.f) :
     slotLow v j≤slotLow v j+(v.rho+i.val*s.chunk) ∧
@@ -162,11 +122,5 @@ theorem selected_inside_slot (v : Stage s) (j : Fin v.slots) (i : Fin v.f) :
   simp only [Nat.add_mul,Nat.one_mul] at hm
   unfold slotWidth
   constructor <;> omega
-
-/-- The target highest operation is exactly the original final selected bit,
-not a newly added address coordinate. -/
-theorem target_highest_position (v : Stage s) :
-    after v+(v.f-1)*s.chunk=slotLow v v.target+(v.rho+(v.f-1)*s.chunk) :=
-  target_selected_position v (v.f-1)
 
 end IntegerMultBounds.Machine.ActivePrefixStageGeometry

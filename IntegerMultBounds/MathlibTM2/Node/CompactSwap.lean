@@ -40,18 +40,6 @@ def compactSwapPerm (P G R h : ℕ) : Equiv.Perm (CompactSwapAddr P G R h) where
   left_inv _ := rfl
   right_inv _ := rfl
 
-lemma compactSwapPerm_spectators (P G R h : ℕ) (x : CompactSwapAddr P G R h) :
-    (compactSwapPerm P G R h x).1 = x.1 ∧
-    (compactSwapPerm P G R h x).2.2.1 = x.2.2.1 ∧
-    (compactSwapPerm P G R h x).2.2.2.2 = x.2.2.2.2 := ⟨rfl, rfl, rfl⟩
-
-lemma compactSwapPerm_fields (P G R h : ℕ) (x : CompactSwapAddr P G R h) :
-    (compactSwapPerm P G R h x).2.1 = x.2.2.2.1 ∧
-    (compactSwapPerm P G R h x).2.2.2.1 = x.2.1 := ⟨rfl, rfl⟩
-
-lemma compactSwapPerm_twice (P G R h : ℕ) (x : CompactSwapAddr P G R h) :
-    compactSwapPerm P G R h (compactSwapPerm P G R h x) = x := rfl
-
 /-- A bijection onto the entire bit-stream volume, with no extra field or zero restriction. -/
 def compactSwapRank (P G R h : ℕ) :
     CompactSwapAddr P G R h ≃ Fin (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ h) R) where

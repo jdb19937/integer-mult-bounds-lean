@@ -44,8 +44,6 @@ theorem source_row (source : ℤ → Fin (a+4)) (p : ℤ)
 /-- Closed arithmetic keeps the fixed role count out of kernel recursion. -/
 def states (n : ℕ) : ℕ := 1+18*n
 
-theorem states_zero : states 0 = 1 := rfl
-
 theorem states_succ (n : ℕ) : states (n+1) = states n+18 := by
   unfold states
   omega
@@ -148,7 +146,5 @@ theorem cycle_hoare (source : ℤ → Fin (a+4))
   simp only [result,prefix_all] at hh
   simpa only [program,rowPrefix,List.take_zero,List.flatten_nil,
     List.length_nil,Nat.cast_zero,add_zero,Nat.not_lt_zero,ite_false,Fin.isLt,ite_true] using hh
-
-theorem states_eq (c : ℕ) : states c = 1+18*c := rfl
 
 end IntegerMultBounds.Machine.CyclicRowCycle

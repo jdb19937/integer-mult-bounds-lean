@@ -198,32 +198,6 @@ lemma errRun_smul {c δ : ℝ} (hc : 0 ≤ c) (hδ : 0 ≤ δ) :
   | .xor _ _ _ :: rest, E => by simp only [errRun]; exact errRun_smul hc hδ rest E
   | .phase _ _ _ :: rest, E => by simp only [errRun]; exact errRun_smul hc hδ rest E
 
-lemma sqrt_mul_l2_bank_diag {Y W : Type} [Fintype Y] [Fintype W] {n k : ℕ}
-    {e : Fin k → Fin n} (he : Function.Injective e) (σ : W → W) (hσ : ∀ w, σ (σ w) = w)
-    (D : W → Arr (Y × (Fin n → ZMod 2)) k) (hD : ∀ w, SpecInv e (D w)) :
-    √(2 ^ k) * l2 (fun p : (Y × W) × (Fin n → ZMod 2) =>
-      D (σ p.1.2) ((p.1.1, p.2), fun i => p.2 (e i))) = bl2 D := by
-  let σe : W ≃ W := ⟨σ, σ, hσ, hσ⟩
-  have hw : ∀ w, √(2 ^ k) * l2 (fun q : Y × (Fin n → ZMod 2) => D w (q, fun i => q.2 (e i))) =
-      l2 (D w) := fun w => sqrt_mul_l2_diag he (D w) (hD w)
-  have hsq : ∀ x : ℝ, 0 ≤ x → √(2 ^ k) * x = √(2 ^ k * x ^ 2) := fun x hx => by
-    rw [Real.sqrt_mul (by positivity), Real.sqrt_sq hx]
-  rw [hsq _ (l2_nonneg _), ← Real.sqrt_sq (bl2_nonneg D), bl2_sq]
-  congr 1
-  have h1 : l2 (fun p : (Y × W) × (Fin n → ZMod 2) =>
-      D (σ p.1.2) ((p.1.1, p.2), fun i => p.2 (e i))) ^ 2 =
-      ∑ w, l2 (fun q : Y × (Fin n → ZMod 2) => D w (q, fun i => q.2 (e i))) ^ 2 := by
-    unfold l2
-    rw [Real.sq_sqrt (Finset.sum_nonneg fun _ _ => by positivity)]
-    rw [Fintype.sum_prod_type, Fintype.sum_prod_type, Finset.sum_comm]
-    rw [← Equiv.sum_comp σe]
-    refine Finset.sum_congr rfl fun w _ => ?_
-    rw [Fintype.sum_prod_type, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => by positivity)]
-    simp [σe, hσ]
-  rw [h1, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun w _ => ?_
-  rw [← hw w, mul_pow, Real.sq_sqrt (by positivity)]
-
 /-- **The diagonal of a sub-bank.** Along an injective choice of wires, the diagonal carries at
 most the bank norm. -/
 lemma sqrt_mul_l2_subbank_diag {Y V W : Type} [Fintype Y] [Fintype V] [Fintype W] [DecidableEq W] {n k : ℕ}

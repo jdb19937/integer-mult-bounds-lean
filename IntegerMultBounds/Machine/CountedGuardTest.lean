@@ -152,15 +152,5 @@ theorem runs_linear (target : Ordering) (f g F : ℤ → Fin (a+4)) (px pc pf : 
   (runs target f g F px pc pf xs ys start d ks hk ck hx hy).consequence
     (fun _ h => h) (fun _ h => h) (cost_linear d ks hk ck)
 
-/-- Both private tapes are wholly blank at head zero at either clean boundary. -/
-theorem bank_private (f g F : ℤ → Fin (a+4)) (px pc pf : ℤ) (ks : List Bool) :
-    (bank f g F px pc pf ks).head 2=0 ∧ (bank f g F px pc pf ks).tape 2=(fun _ => blank) ∧
-    (bank f g F px pc pf ks).head 4=0 ∧ (bank f g F px pc pf ks).tape 4=fun _ => blank :=
-  ⟨rfl,rfl,rfl,rfl⟩
-
-theorem bank_header (f g F : ℤ → Fin (a+4)) (px pc pf : ℤ) (ks : List Bool) :
-    (bank f g F px pc pf ks).head 5=1 ∧
-      (bank f g F px pc pf ks).tape 5=CountedLoopReuseAlphabet.binary ks := ⟨rfl,rfl⟩
-
 end
 end IntegerMultBounds.Machine.CountedGuardTest

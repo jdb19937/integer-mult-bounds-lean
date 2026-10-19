@@ -307,15 +307,6 @@ def rlast (M W : ℕ) : List Bool :=
 theorem length_rpiece (M W : ℕ) : (rpiece M W).length ≤ 2 * (M + W) + 2 := by
   simp [rpiece]; omega
 
-theorem length_flatten_rpiece (M W K : ℕ) :
-    ((List.replicate K (rpiece M W)).flatten).length ≤ K * (2 * (M + W) + 2) := by
-  induction K with
-  | zero => simp
-  | succ K ih =>
-    rw [List.replicate_succ, List.flatten_cons, List.length_append]
-    have := length_rpiece M W
-    nlinarith
-
 theorem ruler_eq (M W : ℕ) : ∀ K, Rules.ruler M W (K + 1) =
     (List.replicate K (rpiece M W)).flatten ++ rlast M W
   | 0 => by

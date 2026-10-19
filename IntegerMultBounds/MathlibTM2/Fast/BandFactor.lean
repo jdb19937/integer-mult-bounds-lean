@@ -163,8 +163,6 @@ section Contracts
 
 variable {body : P → Pr P T Q A U} {rg : RsbR → Fin T} {ι : Fin 64 → Fin T}
 
-lemma bandFree_hv' : RsbFree .hv .xa .hc := bandFree_hv
-
 /-- The cost of one Newton step. -/
 def bandNewtonStepCost (T w : ℕ) : ℕ := 2 * rmulCost T w + 80 * w + 120
 

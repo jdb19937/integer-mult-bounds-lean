@@ -33,12 +33,6 @@ def workspace {v : Descriptor} {r : ℚ} (a : Fin (volume prime v) → Fin 4) (t
 def input {v : Descriptor} {r : ℚ} (hs : Fin 6 → List Bool) (a : Fin (volume prime v) → Fin 4) (t : Target) :=
   (RecursiveScalingDimensions.input hs).append (workspace (r := r) a t)
 
-theorem input_target {v : Descriptor} {r : ℚ} (hs : Fin 6 → List Bool)
-    (a : Fin (volume prime v) → Fin 4) (t u : Target) :
-    input (r := r) hs a t = input (r := r) hs a u := by
-  unfold input workspace source
-  rw [RecursiveInterchangeScaling.view_word,RecursiveInterchangeScaling.view_word]
-
 def output {v : Descriptor} {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r)
     (hs : Fin 6 → List Bool) (a : Fin (volume prime v) → Fin 4) (t : Target) :=
   (RecursiveScalingDimensions.output hprime hs v t).append
@@ -221,22 +215,6 @@ theorem input_dimension_blank {v : Descriptor} {r : ℚ} (hs : Fin 6 → List Bo
     (input (r := r) hs a t).tape (Fin.castAdd _ i) = fun _ => blank := by
   simp only [input,Tapes.append,Fin.addCases_left]
   fin_cases i <;> first | exact ⟨rfl,rfl⟩ | (exfalso; exact hi (by decide))
-
-theorem constructs_array {v : Descriptor} {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r)
-    (hs : Fin 6 → List Bool) (a : Fin (volume prime v) → Fin 4) (t : Target)
-    (hv : RecursiveDimensionBank.Headers v hs) (hvpos : v.Positive) :
-    HoareTime (program hr t) (fun w => w = input (r := r) hs a t)
-      (fun w => w = output hr hs a t ∧
-        SharedPayload.payload w (sourceSlot r) (destSlot r) =
-          FlatAffineScalingPayload.pair (RecursiveInterchangeScaling.array hr a t) ∧
-        ∀ x : RecursiveInterchangeScaling.Address v,
-          RecursiveInterchangeScaling.array hr a t
-            (RecursiveInterchangeScaling.index (RecursiveInterchangeScaling.scaleAddress r x t)) =
-              a (RecursiveInterchangeScaling.index x))
-      ((2428+120*(r.num.natAbs+r.den)+22*LocalTapes r.num.natAbs r.den)*volume prime v+401) := by
-  apply (constructs_hoare hr hs a t hv hvpos).consequence (fun _ h => h) _ le_rfl
-  rintro w rfl
-  exact ⟨rfl,output_payload hr hs a t,RecursiveInterchangeScaling.array_entry hr a t⟩
 
 end
 end IntegerMultBounds.Machine.RecursiveInterchangeScalingConstruct

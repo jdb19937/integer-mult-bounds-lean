@@ -37,30 +37,6 @@ theorem runs_linear (chunks : List (List Bool)) (bs ns : List Bool) (R : ℕ)
   exact h.consequence (by rintro v rfl; exact ⟨_,rfl,rfl⟩)
     (by rintro v ⟨w,rfl,rfl⟩; rfl) le_rfl
 
-theorem source_retained (chunks : List (List Bool)) (bs ns : List Bool) :
-    (output a chunks bs ns).tape 0=(input a chunks bs ns).tape 0 := by
-  change (fun z => (CountedLoopReuseAlphabet.encoding a).encode
-    ((ActiveRepairRecordFormatEndpoint.output chunks bs ns).tape 0 z))=_
-  rw [ActiveRepairRecordFormatEndpoint.source_retained]
-  rfl
-
-theorem clock_blank (chunks : List (List Bool)) (bs ns : List Bool) :
-    (output a chunks bs ns).tape 2=(fun _ => blank) ∧
-      (output a chunks bs ns).tape 4=(fun _ => blank) := by
-  obtain ⟨h2,h4⟩ := ActiveRepairRecordFormatEndpoint.clock_blank chunks bs ns
-  constructor
-  · change (fun z => (CountedLoopReuseAlphabet.encoding a).encode
-      ((ActiveRepairRecordFormatEndpoint.output chunks bs ns).tape 2 z))=_
-    rw [h2]; rfl
-  · change (fun z => (CountedLoopReuseAlphabet.encoding a).encode
-      ((ActiveRepairRecordFormatEndpoint.output chunks bs ns).tape 4 z))=_
-    rw [h4]; rfl
-
-theorem data_heads_origin (chunks : List (List Bool)) (bs ns : List Bool) :
-    (output a chunks bs ns).head 0=0 ∧ (output a chunks bs ns).head 1=0 ∧
-      (output a chunks bs ns).head 2=0 ∧ (output a chunks bs ns).head 4=0 :=
-  ActiveRepairRecordFormatEndpoint.data_heads_origin chunks bs ns
-
 theorem output_encoded (chunks : List (List Bool)) (bs ns : List Bool) :
     (output a chunks bs ns).tape 1=putWord (fun _ => blank) 0
       ((Partition.encode (ActiveRepairRecordFormatWords.records chunks)).map

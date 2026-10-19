@@ -109,18 +109,9 @@ theorem construct_hoare_linear (k : ℕ) (bs : List Bool) (b : ℕ) (hb : Counte
   apply (construct_hoare hq k bs b hb).consequence (fun _ h => h) (fun _ h => h)
   nlinarith
 
-/-- The exponent tape is unchanged, including its head. -/
-theorem exponent_preserved (bs : List Bool) (b : ℕ) :
-    (output hq bs b).head 2 = (input (q := q) bs).head 2 ∧
-      (output hq bs b).tape 2 = (input (q := q) bs).tape 2 := ⟨rfl,rfl⟩
-
 theorem scratch_blank (bs : List Bool) (b : ℕ) (i : Fin 2) :
     (output hq bs b).head (Fin.castAdd 2 i) = 0 ∧
       (output hq bs b).tape (Fin.castAdd 2 i) = fun _ => blank := by
   fin_cases i <;> exact ⟨rfl,rfl⟩
-
-theorem output_descriptor (bs : List Bool) (b : ℕ) :
-    (output hq bs b).head 3 = 1 ∧
-      (output hq bs b).tape 3 = RadixZeroFill.encodedBinary (bits hq b) := ⟨rfl,rfl⟩
 
 end IntegerMultBounds.Machine.RadixPowerMultipleDescriptor

@@ -80,33 +80,6 @@ theorem mr_inst {n : ℕ} (h : Big n) :
   · rw [hs]; have := mt_logT_le_b h; omega
   · have := h.sixteen_le_b; omega
 
-/-- `24 b · 5 b ≤ p³`. -/
-theorem mr_bb_le_p3 {n : ℕ} (hb : 16 ≤ b n) : 24 * b n * (5 * b n) ≤ p n ^ 3 := by
-  unfold p
-  generalize b n = B at hb ⊢
-  have h1 : B * B ≤ B * B * B := Nat.le_mul_of_pos_right _ (by omega)
-  have h2 : 0 ≤ B * B * B := Nat.zero_le _
-  nlinarith
-
-/-- `T p ≤ totConv`, `T p · d K ≤ totConv`, `T p · ℓ d^{λ'} ≤ totConv`. -/
-theorem mr_conv_ge {n : ℕ} (h : Big n) :
-    (T n : ℝ) * p n ≤ totConv n ∧ (T n : ℝ) * p n * ((d n : ℝ) * K n) ≤ totConv n ∧
-      (T n : ℝ) * p n * ((ℓ n : ℝ) * (d n : ℝ) ^ totLam') ≤ totConv n := by
-  have hTp := mt_Tp_nonneg n
-  have hr : (1 : ℝ) ≤ r n := mt_one_le_r n
-  have hp : (1 : ℝ) ≤ p n := mt_one_le_p h
-  have hll := gr_one_le_logLog (one_le_mul_of_one_le_of_one_le hr hp)
-  have h1 : (0 : ℝ) ≤ (d n : ℝ) * K n := by positivity
-  have h2 : (0 : ℝ) ≤ (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) := by positivity
-  have h3 : (0 : ℝ) ≤ (ℓ n : ℝ) * (d n : ℝ) ^ totLam' := by positivity
-  unfold totConv
-  generalize (d n : ℝ) * K n = x at h1 ⊢
-  generalize (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) = y at h2 ⊢
-  generalize (ℓ n : ℝ) * (d n : ℝ) ^ totLam' = z at h3 ⊢
-  generalize grLogLog ((r n : ℝ) * p n) = g at hll ⊢
-  generalize (T n : ℝ) * p n = v at hTp ⊢
-  refine ⟨?_, ?_, ?_⟩ <;> nlinarith
-
 /-! ### The overheads of a round -/
 
 /-! ### The layer of a round -/

@@ -31,19 +31,6 @@ theorem left_hoare (src dst : ℤ → Fin (a+4)) (p z : ℤ) :
       all_goals intro h; subst j; rfl
   · simp [step,moveLeft]
 
-def leftProgram := CountedLoopReuseAlphabet.program (moveLeft (a := a))
-theorem moves_left (src dst : ℤ → Fin (a+4)) (p z : ℤ) (rs : List Bool) (rho : ℕ)
-    (hr : Counter.value rs=rho) :
-    HoareTime leftProgram (fun v => v=bank (payload src dst p z) empty (binary rs) 1 1)
-      (fun v => v=bank (payload src dst (p-rho) z) empty (binary rs) 1 1)
-      (7*rho+7*rs.length+16) := by
-  have h := CountedLoopReuseAlphabet.loop_hoare moveLeft rs rho
-    (fun i => payload src dst (p-i) z) (fun _ => 1) hr (by
-      intro i _
-      simpa only [Nat.cast_add,Nat.cast_one,sub_add_eq_sub_sub] using left_hoare src dst (p-i) z)
-  simpa only [leftProgram,Nat.cast_zero,sub_zero,Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one,
-    show rho+6*rho=7*rho by omega] using h
-
 theorem sample_appends (xs ys : List Bool) (q rho i : ℕ) (qs : List Bool)
     (hq : Counter.value qs=q) (hi : rho+i*q<xs.length) :
     HoareTime (SelectedSourceBitsCore.sample (a := a))

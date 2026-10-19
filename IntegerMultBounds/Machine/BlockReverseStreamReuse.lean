@@ -59,28 +59,4 @@ private theorem canonical_width_le (bs : List Bool) (h : GrowingCounterData.Cano
   have hl := Nat.log2_le_self (Counter.value bs)
   omega
 
-/-- Canonical immutable descriptors give a complete linear-time raw-stream
-routine with reusable state, rather than leaving an exhausted outer clock. -/
-theorem reverse_hoare_linear (source dest : ℤ → Fin 4) (p q : ℤ) (blocks : List (List (Fin 4)))
-    (B : ℕ) (hu : BlockRotationData.Uniform B blocks) (hB : 1 ≤ B) (bs countBits : List Bool)
-    (hb : Counter.value bs = B) (hn : Counter.value countBits = blocks.length)
-    (cb : GrowingCounterData.Canonical bs) (cn : GrowingCounterData.Canonical countBits) :
-    HoareTime program
-      (fun v => v = CountedLoopReuse.bank
-        (bank (putWord source p blocks.flatten) dest bs p q)
-        CountedCopyReuse.empty (CountedCopyReuse.binary countBits) 1 1)
-      (fun v => v = CountedLoopReuse.bank
-        (bank (putWord source p blocks.flatten) (putWord dest q (blocks.map List.reverse).flatten) bs
-          (p+((blocks.length*B : ℕ) : ℤ)) (q+((blocks.length*B : ℕ) : ℤ)))
-        CountedCopyReuse.empty (CountedCopyReuse.binary countBits) 1 1)
-      (124*blocks.flatten.length+23) := by
-  have wb := canonical_width_le bs cb
-  have wn := canonical_width_le countBits cn
-  rw [hb] at wb
-  rw [hn] at wn
-  have hbound := linear_bound B blocks.length bs countBits hB wb wn
-  rw [← BlockRotationData.uniform_volume B blocks hu] at hbound
-  exact (reverse_hoare source dest p q blocks B hu bs countBits hb hn).consequence
-    (fun _ h => h) (fun _ h => h) hbound
-
 end IntegerMultBounds.Machine.BlockReverseStreamReuse

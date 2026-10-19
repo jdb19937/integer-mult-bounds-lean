@@ -278,11 +278,6 @@ theorem dsyWidth_runs {rg : TblR 40 → Fin T} {io : DsX → Fin T} (hrg : Funct
 
 /-! ### The variables and their loads -/
 
-/-- The initial variable values: `N, ℓ, K, D, E` in the variables `0 … 4`. -/
-def dsyInit (N ℓ K D E : ℕ) : Fin 40 → ℕ :=
-  Function.update (Function.update (Function.update (Function.update (Function.update
-    (fun _ => 0) 0 N) 1 ℓ) 2 K) 3 D) 4 E
-
 /-- The zeroing of all variables, from the file after `dsyWidth`, as a layout file. -/
 theorem dsyZeroAll_runs {rg : TblR 40 → Fin T} (hrg : Function.Injective rg) (R : Regs T A)
     (hrg0 : ∀ r, R (rg r) = []) (W : ℕ) :

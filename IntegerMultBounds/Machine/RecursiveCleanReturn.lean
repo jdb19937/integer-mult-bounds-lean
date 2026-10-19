@@ -70,32 +70,5 @@ theorem return_exact (hN : N ≤ 2^k) (stack : Fin t) (ops : List (Slot stack)) 
   rw [hm] at hrun
   exact seq_run _ _ hfirst hhalt hrun
 
-/-- A literal call/body/return assembly. The supplied body's contract must
-prove recursive work and exact saved stacks; child headers remain nonblank. -/
-def withBodyProgram (hN : N ≤ 2^k) (stack : Fin t) (src dst : List (Slot stack))
-    (pcStack : Fin t) (pc : Fin N) (body : Program t b a)
-    (states : Fin N → ℕ) (family : ∀ pc, Program t (states pc) a) :=
-  seq (seq (RecursiveFrameControl.callProgram stack src pcStack (address hN pc)) body)
-    (returnProgram hN stack dst pcStack states family)
-
-theorem withBody_hoare (hN : N ≤ 2^k) (stack : Fin t) (src dst : List (Slot stack)) (hu : dst.Nodup)
-    (pcStack : Fin t) (hslots : ∀ i ∈ dst, pcStack ≠ i.val) (pc : Fin N)
-    (body : Program t b a) (states : Fin N → ℕ) (family : ∀ pc, Program t (states pc) a)
-    (xs child : Fin t → List Bool) (v u : Tapes t a) (f : ℤ → Fin (a+4)) (p : ℤ)
-    (hs : ∀ i ∈ src, v.head i = 1 ∧ v.tape i = BinaryDescriptorStack.descriptor (xs i))
-    (hd : ∀ i ∈ dst, u.head i = 1 ∧ u.tape i = BinaryDescriptorStack.descriptor (child i)) (hfree : Free stack dst xs u)
-    (hpct : u.tape pcStack = FiniteReturnStack.wordPart f p (address hN pc) k le_rfl)
-    (hpch : u.head pcStack = p+k) (hpcfree : ∀ j < k, f (p+j) = blank)
-    (bodyCost continuationCost : ℕ) (post : TapePred t a)
-    (hbody : HoareTime body
-      (fun w => w = FiniteReturnStackAt.pushed pcStack (address hN pc) (saved stack src xs v))
-      (fun w => w = saved stack dst xs u) bodyCost)
-    (hc : HoareTime (family pc) (fun w => w = setTape (restored dst xs u) pcStack f p) post continuationCost) :
-    HoareTime (withBodyProgram hN stack src dst pcStack pc body states family) (fun w => w = v) post
-      (cost src xs+restoreCost dst xs child+2*k+bodyCost+continuationCost+6) := by
-  have h := ((RecursiveFrameControl.call_hoare stack src pcStack (address hN pc) xs v hs).seq hbody).seq
-    (return_hoare hN stack dst hu pcStack hslots states family pc xs child u f p hd hfree hpct hpch hpcfree continuationCost post hc)
-  exact h.consequence (fun _ h => h) (fun _ h => h) (by omega)
-
 end
 end IntegerMultBounds.Machine.RecursiveCleanReturn

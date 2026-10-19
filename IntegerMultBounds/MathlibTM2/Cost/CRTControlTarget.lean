@@ -47,36 +47,6 @@ theorem crtControlDistantPairCost_le {Tm u g h w c L am : ℕ}
     (show u + w + g + h = L by omega) hw hh
   omega
 
-/-- All target exposure pairs use only a linear number of interchanges. -/
-theorem crtControlDistantPairs_total {N : ℕ} (Tm c L am : ℕ)
-    (u g h w : Fin N → ℕ) (hL : ∀ i, u i + h i + g i + w i = L)
-    (hh : ∀ i, h i ≤ am) (hw : ∀ i, w i ≤ am) :
-    (∑ i, (crtControlDistantCost Tm (u i) (g i) (h i) (w i) c +
-      crtControlDistantCost Tm (u i) (g i) (w i) (h i) c)) ≤
-      2 * N * crtStepBound Tm L c (2 ^ L * c) am := by
-  calc
-    _ ≤ ∑ _ : Fin N, 2 * crtStepBound Tm L c (2 ^ L * c) am :=
-      Finset.sum_le_sum fun i _ => crtControlDistantPairCost_le (hL i) (hh i) (hw i)
-    _ = _ := by simp; ring
-
-/-- Match the executable paired exposures to the linear-axis pipeline scale. -/
-theorem crtControlDistantPairs_pipeline_le (Tm cw : ℕ) {n : ℕ} (hb : Big n)
-    (c : ℕ) (hc : c ≤ cw * p n) (u g h w : Fin (d n) → ℕ)
-    (hL : ∀ i, u i + h i + g i + w i = logT n)
-    (hh : ∀ i, h i ≤ ℓ n) (hw : ∀ i, w i ≤ ℓ n) :
-    ((∑ i, (crtControlDistantCost Tm (u i) (g i) (h i) (w i) c +
-      crtControlDistantCost Tm (u i) (g i) (w i) (h i) c)) : ℝ) ≤
-      2 * mtCrtReverseC Tm cw *
-        ((T n : ℝ) * p n * d n * (1 + (ℓ n : ℝ) ^ Parameters.tau)) := by
-  have hn := crtControlDistantPairs_total Tm c (logT n) (ℓ n) u g h w hL hh hw
-  have hbudget : 2 * d n * crtStepBound Tm (logT n) c (2 ^ logT n * c) (ℓ n) ≤
-      2 * crtReverseBudget Tm (logT n) c (d n) (ℓ n) := by
-    unfold crtReverseBudget
-    nlinarith
-  have hcast := (Nat.cast_le (α := ℝ)).2 (hn.trans hbudget)
-  have hrev := mt_crt_reverse_le Tm cw hb c (ℓ n) hc le_rfl
-  push_cast at hcast
-  linarith
 /-- The exposed rotation's exact cost is the checked all-fibers cost plus
 its actual ten-variable workspace initialization and restoration. -/
 theorem crtControlExposedCost_eq (D B w L ai S c : ℕ) :

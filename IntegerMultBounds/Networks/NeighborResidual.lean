@@ -70,23 +70,6 @@ theorem pair_disjoint : Disjoint (K ∙ u) (K ∙ v) := by
   have hs0 := (mul_eq_zero.mp he.symm).resolve_right hu
   simp [hs0]
 
-include hu hv huv in
-theorem pair_finrank [FiniteDimensional K E] : finrank K (pairSpace (K := K) u v) = 2 := by
-  have hu0 : u ≠ 0 := by intro h; exact hu (by simp [h])
-  have hv0 : v ≠ 0 := by intro h; exact hv (by simp [h])
-  have hd := Submodule.finrank_sup_add_finrank_inf_eq (K ∙ u) (K ∙ v)
-  rw [(pair_disjoint B u v hu huv).eq_bot, finrank_bot,
-    finrank_span_singleton hu0, finrank_span_singleton hv0, add_zero] at hd
-  exact hd
-
-include hs hu hv huv in
-theorem pair_complement [FiniteDimensional K E] (hn : B.Nondegenerate) :
-    (B.restrict (B.orthogonal (pairSpace u v))).Nondegenerate ∧
-      finrank K (B.orthogonal (pairSpace u v)) = finrank K E - 2 := by
-  refine ⟨ProjectionRank.orthogonal_nondegenerate B hs hn _
-    (pair_nondegenerate B hs u v hu hv huv), ?_⟩
-  rw [B.finrank_orthogonal hn, pair_finrank B u v hu hv huv]
-
 end Pair
 
 section Binary
@@ -114,16 +97,6 @@ theorem triple_complement_unit (S : Finset (Fin h)) (hs : S.card = 3) (hh : 3 < 
     ∃ x : (binary h).orthogonal ((ZMod 2) ∙ indicator S), binary h x x = 1 := by
   obtain ⟨i, hi⟩ := exists_coordinate_outside S (by omega)
   exact ⟨⟨Pi.single i 1, coordinate_orthogonal S i hi⟩, coordinate_norm i⟩
-
-theorem triple_complement_orthonormal (S : Finset (Fin h)) (hs : S.card = 3)
-    (hh : 3 < h) :
-    let W := (binary h).orthogonal ((ZMod 2) ∙ indicator S)
-    ∃ b : Basis (Fin (finrank (ZMod 2) W)) (ZMod 2) W,
-      ∀ i j, binary h (b i) (b j) = if i = j then 1 else 0 := by
-  have hsym : (binary h).IsSymm := ⟨form_symm 0⟩
-  exact BinaryOrthonormal.exists_orthonormal_basis _ (hsym.restrict _)
-    (ProjectionRank.orthogonal_nondegenerate _ hsym binary_nondegenerate _
-      (binary_line_nondegenerate S hs)) (triple_complement_unit S hs hh)
 
 /-- Outside the union of two supports the coordinate unit lies in their common
 orthogonal complement. The witness does not require the triples to be neighbors. -/
@@ -159,56 +132,6 @@ theorem square_complement_unit (S T : Finset (Fin h)) (hs : S.card = 3) (hh : 3 
       LinearMap.BilinForm.tensorDistrib_tmul, ho]
   · simp [LinearMap.BilinForm.tmul, LinearMap.BilinForm.tensorDistrib_tmul, hn]
 
-/-- The full terminal tensor-line complement has a concrete norm-one witness. -/
-theorem cube_complement_unit (S T U : Finset (Fin h)) (hs : S.card = 3) (hh : 3 < h) :
-    ∃ x : (cubeForm (binary h)).orthogonal ((ZMod 2) ∙ cubeVector S T U),
-      cubeForm (binary h) x x = 1 := by
-  obtain ⟨i, hi⟩ := exists_coordinate_outside S (by omega)
-  let e : Fin h → ZMod 2 := Pi.single i 1
-  have hn : binary h e e = 1 := coordinate_norm i
-  have ho : binary h (indicator S) e = 0 := by
-    simp [e, binary, form_single, indicator, hi]
-  refine ⟨⟨e ⊗ₜ[ZMod 2] (e ⊗ₜ[ZMod 2] e), ?_⟩, ?_⟩
-  · intro x hx
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hx
-    simp [map_smul, LinearMap.smul_apply, cubeForm, cubeVector,
-      LinearMap.BilinForm.tmul, LinearMap.BilinForm.tensorDistrib_tmul, ho]
-  · simp [cubeForm, LinearMap.BilinForm.tmul, LinearMap.BilinForm.tensorDistrib_tmul, hn]
-
-/-- The actual neighboring-triple residual has dimension h-2 and an
-orthonormal basis; its nonalternation is proved by the coordinate witness. -/
-theorem binary_neighbor_residual (S T : Finset (Fin h)) (hs : S.card = 3)
-    (ht : T.card = 3) (hneighbors : Even (S ∩ T).card) (hh : 6 < h) :
-    let W := (binary h).orthogonal (pairSpace (indicator S) (indicator T))
-    finrank (ZMod 2) W = h - 2 ∧
-      ∃ b : Basis (Fin (finrank (ZMod 2) W)) (ZMod 2) W,
-        ∀ i j, binary h (b i) (b j) = if i = j then 1 else 0 := by
-  have hsym : (binary h).IsSymm := ⟨form_symm 0⟩
-  have hSu : binary h (indicator S) (indicator S) ≠ 0 := by
-    rw [binary_self S hs]; exact one_ne_zero
-  have hTu : binary h (indicator T) (indicator T) ≠ 0 := by
-    rw [binary_self T ht]; exact one_ne_zero
-  obtain ⟨hnd, hdim⟩ := pair_complement (binary h) hsym _ _ hSu hTu
-    (binary_neighbors S T hneighbors) binary_nondegenerate
-  refine ⟨by simpa using hdim, ?_⟩
-  exact BinaryOrthonormal.exists_orthonormal_basis _ (hsym.restrict _) hnd
-    (pair_complement_unit S T hs ht hh)
-
 end Binary
-
-/-- Rational neighboring triples also give the exact h-2 residual, with no
-positive-definiteness assumption on the corrected dot product. -/
-theorem rational_neighbor_residual {h : ℕ} (S T : Finset (Fin h))
-    (hs : S.card = 3) (ht : T.card = 3) (hneighbors : (S ∩ T).card = 1) (hh : h ≠ 9) :
-    let W := (Labels.rational h).orthogonal
-      (pairSpace (Labels.indicator S) (Labels.indicator T))
-    ((Labels.rational h).restrict W).Nondegenerate ∧ finrank ℚ W = h - 2 := by
-  have hsym : (Labels.rational h).IsSymm := ⟨Labels.form_symm (1 / 9)⟩
-  have hSu : Labels.rational h (Labels.indicator S) (Labels.indicator S) ≠ 0 := by
-    rw [Labels.rational_self S hs]; norm_num
-  have hTu : Labels.rational h (Labels.indicator T) (Labels.indicator T) ≠ 0 := by
-    rw [Labels.rational_self T ht]; norm_num
-  simpa using pair_complement (Labels.rational h) hsym _ _ hSu hTu
-    (Labels.rational_neighbors S T hs ht hneighbors) (Labels.rational_nondegenerate hh)
 
 end IntegerMultBounds.Networks.NeighborResidual

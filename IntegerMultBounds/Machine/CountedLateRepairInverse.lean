@@ -197,28 +197,5 @@ theorem runs
   simp only [Z0,Z1,CountedPackedParityRun.parities_length]
   omega
 
-/-- The paid physical reverse machine carries its exact unrestricted integer
-inverse semantics together with the restored tape endpoint. -/
-theorem runs_value
-    (hv : ∀ i, Counter.value (hs i) = CountedPackedShapeHeaders.originalValues q b X.length i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hV : V.length=X.length*q) (hW : W.length=X.length*b) (hU : U.length=X.length*b)
-    (hf : f (pv-1) = blank) (hf' : f (pv+V.length) = blank)
-    (hg : g (pw-1) = blank) (hg' : g (pw+W.length) = blank)
-    (hh : h (pu-1) = blank) (hh' : h (pu+U.length) = blank)
-    (hk : k (px-1) = blank) (hk' : k (px+X.length) = blank) :
-    HoareTime (program a) (fun v => v = bank V W U X [] f g h k pv pw pu px hs)
-      (fun v => v = bank (target q b hb hbq V W U X) (temp q b hb hbq V W U X)
-        (restored b hb U X) X [] f g h k pv pw pu px hs ∧
-        Compact.packedLate ((2 : ℤ)^q) ((2 : ℤ)^b) (X.map Compact.PowerTwo.ctrl)
-          (Counter.value (target q b hb hbq V W U X))
-          (Counter.value (temp q b hb hbq V W U X)) (Counter.value (restored b hb U X)) =
-          ((Counter.value V : ℤ),(Counter.value W : ℤ),(Counter.value U : ℤ)))
-      (7000*((X.length+1)*(q+b+1))) := by
-  refine (runs q b hb hbq V W U X f g h k pv pw pu px hs hv hc hV hW hU
-    hf hf' hg hg' hh hh' hk hk').consequence (fun _ h => h) ?_ (le_refl _)
-  intro v hv
-  exact ⟨hv,value_spec q b hb hbq V W U X hV hW hU⟩
-
 end
 end IntegerMultBounds.Machine.CountedLateRepairInverse

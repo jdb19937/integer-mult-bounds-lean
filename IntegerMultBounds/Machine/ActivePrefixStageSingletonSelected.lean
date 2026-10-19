@@ -115,45 +115,5 @@ theorem late_fields (d : Inputs s) (horder : d.stage.target.val<d.stage.source.v
     (x : Address s (params d) d.rows) :
     lateDestination d horder x={x with activeBefore:=(lateDestination d horder x).activeBefore} := rfl
 
-/-- Complete original active word, including every unselected slot bit. -/
-def activeWord (d : Inputs s) (x : Address s (params d) d.rows) :=
-  row (params d).after x.activeAfter.val++row (params d).before x.activeBefore.val
-
-theorem early_active_word (d : Inputs s) (horder : d.stage.source.val<d.stage.target.val)
-    (x : Address s (params d) d.rows) :
-    activeWord d (earlyDestination d horder x)=List.zipWith xor (activeWord d x)
-      (List.replicate (params d).after false++earlyControl s (params d) (earlyOffset d.stage) d.rows x::
-        List.replicate ((params d).before-1) false) := by
-  have h := early_target_word d horder x (row (params d).after x.activeAfter.val)
-  unfold targetWord at h
-  rw [empty_target,empty_target,List.append_nil,row_length] at h
-  exact h
-
-theorem late_active_word (d : Inputs s) (horder : d.stage.target.val<d.stage.source.val)
-    (x : Address s (params d) d.rows) :
-    activeWord d (lateDestination d horder x)=List.zipWith xor (activeWord d x)
-      (List.replicate (params d).after false++lateControl s (params d) (lateOffset d.stage) d.rows x::
-        List.replicate ((params d).before-1) false) := by
-  have h := late_target_word d horder x (row (params d).after x.activeAfter.val)
-  unfold targetWord at h
-  rw [empty_target,empty_target,List.append_nil,row_length] at h
-  exact h
-
-theorem target_position (d : Inputs s) :
-    (params d).after=slotLow d.stage d.stage.target+d.stage.rho := rfl
-
-theorem early_source_position (d : Inputs s) (horder : d.stage.source.val<d.stage.target.val) :
-    (params d).after+ActiveTargetHighestPairLayoutGeometry.sourceHigh s (params d) (earlyOffset d.stage)=
-      slotLow d.stage d.stage.source+d.stage.rho := by
-  have h := early_source_selected_position d.stage horder 0
-  simpa only [params,parameters,ActiveTargetHighestPairLayoutGeometry.sourceHigh,d.singleton,
-    Nat.sub_self,zero_mul,Nat.add_zero,Nat.zero_add] using h
-
-theorem late_source_position (d : Inputs s) :
-    ActiveTargetHighestPairLayoutGeometry.sourceHigh s (params d) (lateOffset d.stage)=
-      slotLow d.stage d.stage.source+d.stage.rho := by
-  simp only [params,parameters,ActiveTargetHighestPairLayoutGeometry.sourceHigh,d.singleton,
-    Nat.sub_self,zero_mul,Nat.add_zero,lateOffset]
-
 end
 end IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected

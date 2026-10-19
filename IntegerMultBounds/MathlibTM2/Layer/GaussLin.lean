@@ -317,11 +317,6 @@ theorem grun_kernel2 (u v : GR W) :
   rw [glin_eq_sum_mulG]
   fin_cases j <;> simp [gKernel2, GR.kernel2, Fin.sum_univ_two]
 
-theorem gcarry_kernel2_bound (xs : List (Fin 2 → Bool × Bool)) :
-    CarryLe 4 (gcarry gKernel2 (fun _ => (0, 0)) xs) := by
-  refine gcarry_zero_bound gKernel2 (fun j => ?_) xs
-  fin_cases j <;> simp [gKernel2, Fin.sum_univ_two]
-
 /-- Multiplication by the Gaussian integer `a + b i`. -/
 theorem grun_mulG (a b : ℤ) (z : GR W) :
     grun ![![(a, b)]] (fun _ => (0, 0)) (gcols ![z]) = gcols ![GR.mulG a b z] := by

@@ -55,12 +55,6 @@ theorem scratchKey_injective (j : Fin 3) : Function.Injective (scratchKey j) := 
       simpa [scratchKey] using hh
     exact Prod.ext he.2 (TripleNeighborPermutation.permutation50.symm.injective he.1)
 
-theorem first_middle_disjoint (q q' : Triple × Triple) : scratchKey 0 q ≠ scratchKey 1 q' := by
-  simp [scratchKey]
-
-theorem third_middle_disjoint (q q' : Triple × Triple) : scratchKey 2 q ≠ scratchKey 1 q' := by
-  simp [scratchKey]
-
 /-- A local invocation sees only its coordinate line and its own scratch. -/
 def localMap (eB : Fin n ≃ Triple)
     (j : Fin 3) (q : Triple × Triple) : Role n 509194 50 0 → World
@@ -83,18 +77,6 @@ theorem localMap_injective (eB : Fin n ≃ Triple)
 def localEmbedding (eB : Fin n ≃ Triple)
     (j : Fin 3) (q : Triple × Triple) : Role n 509194 50 0 ↪ World :=
   ⟨localMap eB j q, localMap_injective eB j q⟩
-
-/-- Reuse identifies matching allocated side slots, with no remapping of roles. -/
-theorem side_reused (eB : Fin n ≃ Triple) (A B : Triple) (i : Fin 509194) :
-    localEmbedding eB 2 (B, TripleNeighborPermutation.permutation50 A) (side i) =
-      localEmbedding eB 0 (A,B) (side i) := by
-  simp [localEmbedding, localMap, side]
-
-/-- The same physical central slot is also reused across the two outer stages. -/
-theorem center_reused (eB : Fin n ≃ Triple) (A B : Triple) (i : Fin 50) :
-    localEmbedding eB 2 (B, TripleNeighborPermutation.permutation50 A) (center i) =
-      localEmbedding eB 0 (A,B) (center i) := by
-  simp [localEmbedding, localMap, center]
 
 /-- Middle-stage execution uses the explicitly inverted local block order. -/
 def localProgram (eB : Fin n ≃ Triple) (j : Fin 3) :
@@ -284,9 +266,6 @@ def enumeration : Fin 19600 ≃ Triple :=
   (Fintype.equivFinOfCardEq Shared50GlobalBudget.triple_card).symm
 
 def program50 : Program World (ZMod 2) := program enumeration
-
-theorem program50_run (X Y : Address → ZMod 2) (S : Scratch → ZMod 2) :
-    run program50 (contents X Y S) = contents Y X S := program_run enumeration X Y S
 
 /-- This bounds scalar instructions only, not multi-tape transition costs. -/
 theorem program50_instruction_bound : program50.length ≤ 3 * 19600 ^ 2 * 5209540 := by

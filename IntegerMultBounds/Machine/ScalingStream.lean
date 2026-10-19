@@ -135,41 +135,6 @@ def program {c : ℕ} (hc : 0 < c) : Program (ScalingExecution.TapeCount c+2)
       ScalingBuffersReset.states c+5)+4) 0 :=
   CountedLoopReuse.program (ScalingExecutionReuse.program hc)
 
-/-- Complete repeated scaling with an exact physical boundary invariant.
-All per-fiber and outer descriptors survive and every work clock is restored. -/
-theorem scale_hoare {Q c B n : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hcop : c.Coprime Q)
-    (hB : 0 < B) (source : ℤ → Fin 4) (p : ℤ)
-    (background : Fin c → ℤ → Fin 4) (origins : Fin c → ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (descriptors : Fin c → List Bool)
-    (bs countBits outerBits : List Bool) (hb : Counter.value bs = B) (hn : Counter.value countBits = Q)
-    (ho : Counter.value outerBits = n)
-    (cb : GrowingCounterData.Canonical bs) (cn : GrowingCounterData.Canonical countBits)
-    (hp : ∀ j, Counter.value (descriptors j) =
-      ScalingSplit.offset Q c B (j.val+1)-ScalingSplit.offset Q c B j.val)
-    (cp : ∀ j, GrowingCounterData.Canonical (descriptors j))
-    (modulus current : Tapes c 0) (payload : ℕ → ℕ → List (Fin 4))
-    (hwidth : ∀ i y, (payload i y).length = B)
-    (hblank : ∀ j z, origins j ≤ z → z < origins j+
-      ((ScalingSplit.offset Q c B (j.val+1)-ScalingSplit.offset Q c B j.val : ℕ) : ℤ) → background j z = blank) :
-    HoareTime (program hc)
-      (fun v => v = CountedLoopReuse.bank
-        (state hc Q B n source p background origins dest q descriptors bs countBits modulus current payload 0)
-        empty (binary outerBits) 1 1)
-      (fun v => v = CountedLoopReuse.bank
-        (state hc Q B n source p background origins dest q descriptors bs countBits modulus current payload n)
-        empty (binary outerBits) 1 1)
-      (n*(127*(Q*B)+120*c+58)+7*outerBits.length+16) := by
-  have hh := CountedLoopReuse.loop_hoare (ScalingExecutionReuse.program hc) outerBits n
-    (state hc Q B n source p background origins dest q descriptors bs countBits modulus current payload)
-    (fun _ => 127*(Q*B)+120*c+52) ho
-    (fun i hi => body_hoare hQ hc hcop hB hi source p background origins dest q descriptors
-      bs countBits hb hn cb cn hp cp modulus current payload hwidth hblank)
-  have hcost : (∑ _i ∈ Finset.range n, (127*(Q*B)+120*c+52))+6*n+7*outerBits.length+16 =
-      n*(127*(Q*B)+120*c+58)+7*outerBits.length+16 := by
-    simp only [Finset.sum_const,Finset.card_range,smul_eq_mul]
-    ring
-  simpa only [program,hcost] using hh
-
 /-- Total physical source volume, equal to the final output volume. -/
 theorem source_length (Q B n : ℕ) (payload : ℕ → ℕ → List (Fin 4))
     (hwidth : ∀ i y, (payload i y).length = B) :
@@ -190,48 +155,9 @@ theorem linear_bound (Q B c n : ℕ) (outerBits : List Bool) (hQ : 0 < Q) (hB : 
   have hcvol := Nat.mul_le_mul_left (120*c+65) hnvol
   nlinarith
 
-/-- A complete volume-linear machine for any number of successive fibers,
-with a coefficient depending only on the fixed multiplier c. -/
-theorem scale_hoare_linear {Q c B n : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hcop : c.Coprime Q)
-    (hB : 0 < B) (source : ℤ → Fin 4) (p : ℤ)
-    (background : Fin c → ℤ → Fin 4) (origins : Fin c → ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (descriptors : Fin c → List Bool)
-    (bs countBits outerBits : List Bool) (hb : Counter.value bs = B) (hn : Counter.value countBits = Q)
-    (ho : Counter.value outerBits = n)
-    (cb : GrowingCounterData.Canonical bs) (cn : GrowingCounterData.Canonical countBits)
-    (co : GrowingCounterData.Canonical outerBits)
-    (hp : ∀ j, Counter.value (descriptors j) =
-      ScalingSplit.offset Q c B (j.val+1)-ScalingSplit.offset Q c B j.val)
-    (cp : ∀ j, GrowingCounterData.Canonical (descriptors j))
-    (modulus current : Tapes c 0) (payload : ℕ → ℕ → List (Fin 4))
-    (hwidth : ∀ i y, (payload i y).length = B)
-    (hblank : ∀ j z, origins j ≤ z → z < origins j+
-      ((ScalingSplit.offset Q c B (j.val+1)-ScalingSplit.offset Q c B j.val : ℕ) : ℤ) → background j z = blank) :
-    HoareTime (program hc)
-      (fun v => v = CountedLoopReuse.bank
-        (state hc Q B n source p background origins dest q descriptors bs countBits modulus current payload 0)
-        empty (binary outerBits) 1 1)
-      (fun v => v = CountedLoopReuse.bank
-        (state hc Q B n source p background origins dest q descriptors bs countBits modulus current payload n)
-        empty (binary outerBits) 1 1)
-      ((192+120*c)*(fibers Q n payload).flatten.length+23) := by
-  have hw := GrowingCounterData.canonical_width outerBits co
-  have hl := Nat.log2_le_self (Counter.value outerBits)
-  have hbnd := linear_bound Q B c n outerBits hQ hB (by omega)
-  rw [← source_length Q B n payload hwidth] at hbnd
-  exact (scale_hoare hQ hc hcop hB source p background origins dest q descriptors
-    bs countBits outerBits hb hn ho cb cn hp cp modulus current payload hwidth hblank).consequence
-      (fun _ h => h) (fun _ h => h) hbnd
-
 /-- Tape and finite-control sizes depend only on the fixed multiplier. -/
 theorem tapeCount_eq (c : ℕ) : ScalingExecution.TapeCount c+2 = 12+4*c := by
   rw [ScalingExecution.tapeCount_eq]
-  omega
-
-theorem stateCount_eq (c : ℕ) :
-    7+(20+((ScalingSplit.states c+ScalingSplit.states c)+(7+(c*16+1+2+5)+4))+
-      ScalingBuffersReset.states c+5)+4 = 98*c+58 := by
-  rw [ScalingExecutionReuse.stateCount_eq]
   omega
 
 end IntegerMultBounds.Machine.ScalingStream

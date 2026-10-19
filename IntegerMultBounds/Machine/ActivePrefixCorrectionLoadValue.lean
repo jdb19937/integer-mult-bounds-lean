@@ -24,15 +24,6 @@ theorem copies_field (xs : List Bool) (N w rows r i : ℕ) (hlen : xs.length=N*w
   have h := ActivePrefixLayoutFields.repeated_field xs N w rows (r*N+i) hN hlen (by nlinarith only [hm,hi])
   simpa only [Nat.mul_add_mod_self_right,Nat.mod_eq_of_lt hi] using h
 
-theorem field_row (s : Shape) (rows r i : ℕ) (hr : r<rows) (hi : i<2^s.W) :
-    Gather.field (offsets s rows) ((r*2^s.W+i)*width s) (width s)=
-      BinaryCorrectionOffsetRow.diff
-        (Gather.field (ActivePrefixCorrectionOffsetData.control s) (i*width s) (width s))
-        (Gather.field (ActivePrefixCorrectionOffsetData.selected s) (i*width s) (width s)) := by
-  rw [offsets,copies_field (offsetWord s) (2^s.W) (width s) rows r i
-    (ActivePrefixCorrectionOffsetData.word_length s) hr hi]
-  exact ActivePrefixCorrectionOffsetData.field_eq s i hi
-
 theorem correction_value (s : Shape) (rows r i : ℕ) (hr : r<rows) (hi : i<2^s.W) :
     (PackedOffsetPayloadValue.offset (offsets s rows) (width s) (r*2^s.W+i) : ℤ)=
       ((Counter.value (Gather.field (ActivePrefixCorrectionOffsetData.control s) (i*width s) (width s)) : ℤ)-

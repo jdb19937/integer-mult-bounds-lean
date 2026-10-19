@@ -272,34 +272,5 @@ theorem trace_nondegenerate (e : Fin n ≃ Triple) :
   · exact stage_nondegenerate e 2 p hp
   · exact boundary_edges_nondegenerate 3 p hp
 
-private theorem updates_predicate_of_edges {ι L : Type*} [DecidableEq ι]
-    (P : L → Prop) (current : ι → L) (xs : List (ι × L))
-    (hp : ∀ p ∈ RankTrace.edges current xs, P p.2) : ∀ u ∈ xs, P u.2 := by
-  induction xs generalizing current with
-  | nil => simp
-  | cons u xs ih =>
-    intro v hv
-    rcases List.mem_cons.mp hv with he | hv
-    · subst v
-      exact hp (current u.1,u.2) (List.mem_cons_self)
-    · exact ih (Function.update current u.1 u.2)
-        (fun p hp' => hp p (List.mem_cons_of_mem _ hp')) v hv
-
-theorem trace_updates_nondegenerate (e : Fin n ≃ Triple) :
-    ∀ u ∈ trace e, (Shared50ReuseLabels.cubeForm.restrict u.2).Nondegenerate :=
-  updates_predicate_of_edges (fun U : Label => (Shared50ReuseLabels.cubeForm.restrict U).Nondegenerate)
-    source (trace e) (fun p hp => (trace_nondegenerate e p hp).2)
-
-/-- The fixed fifty-point global trace uses the same enumeration as program50. -/
-def trace50 := trace Shared50GlobalCircuit.enumeration
-
-theorem trace50_finish : RankTrace.finish source trace50 = sink := trace_finish _
-
-theorem trace50_loss : RankTrace.loss dimension source trace50 = Shared50Parameters.L := by
-  have hn : 3 * 19600 ^ 2 * 2500 = Shared50Parameters.L := by
-    rw [Shared50Parameters.loss_count]
-    norm_num
-  exact (trace_loss Shared50GlobalCircuit.enumeration).trans hn
-
 end
 end IntegerMultBounds.Networks.Shared50GlobalTraceStages

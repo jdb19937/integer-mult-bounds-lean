@@ -160,11 +160,5 @@ include hw ha in
   dsimp only [targetStart,tStart,uStart,prefixStart,tailBits,Shape.bits]
   omega
 
- theorem fields_disjoint :
-    targetStart s after+m≤tStart s w m before after ∧
-      tStart s w m before after+w≤uStart s w m before after := by
-  dsimp only [targetStart,tStart,uStart,prefixStart,tailBits]
-  omega
-
 end
 end IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry

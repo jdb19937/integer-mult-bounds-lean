@@ -119,12 +119,4 @@ theorem replace_hoare (old next : List Bool) :
   have hp := (copy_hoare next).seq (rewind_hoare next)
   exact (hc.seq hp).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
-/-- Numeric correctness follows from the literal copied descriptor. -/
-theorem replace_value (old next : List Bool) (a : ℕ) (ha : Counter.value next = a)
-    (hcanonical : GrowingCounterData.Canonical next) :
-    HoareTime program (fun v => v = bank old next)
-      (fun v => v = bank next next ∧ Counter.value next = a ∧ GrowingCounterData.Canonical next)
-      (2*old.length+2*next.length+8) :=
-  (replace_hoare old next).consequence (fun _ h => h) (fun _ h => ⟨h,ha,hcanonical⟩) le_rfl
-
 end IntegerMultBounds.Machine.BinaryReplace

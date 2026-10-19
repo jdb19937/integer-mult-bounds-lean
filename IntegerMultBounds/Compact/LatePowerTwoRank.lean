@@ -98,12 +98,5 @@ theorem late_rank_split (q b : ℕ) (X cs : List Bool) (hq : 1 ≤ q) (j : ℕ)
   dsimp only [Vw,Ww,Uw] at *
   nlinarith
 
-/-- Three literal short-counter fields reconstruct the complete in-range rank. -/
-theorem late_rank_value (q b : ℕ) (X cs : List Bool) (hq : 1 ≤ q)
-    (hj : value cs < lateMi q b X) :
-    value (Vw q X cs)+2^(X.length*q)*value (Ww q b X cs)+
-      2^(X.length*q+X.length*b)*value (Uw q b X cs) = value cs := by
-  exact value_three cs (X.length*q) (X.length*b) (by simpa only [lateMi_eq q b X hq] using hj)
-
 end
 end IntegerMultBounds.Compact.PowerTwo

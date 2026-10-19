@@ -113,15 +113,6 @@ theorem return_source (hw : v.width=m*b) (i j : Fin m) (x : Fin (volume prime v)
   rw [return_word]
   rfl
 
-/-- The actual recursive node may itself split by any positive divisor. -/
-theorem return_source_rows {c : ℕ} (hw : v.width=m*b) (i j : Fin m)
-    (hc : 0 < c) (hd : c ∣ (RecursiveAffineViews.cross prime b v i j).rows)
-    (x : Fin (volume prime v) → Fin 4) :
-    RecursiveShiftRoleBank.source (Shared50RecursiveNodeRows.transpose hd (toChild hw i j x)) =
-      RecursiveShiftRoleBank.source (array hw i j x) := by
-  rw [transpose_independent hc (by decide : 0 < 1) hd (one_dvd _)]
-  exact return_source hw i j x
-
 /-- Binary values survive because child interchange is a literal permutation. -/
 theorem array_encoded (hw : v.width=m*b) (i j : Fin m) (x : Fin (volume prime v) → ZMod 2) :
     array hw i j (fun z => SparseRoleCircuit.encode (a := 0) (x z)) =

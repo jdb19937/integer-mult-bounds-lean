@@ -85,8 +85,6 @@ theorem synPi_lt (m : ℕ) : synPi L m < 2 ^ N := by
   rw [testBit_synPi]
   simp [show ¬ k < N by omega]
 
-theorem twPosL_lt' (k : ℕ) (hk : k < N) : twPosL L k < N := twPosL_lt L k hk
-
 theorem twPosL_inj {k k' : ℕ} (hk : k < N) (hk' : k' < N) (h : twPosL L k = twPosL L k') :
     k = k' := by
   simp only [twPosL, hk, hk', ↓reduceDIte] at h
@@ -161,15 +159,6 @@ theorem bfly_comm {q q' : ℕ} (hqq : q ≠ q') (u : Recs r) :
   simp only [bfly, Pi.smul_apply, Pi.add_apply, smul_eq_mul, h1, h2, h3]
   split_ifs <;> ring
 
-theorem bflyL_cons_comm {q : ℕ} : ∀ (l : List ℕ), q ∉ l → ∀ u : Recs r,
-    bfly q (bflyL l u) = bflyL l (bfly q u)
-  | [], _, _ => rfl
-  | q' :: l, h, u => by
-      have hq : q ≠ q' := fun e => h (by simp [e])
-      have hl : q ∉ l := fun e => h (by simp [e])
-      show bfly q (bfly q' (bflyL l u)) = bfly q' (bflyL l (bfly q u))
-      rw [bfly_comm hq, bflyL_cons_comm l hl u]
-
 theorem bflyL_perm {l l' : List ℕ} (h : l.Perm l') (hl : l.Nodup) (u : Recs r) :
     bflyL l u = bflyL l' u := by
   induction h generalizing u with
@@ -222,11 +211,6 @@ theorem synZ_synRd {n : ℕ} (Z : ZArr (Fin 1 × Fin r) n) : synZ n (synRd Z) = 
   simp only [synZ, synRd, addrBits_ofBits]
   congr 3
   exact (Fin.fin_one_eq_zero u).symm
-
-theorem synRd_synZ {n : ℕ} (Y : ℕ → Fin r → GaussianInt) {x : ℕ} (hx : x < 2 ^ n) :
-    synRd (synZ n Y) x = Y x := by
-  funext c
-  simp [synRd, synZ, ofBits_addrBits hx]
 
 theorem recList_synZ (w n : ℕ) (Y : ℕ → Fin r → GaussianInt) :
     recList w (synZ n Y) =

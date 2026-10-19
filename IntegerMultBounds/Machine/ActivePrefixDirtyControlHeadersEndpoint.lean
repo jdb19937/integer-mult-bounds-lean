@@ -41,12 +41,5 @@ theorem outputs (mode : Kind) (d : Inputs) (j : Fin 10) :
     (bank (a := a) (finished mode d)).head (Fin.castAdd 15 (Fin.natAdd 14 (Fin.castAdd 4 j)))=1 := by
   fin_cases j <;> exact ⟨rfl,rfl⟩
 
-theorem originals_retained (mode : Kind) (d : Inputs) (hs : Fin 14 → List Bool)
-    (hv : ∀ i, Counter.value (hs i)=originalValues d i) (hc : ∀ i, GrowingCounterData.Canonical (hs i)) (j : Fin 14) :
-    (bank (a := a) (finished mode d)).head (Fin.castAdd 29 j)=(input (a := a) hs).head (Fin.castAdd 29 j) ∧
-    (bank (a := a) (finished mode d)).tape (Fin.castAdd 29 j)=(input (a := a) hs).tape (Fin.castAdd 29 j) := by
-  rw [input,ActivePrefixLayoutHeadersEndpoint.input_eq d hs hv hc]
-  fin_cases j <;> exact ⟨rfl,rfl⟩
-
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersEndpoint

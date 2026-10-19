@@ -93,18 +93,4 @@ theorem crtControlFields_scanCost_le_polynomial {d L W w : ℕ}
   crtControlScanCost_le_polynomial ((crtControlFields_length_le_width a s i pre hpos).trans hpre)
     hW hw
 
-/-- The same bound stated directly for runtime descriptor lists. -/
-theorem crtControlScan_pipeline_le :
-    ∀ᶠ n in atTop, ∀ a W w : Fin (d n) → ℕ,
-      ∀ fs : Fin (d n) → List CrtControlField,
-      (∀ i, a i ≤ logT n) →
-      (∀ i, a i = ℓ n ∨ a i = ℓ n - 1) →
-      (∀ i, (fs i).length ≤ logT n) → (∀ i, W i ≤ 3 * logT n + 1) →
-      (∀ i, w i ≤ W i) →
-      (∑ i, 2 ^ (logT n - a i) *
-        ((fs i).length * ((48 * W i + 56 + 13 * tblC (W i) (w i)) + 2) + 2 +
-          (8 * (fs i).length * W i + 2))) ≤ 2 ^ 19 * T n := by
-  filter_upwards [crtControlScanCost_pipeline_le] with n h a W w fs ha hw hlen hW hn
-  exact h a (fun i => (fs i).length) W w ha hw hlen hW hn
-
 end IntegerMultBounds.MathlibTM2.Cost

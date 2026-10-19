@@ -46,17 +46,6 @@ theorem intern_nodup (nodes : List (Node ι)) (node : Node ι)
     have ht' : t = node.support := List.mem_singleton.mp ht
     exact ha (hst.trans ht' ▸ hs)
 
-theorem intern_unique (nodes : List (Node ι)) (node : Node ι) (hn : Unique nodes)
-    (hs : node.support.Nonempty) : Unique (intern nodes node).1 := by
-  refine ⟨intern_nodup nodes node hn.nodup, ?_⟩
-  unfold intern
-  split
-  · exact hn.nonempty
-  · intro n h
-    rcases List.mem_append.mp h with h | h
-    · exact hn.nonempty n h
-    · simpa using (List.mem_singleton.mp h).symm ▸ hs
-
 /-- Smart addition preserves uniqueness even before its semantic hypotheses
 are discharged: both allocating and reuse branches go through interning. -/
 theorem smartAdd_nodup (nodes : List (Node ι)) (l r : Ref)
@@ -117,17 +106,6 @@ theorem refSupport_nonempty (nodes : List (Node ι)) (hn : ∀ node ∈ nodes, n
   rw [refSupport_some nodes i hi]
   exact hn _ (List.getElem_mem hi)
 
-theorem smartAdd_unique (nodes : List (Node ι)) (l r : Ref) (hn : Unique nodes)
-    (hl : RefValid nodes l) (hr : RefValid nodes r) : Unique (smartAdd nodes l r).1 := by
-  cases l with
-  | none => exact hn
-  | some l =>
-    cases r with
-    | none => exact hn
-    | some r =>
-      apply intern_unique nodes _ hn
-      exact (refSupport_nonempty nodes hn.nonempty l hl).mono Finset.subset_union_left
-
 /-- Two disjoint nonempty summands contain at least two distinct atoms. -/
 theorem union_card_two (s t : Finset ι) (hs : s.Nonempty) (ht : t.Nonempty) (hd : Disjoint s t) :
     2 ≤ (s ∪ t).card := by
@@ -135,16 +113,6 @@ theorem union_card_two (s t : Finset ι) (hs : s.Nonempty) (ht : t.Nonempty) (hd
   have h1 := Finset.card_pos.mpr hs
   have h2 := Finset.card_pos.mpr ht
   omega
-
-/-- A real addition of two nonzero valid references cannot alias any input
-singleton: its actual resulting support contains at least two atoms. -/
-theorem smartAdd_card_two (nodes : List (Node ι)) (l r : ℕ) (hv : Valid nodes)
-    (hl : RefValid nodes (some l)) (hr : RefValid nodes (some r))
-    (hd : Disjoint (refSupport nodes (some l)) (refSupport nodes (some r))) :
-    2 ≤ (refSupport (smartAdd nodes (some l) (some r)).1 (smartAdd nodes (some l) (some r)).2).card := by
-  rw [(smartAdd_built nodes (some l) (some r) hv hl hr hd).support_eq]
-  exact union_card_two _ _ (refSupport_nonempty nodes (valid_nonempty nodes hv) l hl)
-    (refSupport_nonempty nodes (valid_nonempty nodes hv) r hr) hd
 
 /-- Every structurally valid addition over nonempty prior supports has
 cardinality at least two, independently of how its node was constructed. -/
@@ -210,57 +178,5 @@ theorem balanced_total_nodup (nodes : List (Node ι)) (refs : List Ref)
         have hr : right.length < values.length := by simp only [right, List.length_drop]; omega
         rw [DisjointBalanced.total]
         exact smartAdd_nodup _ _ _ (ih right hr _ (ih left hl nodes hn))
-
-/-- Existing supports allocate no additional node. -/
-theorem intern_length_of_mem (nodes : List (Node ι)) (node : Node ι)
-    (hs : node.support ∈ nodes.map Node.support) : (intern nodes node).1.length = nodes.length := by
-  unfold intern
-  split
-  · rfl
-  · rename_i hf
-    exact False.elim ((findSupport_none_iff node.support _).mp hf hs)
-
-/-- A genuinely new support allocates exactly one node. -/
-theorem intern_length_of_not_mem (nodes : List (Node ι)) (node : Node ι)
-    (hs : node.support ∉ nodes.map Node.support) : (intern nodes node).1.length = nodes.length + 1 := by
-  simp [intern, (findSupport_none_iff node.support _).mpr hs]
-
-theorem smartAdd_length_of_union_mem (nodes : List (Node ι)) (l r : ℕ)
-    (hs : refSupport nodes (some l) ∪ refSupport nodes (some r) ∈ nodes.map Node.support) :
-    (smartAdd nodes (some l) (some r)).1.length = nodes.length :=
-  intern_length_of_mem nodes _ hs
-
-theorem smartAdd_length_of_union_not_mem (nodes : List (Node ι)) (l r : ℕ)
-    (hs : refSupport nodes (some l) ∪ refSupport nodes (some r) ∉ nodes.map Node.support) :
-    (smartAdd nodes (some l) (some r)).1.length = nodes.length + 1 :=
-  intern_length_of_not_mem nodes _ hs
-
-omit [DecidableEq ι] in
-/-- Equal actual supports identify equal valid references in a unique DAG,
-including zero: no nonzero identifier carries the empty support. -/
-theorem refSupport_injective (nodes : List (Node ι)) (hu : Unique nodes) (l r : Ref)
-    (hl : RefValid nodes l) (hr : RefValid nodes r)
-    (he : refSupport nodes l = refSupport nodes r) : l = r := by
-  cases l with
-  | none =>
-    cases r with
-    | none => rfl
-    | some r =>
-      have hn := refSupport_nonempty nodes hu.nonempty r hr
-      rw [← he] at hn
-      exact False.elim (Finset.not_nonempty_empty hn)
-  | some l =>
-    cases r with
-    | none =>
-      have hn := refSupport_nonempty nodes hu.nonempty l hl
-      rw [he] at hn
-      exact False.elim (Finset.not_nonempty_empty hn)
-    | some r =>
-      change l < nodes.length at hl
-      change r < nodes.length at hr
-      have hi : l = r := hu.nodup.eq_of_getElem_eq (i := l) (j := r) (by simpa [RefValid] using hl) (by simpa [RefValid] using hr) (by
-        rw [refSupport_some nodes l hl, refSupport_some nodes r hr] at he
-        simpa only [List.getElem_map] using he)
-      exact congrArg some hi
 
 end IntegerMultBounds.Networks.DisjointUnique

@@ -67,10 +67,6 @@ theorem compactPrepared_clear_le {s : Shape} (A : ℕ) (d : Inputs s) :
 /-- A fixed power-of-two coefficient for setup, full execution and cleanup. -/
 def compactPreparedConst (T D : ℕ) : ℝ := 2^(compactSlotXorExponent T D+9)
 
-theorem compactPreparedConst_pos (T D : ℕ) : 0<compactPreparedConst T D := by
-  unfold compactPreparedConst
-  positivity
-
 theorem compactPreparedConst_le (T D : ℕ) :
     compactSlotXorConst T D+379 ≤ compactPreparedConst T D := by
   have h : (1:ℝ) ≤ compactSlotXorConst T D := one_le_pow₀ (by norm_num)

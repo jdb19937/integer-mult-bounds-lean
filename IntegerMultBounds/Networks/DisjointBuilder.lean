@@ -146,26 +146,6 @@ theorem refValue_extends (input : ι → A) {nodes larger : List (Node ι)}
   rw [refValue_eq input larger r hv' (refValid_extends he hr), refSupport_extends he hr,
     refValue_eq input nodes r hv hr]
 
-/-- The returned reference evaluates to the operand sum, including either or
-both absent operands and the branch that reuses an earlier equal-support node. -/
-theorem smartAdd_value (input : ι → A) (nodes : List (Node ι)) (l r : Ref)
-    (hv : Valid nodes) (hl : RefValid nodes l) (hr : RefValid nodes r)
-    (hd : Disjoint (refSupport nodes l) (refSupport nodes r)) :
-    refValue input (smartAdd nodes l r).1 (smartAdd nodes l r).2 =
-      refValue input nodes l + refValue input nodes r := by
-  have hb := smartAdd_built nodes l r hv hl hr hd
-  rw [refValue_eq input _ _ hb.valid hb.refValid, hb.support_eq,
-    refValue_eq input nodes l hv hl, refValue_eq input nodes r hv hr]
-  exact Finset.sum_union hd
-
-/-- Every valid old reference retains its value after smart addition. -/
-theorem smartAdd_preserves (input : ι → A) (nodes : List (Node ι)) (l r old : Ref)
-    (hv : Valid nodes) (hl : RefValid nodes l) (hr : RefValid nodes r) (ho : RefValid nodes old)
-    (hd : Disjoint (refSupport nodes l) (refSupport nodes r)) :
-    refValue input (smartAdd nodes l r).1 old = refValue input nodes old := by
-  have hb := smartAdd_built nodes l r hv hl hr hd
-  exact refValue_extends input hb.extension hv hb.valid ho
-
 end Values
 
 /-- Explicit union semantics for an ordered finite list of references. -/
@@ -255,12 +235,6 @@ theorem total_value (input : ι → A) (nodes : List (Node ι)) (refs : List Ref
   have ht := total_built nodes refs hv hr hd
   rw [refValue_eq input _ _ ht.valid ht.refValid, ht.support_eq]
   exact supportSum_supports input nodes refs hv hr hd
-
-theorem total_preserves (input : ι → A) (nodes : List (Node ι)) (refs : List Ref) (old : Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs)
-    (ho : RefValid nodes old) : refValue input (total nodes refs).1 old = refValue input nodes old := by
-  have ht := total_built nodes refs hv hr hd
-  exact refValue_extends input ht.extension hv ht.valid ho
 
 end TotalValues
 

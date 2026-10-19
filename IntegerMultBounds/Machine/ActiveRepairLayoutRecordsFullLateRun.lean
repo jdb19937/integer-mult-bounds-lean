@@ -65,15 +65,6 @@ def bank (d : Inputs s p offset rows) (x : Array s rows) :=
 
 theorem permanent_le : 252≤count := by change 252≤252+lowCount+highCount; omega
 def rawSlot : Fin count := Fin.castLE permanent_le (237:Fin 252)
-theorem rawSlot_value : rawSlot.val=237 := rfl
-
-theorem raw_array (d : Inputs s p offset rows) (x : Array s rows) :
-    (bank d x).tape rawSlot=ActiveTargetRotation.word (a:=prime) x := by
-  change (if h : 237<252 then
-    (ActiveRepairLayoutRecordsPayloadLateData.caller d x).tape ⟨237,h⟩ else fun _ => blank)=_
-  rw [dite_eq_left (by decide)]
-  exact ActiveRepairLayoutRecordsPayloadLateData.caller_tape_raw d x
-
 theorem raw_head (d : Inputs s p offset rows) (x : Array s rows) : (bank d x).head rawSlot=0 := by
   change (if h : 237<252 then
     (ActiveRepairLayoutRecordsPayloadLateData.caller d x).head ⟨237,h⟩ else 0)=0

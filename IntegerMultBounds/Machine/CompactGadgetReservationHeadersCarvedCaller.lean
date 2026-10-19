@@ -143,20 +143,6 @@ theorem shape_sources (hs : Fin 6 → List Bool) (s : Shape) (n r c w : ℕ) (f 
     all_goals simp [CompactGadgetReservationHeadersWords.common,CompactGadgetReservationHeadersWords.head,
       CompactGadgetReservationHeadersCarvedSchedule.finished]
 
-theorem spectators_preserved (hs : Fin 6 → List Bool) (s : Shape) (n r c w : ℕ) (f : Front)
-    (spectators : Tapes t prime) (V X i : Fin t) (hi : i ≠ X)
-    (y : Fin (RadixRangePadding.volume (s.prefixRange (rowCount r c) f) (2^w) (gap s w f) (suffix s w)) → Bool) :
-    (BinaryPackedOffsetOriginalPlaced.store (prepared hs s n r c w f spectators) (actionFocus V X) y).tape
-      (Fin.castAdd 15 (Fin.natAdd 25 i)) = spectators.tape i ∧
-    (BinaryPackedOffsetOriginalPlaced.store (prepared hs s n r c w f spectators) (actionFocus V X) y).head
-      (Fin.castAdd 15 (Fin.natAdd 25 i)) = spectators.head i := by
-  have hne : Fin.castAdd 15 (Fin.natAdd 25 i) ≠ actionFocus V X 5 := by
-    change Fin.castAdd 15 (Fin.natAdd 25 i) ≠ Fin.castAdd 15 (Fin.natAdd 25 X)
-    intro h
-    exact hi (Fin.natAdd_injective _ _ (Fin.castAdd_injective _ _ h))
-  simp only [BinaryPackedOffsetOriginalPlaced.store,setTape,Function.update_of_ne hne,
-    spectator_tape,spectator_head,and_self]
-
 theorem runs (hs : Fin 6 → List Bool) (spectators : Tapes t prime) (R B V X : Fin t) (hVX : V ≠ X)
     (rs bs : List Bool) (r c n b : ℕ) (s : Shape) (f : Front)
     (hvR : Counter.value rs = r) (cr : GrowingCounterData.Canonical rs)

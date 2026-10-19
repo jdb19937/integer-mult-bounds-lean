@@ -89,17 +89,4 @@ def outputSlot (nodes : List (Node ι)) (outputs : List ℕ) (hv : Valid nodes)
     (hc : (compile nodes outputs).state.next ≤ capacity) (i : ℕ) (hi : i < outputs.length) : Fin capacity :=
   ⟨(compile nodes outputs).outputSlot i, (compile_output_bound nodes outputs hv ho i hi).trans_le hc⟩
 
-/-- The finite-register program retains the actual input-preloaded DAG semantics. -/
-theorem program_output (nodes : List (Node ι)) (outputs : List ℕ) (hv : Valid nodes)
-    (ho : ∀ i ∈ outputs, i < nodes.length) (capacity : ℕ)
-    (hc : (compile nodes outputs).state.next ≤ capacity) (input : ι → ZMod 2)
-    (i : ℕ) (hi : i < outputs.length) :
-    Circuit.run (program nodes outputs hv ho capacity hc)
-      (fun r => DAGValueTransfer.initial (compile nodes outputs).sources
-        (DAGValueTransfer.sourceInput nodes input) r.val)
-      (outputSlot nodes outputs hv ho capacity hc i hi) =
-        supportSum input (nodes[outputs[i]]'(ho _ (List.getElem_mem hi))).support := by
-  rw [program_run]
-  exact DAGValueTransfer.compile_output_input_value nodes outputs input hv ho i hi
-
 end IntegerMultBounds.Networks.DAGFiniteCompile

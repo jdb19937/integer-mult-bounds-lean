@@ -177,10 +177,4 @@ theorem nativeRealization_binary (i : ℕ) :
     (nativeRealization i).binary = Tableau.nativeTableau i :=
   sourceCanonicalRealization_binary _ _
 
-/-- Every selected frame's complex word projects to a tableau whose inverse Z image is the
-frame's Lagrangian. -/
-theorem nativeRealization_inverse_Z (i : ℕ) :
-    Tableau.inverseZ (nativeRealization i).binary = frameLagrangian (catalog i).space := by
-  rw [nativeRealization_binary, Tableau.nativeTableau_inverse_Z]
-
 end IntegerMultBounds.Networks.Certificates.T16.Pauli

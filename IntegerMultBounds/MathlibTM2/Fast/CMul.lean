@@ -175,11 +175,6 @@ lemma natAbs_lt_of_fits {w : ℕ} {x : ℤ} (h : |x| < 2 ^ (w - 1)) : x.natAbs <
     rw [Int.natCast_natAbs]; push_cast; linarith
   exact_mod_cast this
 
-/-- A product numeral of `N + 1` bits as `N` bits and the top bit. -/
-lemma binSyms_succ_split {A : ℕ} (N x : ℕ) :
-    (binSyms (N + 1) x : List (Fin (A + 4))) ++ [] = binSyms N x ++ binSyms 1 (x / 2 ^ N) := by
-  rw [List.append_nil, binSyms_add]
-
 variable (ι) in
 /-- The four Schönhage–Strassen products `|a||c|`, `|b||d|`, `|a||d|`, `|b||c|`. -/
 def cmulProds (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (cr : CR → Fin T) :

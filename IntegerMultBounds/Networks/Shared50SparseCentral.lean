@@ -35,10 +35,6 @@ private theorem sum_sort {α M : Type*} [LinearOrder α] [AddCommMonoid M]
 theorem entries_length (e : Fin n ≃ Triple 50) : (entries e).length = 3 * n := by
   simp [entries, List.length_flatMap, List.map_ofFn, List.sum_ofFn, (e _).property, Nat.mul_comm]
 
-theorem mem_entries (e : Fin n ≃ Triple 50) (i : Fin n) (c : Fin 50) :
-    (i,c) ∈ entries e ↔ c ∈ (e i).val := by
-  simp [entries]
-
 /-- Three central XORs per input triple. -/
 def gather (e : Fin n ≃ Triple 50) : Program (Role n a 50 s) (ZMod 2) :=
   SparseCircuit.copies center x ((entries e).map Prod.swap)
@@ -95,27 +91,5 @@ theorem scatter_run (e : Fin n ≃ Triple 50) (X Y : Fin n → ZMod 2)
   · simp [banks, y]
   · simp [banks, y]
   · simp [banks, y]
-
-/-- Actual central gather incidences are exactly triple membership incidences. -/
-theorem gather_incidence (e : Fin n ≃ Triple 50) (gate : Gate (Role n a 50 s) (ZMod 2)) :
-    gate ∈ gather e ↔ ∃ i c, c ∈ (e i).val ∧
-      gate.target = center c ∧ gate.terms = [(x i,1)] := by
-  rw [gather, SparseCircuit.mem_copies]
-  constructor
-  · rintro ⟨entry, he, ht, hs⟩
-    obtain ⟨pair, hp, rfl⟩ := List.mem_map.mp he
-    exact ⟨pair.1, pair.2, (mem_entries e _ _).mp hp, ht, hs⟩
-  · rintro ⟨i,c,hc,ht,hs⟩
-    exact ⟨(c,i), List.mem_map.mpr ⟨(i,c), (mem_entries e _ _).mpr hc, rfl⟩, ht, hs⟩
-
-theorem scatter_incidence (e : Fin n ≃ Triple 50) (gate : Gate (Role n a 50 s) (ZMod 2)) :
-    gate ∈ scatter e ↔ ∃ i c, c ∈ (e i).val ∧
-      gate.target = y i ∧ gate.terms = [(center c,1)] := by
-  rw [scatter, SparseCircuit.mem_copies]
-  constructor
-  · rintro ⟨⟨i,c⟩, he, ht, hs⟩
-    exact ⟨i,c,(mem_entries e _ _).mp he,ht,hs⟩
-  · rintro ⟨i,c,hc,ht,hs⟩
-    exact ⟨(i,c),(mem_entries e _ _).mpr hc,ht,hs⟩
 
 end IntegerMultBounds.Networks.Shared50SparseCentral

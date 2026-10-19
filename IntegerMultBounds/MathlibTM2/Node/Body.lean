@@ -115,21 +115,6 @@ lemma expZ_eq_expSeq (u : ℕ) (ds : ComplexFramedExecution.Directions) (j : ℕ
 lemma bits_eq_expSeq (u : ℕ) (j : ℕ) : bits u j = expSeq 0 m u j :=
   eq_expSeq (e := bits u) rfl (fun i => by rw [bits, Nat.zero_add]) j
 
-/-- `m ≡ 1` modulo `4`, so `bits u j ≡ u`. -/
-lemma bits_mod_four (u : ℕ) : ∀ j, bits u j % 4 = u % 4
-  | 0 => rfl
-  | j + 1 => by
-      rw [bits, Nat.mul_mod, bits_mod_four u j, show m % 4 = 1 by norm_num [m], one_mul,
-        Nat.mod_mod]
-
-/-- `i ^ (27 k)` only depends on `k` modulo `4`, through `3 (k mod 4)`. -/
-lemma pow_I_27 (k : ℕ) :
-    (⟨0, 1⟩ : GaussianInt) ^ (27 * k) = (⟨0, 1⟩ : GaussianInt) ^ ((3 * (k % 4)) % 4) := by
-  have h4 : (⟨0, 1⟩ : GaussianInt) ^ 4 = 1 := by decide
-  rw [pow_eq_pow_mod _ h4]
-  congr 1
-  omega
-
 /-! ### Host utilities -/
 
 section Utils
@@ -191,112 +176,16 @@ def cntStep (i j cs : Fin T) : Act T Q A U :=
       (.load (fun v => { v with scan := Function.update v.scan cs (nextC 4 (v.scan cs)) })
         (peekR i)))
 
-/-- The counting loop: `2 |l| + 1` steps; the symbols of `i` move onto `j` (reversed) and the
-scan slot `cs` advances by `|l|` modulo `4`. -/
-theorem cntStep_loop {i j : Fin T} (hij : i ≠ j) (cs : Fin T) :
-    ∀ (l : List (Fin (A + 4))) (c : ℕ) (v : HS T Q A U) (S : Stacks T A),
-      S.R i = l → v.flag = l.head?.isSome → (v.scan cs).val = c % 4 →
-      ∃ v', v'.user = v.user ∧ (v'.scan cs).val = (c + l.length) % 4 ∧
-        Exec body (.loop (·.flag) (.act (cntStep i j cs))) (mk v S) (2 * l.length + 1)
-          (mk v' { S with R := movedR S.R i j id l }) := by
-  intro l
-  induction l with
-  | nil =>
-      intro c v S hS hf hc
-      refine ⟨v, rfl, by simpa using hc, ?_⟩
-      have : ({ S with R := movedR S.R i j id [] } : Stacks T A) = S := by
-        cases S with
-        | mk inp out L R =>
-          simp only at hS
-          congr 1
-          funext k
-          by_cases hk : k = j
-          · subst hk; simp [movedR]
-          · by_cases hk' : k = i
-            · subst hk'; simp [movedR, hk, hS]
-            · simp [movedR, hk, hk']
-      rw [this]
-      exact .loop_false (by simpa using hf)
-  | cons e rest ih =>
-      intro c v S hS hf hc
-      have hn := nextC_val (A := A) (W := 4) (n := c) (by norm_num) (by omega) hc
-      obtain ⟨v', hu, hsc, he⟩ := ih (c + 1)
-        { v with sym := some e, scan := Function.update v.scan cs (nextC 4 (v.scan cs)),
-                 flag := rest.head?.isSome }
-        { S with R := Function.update (Function.update S.R i rest) j (e :: S.R j) }
-        (by simp [Function.update_of_ne hij]) rfl (by simpa using hn)
-      refine ⟨v', hu, by rw [hsc, List.length_cons]; ring_nf, ?_⟩
-      have hrun : (cntStep i j cs : Act T Q A U).run (mk v S) =
-          mk { v with sym := some e, scan := Function.update v.scan cs (nextC 4 (v.scan cs)),
-                      flag := rest.head?.isSome }
-            { S with R := Function.update (Function.update S.R i rest) j (e :: S.R j) } := by
-        simp [cntStep, peekR, Action.run, hS, update_rt, Function.update_of_ne hij,
-          Function.update_of_ne hij.symm]
-      refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
-        (hrun ▸ Exec.act (body := body) (cntStep i j cs) (mk v S)) he) (by simp; ring) ?_
-      congr 2
-      funext k
-      by_cases hk : k = j
-      · subst hk; simp [movedR]
-      · by_cases hk' : k = i
-        · subst hk'; simp [movedR, hk]
-        · simp [movedR, hk, hk']
-
 /-- The residue of `|i|` modulo `4` into the scan slot `cs`: count the symbols of `i` while moving
 them onto the empty `t`, then move them back. -/
 def resid4 (i t cs : Fin T) : Pr P T Q A U :=
   .seq (.act (initCounter cs i)) (.seq (.loop (·.flag) (.act (cntStep i t cs))) (moveR t i id))
-
-/-- `resid4`: the registers end as they started, the scan slot `cs` holds `|i| mod 4`;
-`4 |i| + 4` steps. -/
-theorem resid4_exec {i t : Fin T} (hit : i ≠ t) (cs : Fin T) (v : HS T Q A U) (S : Stacks T A)
-    (ht : S.R t = []) :
-    ∃ v', v'.user = v.user ∧ (v'.scan cs).val = (S.R i).length % 4 ∧
-      Exec body (resid4 i t cs) (mk v S) (4 * (S.R i).length + 4) (mk v' S) := by
-  have he₀ := Exec.act (body := body) (initCounter cs i) (mk v S)
-  have hrun : (initCounter cs i : Act T Q A U).run (mk v S) =
-      mk { v with scan := Function.update v.scan cs 0, flag := (S.R i).head?.isSome } S := rfl
-  rw [hrun] at he₀
-  obtain ⟨v₁, hu₁, hsc₁, he₁⟩ := cntStep_loop body hit cs (S.R i) 0
-    { v with scan := Function.update v.scan cs 0, flag := (S.R i).head?.isSome } S rfl rfl
-    (by simp)
-  obtain ⟨v₂, hu₂, hsc₂, he₂⟩ := moveR_exec_scan body t i (Ne.symm hit) id v₁
-    { S with R := movedR S.R i t id (S.R i) }
-  refine ⟨v₂, by rw [hu₂, hu₁], by rw [hsc₂, hsc₁, Nat.zero_add],
-    Exec.cast (Exec.seq he₀ (Exec.seq he₁ he₂)) ?_ ?_⟩
-  · simp [movedR, ht]; ring
-  · congr 1
-    cases S with
-    | mk inp out L R =>
-      simp only at ht ⊢
-      congr 1
-      funext k
-      by_cases hk : k = i
-      · subst hk; simp [movedR, hit, ht]
-      · by_cases hk' : k = t
-        · subst hk'; simp [movedR, hk, ht]
-        · simp [movedR, hk, hk']
 
 /-- Run `p s` for the value `s < 4` of the scan slot `cs`. -/
 def disp4 (cs : Fin T) (p : Fin 4 → Pr P T Q A U) : Pr P T Q A U :=
   .cond (fun v => decide ((v.scan cs).val = 0)) (p 0)
     (.cond (fun v => decide ((v.scan cs).val = 1)) (p 1)
       (.cond (fun v => decide ((v.scan cs).val = 2)) (p 2) (p 3)))
-
-/-- `disp4` runs the branch of the value `q` of the scan slot, in at most three more steps. -/
-lemma disp4_exec (cs : Fin T) (p : Fin 4 → Pr P T Q A U) (q : Fin 4) (v : HS T Q A U)
-    (S : Stacks T A) (hq : (v.scan cs).val = q.val) {c : ℕ}
-    {t : Store (HΓ (T := T) A) (HS T Q A U)} (h : Exec body (p q) (mk v S) c t) :
-    ∃ c', c' ≤ c + 3 ∧ Exec body (disp4 cs p) (mk v S) c' t := by
-  obtain ⟨q, hq4⟩ := q
-  simp only at hq
-  interval_cases q
-  · exact ⟨c + 1, by omega, .cond_true (by simp [hq]) h⟩
-  · exact ⟨c + 1 + 1, by omega, .cond_false (by simp [hq]) (.cond_true (by simp [hq]) h)⟩
-  · exact ⟨c + 1 + 1 + 1, by omega, .cond_false (by simp [hq])
-      (.cond_false (by simp [hq]) (.cond_true (by simp [hq]) h))⟩
-  · exact ⟨c + 1 + 1 + 1, by omega, .cond_false (by simp [hq])
-      (.cond_false (by simp [hq]) (.cond_false (by simp [hq]) h))⟩
 
 /-- **A list of passes on disjoint register sets.** Pass `i` changes only the registers in
 `W i`, setting them to `out i`, from any register file satisfying `Good` and `In i`; `Good` only
@@ -1232,22 +1121,6 @@ section Exchange
 
 variable {BReg : Type} [Fintype BReg] {Q A : ℕ} {U P : Type}
   (body : P → Pr P (nT BReg) Q A U)
-
-/-- The stream of `i ^ q Z` is the stream of `Z` multiplied coefficientwise by `unitG q`. -/
-lemma encZ_unit {R r n w : ℕ} (q : Fin 4) (Z : ZArr (Fin R × Fin r) n) :
-    encZ A w ((⟨0, 1⟩ : GaussianInt) ^ q.val • Z) =
-      ((coeffList w Z).map (GR.mulG (unitG q).1 (unitG q).2)).flatMap (coeffSyms A w) := by
-  rw [encZ, ← coeffList_map (fun z => (⟨(unitG q).1, (unitG q).2⟩ : GaussianInt) * z) _
-    (fun z => red_mulG w _ _ z) Z]
-  congr 2
-  funext p
-  rw [Pi.smul_apply, smul_eq_mul, pow_I_eq_unitG]
-
-/-- The stream of `-Z` is the stream of `Z` negated coefficientwise. -/
-lemma encZ_neg {R r n w : ℕ} (Z : ZArr (Fin R × Fin r) n) :
-    encZ A w (-Z) = ((coeffList w Z).map fun z => -z).flatMap (coeffSyms A w) := by
-  rw [encZ, ← coeffList_map (fun z => -z) (fun z => -z) (fun z => red_neg w z) Z]
-  rfl
 
 /-- The layout of a one-wire Gaussian automaton from `x` to `y` beside `ctr` and `tmp`. -/
 lemma autoLayout_one {x y : LReg BReg} (hxy : x ≠ y) (hxc : x ≠ .ctr) (hxt : x ≠ .tmp)

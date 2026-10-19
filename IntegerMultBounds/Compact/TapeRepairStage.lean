@@ -75,45 +75,7 @@ theorem holes_stream (d : α → List Bool) :
   rw [List.filter_map, List.length_map]
   rfl
 
-omit [Fintype α] in
-theorem items_count (data : α → List Bool) :
-    (Machine.RepairStage.replacements k (items e S T bad k data)).length =
-      Machine.Reinsert.holes (stream e bad (data ∘ S.symm)) := by
-  rw [replacements_eq, List.length_map, sortedExtracted, (sort_perm _ _ _).length_eq, extracted,
-    List.length_map, holes_stream]
-
 variable (hT : ∀ x, bad (T x) ↔ bad x) (agree : ∀ x, ¬bad x → S x = T x)
-
-omit [Fintype α] in
-include hT agree in
-/-- The tape stage on the pipeline's keyed extracted records and the flagged
-actual output stream halts with the ideal stream on the output tape, within
-`74k + 4` extracted volumes, one full-stream volume, and `k + 7`. -/
-theorem tape_pipeline (hk : M ≤ 2 ^ k) (data : α → List Bool) :
-    HoareTime Machine.RepairStage.program
-      (fun v => v = stage k 0 (raw (items e S T bad k data)) 0 0 (fun _ => blank) 0
-        (encTape (Machine.Partition.encode (stream e bad (data ∘ S.symm)))) 0 (fun _ => blank) 0)
-      (fun v => v = stage k (Machine.TapeRadixSort.completed k (raw (items e S T bad k data)))
-        (sortedRaw k (items e S T bad k data))
-        (Machine.KeySelect.encode (sortedRaw k (items e S T bad k data))).length 0
-        (encTape (Machine.Partition.encode ((sortedExtracted e S T bad k data).map Prod.snd)))
-        (Machine.Partition.encode ((sortedExtracted e S T bad k data).map Prod.snd)).length
-        (encTape (Machine.Partition.encode (stream e bad (data ∘ S.symm))))
-        (Machine.Partition.encode (stream e bad (data ∘ S.symm))).length
-        (encTape (Machine.Partition.encode (stream e bad (data ∘ T.symm))))
-        (Machine.Partition.encode (stream e bad (data ∘ T.symm))).length)
-      ((74 * k + 4) * (Machine.KeySelect.encode (raw (items e S T bad k data))).length +
-        (Machine.Partition.encode (stream e bad (data ∘ S.symm))).length + k + 7) := by
-  have h := Machine.RepairStage.stage_hoare k (items e S T bad k data) (items_keys e S T bad k data)
-    (stream e bad (data ∘ S.symm)) (items_count e S T bad k data)
-  have hcost := Machine.RepairStage.stage_cost_le k (items e S T bad k data)
-    (items_keys e S T bad k data) (stream e bad (data ∘ S.symm))
-  rw [replacements_eq] at h hcost
-  have hp : Machine.Reinsert.fill (stream e bad (data ∘ S.symm))
-      ((sortedExtracted e S T bad k data).map Prod.snd) = stream e bad (data ∘ T.symm) :=
-    pipeline_exact e S T bad hT agree k hk data
-  rw [hp] at h
-  exact h.consequence (fun _ hv => hv) (fun _ hv => hv) hcost
 
 /-- The extracted volume is at most the exceptional count times the key width,
 flag, delimiter, and largest payload. -/

@@ -126,12 +126,6 @@ theorem idOutside_diagonal (S : Finset ι) (d : ι → F) (hd : ∀ i, i ∉ S �
   · rw [diagonal_apply_ne d h, ite_eq_right h]
 
 omit [Fintype ι] in
-theorem idOutside_one_add {S : Finset ι} {N : Matrix ι ι F} (hN : SupportedIn S S N) :
-    IdOutside S (1 + N) := by
-  intro i j hij
-  rw [add_apply, hN i j hij, add_zero, one_apply]
-
-omit [Fintype ι] in
 theorem idOutside_one_sub {S : Finset ι} {N : Matrix ι ι F} (hN : SupportedIn S S N) :
     IdOutside S (1 - N) := by
   intro i j hij
@@ -302,11 +296,6 @@ theorem afterCols_row (hp : IsPivot S T A r c) (j : κ) :
 omit [Fintype ι] [LinearOrder ι] in
 theorem afterCols_col (i : ι) : afterCols T A r c i c = A i c := by
   rw [afterCols_apply, ite_eq_right (fun h => lt_irrefl c h.1), mul_zero, add_zero]
-
-omit [Fintype ι] in
-theorem afterCols_rows (hp : IsPivot S T A r c) (i : ι) (hi : i < r) (j : κ) :
-    afterCols T A r c i j = 0 := by
-  rw [afterCols_apply, hp.rows i hi j, hp.rows i hi c, zero_mul, add_zero]
 
 omit [Fintype ι] in
 theorem afterCols_supp (hp : IsPivot S T A r c) : SupportedIn S T (afterCols T A r c) := by

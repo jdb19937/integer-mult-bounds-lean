@@ -100,34 +100,6 @@ theorem body_hoare (source dest : ℤ → Fin 4) (p q : ℤ) (fibers : List (Lis
 /-- One fixed seven-tape machine, independent of fiber count and lengths. -/
 def program : Program 7 85 0 := CountedLoop.program CountedRotateAdvance.program
 
-/-- Complete repeated shifting of equal-length fibers by the same cut. The
-separate outer clock controls exactly the number of fibers; every inner clock
-is prepared and erased by the body and all data heads advance physically. -/
-theorem shift_hoare (source dest : ℤ → Fin 4) (p q : ℤ) (fibers : List (List (Fin 4)))
-    (cut L : ℕ) (hu : BlockRotationData.Uniform L fibers) (hcut : cut ≤ L)
-    (b c d countBits : List Bool) (hb : Counter.value b = cut) (hc : Counter.value c = L-cut)
-    (hd : Counter.value d = L) (hn : Counter.value countBits = fibers.length) :
-    HoareTime program
-      (fun v => v = CountedLoop.bank
-        (bank (putWord source p fibers.flatten) dest b c d p q) CountedCopyReuse.empty countBits)
-      (fun v => v = CountedLoop.bank
-        (bank (putWord source p fibers.flatten) (putWord dest q (fibers.map (shift cut)).flatten) b c d
-          (p+((fibers.length*L : ℕ) : ℤ)) (q+((fibers.length*L : ℕ) : ℤ))) CountedCopyReuse.empty
-        (List.replicate countBits.length true))
-      (fibers.length*(bodyBound L b c d+6)+2*countBits.length+2) := by
-  have h := CountedLoop.loop_hoare CountedRotateAdvance.program CountedCopyReuse.empty countBits
-    fibers.length (state source dest p q fibers cut L b c d) (fun _ => bodyBound L b c d)
-    hn (by simp [CountedCopyReuse.empty])
-    (by simp [CountedCopyReuse.empty,show (1 : ℤ)+countBits.length ≠ 0 by omega])
-    (body_hoare source dest p q fibers cut L hu hcut b c d hb hc hd)
-  have hcost : (∑ _i ∈ Finset.range fibers.length, bodyBound L b c d)+6*fibers.length+
-      2*countBits.length+2 = fibers.length*(bodyBound L b c d+6)+2*countBits.length+2 := by
-    simp only [Finset.sum_const,Finset.card_range,smul_eq_mul]
-    ring
-  rw [hcost] at h
-  simpa only [program,state,outputPrefix,List.take_zero,List.map_nil,List.flatten_nil,
-    putWord,zero_mul,Nat.cast_zero,add_zero,List.take_length] using h
-
 /-- Descriptor overhead is linear in total payload volume when descriptor
 widths have their canonical elementary bounds and each fiber is nonempty.
 No descriptor construction cost is hidden in this execution theorem. -/
@@ -147,33 +119,5 @@ private theorem canonical_width_le (bs : List Bool) (h : GrowingCounterData.Cano
   have hw := GrowingCounterData.canonical_width bs h
   have hl := Nat.log2_le_self (Counter.value bs)
   omega
-
-/-- For canonical prepared descriptors, the complete repeated-fiber machine
-has a genuine linear-volume runtime, with a uniform explicit constant. -/
-theorem shift_hoare_linear (source dest : ℤ → Fin 4) (p q : ℤ) (fibers : List (List (Fin 4)))
-    (cut L : ℕ) (hu : BlockRotationData.Uniform L fibers) (hcut : cut ≤ L) (hL : 1 ≤ L)
-    (b c d countBits : List Bool) (hb : Counter.value b = cut) (hc : Counter.value c = L-cut)
-    (hd : Counter.value d = L) (hn : Counter.value countBits = fibers.length)
-    (cb : GrowingCounterData.Canonical b) (cc : GrowingCounterData.Canonical c)
-    (cd : GrowingCounterData.Canonical d) (cn : GrowingCounterData.Canonical countBits) :
-    HoareTime program
-      (fun v => v = CountedLoop.bank
-        (bank (putWord source p fibers.flatten) dest b c d p q) CountedCopyReuse.empty countBits)
-      (fun v => v = CountedLoop.bank
-        (bank (putWord source p fibers.flatten) (putWord dest q (fibers.map (shift cut)).flatten) b c d
-          (p+((fibers.length*L : ℕ) : ℤ)) (q+((fibers.length*L : ℕ) : ℤ))) CountedCopyReuse.empty
-        (List.replicate countBits.length true)) (177*fibers.flatten.length+4) := by
-  have wb := canonical_width_le b cb
-  have wc := canonical_width_le c cc
-  have wd := canonical_width_le d cd
-  have wn := canonical_width_le countBits cn
-  rw [hb] at wb
-  rw [hc] at wc
-  rw [hd] at wd
-  rw [hn] at wn
-  have hbnd := linear_bound L fibers.length b c d countBits hL (by omega) (by omega) wd wn
-  rw [← BlockRotationData.uniform_volume L fibers hu] at hbnd
-  exact (shift_hoare source dest p q fibers cut L hu hcut b c d countBits hb hc hd hn).consequence
-    (fun _ h => h) (fun _ h => h) hbnd
 
 end IntegerMultBounds.Machine.FiberShift

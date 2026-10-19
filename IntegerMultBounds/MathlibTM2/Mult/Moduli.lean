@@ -57,8 +57,6 @@ theorem odd_prod_range (m : ℕ) : Odd (∏ i ∈ range m, (2 * i + 1)) := by
 
 theorem oddProd_odd (d : ℕ) : Odd (oddProd d) := odd_prod_range _
 
-theorem oddProd_pos (d : ℕ) : 0 < oddProd d := (oddProd_odd d).pos
-
 /-- Every odd number below `4d` divides `oddProd d`. -/
 theorem dvd_oddProd {d m : ℕ} (hm : Odd m) (hm4 : m < 4 * d) : m ∣ oddProd d := by
   obtain ⟨k, rfl⟩ := hm
@@ -68,12 +66,6 @@ theorem dvd_oddProd {d m : ℕ} (hm : Odd m) (hm4 : m < 4 * d) : m ∣ oddProd d
 theorem prime_dvd_oddProd {d : ℕ} :
     ∀ q, q.Prime → q ≠ 2 → q < 4 * d → q ∣ oddProd d :=
   fun _ hq h2 hq4 => dvd_oddProd (hq.odd_of_ne_two h2) hq4
-
-theorem oddProd_le (d : ℕ) : oddProd d ≤ (4 * d) ^ (2 * d) := by
-  unfold oddProd
-  calc ∏ i ∈ range (2 * d), (2 * i + 1) ≤ (4 * d) ^ (range (2 * d)).card :=
-        prod_le_pow_card _ _ _ fun i hi => by rw [mem_range] at hi; omega
-    _ = (4 * d) ^ (2 * d) := by rw [card_range]
 
 /-! ### The two groups -/
 

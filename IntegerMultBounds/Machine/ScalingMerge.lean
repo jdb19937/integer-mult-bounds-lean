@@ -401,24 +401,4 @@ theorem merge_hoare_linear {Q c B : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hcop : c.Cop
   exact (merge_hoare hQ hc hcop background p dest q bs countBits hb hn modulus current payload hwidth).consequence
     (fun _ h => h) (fun _ h => h) (linear_bound Q B bs countBits hB wb wn)
 
-/-- Every source begins at the beginning of its physically prepared stream. -/
-theorem sources_initial_head {c : ℕ} (hc : 0 < c) (Q B : ℕ)
-    (background : Fin c → ℤ → Fin 4) (p : Fin c → ℤ) (payload : ℕ → List (Fin 4)) (j : Fin c) :
-    (sources hc Q B background p payload 0).head j = p j := by
-  simp [sources,ScalingMergeData.popCount]
-
-/-- Every source finishes exactly after its entire stream; empty streams retain
-their initial head, and every source tape retains its original cells. -/
-theorem sources_final_head {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hcop : c.Coprime Q)
-    (B : ℕ) (background : Fin c → ℤ → Fin 4) (p : Fin c → ℤ)
-    (payload : ℕ → List (Fin 4)) (j : Fin c) :
-    (sources hc Q B background p payload Q).head j = p j +
-      (((ScalingControl.boundary Q c (j.val+1)-ScalingControl.boundary Q c j.val)*B : ℕ) : ℤ) := by
-  simp only [sources,ScalingMergeData.complete_count hQ hc hcop]
-
-/-- Source data never changes anywhere, including arbitrary outside backgrounds. -/
-theorem sources_tapes_unchanged {c : ℕ} (hc : 0 < c) (Q B : ℕ)
-    (background : Fin c → ℤ → Fin 4) (p : Fin c → ℤ) (payload : ℕ → List (Fin 4)) (z : ℕ) :
-    (sources hc Q B background p payload z).tape = (sources hc Q B background p payload 0).tape := rfl
-
 end IntegerMultBounds.Machine.ScalingMerge

@@ -83,11 +83,6 @@ theorem pack_digits (B : ℤ) (hB : 0 < B) (n : ℕ) (x : ℤ)
     simp only [digits, pack, ih _ hdiv]
     exact Int.emod_add_mul_ediv x B
 
-theorem pack_injective (B : ℤ) (hB : 0 < B) (xs ys : List ℤ)
-    (hx : Bounded B xs) (hy : Bounded B ys) (hlen : xs.length = ys.length)
-    (hpack : pack B xs = pack B ys) : xs = ys := by
-  rw [← digits_pack B hB xs hx, hpack, hlen, digits_pack B hB ys hy]
-
 theorem pack_add (B : ℤ) (xs ys : List ℤ) (hlen : xs.length = ys.length) :
     pack B (List.zipWith (· + ·) xs ys) = pack B xs + pack B ys := by
   induction xs generalizing ys with
@@ -99,20 +94,6 @@ theorem pack_add (B : ℤ) (xs ys : List ℤ) (hlen : xs.length = ys.length) :
       simp only [List.zipWith_cons_cons, pack]
       rw [ih ys (by simpa using hlen)]
       ring
-
-/-- A modular rotation by a packed *signed* displacement is coordinatewise
-addition whenever every resulting digit remains in range. -/
-theorem rotate_no_carry (B : ℤ) (hB : 0 < B) (xs offsets : List ℤ)
-    (hlen : xs.length = offsets.length)
-    (hout : Bounded B (List.zipWith (· + ·) xs offsets)) :
-    (pack B xs + pack B offsets) % B ^ xs.length =
-      pack B (List.zipWith (· + ·) xs offsets) := by
-  have hb := pack_bounds B hB _ hout
-  have hlength : (List.zipWith (· + ·) xs offsets).length = xs.length := by
-    simp [hlen]
-  rw [hlength] at hb
-  rw [← pack_add B xs offsets hlen]
-  exact Int.emod_eq_of_lt hb.1 hb.2
 
 /-- Changing a packed middle segment leaves both lower and upper spectators
 unchanged when its replacement fits in that segment. -/

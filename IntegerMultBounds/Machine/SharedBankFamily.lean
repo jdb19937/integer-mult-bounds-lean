@@ -35,10 +35,6 @@ theorem raw_reindex (common : Tapes k a) (h : t = n) :
 def padProgram (M : Program t r a) (h : t ≤ n) : Program n r a :=
   reindex (extend M (n-t)) (finCongr (Nat.add_sub_of_le h))
 
-/-- Padding is literal identity on every old physical tape index. -/
-theorem pad_slot_value (h : t ≤ n) (i : Fin t) :
-    ((finCongr (Nat.add_sub_of_le h)) (Fin.castAdd (n-t) i)).val = i.val := rfl
-
 theorem pad_realizes {M : Program t r a} (h : t ≤ n) (hkt : k ≤ t)
     (before after : Tapes k a) (cost : ℕ)
     (hh : HoareTime M (fun v => v = raw before t) (fun v => v = raw after t) cost) :
@@ -113,14 +109,6 @@ def program (blocks : Label → Skeleton k a) (i : Label) :
 @[simp] theorem uniform_states (blocks : Label → Skeleton k a) (i : Label) :
     (uniform blocks i).states = (blocks i).states := rfl
 
-/-- Every label addresses the identical permanent leading bank. This equality
-is about the actual compiled slot map, not a logical bank relocation. -/
-theorem uniform_slots (blocks : Label → Skeleton k a)
-    (hleading : ∀ i j, ((blocks i).slots j).val = j.val) (i : Label) (j : Fin k) :
-    (uniform blocks i).slots j = Fin.castLE (common_le_tapeCount blocks) j := by
-  apply Fin.ext
-  exact hleading i j
-
 theorem realizes (blocks : Label → Skeleton k a) (i : Label)
     (before after : Tapes k a) (cost : ℕ)
     (hh : HoareTime (blocks i).program (fun v => v = raw before (blocks i).tapes)
@@ -129,62 +117,15 @@ theorem realizes (blocks : Label → Skeleton k a) (i : Label)
       (fun v => v = raw after (tapeCount blocks)) cost :=
   pad_skeleton_realizes (blocks i) (block_le blocks i) before after cost hh
 
-/-- Dependent semantic states may vary by label; the physical tape count is
-still one compile-time constant and every original runtime bound is retained. -/
-theorem family_realizes (blocks : Label → Skeleton k a) {Input : Label → Type*}
-    (before after : (i : Label) → Input i → Tapes k a) (cost : (i : Label) → Input i → ℕ)
-    (hh : ∀ i x, HoareTime (blocks i).program
-      (fun v => v = raw (before i x) (blocks i).tapes)
-      (fun v => v = raw (after i x) (blocks i).tapes) (cost i x)) :
-    ∀ i x, HoareTime (program blocks i)
-      (fun v => v = raw (before i x) (tapeCount blocks))
-      (fun v => v = raw (after i x) (tapeCount blocks)) (cost i x) :=
-  fun i x => realizes blocks i (before i x) (after i x) (cost i x) (hh i x)
-
 /-- The common prefix is exact and every private tape is blank at both block
 boundaries, irrespective of which family member will execute next. -/
 theorem bank_payload (blocks : Label → Skeleton k a) (common : Tapes k a) :
     SharedBank.payload (raw common (tapeCount blocks)) (Fin.castLE (common_le_tapeCount blocks)) = common :=
   SharedBankRawCompose.payload_raw common _ (fun _ => rfl)
 
-theorem bank_private (blocks : Label → Skeleton k a) (common : Tapes k a) :
-    SharedBank.strip (raw common (tapeCount blocks)) (Fin.castLE (common_le_tapeCount blocks)) =
-      SharedBank.empty (tapeCount blocks) a := SharedBankRawCompose.strip_raw common _ (fun _ => rfl)
-
-/-- A caller may choose any static common upper bound instead of the sum. -/
-def programAt (blocks : Label → Skeleton k a) (N : ℕ) (hN : ∀ i, (blocks i).tapes ≤ N) (i : Label) :
-    Program N (blocks i).states a := padProgram (blocks i).program (hN i)
-
-omit [Fintype Label] in
-theorem realizesAt (blocks : Label → Skeleton k a) (N : ℕ) (hN : ∀ i, (blocks i).tapes ≤ N)
-    (i : Label) (before after : Tapes k a) (cost : ℕ)
-    (hh : HoareTime (blocks i).program (fun v => v = raw before (blocks i).tapes)
-      (fun v => v = raw after (blocks i).tapes) cost) :
-    HoareTime (programAt blocks N hN i) (fun v => v = raw before N) (fun v => v = raw after N) cost :=
-  pad_realizes (hN i) (common_le (blocks i)) before after cost hh
-
 /-- Direct finite-family constructor for the actual leading-prefix blocks. -/
 def cleanBlocks (work states : Label → ℕ) (machines : (i : Label) → Program (k+work i) (states i) a) :
     Label → Skeleton k a := fun i => ofProgram (machines i)
-
-theorem clean_family_realizes (work states : Label → ℕ)
-    (machines : (i : Label) → Program (k+work i) (states i) a) {Input : Label → Type*}
-    (before after : (i : Label) → Input i → Tapes k a) (cost : (i : Label) → Input i → ℕ)
-    (hh : ∀ i x, HoareTime (machines i)
-      (fun v => v = CleanSubbank.bank (s := work i) (before i x))
-      (fun v => v = CleanSubbank.bank (s := work i) (after i x)) (cost i x)) :
-    ∀ i x, HoareTime (program (cleanBlocks work states machines) i)
-      (fun v => v = raw (before i x) (tapeCount (cleanBlocks work states machines)))
-      (fun v => v = raw (after i x) (tapeCount (cleanBlocks work states machines))) (cost i x) := by
-  apply family_realizes
-  intro i x
-  simpa only [cleanBlocks,ofProgram,SharedBankRawCompose.bank_eq_raw] using hh i x
-
-theorem clean_family_slots (work states : Label → ℕ)
-    (machines : (i : Label) → Program (k+work i) (states i) a) (i : Label) (j : Fin k) :
-    (uniform (cleanBlocks work states machines) i).slots j =
-      Fin.castLE (common_le_tapeCount (cleanBlocks work states machines)) j :=
-  uniform_slots _ (fun _ _ => rfl) i j
 
 end Family
 end

@@ -58,55 +58,5 @@ abbrev earlyDestination (q b : ℕ) {C S : Type*} (Z : C → List Bool) : Equiv.
 abbrev lateDestination (q b : ℕ) {C S : Type*} (Z : C → List Bool) : Equiv.Perm (Late q b Z S) :=
   VaryingControlRepairFiber.destination (fun x => lateSperm q b (Z x)) (fun x => lateTperm q b (Z x))
 
-def earlyRank {C S : Type*} {N K : ℕ} (source : C ≃ Fin N) (spectator : S ≃ Fin K)
-    (q b n : ℕ) (hq : 1≤q) (Z : C → List Bool) (hZ : ∀ x, (Z x).length=n) :=
-  VaryingControlRepairFiber.rankEquiv source (earlyLocalRank q b n hq Z hZ) spectator
-
-def lateRank {C S : Type*} {N K : ℕ} (source : C ≃ Fin N) (spectator : S ≃ Fin K)
-    (q b n : ℕ) (hq : 1≤q) (Z : C → List Bool) (hZ : ∀ x, (Z x).length=n) :=
-  VaryingControlRepairFiber.rankEquiv source (lateLocalRank q b n hq Z hZ) spectator
-
-theorem early_destination_rank {C S : Type*} {N K : ℕ} (source : C ≃ Fin N) (spectator : S ≃ Fin K)
-    (q b n : ℕ) (hq : 1≤q) (Z : C → List Bool) (hZ : ∀ x, (Z x).length=n)
-    (x : C) (d : EarlyAddress (Bi b) (Li q) (controls (Z x)).length) (s : S) :
-    (earlyRank source spectator q b n hq Z hZ (earlyDestination q b Z ⟨x,(d,s)⟩)).val=
-      ((source x).val*earlySize q b n+
-        (Compact.PowerTwo.rankEquiv q b (Z x) (Tperm q b (Z x) ((Sperm q b (Z x)).symm d))).val)*K+
-        (spectator s).val := by
-  exact VaryingControlRepairFiber.destination_rank source (earlyLocalRank q b n hq Z hZ) spectator
-    (fun x => Sperm q b (Z x)) (fun x => Tperm q b (Z x)) x d s
-
-theorem late_destination_rank {C S : Type*} {N K : ℕ} (source : C ≃ Fin N) (spectator : S ≃ Fin K)
-    (q b n : ℕ) (hq : 1≤q) (Z : C → List Bool) (hZ : ∀ x, (Z x).length=n)
-    (x : C) (d : LateAddress (Bi b) (Li q) (controls (Z x)).length) (s : S) :
-    (lateRank source spectator q b n hq Z hZ (lateDestination q b Z ⟨x,(d,s)⟩)).val=
-      ((source x).val*lateSize q b n+
-        (lateRankEquiv q b (Z x) (lateTperm q b (Z x) ((lateSperm q b (Z x)).symm d))).val)*K+
-        (spectator s).val := by
-  exact VaryingControlRepairFiber.destination_rank source (lateLocalRank q b n hq Z hZ) spectator
-    (fun x => lateSperm q b (Z x)) (fun x => lateTperm q b (Z x)) x d s
-
-theorem early_repaired {C S : Type*} (q b : ℕ) (Z : C → List Bool) (a : Early q b Z S) :
-    (if earlyBad q b Z (earlyActual q b Z a) then
-      earlyDestination q b Z (earlyActual q b Z a) else earlyActual q b Z a)=earlyIdeal q b Z a := by
-  refine VaryingControlRepairFiber.repair_exact (fun x => Sperm q b (Z x))
-    (fun x => Tperm q b (Z x)) (fun x => badSet q b (Z x)) ?_ ?_ a
-  · intro x d
-    exact not_congr (earlyIdeal_preserves_good (Bi b) (Li q) (Li_pos q) (controls (Z x)) (controls_bits (Z x)) d)
-  · intro x d hd
-    exact early_program_agrees_on_good (Bi b) (Li q) (Bi_one b) (Li_pos q)
-      (controls (Z x)) (controls_bits (Z x)) d (not_not.mp hd)
-
-theorem late_repaired {C S : Type*} (q b : ℕ) (Z : C → List Bool) (a : Late q b Z S) :
-    (if lateBad q b Z (lateActual q b Z a) then
-      lateDestination q b Z (lateActual q b Z a) else lateActual q b Z a)=lateIdeal q b Z a := by
-  refine VaryingControlRepairFiber.repair_exact (fun x => lateSperm q b (Z x))
-    (fun x => lateTperm q b (Z x)) (fun x => lateBadSet q b (Z x)) ?_ ?_ a
-  · intro x d
-    exact not_congr (lateIdeal_preserves_good (Bi b) (Li q) (Li_pos q) (controls (Z x)) (controls_bits (Z x)) d)
-  · intro x d hd
-    exact late_program_agrees_on_good (Bi b) (Li q) (Bi_one b) (Li_pos q)
-      (controls (Z x)) (controls_bits (Z x)) d (not_not.mp hd)
-
 end
 end IntegerMultBounds.Machine.VaryingControlRepairPacked

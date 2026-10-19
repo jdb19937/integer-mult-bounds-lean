@@ -60,11 +60,6 @@ theorem destination_entry (ws : List (List Bool)) (Q B : ℕ) (source dest contr
   obtain ⟨hi,hv⟩ := List.getElem?_eq_some_iff.mp he
   rw [WordSegments.get _ _ _ _ hi,hv]
 
-theorem control_tape (ws : List (List Bool)) (Q B : ℕ) (source dest control : ℤ → Fin 4)
-    (p q r : ℤ) (bs qs ns : List Bool) (a : Fin (ws.length*(Q*B)) → Fin 4) (i : ℕ) :
-    (bank ws Q B source dest control p q r bs qs ns a i).tape 12 =
-      putWord control r (StreamedFiberTranslation.encoded ws) := rfl
-
 theorem output_heads (ws : List (List Bool)) (Q B : ℕ) (source dest control : ℤ → Fin 4)
     (p q r : ℤ) (bs qs ns : List Bool) (a : Fin (ws.length*(Q*B)) → Fin 4) :
     (bank ws Q B source dest control p q r bs qs ns a ws.length).head 10 = p+((ws.length*(Q*B) : ℕ) : ℤ) ∧

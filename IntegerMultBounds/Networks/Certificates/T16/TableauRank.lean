@@ -81,15 +81,4 @@ theorem bBlock_rank (A B : PhaseAddress ≃ₗ[F] PhaseAddress) :
   rw [hd] at h
   omega
 
-/-- B-block width of the actual canonical recipes on nested frame spaces. -/
-theorem canonical_relative_rank (G H : Address ≃ₗ[F] Address) (r s : ℕ)
-    (h : frameSpace G r ≤ frameSpace H s) :
-    Module.finrank F (LinearMap.range (bBlock (canonical G r) (canonical H s))) =
-      Module.finrank F (frameSpace H s) - Module.finrank F (frameSpace G r) := by
-  rw [bBlock_rank]
-  change 9 - Module.finrank F
-    (zSpace.map (canonical G r).symm.toLinearMap ⊓
-      zSpace.map (canonical H s).symm.toLinearMap : Submodule F PhaseAddress) = _
-  rw [canonical_inverse_Z, canonical_inverse_Z, frameLagrangian_inf_deficit h]
-
 end IntegerMultBounds.Networks.Certificates.T16.Tableau

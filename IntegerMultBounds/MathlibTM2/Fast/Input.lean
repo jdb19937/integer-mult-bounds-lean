@@ -127,11 +127,6 @@ theorem binaryValue_lt_of_digitsOf {b S : ℕ} (hb : 0 < b) {xs : List Bool}
     _ ≤ (2 ^ b) ^ S := Nat.pow_le_pow_right (by positivity) hS
     _ = 2 ^ (b * S) := by rw [pow_mul]
 
-/-- Every padded MSB-first word of `x`: the encoding reversed, with leading zeros. -/
-theorem binaryValue_pad (x k : ℕ) :
-    binaryValue (List.replicate k false ++ (encodingNatBool.encode x).reverse) = x := by
-  rw [binaryValue_replicate_append]; exact binaryValue_reverse_encodeNat x
-
 /-! ### Coefficient records -/
 
 /-- One digit record: `e` zero pairs, then `b` pairs whose real bits are `l.getD j false`, then
@@ -140,10 +135,6 @@ def digitRec (A e b f : ℕ) (l : List Bool) : List (Fin (A + 4)) :=
   List.replicate e (pairSym A false false) ++
     (List.ofFn fun j : Fin b => pairSym A (l.getD j false) false) ++
     List.replicate f (pairSym A false false)
-
-lemma length_digitRec (A e b f : ℕ) (l : List Bool) :
-    (digitRec A e b f l).length = e + b + f := by
-  simp [digitRec]; omega
 
 /-- The stored numerator `d · 2^e` of a digit `d < 2^b` whose bits are `l`. -/
 theorem coeffSyms_digit {A w e b : ℕ} (hw : e + b ≤ w) {d : ℕ} (hd : d < 2 ^ b)
@@ -1014,10 +1005,6 @@ theorem digitStream_congr {b : ℕ} (hb : 0 < b) (A p w S : ℕ) {xs ys : List B
     (h : binaryValue xs = binaryValue ys) :
     digitStream A b p w S xs = digitStream A b p w S ys := by
   simp only [digitStream, getD_digitsOf hb, h]
-
-lemma length_digitStream (A b p w S : ℕ) (xs : List Bool) :
-    (digitStream A b p w S xs).length = S * w := by
-  simp [digitStream, List.length_flatMap, Function.comp_def, List.ofFn_const, List.sum_replicate]
 
 /-! ### The digit stage -/
 

@@ -205,27 +205,5 @@ theorem runs_linear (cs v t u : List Bool) (hs : Fin 7 → List Bool) (total sv 
   rw [List.getElem?_eq_getElem (by simpa using hj)]
   simp
 
- theorem target_field (cs v t u : List Bool) (total sv st su : ℕ)
-    (fv : sv+v.length≤total)
-    (hvt : sv+v.length≤st ∨ st+t.length≤sv)
-    (hvu : sv+v.length≤su ∨ su+u.length≤sv) :
-    Gather.field (destination cs v t u total sv st su) sv v.length=v := by
-  unfold destination
-  rw [ActiveRepairDestinationPatchData.field_outside _ _ _ sv v.length (by simpa [initial] using fv) hvu,
-      ActiveRepairDestinationPatchData.field_outside _ _ _ sv v.length (by simpa [initial] using fv) hvt,
-      ActiveRepairDestinationPatchData.field_inside _ _ _ (by simpa [initial] using fv)]
-
- theorem t_field (cs v t u : List Bool) (total sv st su : ℕ)
-    (ft : st+t.length≤total) (htu : st+t.length≤su ∨ su+u.length≤st) :
-    Gather.field (destination cs v t u total sv st su) st t.length=t := by
-  unfold destination
-  rw [ActiveRepairDestinationPatchData.field_outside _ _ _ st t.length (by simpa [initial] using ft) htu,
-      ActiveRepairDestinationPatchData.field_inside _ _ _ (by simpa [initial] using ft)]
-
- theorem u_field (cs v t u : List Bool) (total sv st su : ℕ) (fu : su+u.length≤total) :
-    Gather.field (destination cs v t u total sv st su) su u.length=u := by
-  unfold destination
-  exact ActiveRepairDestinationPatchData.field_inside _ _ _ (by simpa [initial] using fu)
-
 end
 end IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
