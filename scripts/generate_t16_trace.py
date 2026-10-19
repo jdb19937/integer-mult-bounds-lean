@@ -43,6 +43,8 @@ SCALE=re.compile(r'\.scalar \(\.scale (\d+) (\(-?\d+\)|\d+) (\(-?\d+\)|\d+) (\d+
 CENTER=re.compile(r'\.center (\d+) (\d+) (\d+) (\d+)$')
 CENTER_START=12551
 CENTER_LENGTH=26
+# Event offsets where `Trace.backward_checked` splits its kernel check.
+BACKWARD_CUTS=[6144,12288,18432]
 def num(x): return int(x.strip('()'))
 def dual(row):
     if m:=ADD.match(row):t,r,n,d,f=m.groups();return f'.scalar (.add {r} {t} {z(-num(n))} {d} {f})'
@@ -136,10 +138,18 @@ def main():
             name='labels'+str(len(nodes));nodes[key]=name
             node_lines.append(f'def {name} : Labels := {body}\n')
         return nodes[key]
-    state_lines=[]
+    # Names follow every snapshot, but only the snapshots Lean checks against are emitted.
+    bbs=streams['backward'][1]
+    keep=set(streams['forward'][1])|{bbs[0],bbs[-1]}|{bbs[c//CHUNK_SIZE] for c in BACKWARD_CUTS}
+    state_lines=[];live=set()
     for i,(labels,phase) in enumerate(states):
         name=tree(labels+[0]*(1024-len(labels)))
-        state_lines.append(f'def state{i} : State := ⟨{name}, {phase}⟩\n')
+        if i in keep:
+            state_lines.append(f'def state{i} : State := ⟨{name}, {phase}⟩\n');live.add(name)
+    for line in reversed(node_lines):
+        name,body=line[4:].split(' : Labels := ')
+        if name in live:live.update(re.findall(r'labels\d+',body))
+    node_lines=[l for l in node_lines if l[4:].split(' :')[0] in live]
     save('States',text+''.join(node_lines)+''.join(state_lines))
     # Backward.lean derives the backward events; its snapshot states stay for stable numbering.
     for ori,(rows,bs) in [('forward',streams['forward'])]:
