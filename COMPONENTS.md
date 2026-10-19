@@ -4905,7 +4905,7 @@ Parameters and asymptotics.
 
 - `MathlibTM2/Fast/CompactStopped{DigBody,Digits}.lean`: Actual complete digit scanner with supplied cutoff, exact rebased records/exponents, actual rebased-leaf clearing, per-pass prefix lengths and all live-wire restoration. Two clean guarded checks and three standard-axiom contract audits pass. Runtime cutoff, semantic piece identification, precision, caller replacement and full stopped-layer cost absorption remain separate.
 
-- `Networks/Certificates/T16/Geometry/`: Exact1004 binary bases/duals,2888 oriented span/dimension certificates and binding to both full native traces; doubled-space shear/Lagrangian intersections give every declared geometric width deficit. All182 modules pass clean guarded checks;16310-declaration audit standard axioms only. Actual canonical Clifford action, symplectic B-block rank correspondence, global phases and hosted tape realization remain unproved.
+- `Networks/Certificates/T16/Geometry/`: Exact1004 binary bases/duals; a span checker proved sound once decides every climb/center edge of the forward trace from the catalog, and the backward geometry follows from the forward one; doubled-space shear/Lagrangian intersections give every declared geometric width deficit. All182 modules pass clean guarded checks;16310-declaration audit standard axioms only. Actual canonical Clifford action, symplectic B-block rank correspondence, global phases and hosted tape realization remain unproved.
 
 - `NLogN/PhaseCellCrossCell.lean`: Executable direct cross-cell samples and a combined retained-band entry with actual phase selection, literal unit diagonal and band zeros; selected entry error is uniform across within-cell and cross-cell branches. Guarded check passed.
 

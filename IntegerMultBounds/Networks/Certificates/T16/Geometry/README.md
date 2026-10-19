@@ -8,17 +8,19 @@ frame IDs and ordered masks are retained exactly.
 `Model.lean` proves that checked dual functionals imply linear independence,
 that the span's finite dimension equals the literal basis length, and that
 checked XOR combinations imply actual submodule inclusion. The generator supplies
-finite dual and XOR witnesses; Lean checks their equations with default proof
-limits. No supplier program is executed to establish a proof.
+finite dual witnesses; Lean checks their equations with default proof limits. No supplier program is executed to establish a proof.
 
 `Catalog.lean` exposes certified frames. `catalogBasis` in `Certificate.lean`
 turns each retained ordered vector family into a basis of its actual span and
 proves that the basis retains those vectors. The catalog uses frame zero outside
 the native ID range; all native IDs are already bounded in the trace certificate.
 
-The 2,888 distinct oriented edge certificates prove actual span inclusion,
-actual finite-dimension difference equal to the declared positive rank, and
-positivity. The event checks run over the **committed literal trace definitions**,
+`Checker.lean` decides each climb and center edge directly from the catalog:
+every mask of the old frame occurs among the XOR combinations of the next
+frame's masks (`spanMasks`, proved to lie in the span), the literal ranks differ
+by the declared positive rank, and the certified independence turns those
+literal ranks into actual dimensions. No edge witnesses are stored. The event
+checks run over the **committed literal trace definitions**,
 not a replacement event list. Climbs ascend in both orientations; forward
 centers descend and backward centers ascend. Every one of the 24,767 retained
 forward events is checked, with scalar and wrapper events imposing no additional
@@ -77,3 +79,5 @@ The final focused namespace audit passed for 16,310 declarations, allowing only
 `propext`, `Quot.sound`, and `Classical.choice`. The finite-only audit covered
 16,283 declarations. Peak resumed module RSS was 1,201.9 MiB; the final audit
 used 1,137.6 MiB. No ambient operator or tableau assertion is included.
+These counts predate the span checker, which replaced the generated edge
+witnesses, edge bank and per-chunk event checks.
