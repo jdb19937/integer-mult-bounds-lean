@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
-public import IntegerMultBounds.Machine.BinaryRadixEqualShared
+public import IntegerMultBounds.Machine.Shared50BinaryRadixEqualShared
 
 /-! Actual adjacent binary-width interchange, with physically constructed
 prefix and movement headers and blank private workspace at both endpoints. -/
@@ -18,19 +18,19 @@ open BinaryAdjacentWidthHeadersShared (Sources values volume)
 variable {t : ℕ}
 
 def prefixSlot (i : Fin t) := Fin.castAdd 17 (Fin.castAdd 1 i)
-def equalSlot (i : Fin ((t+1)+17)) := Fin.castAdd BinaryRadixEqualShared.count i
+def equalSlot (i : Fin ((t+1)+17)) := Fin.castAdd Shared50BinaryRadixEqualShared.count i
 
-def middle (caller : Tapes t prime) := BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.input caller)
+def middle (caller : Tapes t prime) := Shared50BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.input caller)
 def input (caller : Tapes t prime) := BinaryAdjacentWidthMovementShared.input (middle caller)
 def ready (caller : Tapes t prime) (P G B : ℕ) (hs : Fin 4 → List Bool) :=
-  BinaryAdjacentWidthMovementShared.input (BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs))
+  BinaryAdjacentWidthMovementShared.input (Shared50BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs))
 def setup (focus : Fin 4 → Fin t) := extend (extend (extend (extend
-  (BinaryAdjacentWidthPrefixShared.program (a := prime) focus) BinaryRadixEqualShared.count) 1) 17) 22
+  (BinaryAdjacentWidthPrefixShared.program (a := prime) focus) Shared50BinaryRadixEqualShared.count) 1) 17) 22
 def cleanup := extend (extend (extend (extend
-  (BinaryAdjacentWidthPrefixShared.cleanup (a := prime) (t := t)) BinaryRadixEqualShared.count) 1) 17) 22
+  (BinaryAdjacentWidthPrefixShared.cleanup (a := prime) (t := t)) Shared50BinaryRadixEqualShared.count) 1) 17) 22
 
 def equalProgram (focus : Fin 4 → Fin t) (payload : Fin t) :=
-  extend (extend (extend (BinaryRadixEqualShared.program (BinaryAdjacentWidthPrefixShared.equalFocus focus) (prefixSlot payload)) 1) 17) 22
+  extend (extend (extend (Shared50BinaryRadixEqualShared.program (BinaryAdjacentWidthPrefixShared.equalFocus focus) (prefixSlot payload)) 1) 17) 22
 def movementFocus (focus : Fin 4 → Fin t) := fun i => equalSlot (prefixSlot (focus i))
 def forwardProgram (focus : Fin 4 → Fin t) (payload : Fin t) :=
   BinaryAdjacentWidthMovementShared.constructedForwardProgram (a := prime) (movementFocus focus) (equalSlot (prefixSlot payload))
@@ -42,7 +42,7 @@ def longDProgram (focus : Fin 4 → Fin t) (payload : Fin t) :=
   seq (seq (seq (setup focus) (backwardProgram focus payload)) (equalProgram focus payload)) cleanup
 
 def cost (P G B u : ℕ) (hs : Fin 4 → List Bool) :=
-  BinaryAdjacentWidthPrefixShared.coefficient*volume P G B u + BinaryRadixEqualShared.cost (P*2) G B u (BinaryAdjacentWidthPrefixShared.equalWords P G B hs) +
+  BinaryAdjacentWidthPrefixShared.coefficient*volume P G B u + Shared50BinaryRadixEqualShared.cost (P*2) G B u (BinaryAdjacentWidthPrefixShared.equalWords P G B hs) +
     BinaryAdjacentWidthMovementShared.constructedCoefficient*volume P G B u + 210*volume P G B u + 3
 
 private theorem equal_values (P G B u : ℕ) (hs : Fin 4 → List Bool)
@@ -83,12 +83,12 @@ private theorem source_changed (caller : Tapes t prime) (focus : Fin 4 → Fin t
 
 private theorem prepared_sources (caller : Tapes t prime) (focus : Fin 4 → Fin t)
     (P G B : ℕ) (hs : Fin 4 → List Bool) (hsrc : Sources caller focus hs) :
-    Sources (BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs)) (movementFocus focus) hs := by
+    Sources (Shared50BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs)) (movementFocus focus) hs := by
   constructor
   · intro i
-    simpa only [BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,movementFocus,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hsrc.tape i
+    simpa only [Shared50BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,movementFocus,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hsrc.tape i
   · intro i
-    simpa only [BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,movementFocus,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hsrc.head i
+    simpa only [Shared50BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,movementFocus,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hsrc.head i
 
 private theorem setup_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t)
     (P G B u : ℕ) (hs : Fin 4 → List Bool) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
@@ -98,7 +98,7 @@ private theorem setup_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t)
       (BinaryAdjacentWidthPrefixShared.coefficient*volume P G B u) := by
   exact hoare_extend_eq (hoare_extend_eq (hoare_extend_eq (hoare_extend_eq
     (BinaryAdjacentWidthPrefixShared.constructs caller focus P G B u hs hP hG hB hv hc hsrc)
-      (FixedHeaderBankCopy.empty BinaryRadixEqualShared.count)) (FixedHeaderBankCopy.empty 1))
+      (FixedHeaderBankCopy.empty Shared50BinaryRadixEqualShared.count)) (FixedHeaderBankCopy.empty 1))
       (FixedHeaderBankCopy.empty 17)) (FixedHeaderBankCopy.empty 22)
 
 private theorem cleanup_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t)
@@ -109,7 +109,7 @@ private theorem cleanup_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t)
       (210*volume P G B u) := by
   exact hoare_extend_eq (hoare_extend_eq (hoare_extend_eq (hoare_extend_eq
     (BinaryAdjacentWidthPrefixShared.cleans caller focus P G B u hs hP hG hB hv hc)
-      (FixedHeaderBankCopy.empty BinaryRadixEqualShared.count)) (FixedHeaderBankCopy.empty 1))
+      (FixedHeaderBankCopy.empty Shared50BinaryRadixEqualShared.count)) (FixedHeaderBankCopy.empty 1))
       (FixedHeaderBankCopy.empty 17)) (FixedHeaderBankCopy.empty 22)
 
 private theorem equal_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t) (payload : Fin t)
@@ -122,8 +122,8 @@ private theorem equal_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t) (p
     HoareTime (equalProgram focus payload) (fun z => z = ready caller P G B hs)
       (fun z => z = ready (setTape caller payload
         (BinaryRadixRangePrepareAlphabet.word (RadixRangePadding.transpose (fun i => bitSymbol (x i)))) 0) P G B hs)
-      (BinaryRadixEqualShared.cost (P*2) G B u (BinaryAdjacentWidthPrefixShared.equalWords P G B hs)) := by
-  have h := BinaryRadixEqualShared.runs (BinaryAdjacentWidthPrefixShared.output caller P G B hs) (BinaryAdjacentWidthPrefixShared.equalFocus focus) (prefixSlot payload)
+      (Shared50BinaryRadixEqualShared.cost (P*2) G B u (BinaryAdjacentWidthPrefixShared.equalWords P G B hs)) := by
+  have h := Shared50BinaryRadixEqualShared.runs (BinaryAdjacentWidthPrefixShared.output caller P G B hs) (BinaryAdjacentWidthPrefixShared.equalFocus focus) (prefixSlot payload)
     (P*2) G B u (BinaryAdjacentWidthPrefixShared.equalWords P G B hs) (equal_values P G B u hs hv)
     (equal_canonical P G B hs hc) (by omega) hG hB (BinaryAdjacentWidthPrefixShared.equal_sources caller focus P G B hs hsrc) x
     (by simpa only [BinaryAdjacentWidthPrefixShared.output,prefixSlot,Tapes.append,Fin.addCases_left] using ht)
@@ -142,12 +142,12 @@ private theorem forward_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t) 
       (fun z => z = ready (setTape caller payload
         (putWord (fun _ => blank) 0 (List.ofFn (RadixDigitMoveBlockRows.move x))) 0) P G B hs)
       (BinaryAdjacentWidthMovementShared.constructedCoefficient*volume P G B u) := by
-  have h := BinaryAdjacentWidthMovementShared.constructed_forward (BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs)) (movementFocus focus)
+  have h := BinaryAdjacentWidthMovementShared.constructed_forward (Shared50BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs)) (movementFocus focus)
     (equalSlot (prefixSlot payload)) P G B u hs (fun _ => blank) x hP hG hB hv hc
     (prepared_sources caller focus P G B hs hsrc)
-    (by simpa only [BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using ht)
-    (by simpa only [BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hh)
-  simp only [BinaryRadixEqualShared.input,equalSlot,SharedPlacementAlphabet.setTape_append_left,prefix_setTape] at h
+    (by simpa only [Shared50BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using ht)
+    (by simpa only [Shared50BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hh)
+  simp only [Shared50BinaryRadixEqualShared.input,equalSlot,SharedPlacementAlphabet.setTape_append_left,prefix_setTape] at h
   exact h
 private theorem backward_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t) (payload : Fin t)
     (P G B u : ℕ) (hs : Fin 4 → List Bool) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
@@ -159,12 +159,12 @@ private theorem backward_runs (caller : Tapes t prime) (focus : Fin 4 → Fin t)
       (fun z => z = ready (setTape caller payload
         (putWord (fun _ => blank) 0 (List.ofFn (RadixDigitMoveBlockRows.unmove x))) 0) P G B hs)
       (BinaryAdjacentWidthMovementShared.constructedCoefficient*volume P G B u) := by
-  have h := BinaryAdjacentWidthMovementShared.constructed_backward (BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs)) (movementFocus focus)
+  have h := BinaryAdjacentWidthMovementShared.constructed_backward (Shared50BinaryRadixEqualShared.input (BinaryAdjacentWidthPrefixShared.output caller P G B hs)) (movementFocus focus)
     (equalSlot (prefixSlot payload)) P G B u hs (fun _ => blank) x hP hG hB hv hc
     (prepared_sources caller focus P G B hs hsrc)
-    (by simpa only [BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using ht)
-    (by simpa only [BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hh)
-  simp only [BinaryRadixEqualShared.input,equalSlot,SharedPlacementAlphabet.setTape_append_left,prefix_setTape] at h
+    (by simpa only [Shared50BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using ht)
+    (by simpa only [Shared50BinaryRadixEqualShared.input,BinaryAdjacentWidthPrefixShared.output,equalSlot,prefixSlot,Tapes.append,Fin.addCases_left] using hh)
+  simp only [Shared50BinaryRadixEqualShared.input,equalSlot,SharedPlacementAlphabet.setTape_append_left,prefix_setTape] at h
   exact h
 
 /-- Complete longer-H direction from the four original physical headers. -/
@@ -269,8 +269,8 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
     (∀ i, Counter.value (hs i) = values P G B u i) →
     (∀ i, GrowingCounterData.Canonical (hs i)) →
     (cost P G B u hs : ℝ) ≤ C*(volume P G B u : ℝ)*
-      ((max 1 u : ℕ) : ℝ)^Parameters.tau := by
-  obtain ⟨C,hC,hbound⟩ := BinaryRadixEqualShared.uniform_bound
+      ((max 1 u : ℕ) : ℝ)^Shared50Parameters.tau := by
+  obtain ⟨C,hC,hbound⟩ := Shared50BinaryRadixEqualShared.uniform_bound
   let L := BinaryAdjacentWidthPrefixShared.coefficient +
     BinaryAdjacentWidthMovementShared.constructedCoefficient + 213
   refine ⟨C+(L : ℝ),by have hL := Nat.cast_nonneg (α := ℝ) L; linarith,?_⟩
@@ -283,12 +283,12 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
   rw [he] at hb
   have hVnat := (BinaryAdjacentWidthHeadersShared.volume_bounds P G B u hP hG hB).1
   have hV : 1 ≤ (volume P G B u : ℝ) := by exact_mod_cast hVnat
-  have hp : 1 ≤ ((max 1 u : ℕ) : ℝ)^Parameters.tau := Real.one_le_rpow
-    (by exact_mod_cast le_max_left 1 u) Shared50RecursiveBudgetBound.exponent_range.1.le
+  have hp : 1 ≤ ((max 1 u : ℕ) : ℝ)^Shared50Parameters.tau := Real.one_le_rpow
+    (by exact_mod_cast le_max_left 1 u) Shared50RecursiveBudgetBound.tau_range.1.le
   have hlin := mul_le_mul_of_nonneg_left hp (Nat.cast_nonneg (α := ℝ) (volume P G B u))
   have hL := Nat.cast_nonneg (α := ℝ) L
   have hh := mul_le_mul_of_nonneg_left hlin hL
-  have hcost : cost P G B u hs ≤ BinaryRadixEqualShared.cost (P*2) G B u
+  have hcost : cost P G B u hs ≤ Shared50BinaryRadixEqualShared.cost (P*2) G B u
       (BinaryAdjacentWidthPrefixShared.equalWords P G B hs) + L*volume P G B u := by
     unfold cost L
     simp only [Nat.add_mul]

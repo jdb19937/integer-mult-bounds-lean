@@ -176,7 +176,7 @@ theorem cost_bound (P e G B : ℕ) (jh : Fin 6 → List Bool)
       (highDepth prime e) (rounded prime e) i)
     (jhc : ∀ i, GrowingCounterData.Canonical (jh i)) :
     (cost P e G B jh : ℝ) ≤ coefficient*
-      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Parameters.tau := by
+      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Shared50Parameters.tau := by
   have hh := lowroot_headers P G B e (highDepth prime e) (rounded prime e) jh jhv jhc
   have hb := ArbitraryWidthHighInitializedRun.cost_bound_twice P e G B
     (ArbitraryWidthJoinedHeaders.words jh e (highDepth prime e)) hP hG hB hr hh
@@ -191,8 +191,8 @@ theorem cost_bound (P e G B : ℕ) (jh : Fin 6 → List Bool)
       (overheadCoefficient : ℝ)*(volume prime (originalDescriptor P e G B) : ℝ) := by
     exact_mod_cast ho
   have he : 0 < e := by omega
-  have hpower : 1 ≤ (e : ℝ)^Parameters.tau := Real.one_le_rpow
-    (by exact_mod_cast he) Shared50RecursiveBudgetBound.exponent_range.1.le
+  have hpower : 1 ≤ (e : ℝ)^Shared50Parameters.tau := Real.one_le_rpow
+    (by exact_mod_cast he) Shared50RecursiveBudgetBound.tau_range.1.le
   have hlin := mul_le_mul_of_nonneg_left hpower
     (show 0 ≤ (overheadCoefficient : ℝ)*(volume prime (originalDescriptor P e G B) : ℝ) by positivity)
   unfold cost coefficient

@@ -28,50 +28,50 @@ theorem coefficient_positive : 0 < coefficient := by
   linarith
 
 theorem budget_bound (depth V : ℕ) :
-    (budget depth V : ℝ) ≤ coefficient*V*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+    (budget depth V : ℝ) ≤ coefficient*V*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
   have hr := Shared50RecursiveRootExecution.rootBudget_bound depth V
   have hw : (1 : ℝ) ≤ ((125000^depth : ℕ) : ℝ) := by
     exact_mod_cast (show 1 ≤ (125000 : ℕ)^depth from Nat.one_le_iff_ne_zero.mpr (pow_ne_zero _ (by decide)))
-  have hp := Real.one_le_rpow hw Shared50RecursiveBudgetBound.exponent_range.1.le
+  have hp := Real.one_le_rpow hw Shared50RecursiveBudgetBound.tau_range.1.le
   have hv : (0 : ℝ) ≤ V := Nat.cast_nonneg _
   simp only [budget,Nat.cast_add,Nat.cast_mul,Nat.cast_ofNat,coefficient]
   nlinarith
 
 def constant : ℝ := coefficient*
-  (((125000 : ℝ)-1)*(125000 : ℝ)^Parameters.tau / ((125000 : ℝ)^Parameters.tau-1))
+  (((125000 : ℝ)-1)*(125000 : ℝ)^Shared50Parameters.tau / ((125000 : ℝ)^Shared50Parameters.tau-1))
 
 theorem constant_positive : 0 < constant := by
-  have hx : 1 < (125000 : ℝ)^Parameters.tau :=
-    Real.one_lt_rpow (by norm_num) Shared50RecursiveBudgetBound.exponent_range.1
+  have hx : 1 < (125000 : ℝ)^Shared50Parameters.tau :=
+    Real.one_lt_rpow (by norm_num) Shared50RecursiveBudgetBound.tau_range.1
   unfold constant
   exact mul_pos coefficient_positive
     (div_pos (mul_pos (by norm_num) (by linarith)) (by linarith))
 
 theorem sum_bound (V e k : ℕ) (hk : 125000^k ≤ e) :
     ((ArbitraryWidthPieces.depths 125000 e k).map (fun j => (budget j V : ℝ))).sum ≤
-      constant*V*(e : ℝ)^Parameters.tau := by
+      constant*V*(e : ℝ)^Shared50Parameters.tau := by
   have hCV : 0 ≤ coefficient*(V : ℝ) := mul_nonneg coefficient_positive.le (Nat.cast_nonneg _)
   calc
     _ = ∑ j ∈ Finset.range (k+1), (e/125000^j%125000 : ℕ)*(budget j V : ℝ) :=
       ArbitraryWidthPieces.real_piece_sum _ _ _ _
     _ ≤ ∑ j ∈ Finset.range (k+1), (e/125000^j%125000 : ℕ)*
-        (coefficient*(V : ℝ)*((125000^j : ℕ) : ℝ)^Parameters.tau) := by
+        (coefficient*(V : ℝ)*((125000^j : ℕ) : ℝ)^Shared50Parameters.tau) := by
       apply Finset.sum_le_sum
       intro j _
       exact mul_le_mul_of_nonneg_left (budget_bound j V) (Nat.cast_nonneg _)
     _ = coefficient*(V : ℝ)*(∑ j ∈ Finset.range (k+1),
-        (e/125000^j%125000 : ℕ)*((125000^j : ℕ) : ℝ)^Parameters.tau) := by
+        (e/125000^j%125000 : ℕ)*((125000^j : ℕ) : ℝ)^Shared50Parameters.tau) := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro j _
       ring
     _ ≤ coefficient*(V : ℝ)*
-        ((((125000 : ℝ)-1)*(125000 : ℝ)^Parameters.tau /
-          ((125000 : ℝ)^Parameters.tau-1))*(e : ℝ)^Parameters.tau) :=
+        ((((125000 : ℝ)-1)*(125000 : ℝ)^Shared50Parameters.tau /
+          ((125000 : ℝ)^Shared50Parameters.tau-1))*(e : ℝ)^Shared50Parameters.tau) :=
       mul_le_mul_of_nonneg_left
-        (Swap.Recurrence.pieces_le (by decide) Shared50RecursiveBudgetBound.exponent_range.1
+        (Swap.Recurrence.pieces_le (by decide) Shared50RecursiveBudgetBound.tau_range.1
           (fun j => e/125000^j%125000) (fun j => Nat.mod_lt _ (by decide)) hk) hCV
-    _ = constant*V*(e : ℝ)^Parameters.tau := by unfold constant; ring
+    _ = constant*V*(e : ℝ)^Shared50Parameters.tau := by unfold constant; ring
 
 end
 end IntegerMultBounds.Machine.ArbitrarySliceStepBudget

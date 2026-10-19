@@ -207,7 +207,7 @@ theorem branching_of_balance (ordinaryRank loss : ℕ)
     (hb : ordinaryRank + sourceTotal = sinkTotal + 2 * loss)
     (hl : loss ≤ Shared50Parameters.L) :
     ((ordinaryRank + sourceTotal : ℕ) : ℝ) / Shared50Parameters.W <
-      (Shared50Parameters.m : ℝ) ^ Parameters.tau :=
+      (Shared50Parameters.m : ℝ) ^ Shared50Parameters.tau :=
   Shared50Parameters.branching_of_rank_le _ (corrected_rank_budget ordinaryRank loss hb hl)
 
 /-- A concrete signed-rank trace can use the bound once its source correction,
@@ -215,7 +215,7 @@ ordinary balance and loss estimate have all been established. -/
 theorem branching_of_trace_bounds (ordinaryRank signedRank loss : ℕ)
     (hb : ordinaryRank + sourceTotal = sinkTotal + 2 * loss)
     (hl : loss ≤ Shared50Parameters.L) (hc : signedRank ≤ ordinaryRank + sourceTotal) :
-    (signedRank : ℝ) / Shared50Parameters.W < (Shared50Parameters.m : ℝ) ^ Parameters.tau :=
+    (signedRank : ℝ) / Shared50Parameters.W < (Shared50Parameters.m : ℝ) ^ Shared50Parameters.tau :=
   Shared50Parameters.branching_of_rank_le _ (hc.trans (corrected_rank_budget ordinaryRank loss hb hl))
 
 end

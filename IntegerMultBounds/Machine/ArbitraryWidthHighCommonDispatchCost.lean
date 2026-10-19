@@ -55,18 +55,18 @@ theorem bound (cutoff : ℕ)
     (hcut : ∀ n, cutoff ≤ n → 1 ≤ highDepth prime n ∧ highDepth prime n < n)
     (d : Descriptor) (hs : Fin 6 → List Bool) (hp : d.Positive)
     (hv : RecursiveDimensionBank.Headers d hs) (he : 0 < d.width) :
-    (cost d hs : ℝ) ≤ coefficient cutoff*(volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by
-  have hpower : 1 ≤ (d.width : ℝ)^Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
-    Shared50RecursiveBudgetBound.exponent_range.1.le
+    (cost d hs : ℝ) ≤ coefficient cutoff*(volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by
+  have hpower : 1 ≤ (d.width : ℝ)^Shared50Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
+    Shared50RecursiveBudgetBound.tau_range.1.le
   have hsel : ((ArbitraryWidthHighBranch.cost (ArbitraryWidthHighPrepare.words prime d.width 2) (hs 3)+1 : ℕ) : ℝ) ≤
       (selectorCoefficient cutoff : ℝ)*(volume prime d : ℝ) := by
     exact_mod_cast selector_bound cutoff hcut d hs hp hv
   have hsel' := mul_le_mul_of_nonneg_left hpower
     (show 0 ≤ (selectorCoefficient cutoff : ℝ)*(volume prime d : ℝ) by positivity)
-  have hhigh : 0 ≤ ArbitraryWidthHighPreparedRun.coefficient*(volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by
+  have hhigh : 0 ≤ ArbitraryWidthHighPreparedRun.coefficient*(volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by
     have hc := ArbitraryWidthHighPreparedRun.coefficient_positive
     positivity
-  have hfall : 0 ≤ (fallbackCoefficient cutoff : ℝ)*(volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by positivity
+  have hfall : 0 ≤ (fallbackCoefficient cutoff : ℝ)*(volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by positivity
   by_cases hg : guard d
   · have hb := ArbitraryWidthHighCommonHighBody.cost_bound d hs hp hv hg.2
     unfold cost
@@ -92,7 +92,7 @@ theorem bound (cutoff : ℕ)
 selector, so the genuine combined dispatch has one uniform certified bound. -/
 theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (d : Descriptor) (hs : Fin 6 → List Bool),
     d.Positive → RecursiveDimensionBank.Headers d hs → 0 < d.width →
-    (cost d hs : ℝ) ≤ C*(volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by
+    (cost d hs : ℝ) ≤ C*(volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by
   obtain ⟨cutoff,hcut⟩ := ArbitraryWidthHighGuard.bounded_fallback prime Shared50ModularControl.prime_prime.two_le
   exact ⟨coefficient cutoff,coefficient_positive cutoff,fun d hs hp hv he => bound cutoff hcut d hs hp hv he⟩
 

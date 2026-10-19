@@ -51,25 +51,29 @@ theorem budget_le_normalized (k depth V : ℕ) : (budget k depth V : ℝ) ≤ no
       _ = normalized k (depth+1)*V := by rw [normalized]; ring
 
 /-- The exponent of width retains the fixed certified positive saving. -/
+theorem tau_range : 0 < Shared50Parameters.tau ∧ Shared50Parameters.tau < 1 := by
+  norm_num [Shared50Parameters.tau]
+
+/-- The range of the supplier exponent `Parameters.tau` of the cost chain. -/
 theorem exponent_range : 0 < Parameters.tau ∧ Parameters.tau < 1 := by
   norm_num [Parameters.tau]
 
-theorem exponent_saving : 1-Parameters.tau = 296/(10^11 : ℝ) := by
-  unfold Parameters.tau
+theorem exponent_saving : 1-Shared50Parameters.tau = 296/(10^11 : ℝ) := by
+  unfold Shared50Parameters.tau
   ring
 
-theorem branching_bound : (Shared50Parameters.s : ℝ)/roleCount ≤ (125000 : ℝ)^Parameters.tau := by
+theorem branching_bound : (Shared50Parameters.s : ℝ)/roleCount ≤ (125000 : ℝ)^Shared50Parameters.tau := by
   rw [Shared50RecursiveNodeLayout.roleCount_eq_W]
   exact Shared50Parameters.branching_bound.le
 
 /-- One fixed constant for a fixed compiled return-address capacity, independent
 of depth, runtime width, spectators, payload volume and previous stack contents. -/
 def constant (k : ℕ) : ℝ :=
-  ((base k : ℝ)+(node k : ℝ))*(125000 : ℝ)^Parameters.tau /
-    ((125000 : ℝ)^Parameters.tau-1)
+  ((base k : ℝ)+(node k : ℝ))*(125000 : ℝ)^Shared50Parameters.tau /
+    ((125000 : ℝ)^Shared50Parameters.tau-1)
 
 theorem constant_positive (k : ℕ) : 0 < constant k := by
-  have hx : 1 < (125000 : ℝ)^Parameters.tau := Real.one_lt_rpow (by norm_num) exponent_range.1
+  have hx : 1 < (125000 : ℝ)^Shared50Parameters.tau := Real.one_lt_rpow (by norm_num) tau_range.1
   have hb : 0 < base k := by
     unfold Shared50RecursiveBudget.base
     omega
@@ -79,19 +83,19 @@ theorem constant_positive (k : ℕ) : 0 < constant k := by
   exact div_pos (mul_pos (by linarith) (by linarith)) (by linarith)
 
 theorem normalized_bound (k depth : ℕ) :
-    normalized k depth ≤ constant k*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+    normalized k depth ≤ constant k*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
   exact Swap.Recurrence.power_width_bound (F := normalized k) (m := 125000)
     (a := (Shared50Parameters.s : ℝ)/roleCount) (L := (base k : ℝ)) (C := (node k : ℝ))
-    (by decide) exponent_range.1 (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
+    (by decide) tau_range.1 (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
     branching_bound (Nat.cast_nonneg _) (Nat.cast_nonneg _) le_rfl (fun _ => le_rfl) depth
 
 /-- Budget-only power-width bound with the manuscript's certified exponent,
 including every fixed node/entry/recovery/return coefficient already in budget. -/
 theorem power_width_bound (k depth V : ℕ) :
-    (budget k depth V : ℝ) ≤ constant k*(V : ℝ)*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+    (budget k depth V : ℝ) ≤ constant k*(V : ℝ)*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
   calc
     (budget k depth V : ℝ) ≤ normalized k depth*V := budget_le_normalized k depth V
-    _ ≤ (constant k*((125000^depth : ℕ) : ℝ)^Parameters.tau)*V :=
+    _ ≤ (constant k*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau)*V :=
       mul_le_mul_of_nonneg_right (normalized_bound k depth) (Nat.cast_nonneg _)
     _ = _ := by ring
 
@@ -100,7 +104,7 @@ Proving an execution takes at most this budget remains a separate obligation. -/
 theorem descriptor_bound {depth : ℕ} {v : Descriptor} (k : ℕ)
     (h : Shared50RecursiveDepth.Shape depth v) :
     (budget k depth (volume prime v) : ℝ) ≤
-      constant k*(volume prime v : ℝ)*(v.width : ℝ)^Parameters.tau := by
+      constant k*(volume prime v : ℝ)*(v.width : ℝ)^Shared50Parameters.tau := by
   rw [h.width]
   exact power_width_bound k depth (volume prime v)
 

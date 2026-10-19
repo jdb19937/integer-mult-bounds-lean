@@ -105,12 +105,12 @@ theorem constant_positive : 0 < constant := by
   linarith
 
 theorem rootBudget_bound (depth V : ℕ) :
-    (rootBudget depth V : ℝ) ≤ constant*(V : ℝ)*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+    (rootBudget depth V : ℝ) ≤ constant*(V : ℝ)*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
   have hbound := Shared50RecursiveBudgetBound.power_width_bound returnWidth depth V
   have hw : (1 : ℝ) ≤ ((125000^depth : ℕ) : ℝ) := by
     exact_mod_cast (show 1 ≤ (125000 : ℕ)^depth from Nat.one_le_iff_ne_zero.mpr (pow_ne_zero _ (by decide)))
-  have hpow := Real.one_le_rpow hw Shared50RecursiveBudgetBound.exponent_range.1.le
-  have hlin : (rootOverhead : ℝ)*V ≤ (rootOverhead : ℝ)*V*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+  have hpow := Real.one_le_rpow hw Shared50RecursiveBudgetBound.tau_range.1.le
+  have hlin : (rootOverhead : ℝ)*V ≤ (rootOverhead : ℝ)*V*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
     nlinarith [show (0 : ℝ) ≤ (rootOverhead : ℝ)*V by positivity]
   simp only [rootBudget,Nat.cast_add,Nat.cast_mul,constant]
   nlinarith
@@ -122,7 +122,7 @@ theorem halts_power_bound (v : Descriptor) (shape : Shared50RecursiveDepth.Shape
     (hs : Fin 6 → List Bool) (hv : RecursiveDimensionBank.Headers v hs)
     (f : ℤ → Fin (prime+4)) (p : ℤ) (node scalar : Tapes 1 prime) (st : Tapes 2 prime)
     (ready : Ready f p node scalar st) (x : Fin (volume prime v) → ZMod 2) :
-    ∃ n : ℕ, ∃ c, (n : ℝ) ≤ constant*(volume prime v : ℝ)*(v.width : ℝ)^Parameters.tau ∧
+    ∃ n : ℕ, ∃ c, (n : ℝ) ≤ constant*(volume prime v : ℝ)*(v.width : ℝ)^Shared50Parameters.tau ∧
       Machine.run Shared50RecursiveImplementation.program n
         ((raw (bank (roles (RecursiveRowsSerialization.sourceData wires (encoded x))) hs f p node scalar
           (SharedBank.empty 0 prime) st) Shared50RecursiveRoot.tapeCount).start Shared50RecursiveImplementation.program) =

@@ -84,7 +84,7 @@ theorem cost_bound (d : Descriptor) (hs : Fin 6 → List Bool)
     (hp : d.Positive) (hv : RecursiveDimensionBank.Headers d hs)
     (hr : ArbitraryWidthHighPrepare.highDepth prime d.width < d.width) :
     (cost d hs : ℝ) ≤ ArbitraryWidthHighPreparedRun.coefficient*
-      (volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by
+      (volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by
   have h := ArbitraryWidthHighPreparedRun.cost_bound (foldedPrefix d) d.width d.between d.afterD
     (joinedWords d hs) (foldedPrefix_positive d hp) hp.2.2.2.1 hp.2.2.2.2 hr
     (joined_values d hs hv) (joined_canonical d hs hv)

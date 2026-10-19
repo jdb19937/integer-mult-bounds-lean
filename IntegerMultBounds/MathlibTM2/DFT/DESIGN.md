@@ -253,7 +253,7 @@ Total: `O(n w H(12 w + 3) + Tm(9N) + w H(8w + 4) + N)` = `O(N (log N)^(1-κ))`, 
   `M.tab 50 Unit (M.dftMain Unit M.dftσ₀)`, and `dftTime_isBigO` gives
   `dftTimeOf M.tH =O N (log N) ^ (1 - κ)` for `κ ≤ 1`. `HostMultiplier.dftInTime`:
   `κ ≤ 1 → DFTInTime κ`.
-* `finalHostMultiplier : Nonempty (HostMultiplier (88279 / 2 ^ 46))` packages the rounded compact
+* `finalHostMultiplier : Nonempty (HostMultiplier (111364923 / 2 ^ 46))` packages the rounded compact
   multiplier (`compactRetunedPrefixR_exec`, `compactCompletedR_hostMul`, `dispatch_exec`,
   `compactMain_runs_time_isBigO`), and
 

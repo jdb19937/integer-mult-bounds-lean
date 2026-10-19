@@ -58,7 +58,7 @@ theorem corrected_rank_exact : rankSum50 + sourceTotal = Shared50Parameters.s :=
 /-- Strict optimized branching inequality for the complete actual trace budget. -/
 theorem branching_bound :
     ((rankSum50 + sourceTotal : ℕ) : ℝ) / Shared50Parameters.W <
-      (Shared50Parameters.m : ℝ) ^ Parameters.tau :=
+      (Shared50Parameters.m : ℝ) ^ Shared50Parameters.tau :=
   Shared50GlobalBudget.branching_of_balance _ _ rank_balance50 le_rfl
 
 end

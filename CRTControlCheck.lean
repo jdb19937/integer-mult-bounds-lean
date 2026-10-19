@@ -10,6 +10,7 @@ import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineCore
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup
 import IntegerMultBounds.MathlibTM2.Cost.CRTDirectMachine
+import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
 import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking

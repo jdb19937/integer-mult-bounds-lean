@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Networks.Shared50ModularSchedule
 public import IntegerMultBounds.Networks.ModularProgramShape
+public import IntegerMultBounds.Networks.CoefficientBound
 
 /-! Canonical finite control for every modular edge in the actual signed
 schedule. A single chosen prime works for every width, and the operation lists
@@ -36,17 +37,30 @@ def edges : List (Edge Index) := pairs Shared50GlobalCircuit.enumeration
 /-- All denominators needed by the fixed edge factorizations and endpoints. -/
 def denominators : Finset ℕ := allDenominators edges extra
 
+-- Avoid unfolding a 125000-coordinate denominator finset in the naming linter.
+set_option linter.constructorNameAsVariable false in
+/-- A prime beyond every denominator and beyond the supplier coefficient bound. -/
+theorem exists_prime_bound :
+    ∃ q : ℕ, q.Prime ∧ 2 < q ∧ (∀ d ∈ denominators, d < q) ∧ coefficientBound < q := by
+  classical
+  obtain ⟨q,hq,hodd,hd⟩ := Modular.exists_prime_gt (insert coefficientBound denominators)
+  exact ⟨q,hq,hodd,fun d h => hd d (Finset.mem_insert_of_mem h),hd _ (Finset.mem_insert_self _ _)⟩
+
 /-- An admissible prime is fixed once, independently of the radix width. -/
-def prime : ℕ := Classical.choose Shared50ModularSchedule.exists_prime_actual
+def prime : ℕ := Classical.choose exists_prime_bound
 
 theorem prime_prime : prime.Prime :=
-  (Classical.choose_spec Shared50ModularSchedule.exists_prime_actual).1
+  (Classical.choose_spec exists_prime_bound).1
 
 theorem prime_odd : 2 < prime :=
-  (Classical.choose_spec Shared50ModularSchedule.exists_prime_actual).2.1
+  (Classical.choose_spec exists_prime_bound).2.1
 
 theorem prime_bound : ∀ d ∈ denominators, d < prime :=
-  (Classical.choose_spec Shared50ModularSchedule.exists_prime_actual).2.2.1
+  (Classical.choose_spec exists_prime_bound).2.2.1
+
+/-- Every coefficient within the supplier bound avoids the prime. -/
+theorem coefficientBound_lt_prime : coefficientBound < prime :=
+  (Classical.choose_spec exists_prime_bound).2.2.2
 
 /-- The exact ordered programs; there is no choice depending on the width. -/
 def programs (m : ℕ) : List (List (Op Index (ZMod m))) :=

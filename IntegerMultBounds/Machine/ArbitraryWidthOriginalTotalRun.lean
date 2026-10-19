@@ -77,7 +77,7 @@ theorem runs (caller : Tapes t prime) (headers : Fin 6 → Fin t) (source : Fin 
 
 theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (d : Descriptor) (hs : Fin 6 → List Bool),
     d.Positive → RecursiveDimensionBank.Headers d hs →
-    (cost d hs : ℝ) ≤ C*(volume prime d : ℝ)*((max 1 d.width : ℕ) : ℝ)^Parameters.tau := by
+    (cost d hs : ℝ) ≤ C*(volume prime d : ℝ)*((max 1 d.width : ℕ) : ℝ)^Shared50Parameters.tau := by
   obtain ⟨C,hC,hbound⟩ := ArbitraryWidthOriginalRun.uniform_bound
   have hK : 0 ≤ (zeroCoefficient : ℝ) := Nat.cast_nonneg _
   refine ⟨C+(zeroCoefficient : ℝ)+1,by linarith,?_⟩
@@ -91,11 +91,11 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (d : Descriptor) (hs : Fin 6 
     nlinarith
   · have he : 0 < d.width := Nat.pos_of_ne_zero hw
     have hmax : max 1 d.width = d.width := max_eq_right he
-    have hpow : 1 ≤ (d.width : ℝ)^Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
-      Shared50RecursiveBudgetBound.exponent_range.1.le
+    have hpow : 1 ≤ (d.width : ℝ)^Shared50Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
+      Shared50RecursiveBudgetBound.tau_range.1.le
     have hb := hbound d hs hp hv he
-    have hVpow : 1 ≤ (volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by nlinarith
-    have hKpow : 0 ≤ (zeroCoefficient : ℝ)*((volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau) :=
+    have hVpow : 1 ≤ (volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by nlinarith
+    have hKpow : 0 ≤ (zeroCoefficient : ℝ)*((volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau) :=
       mul_nonneg hK (by linarith)
     unfold cost
     rw [ite_eq_right hw,hmax]

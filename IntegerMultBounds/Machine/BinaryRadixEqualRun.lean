@@ -148,7 +148,7 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
     (∀ i, Counter.value (hs i) = BinaryRadixRangePrepare.values P G B u i) →
     (∀ i, GrowingCounterData.Canonical (hs i)) →
     (cost P G B u hs : ℝ) ≤ C*(RadixRangePadding.volume P (2^u) G B : ℝ)*
-      ((max 1 u : ℕ) : ℝ)^Parameters.tau := by
+      ((max 1 u : ℕ) : ℝ)^Shared50Parameters.tau := by
   obtain ⟨C,hC,hbound⟩ := BinaryRadixRangeRuntimeBudget.uniform_bound
   refine ⟨C,hC,?_⟩
   intro P G B u hs hP hG hB hv hc
