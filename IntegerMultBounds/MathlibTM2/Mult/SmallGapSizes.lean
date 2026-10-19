@@ -23,7 +23,7 @@ variable {n : ℕ}
 
 /-- `u d ≤ p`: `u ≤ ⌈log₂ p⌉ + 3` and the Gaussian width room `64 d (⌈log₂ p⌉ + 3) ≤ b`. -/
 theorem Big.uSG_mul_d_le (h : Big n) : uSG n*d n≤p n := by
-  have hroom := h.bigFacts.2.2.1
+  have hroom := h.bigFacts.2.1
   have hu : uSG n≤Nat.clog 2 (p n)+3 := by
     unfold uSG
     apply Nat.clog_le_of_le_pow

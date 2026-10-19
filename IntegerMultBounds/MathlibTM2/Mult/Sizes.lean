@@ -30,7 +30,7 @@ functions of the operand length `n`, with the retuned constants `ε = 31/64`, `c
   `((1 - 2η) r, (1 - η) r]` (`srcLen`), and `S = ∏ s_i`.
 
 The windows hold enough primes for all large `n` (`PrimeSupply`, `eventually_primeSupply`, from
-the strong prime number theorem). With the chunk room `256 d^7 < ℓ^8` and the Gaussian width room
+the strong prime number theorem). With the Gaussian width room
 `64 d (⌈log₂ p⌉ + 3) ≤ b` it forms the regime facts `BigFacts`, eventual statements whose
 thresholds are existential; `bigDim` names a dimension from which on they hold. None of them
 needs `d² ≤ b`: they use `d^64 ≤ b^31` and `b^33 ≤ (2ℓ)^64` (`b_pow_le_ℓ`).
@@ -710,43 +710,23 @@ theorem eventually_pow_p_le_r (C : ℕ) : ∀ᶠ n in atTop, p n ^ C ≤ r n := 
   have h2 : 2 ^ ℓ n ≤ (2 ^ ℓ n) ^ 33 := Nat.le_self_pow (by norm_num) _
   exact (Nat.pow_le_pow_iff_left (by norm_num)).mp ((h1.trans hl).trans h2)
 
-/-- The chunk room `2^8 d^7 < ℓ^8`: the compact chunk `⌊d^(7/8)⌋` (`CompactSizes.Kroot`) stays
-below `ℓ/2` eventually, since `(7/8) ε < 1 - ε`. From `d^64 ≤ b^31` and `b^33 ≤ (2ℓ)^64`:
-`(2^8 d^7)^64 ≤ 2^512 b^217 < 2^(-512) b^264 ≤ ℓ^512` once `b^47 > 2^1024`. -/
-theorem eventually_chunk_room : ∀ᶠ n in atTop, 2 ^ 8 * d n ^ 7 < ℓ n ^ 8 := by
-  filter_upwards [eventually_ge_atTop 2, tendsto_atTop.1 tendsto_b (2 ^ 22)] with n hn hb
-  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
-  have hℓ := b_pow_le_ℓ hn
-  obtain ⟨t, ht⟩ : ∃ t : ℕ, t = 2 := ⟨_, rfl⟩
-  rw [← ht] at hℓ hb ⊢
-  have ht1 : 1 < t := by omega
-  have hb1 : 0 < b n := lt_of_lt_of_le (Nat.pow_pos (by omega)) hb
-  have h1 : (t ^ 8 * d n ^ 7) ^ 64 ≤ t ^ 512 * b n ^ 217 := by
-    calc (t ^ 8 * d n ^ 7) ^ 64 = t ^ 512 * (d n ^ 64) ^ 7 := by ring
-      _ ≤ t ^ 512 * (b n ^ 31) ^ 7 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hroot 7)
-      _ = t ^ 512 * b n ^ 217 := by ring
-  have h2 : b n ^ 264 ≤ t ^ 512 * ℓ n ^ 512 := by
-    calc b n ^ 264 = (b n ^ 33) ^ 8 := by ring
-      _ ≤ ((t * ℓ n) ^ 64) ^ 8 := Nat.pow_le_pow_left hℓ 8
-      _ = t ^ 512 * ℓ n ^ 512 := by ring
-  have h3 : t ^ 1024 < b n ^ 47 := by
-    have h10 : 1 < t ^ 10 := Nat.one_lt_pow (by norm_num) ht1
-    have hpos : 0 < t ^ 1024 := pow_pos (Nat.lt_trans Nat.zero_lt_one ht1) 1024
-    calc t ^ 1024 < t ^ 1024 * t ^ 10 := lt_mul_of_one_lt_right hpos h10
-      _ = (t ^ 22) ^ 47 := by ring
-      _ ≤ b n ^ 47 := Nat.pow_le_pow_left hb 47
-  have hpos : 0 < b n ^ 217 := Nat.pow_pos hb1
-  have h4 : t ^ 512 * (t ^ 512 * b n ^ 217) < t ^ 512 * ℓ n ^ 512 := by
-    calc t ^ 512 * (t ^ 512 * b n ^ 217) = t ^ 1024 * b n ^ 217 := by ring
-      _ < b n ^ 47 * b n ^ 217 := Nat.mul_lt_mul_of_pos_right h3 hpos
-      _ = b n ^ 264 := by ring
-      _ ≤ t ^ 512 * ℓ n ^ 512 := h2
-  have h5 : (t ^ 8 * d n ^ 7) ^ 64 < (ℓ n ^ 8) ^ 64 := by
-    have := Nat.lt_of_mul_lt_mul_left h4
-    calc (t ^ 8 * d n ^ 7) ^ 64 ≤ t ^ 512 * b n ^ 217 := h1
-      _ < ℓ n ^ 512 := this
-      _ = (ℓ n ^ 8) ^ 64 := by ring
-  exact (Nat.pow_lt_pow_iff_left (by norm_num)).mp h5
+/-- Twice the dimension is below the axis length once `d ≥ 2^32`: if `ℓ ≤ 2d` then
+`d^33 ≤ (2ℓ)^31 ≤ 2^62 d^31`, so `d^2 ≤ 2^62`. -/
+theorem two_mul_d_lt_ℓ (hn : 2 ≤ n) (hd : 2 ^ 32 ≤ d n) : 2 * d n < ℓ n := by
+  by_contra hc
+  have h1 := d_pow_le_ℓ hn
+  have h2 : (2 * ℓ n) ^ 31 ≤ (4 * d n) ^ 31 := Nat.pow_le_pow_left (by omega) 31
+  have h3 : 2 ^ 64 ≤ d n ^ 2 := by
+    calc (2:ℕ) ^ 64 = (2 ^ 32) ^ 2 := by norm_num
+      _ ≤ d n ^ 2 := Nat.pow_le_pow_left hd 2
+  have hpos : 0 < d n ^ 31 := Nat.pow_pos (by omega)
+  have h4 : 2 ^ 64 * d n ^ 31 ≤ 2 ^ 62 * d n ^ 31 :=
+    calc 2 ^ 64 * d n ^ 31 ≤ d n ^ 2 * d n ^ 31 := Nat.mul_le_mul_right _ h3
+      _ = d n ^ 33 := by ring
+      _ ≤ (2 * ℓ n) ^ 31 := h1
+      _ ≤ (4 * d n) ^ 31 := h2
+      _ = 2 ^ 62 * d n ^ 31 := by ring
+  exact absurd h4 (not_le.mpr (Nat.mul_lt_mul_of_pos_right (by norm_num) hpos))
 
 /-- The Gaussian width room `64 d (⌈log₂ p⌉ + 3) ≤ b`: `d ≤ b^(31/64)` against a logarithm. -/
 theorem eventually_gauss_room : ∀ᶠ n in atTop, 64 * d n * (Nat.clog 2 (p n) + 3) ≤ b n := by
@@ -803,21 +783,18 @@ theorem eventually_gauss_room : ∀ᶠ n in atTop, 64 * d n * (Nat.clog 2 (p n) 
     _ ≤ b n := h
 
 /-- The facts of the large regime that hold eventually for the present exponents: the prime
-supply, the chunk room `2^8 d^7 < ℓ^8`, the Gaussian width room
-`64 d (⌈log₂ p⌉ + 3) ≤ b`, `d ≤ 2^(ℓ-1)` and `8p ≤ r`. Each holds eventually for every dimension exponent
-`ε < 1` with the chunk exponent `c` of `CompactSizes` in `εc < 1 - ε`. -/
+supply, the Gaussian width room `64 d (⌈log₂ p⌉ + 3) ≤ b`, `d ≤ 2^(ℓ-1)` and `8p ≤ r`. -/
 def BigFacts (n : ℕ) : Prop :=
-  PrimeSupply n ∧ 2 ^ 8 * d n ^ 7 < ℓ n ^ 8 ∧ 64 * d n * (Nat.clog 2 (p n) + 3) ≤ b n ∧
+  PrimeSupply n ∧ 64 * d n * (Nat.clog 2 (p n) + 3) ≤ b n ∧
     d n ≤ 2 ^ (ℓ n - 1) ∧ 8 * p n ≤ r n
 
 theorem eventually_bigFacts : ∀ᶠ n in atTop, BigFacts n := by
-  filter_upwards [eventually_primeSupply, eventually_chunk_room, eventually_gauss_room,
-    tendsto_ℓ.eventually (eventually_mul_pow_le_two_pow 2 8), eventually_ge_atTop 2,
-    eventually_pow_p_le_r 3] with n h₁ h₂ h₃ h₄ hn h₅
-  have e8 : (2:ℕ) ^ 8 = 256 := by norm_num
-  have h₂' := h₂
-  rw [e8] at h₂'
-  refine ⟨h₁, h₂, h₃, ?_, ?_⟩
+  filter_upwards [eventually_primeSupply, tendsto_d.eventually_ge_atTop (2 ^ 32),
+    eventually_gauss_room, tendsto_ℓ.eventually (eventually_mul_pow_le_two_pow 2 1),
+    eventually_ge_atTop 2, eventually_pow_p_le_r 3] with n h₁ h₂ h₃ h₄ hn h₅
+  have hdℓ := two_mul_d_lt_ℓ hn h₂
+  rw [pow_one] at h₄
+  refine ⟨h₁, h₃, ?_, ?_⟩
   swap
   · have hb := one_le_b hn
     have hp : 6 ≤ p n := by unfold p; omega
@@ -825,9 +802,7 @@ theorem eventually_bigFacts : ∀ᶠ n in atTop, BigFacts n := by
     have h8 : 8 * p n ≤ p n * p n * p n := Nat.mul_le_mul_right _ hpp
     have e : p n ^ 3 = p n * p n * p n := by ring
     omega
-  have hd := one_le_d hn
   have hl := h₁.2.1
-  have h7 : d n ≤ d n ^ 7 := Nat.le_self_pow (by norm_num) _
   have e : 2 ^ ℓ n = 2 * 2 ^ (ℓ n - 1) := by
     rw [← pow_succ']; congr 1; omega
   omega
@@ -889,8 +864,7 @@ end Supply
 /-! ### The large regime -/
 
 /-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 2^192 + bigDim`, so that
-the regime facts hold (`Big.bigFacts`): the prime supply, the chunk room and the Gaussian width
-room. -/
+the regime facts hold (`Big.bigFacts`): the prime supply and the Gaussian width room. -/
 def Big (n : ℕ) : Prop :=
   2 ≤ n ∧ 6277101735386680763835789423207666416102355444464034512896 + bigDim ≤ d n
 
@@ -923,14 +897,11 @@ theorem Big.four_le_ℓ (h : Big n) : 4 ≤ ℓ n := h.primeSupply.2.1
 
 theorem Big.two_le_ℓ (h : Big n) : 2 ≤ ℓ n := by have := h.four_le_ℓ; omega
 
-/-- The chunk room `256 d^7 < ℓ^8`. -/
-theorem Big.chunk_room (h : Big n) : 256 * d n ^ 7 < ℓ n ^ 8 := by
-  have h1 := h.bigFacts.2.1
-  rwa [show (2:ℕ) ^ 8 = 256 by norm_num] at h1
+theorem Big.two_d_lt_ℓ (h : Big n) : 2 * d n < ℓ n := two_mul_d_lt_ℓ h.1 (by have := h.2; omega)
 
-theorem Big.d_le_two_pow_pred_ℓ (h : Big n) : d n ≤ 2 ^ (ℓ n - 1) := h.bigFacts.2.2.2.1
+theorem Big.d_le_two_pow_pred_ℓ (h : Big n) : d n ≤ 2 ^ (ℓ n - 1) := h.bigFacts.2.2.1
 
-theorem Big.eight_p_le_r (h : Big n) : 8 * p n ≤ r n := h.bigFacts.2.2.2.2
+theorem Big.eight_p_le_r (h : Big n) : 8 * p n ≤ r n := h.bigFacts.2.2.2
 
 /-- `F d ≤ b` whenever `F^64 ≤ b^33`: `(F d)^64 ≤ b^33 b^31`. -/
 theorem mul_d_le_b {F : ℕ} (hF : F ^ 64 ≤ b n ^ 33) : F * d n ≤ b n := by
@@ -969,18 +940,11 @@ theorem Big.ℓ_bounds_real (h : Big n) :
   · rw [div_le_iff₀ (by positivity)]; linarith
   · rw [le_div_iff₀ (by positivity)]; linarith
 
-/-- `K + 1 ≤ ℓ`: `K^8 ≤ K^(2^32) ≤ d ≤ d^7 < ℓ^8`. -/
+/-- `K + 1 ≤ ℓ`: `K ≤ d < 2d < ℓ`. -/
 theorem Big.K_succ_le_ℓ (h : Big n) : K n + 1 ≤ ℓ n := by
-  have hroom := h.chunk_room
-  have hK := K_pow_le n
-  have hd := h.one_le_d
-  by_contra hc
-  have h1 : ℓ n ^ 8 ≤ K n ^ 8 := Nat.pow_le_pow_left (by omega) 8
-  have h2 : K n ^ 8 ≤ K n ^ cExp := by
-    rcases Nat.eq_zero_or_pos (K n) with h0 | h0
-    · rw [h0, zero_pow (by norm_num)]; exact Nat.zero_le _
-    · exact Nat.pow_le_pow_right h0 (by norm_num [cExp])
-  have h3 : d n ≤ d n ^ 7 := Nat.le_self_pow (by norm_num) _
+  have := K_le_d n
+  have := h.two_d_lt_ℓ
+  have := h.one_le_d
   omega
 
 /-- Under `Big` the source lengths are the prime moduli. -/
@@ -1078,7 +1042,7 @@ theorem Big.quarter_p_le_theta (h : Big n) (i : Fin (d n)) :
 /-- `16 d α² ≤ b`. -/
 theorem Big.sixteen_d_alpha_sq_le_b (h : Big n) : 16 * d n * alpha n ^ 2 ≤ b n := by
   have h1 := alpha_sq_lt n
-  have h3 := h.bigFacts.2.2.1
+  have h3 := h.bigFacts.2.1
   have h4 : 16 * d n * alpha n ^ 2 ≤ 16 * d n * (4 * alphaU n) :=
     Nat.mul_le_mul_left _ h1.le
   have e : 16 * d n * (4 * alphaU n) = 64 * d n * (Nat.clog 2 (p n) + 3) := by

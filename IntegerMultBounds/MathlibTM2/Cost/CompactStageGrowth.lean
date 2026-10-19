@@ -11,7 +11,7 @@ These analytic envelopes still require the executable total-cost matching theore
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Cost.CompactTotal
 open IntegerMultBounds IntegerMultBounds.MathlibTM2
-open IntegerMultBounds.MathlibTM2.Mult.Sizes hiding K cParam
+open IntegerMultBounds.MathlibTM2.Mult.Sizes hiding K
 noncomputable section
 
 /-- Every shared stage margin covers the proposed compact saving. -/
@@ -20,10 +20,9 @@ theorem exp_facts :
       epsilon*(1-Parameters.tau)+Parameters.tau≤1-kappa ∧
       epsilon+epsilon*Mult.Sizes.cParam*(1/2)+(1/2+totDelta)≤1-kappa ∧
       1-epsilon*(1-lam')≤1-kappa ∧
-      1-epsilon+epsilon*cParam≤1-kappa ∧ totDelta≤1-kappa := by
+      1-epsilon+epsilon*Mult.Sizes.cParam≤1-kappa ∧ totDelta≤1-kappa := by
   rw [epsilon_eq, Mult.Sizes.cParam_eq]
-  norm_num [kappa,lam',cParam,Mult.CompactSizes.cParam,Mult.CompactSizes.cExp,
-    CompactInterim.kappa,CompactInterim.lam',Parameters.tau,totDelta]
+  norm_num [kappa,lam',CompactInterim.kappa,CompactInterim.lam',Parameters.tau,totDelta]
 
 /-- The convolution envelope with the uniform balanced chunk and the new layer exponent: the
 prefix costs `T p d`, the chunk exchanges `T p · p K^(τ-1)`, the layer `T p ℓ d^λ'`. -/
@@ -127,8 +126,8 @@ theorem conv_inner_nonneg (h : Big n) :
   linarith
 
 /-- `T p (d + p K^{τ-1} + ℓ d^{λ'} + grLogLog (r p)) ≤ 4096 n B^{1-κ}`, given `K ≥ 1` and
-`log₂ p ≤ K`. -/
-theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n) :
+`log₂ p` below the legacy chunk `⌊d^c⌋` (`c = 2^-32`). -/
+theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ Mult.Sizes.K n) :
     conv n ≤ 4096 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
   obtain ⟨-, he, -, -, hlam, hll, -⟩ := exp_facts
   have hB1 := tot_one_le_b h
@@ -149,10 +148,9 @@ theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n)
       ring
     have hk : (b n : ℝ) ^ kappa ≤ 4 * (K n : ℝ) ^ (1 - Parameters.tau) :=
       (Real.rpow_le_rpow_of_exponent_le hB1
-        (show kappa≤epsilon*cParam*(1-Parameters.tau) by
+        (show kappa≤epsilon*(1-Parameters.tau) by
           rw [epsilon_eq]
-          norm_num [kappa,cParam,Mult.CompactSizes.cParam,Mult.CompactSizes.cExp,
-            CompactInterim.kappa,Parameters.tau])).trans
+          norm_num [kappa,CompactInterim.kappa,Parameters.tau])).trans
         (compact_rpow_le_four_K_rpow hK (a:=1-Parameters.tau)
           (by linarith) (by linarith))
     have := gr_div_le hB hKτ hk
@@ -178,13 +176,13 @@ theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n)
     have h3 := gr_le_rpow_of_le hB1 (by norm_num) h2 hlam
     rw [e]; linarith
   -- `Λ = log₂ (r p) = ℓ + log₂ p ≤ 2ℓ`, so `Λ + 1 ≤ 9 B^{1-ε}` and
-  -- `log₂ (Λ + 1) + 1 ≤ log₂ (4p) + 1 ≤ K + 3 ≤ 4 B^{εc}`
+  -- `log₂ (Λ + 1) + 1 ≤ log₂ (4p) + 1 ≤ K + 3 ≤ 4 B^{εc}` for the legacy chunk
   have i4 : grLogLog ((r n : ℝ) * p n) ≤ 45 * (b n : ℝ) ^ (1 - kappa) := by
     have hp1 : 1 ≤ p n := by have := h.thirteen_le_p; omega
     have hp1' : (1 : ℝ) ≤ p n := by exact_mod_cast hp1
     have hΛ := gr_logb_rp hp1
     have hlp0 : 0 ≤ Real.logb 2 (p n) := gr_logb_nonneg hp1'
-    have hKℓ : (K n : ℝ) + 1 ≤ ℓ n := by exact_mod_cast Mult.CompactSizes.K_succ_le_ℓ h
+    have hKℓ : (Mult.Sizes.K n : ℝ) + 1 ≤ ℓ n := by exact_mod_cast h.K_succ_le_ℓ
     have hℓp : (ℓ n : ℝ) ≤ p n := by
       have h1 : 3 * d n * ℓ n ≤ p n := h.ℓ_bounds.2
       have h2 : ℓ n ≤ 3 * d n * ℓ n := by
@@ -207,10 +205,10 @@ theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n)
     have hlΛ : Real.logb 2 (Λ + 1) ≤ Real.logb 2 (4 * p n) :=
       Real.logb_le_logb_of_le one_lt_two (by linarith) (by linarith)
     have hK1 : (1 : ℝ) ≤ K n := by exact_mod_cast hK
-    have f2 : Real.logb 2 (Λ + 1) + 1 ≤ 5 * (b n : ℝ) ^ (epsilon * cParam) := by
-      have := compact_K_le_rpow n
-      have : (1 : ℝ) ≤ (b n : ℝ) ^ (epsilon * cParam) :=
-        Real.one_le_rpow hB1 (mul_nonneg (by rw [epsilon_eq]; norm_num) compact_cParam_pos.le)
+    have f2 : Real.logb 2 (Λ + 1) + 1 ≤ 5 * (b n : ℝ) ^ (epsilon * Mult.Sizes.cParam) := by
+      have := gr_K_le_rpow n
+      have : (1 : ℝ) ≤ (b n : ℝ) ^ (epsilon * Mult.Sizes.cParam) :=
+        Real.one_le_rpow hB1 (mul_nonneg (by rw [epsilon_eq]; norm_num) gr_cParam_pos.le)
       linarith
     have f12 := gr_mul_le hB (by linarith [gr_logb_nonneg (show (1 : ℝ) ≤ Λ + 1 by linarith)])
       (by norm_num) f1 f2

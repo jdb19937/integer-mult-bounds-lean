@@ -56,7 +56,7 @@ theorem compactRetuned_top_envelope (packD : ℕ) (ds : ComplexFramedExecution.D
   have hcontrol : A*(d:ℝ)^CompactInterim.lam≤A*(d:ℝ)^CompactInterim.lam' :=
     mul_le_mul_of_nonneg_left hdp hA
   have hres := compactRetuned_reservation_power M hM CompactInterim.lam'
-    (by norm_num [Mult.CompactSizes.cParam,Mult.CompactSizes.cExp,CompactInterim.lam'])
+    (by norm_num [CompactInterim.lam'])
   have hreservation : 512*(backChunks d g K:ℝ)+512*(q:ℝ)≤
       512*compactRetunedReservationCoeff CompactInterim.lam'*(d:ℝ)^CompactInterim.lam' := by
     have he : backChunks d g K+q=CompactGlobalReservation.reservedAxes NW m d g K := by

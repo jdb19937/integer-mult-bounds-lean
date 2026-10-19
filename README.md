@@ -8,17 +8,17 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 111364923/2^46` (about `2^-19.27`), exposed by `MathlibTM2.mulInTime`, where `n` is the
+`kappa = 127238784/2^46` (about `2^-19.08`), exposed by `MathlibTM2.mulInTime`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 The running multiplier combines linear direct CRT routing with compact controls
-and seven-eighths-power chunks `K = ⌊d^(7/8)⌋`. It uses rounded synthetic layers on the T16 node (73 slots, 14336 data
+and full-width chunks above the root `⌈d/2⌉`. It uses rounded synthetic layers on the T16 node (73 slots, 14336 data
 roles, 1,041,408 children, so `log_73 (F/NW) < 999/1000`). Its bit interchange runs PR97's two-stage
 partial-swap word (`h = 23`, `m = 529`, 108,516,254 roles, 57,403,754,177 rank-one children) on the
 generic interchange machine of `MathlibTM2/M8`, so `tau = 1-3734039/10^12`
-([note](docs/pr97-stage1/pr97-stage1.pdf)). Its parameters are `epsilon = 31/64`, `c = 7/8`,
-`lambda = 1-35/10^7` and `lambda' = 1-33/10^7`. The public saving is the binding layout margin
-`epsilon c (1-tau)`, rounded down to `2^-46`. Complete input preparation, distribution, transforms,
+([note](docs/pr97-stage1/pr97-stage1.pdf)). Its parameters are `epsilon = 31/64`,
+`lambda = 1-3734/10^9` and `lambda' = 1-3733/10^9`. The public saving is the binding layer margin
+`epsilon (1-lambda')`, just below the layout margin `epsilon (1-tau)`, rounded down to `2^-46`. Complete input preparation, distribution, transforms,
 output and cleanup are included in the fixed-machine proof. The public saving
 is more than `2^46` times the historical M2 saving `2^-66`, as an exponent improvement.
 

@@ -3,7 +3,7 @@
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
 **Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 🟡 · M6 🟡 · M7 🟡 · M8 ⬜.
-The completed compact multiplier proves saving `111364923/2^46 ≈ 2^-19.2693`. With today's bit
+The completed compact multiplier proves saving `127238784/2^46 ≈ 2^-19.0770`. With today's bit
 supplier (PR97, rank-one children) no route in this plan exceeds about `2^-18.0`; going further
 needs a better bit supplier.
 
@@ -14,7 +14,8 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Proved (UTC) | Status |
 | --- | --- | --- | --- |
-| **Current unconditional result** | **`111364923/2^46 ≈ 2^-19.2693`** | 2026-10-19 01:42 | ✅ PR 6: the bit interchange runs PR97's two-stage partial-swap word with rank-one children on the recursive interchange machine, made generic in the bit network (`MathlibTM2/M8/`). The word needs no routes, charts, cover classes or helper hosting. `tau = 1-3734039/10^12` replaces Shared50's `1-296/10^11`, about `1261` times the saving. `lambda = 1-35/10^7`, `lambda' = 1-33/10^7`; the layout margin `epsilon c (1-tau)` binds, rounded down to `2^-46` ([note](docs/pr97-stage1/pr97-stage1.pdf)). |
+| **Current unconditional result** | **`127238784/2^46 ≈ 2^-19.0770`** | 2026-10-19 06:54 | ✅ Full-width chunks: the chunk root is `Kroot = ⌈d/2⌉` (`c = 1`), so the layout margin is `epsilon (1-tau)`. The direct-round log factor is bounded by the legacy `2^-32` chunk, so it no longer caps `c`. `lambda = 1-3734/10^9`, `lambda' = 1-3733/10^9` sit just above `tau`; the layer margin `epsilon (1-lambda')` binds, rounded down to `2^-46`. |
+| **Previous PR97 seven-eighths result** | `111364923/2^46 ≈ 2^-19.2693` | 2026-10-19 01:42 | ✅ Superseded; PR 6: the bit interchange runs PR97's two-stage partial-swap word with rank-one children on the recursive interchange machine, made generic in the bit network (`MathlibTM2/M8/`). The word needs no routes, charts, cover classes or helper hosting. `tau = 1-3734039/10^12` replaces Shared50's `1-296/10^11`, about `1261` times the saving. `lambda = 1-35/10^7`, `lambda' = 1-33/10^7`; the layout margin `epsilon c (1-tau)` binds, rounded down to `2^-46` ([note](docs/pr97-stage1/pr97-stage1.pdf)). |
 | **Previous T16 seven-eighths result** | `88279/2^46 ≈ 2^-29.5702` | 2026-10-18 17:18 | ✅ Superseded; T16 node with seven-eighths-power chunks `K = ⌊d^(7/8)⌋` (`c = 7/8`, from PR 4). The binding layout margin `epsilon c (1-tau)` grows by `7/2`; `lambda = 1-28/10^10`, `lambda' = 1-23/2^33` keep the layer margin `epsilon (1-lambda')` above it. The saving is the layout margin rounded down to `2^-46`. |
 | **Previous T16 result** | `25222/2^46 ≈ 2^-31.3776` | 2026-10-18 09:47 | ✅ Superseded; T16 layer node: 73 slots, 14336 data roles and 8 private centres, 1,041,408 children (`log_73 (F/NW) < 999/1000`), lowered to factors, half-integral gates, translations, slot XORs and slot phases on the layer machine. With `lambda = 1-2/10^9`, `lambda' = 1-2^-30` the layer margin `epsilon (1-lambda')` no longer binds; the saving is the layout margin `epsilon c (1-tau)` rounded down. |
 | **PR 4 mixer result** | `651/2^39 ≈ 2^-29.6534` | 2026-10-18 05:03 (branch) | Proved on the `further-improvements` branch only; not adopted. Size-25 mixer supplier (`sigma = 1-25/10^10`) with `c = 7/8`, binding layer margin `epsilon (1-lambda')` at `lambda' = 1-21/2^33`. T16 replaces the mixer in the complex-supplier slot. |
@@ -41,7 +42,7 @@ certificate alone does not improve the proved multiplication bound.
 `IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
 machine that multiplies every input pair correctly in worst-case time
 `O(n (log n)^(1-kappa))`, with positive saving
-`kappa = 111364923/2^46`. No algorithmic or runtime assumption remains.
+`kappa = 127238784/2^46`. No algorithmic or runtime assumption remains.
 
 ## Completed proof
 
@@ -57,35 +58,35 @@ The Files column counts the components listed in that detail file; the full
 transitive proof dependency set is larger, as recorded by the
 [retention audit](docs/proof-retention.md).
 
-At `111364923/2^46` the checks pass: `CompletedProofCheck` (only `propext`, `Classical.choice` and
-`Quot.sound`), `AxiomAudit` (127263 declarations) and `CompactControlCheck` (558 contracts).
+At `127238784/2^46` the checks pass: `CompletedProofCheck` (only `propext`, `Classical.choice` and
+`Quot.sound`), `AxiomAudit` (100026 declarations) and `CompactControlCheck` (552 contracts).
 The native-machine bridge and its `MathlibTM2Check`/`FastPathCheck` audits were removed
 2026-10-18 (restore from 5e12c129).
 
-**Corollary.** `MathlibTM2.DFT.dftInTime : DFTInTime (111364923/2^46)`: one fixed finite machine
+**Corollary.** `MathlibTM2.DFT.dftInTime : DFTInTime (127238784/2^46)`: one fixed finite machine
 computes the discrete Fourier transform over every prime field `F_p`, at every length with a
 primitive root of unity, in time `O(N (log N)^(1-kappa))` (`docs/dft/dft.pdf`).
 
 ## Where the bound stands
 
-Parameters (`Cost/CompactInterimParameters.lean`): `epsilon = 31/64`, `c = 7/8`,
+Parameters (`Cost/CompactInterimParameters.lean`): `epsilon = 31/64`, chunk root `⌈d/2⌉` (`c = 1`),
 `tau = 1-3734039/10^12` (`Parameters.tau`, the selected bit supplier's exponent),
-`lambda = 1-35/10^7`, `lambda' = 1-33/10^7`, `delta = 2^-7`.
+`lambda = 1-3734/10^9`, `lambda' = 1-3733/10^9`, `delta = 2^-7`.
 
 | Stage margin | Formula | Value |
 | --- | --- | --- |
-| Chunk-exchange layout (binding) | `epsilon c (1-tau)` | `1.5826e-6 ≈ 2^-19.269`, rounded down to `kappa` |
-| Compact layer | `epsilon (1-lambda')` | `1.5984e-6 ≈ 2^-19.255` |
+| Compact layer (binding) | `epsilon (1-lambda')` | `1.8082e-6 ≈ 2^-19.077`, rounded down to `kappa` |
+| Chunk-exchange layout | `epsilon (1-tau)` | `1.8087e-6 ≈ 2^-19.077` |
 | CRT and resampling exposure | `(1-epsilon)(1-tau)` | `1.9254e-6 ≈ 2^-18.986` |
 | Gaussian resampling | `1/2 - delta - epsilon(1+2^-33)` | `2^-7 - 31/2^39 ≈ 2^-7.0` |
-| Packed products | `epsilon (1-c)` | `0.0605` |
+| Direct rounds | `epsilon (1-2^-32)` | `0.484` |
 | Prefix (M5a) | `1-epsilon` | `0.516` |
 
 **The `tau` ceiling.** `1-tau = 3.73e-6 ≈ 2^-18.03` is the saving of the bit interchange. Every
 margin near the top of the table carries it. The layer margin carries it too, because
 `lambda' > lambda > tau`.
 
-- **Retuning alone** gains at most about `0.2` bits. The layout margin is below `epsilon (1-tau)`,
+- **Retuning alone** is exhausted: the layout and layer margins both sit at `epsilon (1-tau)`,
   and the exposure margin `(1-epsilon)(1-tau)` falls as `epsilon` rises.
 - **Near-one dimensions** reach about `1-tau ≈ 2^-18.0`, one bit. That needs `epsilon → 1`, which
   needs M7, M5b and the bulk exposure transfer
@@ -108,7 +109,7 @@ Section numbers are the [original manuscript](plan/D-sharper-bound.md)'s printed
 | §3 Finite networks | 🟡 | Bit saving `1-tau = 3.73e-6` (PR97, rank-one children) caps every margin. Complex: T16 at `log_73 (F/NW) < 999/1000`, in the proof. | Variable-rank bit children: PR97 corner runs, then #104's opposite-bank compiler (M6). |
 | §4 Address interchange | 🟡 | Field moves inherit `tau`; the CRT uses linear direct routing. | Arbitrary-source coordinate routing (M5b). |
 | §5 Butterfly layers; Appendix A | 🟡 | The T16 node takes the layer margin off the critical path. | Stopped recursion, precision and recursive stock (M3, M4). |
-| **§6 Synthetic transforms/layout** | 🟡 | **The layout margin `epsilon c (1-tau)` binds.** The balanced prefix (M5a) is done. | M5b lifts the layout margin to `1-tau`. |
+| **§6 Synthetic transforms/layout** | 🟡 | **The layout margin `epsilon (1-tau)` and the layer margin `epsilon (1-lambda')` bind together.** The balanced prefix (M5a) and full-width chunks are done. | M5b with `epsilon → 1` lifts the layout margin to `1-tau`. |
 | §7 Exact polynomial products | ✅ | Packing widths must stay within budget. Not binding. | Revalidate under new widths. |
 | §8 Resampling | 🟡 | The Gaussian margin keeps `epsilon < 1/2`. | The rest of M7: tape costs and bulk core/halo execution. |
 | §9 Exact multiplication/cost | 🟡 | The exposure margin `(1-epsilon)(1-tau)`. The moduli are short-interval primes, so they no longer bound `epsilon`. | Bulk exposure transfer; the M8 bootstrap. |

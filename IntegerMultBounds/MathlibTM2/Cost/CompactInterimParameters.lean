@@ -11,42 +11,34 @@ noncomputable section
 
 /-- Preserve the actual dimension exponent. -/
 def epsilon : ℝ := 31 / (2^6:ℝ)
-/-- Larger chunks become possible after removing the old chunk-width power. -/
-def spacing : ℝ := 7/(2^3:ℝ)
 /-- The layer exponent of the T16 node: above `τ` and above `log_m (F / NW) < 999/1000`
 (`Cost.br_branching_999`). -/
-def lam : ℝ := 1-35/(10^7:ℝ)
+def lam : ℝ := 1-3734/(10^9:ℝ)
 /-- Absorb the full-depth compact recurrence and all polylogarithmic factors. -/
-def lam' : ℝ := 1-33/(10^7:ℝ)
+def lam' : ℝ := 1-3733/(10^9:ℝ)
 /-- Dyadic allowance for the unchanged quasi-linear multiplier. -/
 def delta : ℝ := (2^7:ℝ)⁻¹
-/-- The public saving: the layout margin `ε s (1-τ)` rounded down to `2^-46`, about `2^-19.27`. -/
-def kappa : ℝ := 111364923/(2^46:ℝ)
+/-- The public saving: the layer margin `ε (1-λ')` rounded down to `2^-46`, about `2^-19.08`. -/
+def kappa : ℝ := 127238784/(2^46:ℝ)
 
 /-- The compact recurrence and reserved axes fit strictly below the target
 layer exponent; this does not assert the old full-width recurrence condition. -/
 theorem compact_slacks :
-    0 < epsilon ∧ 0 < spacing ∧ spacing < 1 ∧
-      Parameters.tau < lam ∧ 999/1000 < lam ∧
-      lam < lam' ∧ 1-spacing < lam' ∧ lam' < 1 := by
-  norm_num [epsilon,spacing,lam,lam',Parameters.tau]
+    0 < epsilon ∧ Parameters.tau < lam ∧ 999/1000 < lam ∧ lam < lam' ∧ lam' < 1 := by
+  norm_num [epsilon,lam,lam',Parameters.tau]
 
-/-- Exact candidate margins for layout, compact layers, direct rounds, CRT,
-and the resampling stage with the logarithmic band width `α ≤ 4 b^{ε/2^33}`. -/
+/-- Exact candidate margins for layout with the half-dimension chunk, compact layers, direct
+rounds with the legacy `2^-32` chunk, CRT, and the resampling stage with the logarithmic band
+width `α ≤ 4 b^{ε/2^33}`. -/
 def margin : Fin 5 → ℝ := ![
-  epsilon*spacing*(1-Parameters.tau),
+  epsilon*(1-Parameters.tau),
   epsilon*(1-lam'),
-  epsilon*(1-spacing),
+  epsilon*(1-(2^32:ℝ)⁻¹),
   (1-epsilon)*(1-Parameters.tau),
   1/2-delta-epsilon*(1+(2^33:ℝ)⁻¹)]
 
 theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
-  fin_cases i <;> norm_num [margin,kappa,epsilon,spacing,lam',delta,Parameters.tau]
-
-/-- The obsolete full-width internal inequality fails for these chunks. All
-uses of that estimate on the compact branch must be replaced. -/
-theorem old_internal_exceeds_one : 1 < Parameters.tau*(1+2*spacing) := by
-  norm_num [Parameters.tau,spacing]
+  fin_cases i <;> norm_num [margin,kappa,epsilon,lam',delta,Parameters.tau]
 
 end
 end IntegerMultBounds.MathlibTM2.Cost.CompactInterim

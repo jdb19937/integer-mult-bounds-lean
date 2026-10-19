@@ -16,15 +16,13 @@ The fixed-machine theorem still needs an actual execution-cost match to this env
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Cost.CompactTotal
 open IntegerMultBounds IntegerMultBounds.MathlibTM2 Filter Asymptotics
-open IntegerMultBounds.MathlibTM2.Mult.Sizes hiding K cParam
+open IntegerMultBounds.MathlibTM2.Mult.Sizes hiding K
 noncomputable section
 
 theorem regime (C : ℕ) : ∀ᶠ n in atTop,
-    Big n ∧ 1≤K n ∧ Real.logb 2 (p n)≤K n ∧ (b n:ℝ)^C≤n ∧ 8≤n := by
+    Big n ∧ 1≤K n ∧ Real.logb 2 (p n)≤Mult.Sizes.K n ∧ (b n:ℝ)^C≤n ∧ 8≤n := by
   filter_upwards [tot_eventually C] with n ⟨h,hK,hlog,hbC,hn⟩
-  have hk := Mult.CompactSizes.old_K_le_K n
-  refine ⟨h,hK.trans hk,?_,hbC,hn⟩
-  exact hlog.trans (by exact_mod_cast hk)
+  exact ⟨h,hK.trans (Mult.CompactSizes.old_K_le_K n),hlog,hbC,hn⟩
 
 /-- The full stage envelope with direct CRT routing in both directions. -/
 noncomputable def bound (C n : ℕ) : ℝ :=
