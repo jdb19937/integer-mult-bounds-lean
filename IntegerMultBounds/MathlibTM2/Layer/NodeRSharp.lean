@@ -218,7 +218,8 @@ lemma sqrt_mul_l2_subbank_diag {Y V W : Type} [Fintype Y] [Fintype V] [Fintype W
     rw [Real.sq_sqrt (Finset.sum_nonneg fun _ _ => by positivity)]
     rw [Fintype.sum_prod_type, Fintype.sum_prod_type, Finset.sum_comm]
     refine Finset.sum_congr rfl fun v _ => ?_
-    rw [Fintype.sum_prod_type, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => by positivity)]
+    rw [Fintype.sum_prod_type, Real.sq_sqrt (Finset.sum_nonneg fun _ _ =>
+      Finset.sum_nonneg fun _ _ => pow_nonneg (norm_nonneg _) 2)]
   rw [h1, Finset.mul_sum]
   calc ∑ v, 2 ^ k * l2 (fun q : Y × (Fin n → ZMod 2) => D (τ v) (q, fun i => q.2 (e i))) ^ 2
       = ∑ v, l2 (D (τ v)) ^ 2 := Finset.sum_congr rfl fun v _ => by

@@ -5,7 +5,6 @@ public import IntegerMultBounds.Networks.RationalScalarGrid
 public import IntegerMultBounds.Networks.GaussianFrameGrid
 public import IntegerMultBounds.Networks.GaussianBoundedMotif
 public import IntegerMultBounds.Networks.ComplexFramedExecution
-public import IntegerMultBounds.Machine.ActivePrefixStageParameters
 
 /-! Exact scalar-prefix grids for the actual labeled complex25 grouped
 network. Prefix states retain their true role frames; the frame's own grid

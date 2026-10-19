@@ -36,7 +36,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   and separator. Decoding also simulates arbitrary larger-alphabet tapes.
   That weaker observation does not itself preserve foreign marker symbols;
   their preservation requires a separate locality invariant.
-- `Machine/Protected.lean`: exact alphabet simulation on a proof-side region
   of each tape, with arbitrary larger-alphabet cells retained literally outside
   that region. Head-trajectory hypotheses establish preservation of foreign
   markers and exact runtime; halting also requires the final read in-region.
@@ -124,7 +123,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   target stride and one control bit. The gathered word is exact and the cost
   is `n(2(sx + st) + 7)`. `ExactFrame` gained step-right and write-zero moves
   and the generic unrolling combinator `iterate` with its chain contract.
-- `Machine/PackedLine.lean`: one line of packed address arithmetic on five
   tapes, source, control, offset scratch, accumulator and target: gather the
   packed offset, rewind source, control and offset, combine accumulator and
   offset by a column transducer into the target, erase the offset and rewind
@@ -134,30 +132,25 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   subtraction instance with its integer-residue value; `ExactFrame` a rewind
   from inside a longer word; `Gather` accepts a source longer than the
   scanned strides.
-- `Machine/PackedArith.lean`: the forward packed program of the
   compact-control address arithmetic on nine tapes for digit widths `q` and
   `b` with `b + 1 ≤ q`: the four packed updates of `packedEarly` in the
   radices `2^q` and `2^b` as five gather-and-transduce lines, with exact
   list-level word semantics, the input words and control preserved, the
   offset scratch blank again, intermediate and final words on their own tapes
   and every head at its origin; linear cost.
-- `Machine/GuardTest.lean`: comparing a fixed number of cells of a word with
   a constant word, the order kept in a single cell updated column by column
   (the `BinaryCompare` order semantics), and a flag cell writing whether the
   order is "smaller" or "larger" onto a flag word and erasing the order cell.
-- `Machine/GuardGadget.lean`: the guard test on seven tapes: for each block
   of the first word its upper bits are compared with two constants, for each
   block of the second word the block with a third, each comparison appending
   one flag bit; unrolled finite control, exact flag word, words and constants
   preserved, linear cost.
-- `Machine/AnyFlag.lean`: a two-tape scan over a flag word writing whether
   any flag is set at the key head, which advances; the flag word is preserved
   with its head on its blank end.
 - `Machine/PlacementBank.lean`: reading a replaced bank cell by cell: at an
   active slot the replacement appears, elsewhere the original bank is
   unchanged; an exact contract placed by an injective slot map yields an exact
   whole-bank contract once the banks are compared index by index.
-- `Machine/KeyRoutine.lean`: the repair key routine on seventeen tapes for
   the compact-control instance in the radices `2^q`, `2^b`: copy the rank's
   bits from the counter into the two address words, run the guard test and
   write the membership flag at the key's origin, run the inverse packed
@@ -239,7 +232,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   magnitude at most `2^p`, width at least `p + 2`, and the accumulator width
   exceeds `p + log₂(2m+1) + 1` (`abs_tdiv_pow_le`, `abs_sum_le`).
 
-- `Machine/PackedInverse.lean`: the inverse packed program on nine tapes:
   the four packed updates undone in reverse order with negated offsets as
   five gather-and-transduce lines, with exact list-level word semantics, the
   input words and control preserved, the offset scratch blank again and the
@@ -273,16 +265,13 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   sorting is supplied separately by `TapeRadixSort`; the list traversal volume
   is not itself claimed as the machine runtime.
 
-- `Machine/PartitionMarked.lean`: a five-symbol version of the literal
   partition retains a left sentinel on each tape. A proved nondecreasing-head
   invariant supplies the alphabet simulation's footprint. Exact complete-tape
   contracts and a distance-plus-one rewind theorem support stream composition.
-- `Machine/Concatenate.lean`: a three-tape, two-state program copies two
   blank-terminated source words consecutively to a destination, preserving both
   sources. Exact runtime is their combined length plus one phase-switch step;
   the complete output and untouched background are specified. Source positioning
   is a precondition; this routine does not perform its callers' rewinds.
-- `Machine/StripPrefix.lean`: a fixed three-tape, four-state routine removes
   a unary-counted key prefix from every raw record: it rewinds the width tape
   from wherever the sorter left it, then per record advances over the prefix
   in lockstep with the width tape, rewinds it, and copies the remainder. Source
@@ -291,26 +280,22 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/ReturnOrigin.lean`: a one-tape, three-state routine returns a head
   from the end of a blank-backed nonblank word to its origin in the word
   length plus two transitions, retaining the tape.
-- `Machine/RepairStage.lean`: one fixed eleven-tape machine sequences the
   radix sorter, the prefix stripper, the head return, and the alphabet-widened
   reinserter. Keyed records (key bits then the flagged record) are sorted by
   key, stripped, and reinserted into the flagged full stream; the exact-run
   contract lists every tape and head, and the cost is at most `74k + 4`
   extracted volumes plus one full-stream volume plus `k + 7`. Radix sorting
   commutes with key-preserving record maps.
-- `Machine/FlagCopy.lean`: a four-tape, six-state routine rewrites one
   record's flag from a key tape and, when the flag is set, moves the key's
   destination bits to the extracted stream and copies the record behind them
   in the raw keyed format, erasing the key tape back to its marked blank
   state. Exact cost: the record length, plus twice the key width plus three
   when flagged.
-- `Machine/MarkedReturn.lean`: a one-tape, three-state routine returns a head
   from the end of a word to its origin over either a blank or a marked
   background in the word length plus two transitions.
 - `Machine/LoopChain.lean`: a while loop whose iterations form a chain of
   exact-tape contracts runs from the first bank to the last within the sum of
   the iteration bounds plus two control transitions each.
-- `Machine/RepairScan.lean`: the flagging and extraction scan of the
   exceptional-address repair on the fourteen-slot repair bank. A binary rank
   counter drives a loop whose body runs a key routine (a program parameter
   with a per-rank contract: read the counter, write the flag and destination
@@ -327,7 +312,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   repair. Computing those replacements and sorting them into destination order
   still require separate machine proofs.
 
-- `Machine/PartitionPass.lean`: a fixed four-tape, nine-state, five-symbol
   leading-bit stable pass, composing partition, both bucket resets, and
   concatenation. Its exact runtime is three times encoded input length plus
   eight, including every head movement and phase join. Complete output is
@@ -335,7 +319,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   and empty work/output tapes; setup, repeated key selection, and full sorting
   remain open.
 
-- `Machine/KeySelectData.lean` and `Machine/KeySelect.lean`: one fixed
   three-tape, four-state machine scans a supplied unary key index, physically
   selects that bit from each record, rewinds, and emits a leading flag followed
   by all original bits. Source and selector are preserved. Exact runtime is
@@ -343,26 +326,22 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   volume for valid positions. Output is proved to match the partition format;
   repeated-pass control, flag removal, and buffer reuse remain to be composed.
 
-- `Machine/DropFlag.lean`: a fixed two-tape, two-state routine removes the
   leading flag of arbitrary records in exactly their flagged encoded length.
   Optional source erasure restores a completely empty marked buffer while
   preserving its sentinel; output, untouched cells, endpoint heads, and halting
   are proved. Selection followed by flag removal restores the original records.
 
-- `Machine/KeyPartition.lean`: one fixed six-tape, fifteen-state program
   composes physical key selection, a flagged-stream rewind, and the complete
   partition pass. Output encodes the stable pass of the original records at
   any valid key index; original input and selector survive. Exact runtime
   includes every join and is at most eleven input volumes plus twelve.
   Output still carries flags; repeated-pass buffer reuse remains separate.
 
-- `Machine/KeyPass.lean`: a fixed seven-tape, twenty-one-state stable pass
   returns raw records after key selection, partition, and destructive flag
   removal. It resets the emptied sorted-flag buffer and tracks all other
   tape contents and heads. Exact runtime is bounded by seventeen raw volumes
   plus nineteen. Remaining old input/flag/bucket buffers need cleanup for reuse.
 
-- `Machine/Erase.lean` and `Machine/KeyPassReuse.lean`: backwards cleanup
   preserves the sentinel and restores a marked blank stream in its length plus
   two transitions. A fixed seven-tape, thirty-six-state pass clears every old
   buffer and physically moves the sorted raw output back to the original input
@@ -370,7 +349,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   survives; total time is at most twenty-six raw volumes plus forty-one.
   The repeated-pass selector controller remains separate.
 
-- `Machine/UnarySelector.lean` and `Machine/TapeRadixSort.lean`: one fixed
   eight-tape, forty-state program performs the entire stable least-significant-
   bit radix sort, physically advancing and rewinding its unary selector and
   testing the width cursor. All work buffers return empty. Exact execution
@@ -1456,149 +1434,83 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryInterchangeBudget.lean`: Proves one positive uniform coefficient bounds the actual comparison, dispatch and selected concrete branch runtime by original rectangular volume times max-one maximum width to the certified exponent 1−296/10^11.
 
-- `Machine/CountedGatherField.lean`: A fixed five-tape eighteen-state machine copies and applies a Boolean operation to a runtime-counted field while holding the control head fixed. Exact whole-word and interior-field semantics retain source/control and arbitrary target exterior, restore both binary controls and pay linear field time, including zero.
-
-- `Machine/CountedGatherPadding.lean`: Fixed five-tape eighteen-state machines seek either direction or write an exact runtime-counted run of false symbols, preserving all spectators and arbitrary exterior. Immutable descriptors and reusable clocks are restored; zero counts and canonical linear bounds are proved.
-
-- `Machine/CountedGatherDigit.lean`: Composes runtime-counted source prefix/suffix seeks, target zero prefix/suffix writes, mapped field copying and one control-head step in one fixed nine-tape ninety-two-state machine. Exact digitWord output preserves source/control and target exterior, restores all five immutable descriptors and the clock, and costs at most fourteen times both strides plus121 for canonical counts.
-
-- `Machine/CountedGatherRun.lean`: A fixed eleven-tape108-state machine loops the concrete gather digit using an independent runtime digit-count descriptor. Proves the exact whole gathered word with arbitrary exterior and all eight controls restored, including zero counts/strides. Paid canonical runtime is at most134 times digit count times source stride plus target stride plus one, plus23. Shape metadata construction and packed arithmetic composition remain separate.
-
-- `Machine/CountedGatherMetadata.lean`: A fixed ten-tape machine executes four immutable descriptor subtractions from six original gather controls to construct both suffix lengths. Original and derived literal cells, canonical values and the five digit-header sources are identified; complete derived-header erasure and linear setup/cleanup costs include zero dimensions. Sharing this bank with the gather and initializing its clocks remain separate.
-
-- `Machine/CountedPackedLine.lean`: A uniform thirteen-tape line executes the actual runtime-counted gather, physical source/control/offset rewinds, modular column transduction, offset erasure and accumulator/result rewinds. Exact result semantics retain all inputs and controls, restore every payload head, and have canonical runtime at most140 times total digit stride plus three accumulator lengths plus42, including zero cases. Shape metadata and complete multi-line packed-control execution remain separate.
-
-- `Machine/CountedGatherClockPair.lean`: Physically writes two independent marked-zero clocks from blank storage in one transition and erases both in two transitions. Exact native and arbitrary-caller placement contracts preserve every spectator; no prepared marker or input initialization is assumed.
-
-- `Machine/CountedPackedShapeHeaders.lean`: Constructs the six original gather headers for each of the three static packed-line shapes from caller-owned canonical q/b/n alone. Physically writes and erases temporary zero/one, copies all six headers, preserves the caller and erases all eight private tapes on cleanup; setup and cleanup are linear in q+b+n+1. No derived-header input is supplied.
-
-- `Machine/CountedGatherOriginalRun.lean`: One actual fixed gather constructs four suffix headers and two independent clocks from blank storage, executes the complete runtime-driven gather through caller-owned payload and original six headers, then physically erases every private tape. Exact gathered output, retained source/control and originals, arbitrary target exterior and a uniform169-times-full-stride bound include zero dimensions/counts; no prepared metadata or branch callbacks are supplied.
-
-- `Machine/CountedPackedOriginalLine.lean`: One fixed seventeen-tape modular line constructs and erases all gather suffixes and both clocks from blank workspace, performs exact gathered column arithmetic, erases offset scratch and restores every payload head. Only the six original canonical gather headers remain inputs; they are retained, all six private tapes return blank, and the total uniform full-stride bound includes zero cases. Runtime q/b/n shape construction and multi-line composition are separate.
-
-- `Machine/CountedPackedRuntimeLine.lean`: One fixed twenty-two-tape line constructs shape headers from only original q/b/n, executes the original-header gathered modular arithmetic and erases all fourteen private tapes. Exact result semantics retain source/control/accumulator and original q/b/n, restore every payload head and offset scratch, and have uniform530-times-full-stride plus three accumulator lengths, including zero digits. The static shape kind and Boolean/rule operations are compile-time choices; no runtime dimensions appear in the program.
-
-- `Machine/CountedPackedArith.lean`: Fixed twenty-six-tape forward packed arithmetic composes five runtime-driven modular lines from original q/b/n and blank metadata storage. Exact packedEarly values, restored original descriptors and all fourteen private metadata tapes blank are proved, with uniform2669-times-full-stride cost. Intermediate payload words remain; reusable copy-back and payload erasure are separate.
-
-- `Machine/CountedPackedInverse.lean`: Fixed twenty-six-tape inverse packed arithmetic composes five runtime-driven lines, proves a true packedEarly preimage and restores original q/b/n and fourteen private metadata tapes with the same uniform stride bound. Intermediate payload words remain; physical permutation and reusable payload cleanup are separate.
-
-- `Machine/EqualWordReplace.lean`: One fixed two-tape seven-state machine copies an equal-width word over an existing target, rewinds both heads and preserves arbitrary exteriors. A literal overwrite lemma justifies replacing every target cell without a preliminary erasure; total cost is at most three lengths plus six, including empty words.
-
-- `Machine/WordBankCleanup.lean`: Generic fixed-slot word replacement and physical scan/erase act on a selected caller bank, preserving the full complementary frame. The target and source heads return to their original positions; exact contracts charge all transitions and handle zero widths.
-
-- `Machine/CountedPackedRecycle.lean`: One fixed nine-tape seven-stage cleanup copies both new packed outputs into the original target and temporary tapes, then physically erases five intermediate payload words. Exact restored heads and a uniform affine word-length bound work for forward and inverse layouts, including unguarded addresses.
-
-- `Machine/CountedPackedReusable.lean`: Complete fixed forward and inverse packed arithmetic reads original q/b/n, copies both output words back into the original payload slots and physically erases every generated payload and metadata tape. Exact word endpoints retain all source/control exteriors and original descriptors, restore every head and have uniform2720-times-full-stride cost, including zero digits. Physical payload permutation and late-control load/unload remain separate.
-
-- `Machine/CountedPackedGuarded.lean`: Proves literal word equality for the fixed runtime-driven packed early gadget on good input blocks: only selected low target bits toggle, and every temporary bit is restored. Connects actual block/control words to the packed integer correctness theorem, then lifts this to the reusable physical gadget with all intermediate payload and metadata tapes blank, heads restored and uniform2720-times-full-stride cost. The physical payload permutation remains separate.
-
-- `Machine/BinaryPackedFieldSwap.lean`: Actual runtime-header binary field interchange retains complete payload records, arbitrary prefix/intervening/suffix fields and dirty back coordinates. Two real calls restore the entire caller payload and every private tape, charging both executions and the join; the uniform certified width exponent is retained. A data conjugation lemma identifies front actions by swap/back-action/swap. The physical packed-controlled back action and row reservation wiring remain separate.
-
-- `Machine/BinaryOffsetStreamRead.lean`: Fixed ten-state reader physically clears the previous marked offset, copies the next literal blank-delimited bit word, restores the offset head and advances the control head across its delimiter. The complete control tape is retained; exact cost is two previous lengths plus two next lengths plus eleven, including empty words.
-
-- `Machine/StreamedFiberTranslation.lean`: Fixed fifteen-tape243-state machine consumes one actual canonical offset word per prefix fiber, synthesizes split descriptors and physically rotates that fiber, retaining the entire control tape. Runtime is at most481 times payload volume plus23. Recurring metadata markers remain explicit inputs, final offset and advanced heads explicit outputs; initialization and normalization are separate.
-
-- `Machine/StreamedFiberTranslationArray.lean`: Connects the actual streamed-offset machine to literal finite arrays: each prefix/back/suffix entry reaches back address plus its physically read offset modulo Q. Exact source/control preservation, destination tape and advanced heads are proved, including empty prefix families. No payload permutation or preparation callback is assumed.
-
-- `Machine/StreamedFiberTranslationAlphabet.lean`: Lifts the real fixed streamed-offset rotation to any larger finite alphabet with unchanged runtime, literal encoded array source, exact bit destinations, retained original Q/B/n headers and full control stream. The first four symbols preserve their actual blank/bit/separator identities, enabling placement with the binary interchange alphabet. Recurring markers and retained final offset remain explicit; initialization and normalization are separate.
-
-- `Machine/CountedPackedParityHeaders.lean`: Constructs gather headers [b,0,1,1,0,n] from only original canonical b/n on physical tapes, with paid zero/one initialization, exact source preservation and cleanup of all private header storage. Width one is supported without a stronger artificial width restriction.
-
-- `Machine/CountedPackedParityRun.lean`: One fixed nineteen-tape program extracts the lowest bit of every dirty b-bit source block into an n-bit control word, clocked by a literal dummy control word and original b/n headers. Source/control and original descriptors are retained, every head restored and fourteen private tapes returned wholly blank, with bound330 times full stride. Includes b=1 and n=0; later-source load/unload remains separate.
-
-- `Machine/StreamedFiberTranslationInitialized.lean`: Complete fixed fifteen-tape streamed rotation lifecycle reads only original B/Q/n headers and a literal offset stream, physically initializes recurring markers, executes every payload fiber rotation and erases the last offset and all private markers. All nine private slots return wholly blank at head zero; source/control and original headers are retained. Actual payload/control heads advance explicitly; total cost is at most483 times payload volume plus35, including empty streams.
-
-- `Machine/CountedPackedParityValue.lean`: Proves physically extracted low block bits equal the parities of the power-of-two radix digits, then connects the actual clean parity-extraction run to the later-source packed integer specification with its exact uniform stride bound. No control word is supplied by an arithmetic oracle; full late-gadget composition remains separate.
-
-- `Machine/CountedPackedControlLoadHeaders.lean`: Physically constructs the six original gather headers [1,0,1,b,0,n] from retained canonical b/n, including paid zero/one setup and full private header cleanup. Width one and zero counts are supported.
-
-- `Machine/CountedPackedControlLoadLine.lean`: A fixed twenty-one-tape gathered modular line constructs and erases all shape headers, suffixes and clocks from only original b/n. It realizes a static add/subtract rule and leaves only exact result payload words; runtime dimensions do not occur in finite control.
-
-- `Machine/CountedPackedControlLoadRun.lean`: Complete reusable fixed dirty-control load/unload physically copies the one-bit control source, applies gathered modular arithmetic, copies the result over the original dirty word and erases every scratch payload and metadata tape. X and original b/n are retained with all heads restored and seventeen private tapes blank; bound380 times full stride includes b=1 and n=0.
-
-- `Machine/CountedPackedControlLoadValue.lean`: The actual load/unload output words have value U plus/minus the packed control-bit integers modulo the full power-of-two word radix. Their widths equal the original dirty word, with no stronger width restriction or supplied arithmetic offset oracle.
-
-- `Machine/PackedOffsetStreamEmit.lean`: Fixed six-state emission physically copies canonical bits into the control stream, writes and crosses a blank delimiter, and erases the marked source scratch. Literal output and full scratch cleanup include canonical zero.
-
-- `Machine/PackedOffsetStreamBlock.lean`: Fixed thirty-state runtime-width body copies one raw binary block, physically trims high zeros and emits its canonical little-endian representation plus a delimiter. Source is retained, scratch returns wholly blank and the width descriptor/clock are preserved.
-
-- `Machine/PackedOffsetStream.lean`: Fixed seven-tape51-state machine initializes both private clocks, processes all runtime-counted packed blocks and erases every clock/scratch tape. Literal emitted stream contains the canonical block values, source and original width/count headers survive, private three tapes return blank/head zero and total cost is at most66 times n times w-plus-one plus28, including zero width/count.
-
-- `Machine/PackedOffsetStreamRaw.lean`: Connects the actual stream builder to a raw n*w-bit input word: emitted canonical values are precisely its radix-two-power digits, each below2^w, in their literal order. Source and descriptors are retained, output length is at most n*(w+1), all private tapes blank and physical advanced heads explicit. No canonical offset stream is assumed as input.
 
 
 
-- `Machine/StreamedFiberTranslationReusable.lean`: Complete fixed streamed binary payload rotation physically initializes private metadata, rotates every fiber, rewinds source/output, copies equal-width rotated output back over the original source and erases the temporary output. Source exterior/head, original B/Q/n and all private tapes are restored; control symbols retained with its head explicitly at stream end. Uniform500-volume-plus70 cost includes empty arrays. Control-head normalization and full packed-offset/interchange assembly remain separate.
-
-- `Machine/MarkedControlStreamReset.lean`: Fixed one-tape machines rewind and erase a separator-marked control stream even when it contains internal blank delimiters. Exact costs retain every stream cell during rewind and erase the complete stream during reset, with the final head at zero.
-
-- `Machine/PackedOffsetPayload.lean`: One fixed seventeen-tape machine synthesizes canonical controls from a literal packed bit word, rotates each payload fiber in place, erases the generated stream and restores both original heads. Original B/Q/n/w descriptors and tape exteriors survive, all private tapes return blank and cost is at most600 times payload volume plus150.
-
-- `Machine/PackedOffsetPayloadValue.lean`: Identifies each physical fiber rotation offset with the actual integer value of its corresponding fixed-width packed source field, connecting the tape endpoint to the original packed bits rather than a supplied offset stream.
-
-- `Machine/PackedOffsetPowerHeader.lean`: A fixed placed power-descriptor machine synthesizes the canonical Q=2^w header from the original width descriptor. All six other active scratch slots are restored, the complementary frame is retained and actual cleanup erases Q. Synthesis and cleanup have separate bounds proportional to Q, including empty payloads.
-
-- `Machine/PackedOffsetPayloadOriginal.lean`: One fixed seventeen-tape machine generates Q=2^w from the original width, synthesizes offsets from the packed source, rotates full payload records and erases both the control stream and Q. Only original B/n/w and bit words are inputs; every private tape and both source heads are restored. Cost explicitly includes Q for zero fibers and is linear in payload volume when n is positive.
 
 
-- `Machine/PackedOffsetPayloadArray.lean`: Returns the physically rotated payload as a canonical Bool array and proves exact per-address packed-offset destination semantics. This supplies a literal array handoff for subsequent binary interchanges without a free copy or permutation.
 
-- `Machine/PackedOffsetPayloadAlphabet.lean`: Lifts the original-header packed-offset rotation to any larger fixed alphabet with exact literal payload array, original head retention, complete private cleanup and unchanged charged runtime.
 
-- `Machine/PackedOffsetPayloadPlaced.lean`: Shares caller payload, packed source and B/n/w descriptors directly through static injective wiring. Twelve private tapes start and return wholly blank; all caller spectators and heads are retained, with an exact canonical-array endpoint and paid power-synthesis cost.
 
-- `Machine/BinaryRepeatedOffsetAction.lean`: identifies the physically generated repeated parity, selected, correction and negative parity-XOR offset words with the actual swap/rotate/swap permutation. Proves exact packed parity, selected two-times-control-times-digit, and signed correction offsets and destination entries, retaining the dirty back coordinate and every suffix bit. Physical producer/action sequencing remains separate.
-- `Machine/BinaryPackedOffsetData.lean`: Exact swap/packed-back-rotation/swap array semantics. The front field reaches its modular offset destination, indexed by the original dirty back coordinate; that back coordinate and every suffix bit are retained literally.
 
-- `Machine/BinaryPackedOffsetRun.lean`: One fixed shared-caller machine executes two actual binary field interchanges around the placed original-header packed-offset rotation. Both private banks are blank on return, caller headers and packed source are retained, and every call and sequencing transition is charged. Complete packed-arithmetic and reservation assembly remains separate.
 
-- `Machine/BinaryPackedOffsetBudget.lean`: The actual complete swap/rotate/swap cost retains the certified interchange width exponent. Power-header generation, payload rotation, physical erasure and both sequencing transitions are absorbed into full nonempty payload volume; no call cost is omitted.
 
-- `Machine/CompactRowHeaders.lean`: Physically constructs the six row-split headers from original canonical total-row/role-count/record-width descriptors, retains originals, erases temporary zero/one writers and cleans every generated descriptor with charged bounds.
 
-- `Machine/CompactRowSplit.lean`: A fixed-role-count machine composes actual runtime-header construction, destructive complete-row splitting and generated-header cleanup. The source is erased, full role words installed, original descriptors retained and all private storage blank.
 
-- `Machine/CompactRowArray.lean`: Connects actual row splitting to Compact.Layout.splitRows on literal finite arrays. Every suffix cell, including dirty temporary fields, is preserved. Positive rows/width and static positive role count are explicit; runtime and full cleanup are linear in total payload volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 - `Machine/CompactRowPaddingRound.lean`: Physically writes the static role count, derives the least enclosing row multiple from original runtime row count/width, erases role-count arithmetic scratch and returns the exact Compact.Layout.paddedRows descriptor. Every positive row/role case is included.
 
-- `Machine/CompactRowPaddingRun.lean`: A fixed twenty-five-tape machine rounds original row count, constructs all span descriptors, pads complete binary records and physically erases all twenty-one private tapes. Original headers/heads and tape exteriors survive. Bound4600 times padded volume,9200 times original volume when roles≤rows, and a fixed-role bound handle all positive rows. Padding-to-role-split composition remains separate.
 
-- `Machine/BinaryAddressTableData.lean`: Defines the literal little-endian fixed-width address rows, proves every row has its stated rank and width, and proves enumeration wraps exactly to zeros after2^w rows, including width zero.
 
-- `Machine/BinaryAddressTableStep.lean`: A fixed physical body copies one address row, restores its source head and increments the counter. Exact next-row and wrap semantics have cost at most4 times width plus7.
 
-- `Machine/BinaryAddressTableFill.lean`: Physically initializes the fixed-width zero counter from the original width descriptor and blank storage, with exact literal cells and restored descriptor; no prepared address table is supplied.
 
-- `Machine/BinaryAddressTable.lean`: A fixed nine-tape machine generates the entire regular address table from the sole original canonical width, physically synthesizes its2^w loop bound, executes every copy/rewind/increment, returns output head zero and erases all seven private tapes. Cost is proportional to(w+1)*2^w; payload-volume absorption requires record width at least w+1. Selected/parity gather composition remains open.
 
 
-- `Machine/BinaryPackedRowCount.lean`: A fixed thirteen-tape machine physically derives the fiber count P*2^w*G from original P/G/B/w headers through one power and two products. Original headers are retained, intermediate Q/PQ and all scratch are erased, and only the canonical derived count survives, including width zero.
 
-- `Machine/BinaryPackedRowCountPlaced.lean`: Shares four static injective original-header slots with a caller bank and nine blank private tapes. The generated count occupies the first private slot, every other private tape returns blank, and the complete complementary frame is retained. Actual count erasure restores the original caller and all private tapes.
 
-- `Machine/BinaryPackedRowCountBudget.lean`: The actual original-header count preparation has bound(constant2+110)*fiberCount+75 for positive P/G. Retained count erasure costs at most2*fiberCount+6; every power/product/setup/join/cleanup is paid. Wiring this producer into the full payload permutation remains separate.
 
 
 
 
 
 
-- `Machine/CompactRowReservationPlacement.lean`: Places complete-row splitting onto the actual padded destination and role outputs with retained physical rounded/role/width headers. Original row count and the complete padding workspace are framed.
 
-- `Machine/CompactRowReservationData.lean`: Literal padded role-array specification, with exact source/role/suffix coordinates. Original rows retain every payload bit and dirty suffix field; added whole rows are zero.
 
-- `Machine/CompactRowReservationRun.lean`: One fixed-role machine executes original-header rounding and padding, writes static role count, splits the padded complete records, and physically erases all retained role/rounded headers. Exact final original headers, erased source/padding destination, literal role words and clean private banks are proved.
 
-- `Machine/CompactRowReservationBudget.lean`: The complete physical pad/split/erase path costs a static-role constant times original row count and record width for all positive cases, including fewer input rows than roles. The usual roles≤rows range has the sharper twice-original-volume bound.
 
-- `Machine/CompactRowReservationEndpoint.lean`: Explicit whole-bank endpoint for the original-descriptor binary reservation path: original row/width headers and heads retained, complete padded role words installed, original source/padding destination and every private tape blank at head zero. Reserved compact-gadget slot/capacity instantiation remains separate.
 
-- `Machine/BinaryPackedOffsetOriginalRun.lean`: One fixed original-header wrapper computes P*2^w*G from the four original interchange headers, executes the actual swap/rotate/swap on the supplied literal packed-offset word and canonical payload, physically erases the generated count and restores every private bank. Exact result and all preparation/action/cleanup/sequencing costs are proved; implicit-address offset production and packed arithmetic assembly remain separate.
 
-- `Machine/BinaryPackedOffsetOriginalBudget.lean`: The complete original-header count/action/erasure path preserves the certified interchange exponent. Actual count preparation and cleanup are absorbed into nonempty payload volume; no derived count word or free preparation is assumed.
 
 
 
@@ -1608,53 +1520,29 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/CountedIdealToggle.lean`: Fixed twenty-two-tape ideal selected-parity toggle from original q/b/n descriptors: actual controls-at gather plus XOR returns exactly the target word exclusive-or the padded control mask, retains all original inputs/heads and erases every generated descriptor, clock and mask. Integer toggle semantics and bound533*(n+1)*(q+b+1) are proved; repair-key placement remains separate.
 
-- `Machine/BinaryAddressOffsetHeaders.lean`: Physically derives q*n,2^(q*n) and n*2^(q*n) descriptors from original canonical q/b/n, retaining originals and clearing arithmetic scratch with charged setup and erasure.
 
-- `Machine/BinaryAddressOffsetData.lean`: Literal regular-address parity offsets with exact n*b-bit row width, low-bit destinations and zero padding for every source address and packed digit.
 
-- `Machine/BinaryAddressOffsetPrepare.lean`: Physically constructs the regular address table and the counted dummy-zero control stream from original headers; every descriptor, initialization and output rewind is paid.
 
-- `Machine/BinaryAddressOffsetGather.lean`: Actual runtime parity gather traverses the generated address table and dummy controls, produces all offsets in rank order and restores original descriptors and private gather metadata.
 
-- `Machine/BinaryAddressOffsetCleanup.lean`: Physically erases the generated regular address table, dummy control and all derived dimension headers, rewinds the retained offset output and restores all private tapes.
 
-- `Machine/BinaryAddressOffset.lean`: Fixed thirty-tape parity-offset producer from sole original q/b/n, including zero digits. Original headers survive, only the literal offset word remains and all other private tapes are blank. BoundK*2^(n*q)*(n+1)*(q+b+1) is absorbed under an explicit record-width allowance; caller placement and repetition across dirty-back/spectator coordinates remain separate.
 
-- `Machine/BinaryAddressOffsetValue.lean`: Connects each literal generated offset row to the packed parity of the source address digits, with exact integer value and target modular range. No prepared offset table is assumed.
 
-- `Machine/CountedRankSplitCopy.lean`: Fixed runtime-counted bit copier reads actual blank-tail cells as zero, writes literal field words and retains source/control storage. No padded source word is assumed.
 
-- `Machine/CountedRankSplitPosition.lean`: Placed physical counted left walks restore source and destination heads while retaining caller tapes and erasing countdown workspace.
 
-- `Machine/CountedRankSplitData.lean`: Exact zero-extended low/middle field words for arbitrarily short rank counters, value splitting and in-range rank reconstruction without a stored-width premise.
 
-- `Machine/CountedRankSplitBank.lean`: Twelve-tape rank-split wiring derives n*q and n*b from original headers, copies both fields, physically rewinds all heads and erases generated dimensions with complete frame lemmas.
 
-- `Machine/CountedRankSplitRun.lean`: One fixed runtime-driven machine produces both literal rank fields from original q/b/n while preserving the original counter and every head, erasing all six scratch tapes. Exact paid budget is bounded by400*(n+1)*(q+b+1).
 
-- `Machine/CountedRankSplitEndpoint.lean`: Direct contract for the actual RepairScan growing counter with no padded/canonical stored-length premise. Both copied fields reconstruct the in-range rank, original counter/headers are retained and all private tapes are physically erased; full repair-key assembly remains separate.
 
-- `Machine/BinaryAddressOffsetRepeatData.lean`: Literal packed-offset expansion order: repeat each row over trailing spectators then repeat the complete expanded table over preceding coordinates, including dirty back fields. Exact lengths and row concatenation are proved; the complete physical expansion is separate.
 
-- `Machine/BinaryAddressOffsetRepeatCopy.lean`: Fixed two-tape actual word copy plus source rewind, preserving the source and advancing only the destination. Exact cumulative repeated words and cost2*length+3 include empty words.
 
-- `Machine/CountedControlWordRepeat.lean`: Fixed four-tape original control-word repetition driven by an immutable runtime count. Physically initializes/cleans its loop clock, copies and rewinds every source word, restores output head and retains source/count. CostN*(3*length+9)+7*descriptorLength+31 is absorbed by54*N*(length+1) for positive canonical counts.
 
-- `Machine/BinarySelectedOffsetPrepare.lean`: Fixed seventeen-tape preparation for the selected mask-shift offset load. From original b/q/n and one original control word, builds the complete regular temporary-address table and its physically repeated controls, retains originals and clears local clocks. Exact table/control words and all setup/copy/return costs are proved; selected gather, value linkage and final table/header erasure remain separate.
 
-- `Machine/BinarySelectedOffsetData.lean`: Literal selected mask-shift offsets over regular temporary addresses with physically repeated original controls. Exact source/control/output widths are proved, including zero digits.
 
-- `Machine/BinarySelectedOffsetGather.lean`: Actual fixed original-header mask-shift gather traverses the generated regular table and repeated controls, retains the original b/q/n and control word, and restores all generated shape/count metadata with charged runtime.
 
-- `Machine/BinarySelectedOffsetCleanup.lean`: Physically erases both generated streams and every derived width/range/count descriptor, rewinds the packed offset output and retains original headers/control. Exact whole-bank endpoint and every cleanup transition are proved.
 
-- `Machine/BinarySelectedOffset.lean`: Fixed thirty-one-tape selected mask-shift offset producer from original b/q/n and one original control word. Builds every table/control/header, executes the actual gather, erases generated inputs and private storage, and returns the exact packed offset word at origin. CostK*2^(n*b)*(n+1)*(q+b+1) includes zero digits; payload absorption requires an explicit record-width allowance. Caller repetition and full packed-gadget assembly remain separate.
 
-- `Machine/BinarySelectedOffsetValue.lean`: Each physically generated selected-offset row is exactly the packed2*z*w load for the first early-source update. Proves original-control alignment, complete literal row equality and integer offset value for every regular temporary address; no repeated controls or offset oracle are supplied.
 
-- `Machine/BinarySelectedOffsetPlaced.lean`: Places the complete selected mask-shift producer on any larger alphabet and five distinct caller ports for b/q/n, original controls and output. Preserves all complementary caller tapes/heads, retains original controls/headers, returns literal packed offsets and restores26 appended private tapes with unchanged certified cost.
 
 
 
@@ -1665,136 +1553,75 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/BinaryAddressOffsetRepeatBlock.lean`: Fixed runtime-width source-block copying, scratch rewinding and repeated block output with exact complete-block preservation and charged controls.
 
-- `Machine/BinaryAddressOffsetRepeatPass.lean`: Actual counted traversal of all base offset rows repeats each row over the trailing spectator dimension, erases block scratch and restores counted workspace.
 
-- `Machine/BinaryAddressOffsetRepeatLoop.lean`: Physically repeats the expanded table over preceding coordinates, paying table rewinds and all outer countdown operations.
 
-- `Machine/BinaryAddressOffsetRepeat.lean`: Complete fixed eleven-tape offset repetition: actual nested loops, block/source erasure, output rewind and all four private marker cleanups. Original width/count descriptors retained; zero block width supported.
 
-- `Machine/BinaryAddressOffsetRepeatBudget.lean`: Full physical repetition budget at most250*K*N*L*(W+1) for positive row/repetition counts, charging every copy, rewind, clock and cleanup.
 
-- `Machine/BinaryAddressOffsetRepeatValue.lean`: Exact expanded row lookup and integer offset values through trailing and preceding repetitions, with no free duplicated table.
 
-- `Machine/BinaryAddressOffsetRepeatAlphabet.lean`: Lifts the initialized repetition machine to any larger alphabet with unchanged runtime and literal output words.
 
-- `Machine/BinaryAddressOffsetRepeatPlaced.lean`: Shares six caller ports and appends five blank private tapes for actual repetition, retaining every complementary caller tape and clearing all private storage.
 
-- `Machine/BinaryAddressOffsetPlaced.lean`: Complete original-header parity-offset producer shares caller q/b/n/output slots, preserves all complementary storage and restores26 appended private tapes.
 
-- `Machine/BinaryAddressOffsetRepeatHeaders.lean`: Physically synthesizes W=n*b,N=2^(n*q),K=P*H*2^(n*b) from original q/b/n/P/H/L, retaining originals and erasing all intermediate arithmetic/power scratch.
 
-- `Machine/BinaryAddressOffsetRepeatConstruct.lean`: Fixed forty-nine-tape repeated parity-offset constructor from only six original canonical headers. Builds/consumes the regular base table, runs all physical repetitions and erases every generated descriptor/work tape; only output and originals remain.
 
-- `Machine/BinaryAddressOffsetRepeatConstructBudget.lean`: All original-header setup, table generation, repetition and erasure costs are absorbed into the full payload volume under the explicit sufficient record-width allowance.
 
-- `Machine/BinaryAddressOffsetRepeatCoordinates.lean`: Exact actual fiber row equation includes prefix, dirty back, preceding/source/trailing spectator coordinates. The repeated offset equals precisely the packed parity of its source coordinate, independent of dirty back and other spectators.
 
 - `Machine/CompactGadgetReservationCapacity.lean`: Exact existing front2H/backH ceiling-chunk capacities, bounded slack and complete dirty-field allocation; no compact field is inserted into the row index.
 
 - `Machine/CompactGadgetReservationShape.lean`: Concrete row/front-temporary/front-control/active/back/payload bit geometry, disjoint reserved slots, bit-count conservation and exact temp/control rectangular factorizations including slack.
 
-- `Machine/CompactGadgetReservationData.lean`: Identifies each actual padded role word with the complete binary rectangle used by compact loads, preserving every unused bit and suffix coordinate.
 
-- `Machine/CompactGadgetReservationRun.lean`: Actual original-header swap/rotation/swap on concrete temporary/back or control/back reserved slots. Exact per-coordinate load semantics preserve prefix, gap, dirty back, slack and payload.
 
-- `Machine/CompactGadgetReservationBudget.lean`: Actual reserved-slot load runtime is bounded by role volume times max(1,n*G)^tau; complete movement costs are charged with no K factor.
 
-- `Machine/CompactGadgetReservationPlacement.lean`: Shares the selected physical role tape with the native reserved-load machine, retains five supplied original shape/offset tapes and frames every other role and row header.
 
-- `Machine/BinarySelectedOffsetRepeatData.lean`: Literal selected-mask-shift row expansion repeats original-control offsets over trailing spectators and preceding prefix/dirty-back coordinates, with exact row counts and widths.
 
-- `Machine/BinarySelectedOffsetRepeatConstruct.lean`: Fixed fifty-tape selected-offset constructor from six original b/q/n/P/H/L descriptors and one original control word. Physically synthesizes W=n*q,N=2^(n*b),K=P*H*2^(n*q), produces all base selected offsets, repeats/consumes them and erases every derived descriptor and private tape.
 
-- `Machine/BinarySelectedOffsetRepeatBudget.lean`: Complete selected repetition cost, including original-control retention and all metadata/table/copy/cleanup costs, is absorbed into full payload volume under the explicit record-width allowance.
 
-- `Machine/BinarySelectedOffsetRepeatCoordinates.lean`: Exact fiber lookup over prefix/dirty-back/source/trailing spectators returns the packed2*z*w offset from the original control and actual temporary source coordinate, independent of dirty back/slack.
 
 
 
 
 
 
-- `Machine/BinaryCorrectionOffsetRow.lean`: Copies exactly one runtime-width row from both operands, invokes the actual subtraction rule with fresh zero borrow, and erases both row scratch words. Exact modular difference and cost15W+14*headerLength+46 are proved; borrows never cross row boundaries.
 
-- `Machine/BinaryCorrectionOffsetLoop.lean`: Fixed nested row traversal executes the physical subtraction independently for each address row, with exact output concatenation, restored row scratch and all counted-loop transitions charged.
 
-- `Machine/BinaryCorrectionOffsetSubtract.lean`: Complete nine-tape per-row subtraction from two literal packed operand tables and original canonical width/count. Physically initializes and clears clocks, erases both full operand tables, rewinds output and restores all private storage; cost at most160*N*(W+1) for positive N. Original-address operand construction remains separate.
 
-- `Machine/CompactGadgetReservationHeadersData.lean`: Runtime descriptor values for concrete reserved temp/control geometry: products, rounded capacities, nonnegative gaps and fixed-base powers from seven original K/d/G/n/activeAxes/roleRows/payloadWidth inputs.
 
-- `Machine/CompactGadgetReservationHeadersCore.lean`: A fixed canonical-bank compiler physically executes products, differences, rounding, powers, constants and erasure through one fifteen-tape shared private bank. Static slot commands do not encode runtime values in finite control.
 
-- `Machine/CompactGadgetReservationHeadersPowerRound.lean`: Paid fixed-base power and rounded-multiple commands construct actual canonical descriptor words and retain original source descriptors with private cleanup.
 
-- `Machine/CompactGadgetReservationHeadersWords.lean`: Literal forty-tape bank words identify original inputs, the four surviving P/G/B/w outputs, erased intermediate descriptors and blank shared scratch.
 
-- `Machine/CompactGadgetReservationHeadersOps.lean`: Physical original-input command rules discharge exact tape readiness, output words, source retention and cost for every arithmetic/erasure command in the reservation schedule.
 
-- `Machine/CompactGadgetReservationHeadersSchedule.lean`: One fixed thirty-two-command forty-tape schedule physically computes all concrete reserved-slot P/G/B/w headers from seven canonical originals, clears fourteen intermediate descriptors and all fifteen shared scratch tapes, and proves its full paid runtime. RoleRows is a supplied original child-boundary descriptor; synthesis from original R/static role count remains separate.
 
-- `Machine/CompactGadgetReservationHeadersEndpoint.lean`: The generated P/G/B/w tapes satisfy the actual original-header load Sources contract with canonical words and exact geometry values. Original seven descriptors remain unchanged, fourteen intermediates and fifteen private tapes are blank. Upstream role-row synthesis and whole reserve/load sequencing remain separate.
 
-- `Machine/BinaryCorrectionOffsetData.lean`: Literal selected/control operand streams and independently reset modular subtraction rows for early correction offsets; specifies exact lengths and per-address words.
 
-- `Machine/BinaryCorrectionOffsetGather.lean`: Executes the original-header control gather over the physically generated address source, with exact consumed-prefix lengths and retained source/control words.
 
-- `Machine/BinaryCorrectionOffsetRewind.lean`: Physically rewinds exactly the source prefix read by control gather while retaining its unread tail, with all return transitions charged.
 
-- `Machine/BinaryCorrectionOffsetPrepare.lean`: Places actual gathers and runtime nq synthesis into the shared correction bank from canonical original b/q/n and retained original control, preserving literal operand words for independent row subtraction.
 
-- `Machine/BinaryCorrectionOffsetValue.lean`: Each correction row is the packed original control minus packed two-times-control-times-source digits modulo the target power of two. Uses the actual rowwise subtraction output; no borrow crosses address boundaries.
 
-- `Machine/BinaryCorrectionOffsetFinish.lean`: Physically erases every remaining descriptor and generated source/control word, including the unread source suffix, and restores original heads after correction subtraction.
 
-- `Machine/BinaryCorrectionOffset.lean`: Complete fixed thirty-one-tape early-correction constructor from original b/q/n and control. Output14 holds every address correction; all other twenty-six generated/private slots are blank. Cost at most(selectedBaseConstant+1000)*2^(n*b)*(n+1)*(q+b+1). Full repetition and action composition remain separate.
 
-- `Machine/BinaryCorrectionOffsetPlaced.lean`: Places the complete original-input correction producer on five caller ports with twenty-six appended private tapes, preserving arbitrary larger-alphabet spectators and literal output words with identical paid runtime.
 
-- `Machine/BinaryCorrectionOffsetRepeatData.lean`: Literal repeated independently subtracted correction rows, with spectators and dirty-back coordinates repeating the source-address word.
 
-- `Machine/BinaryCorrectionOffsetRepeatConstruct.lean`: Fixed fifty-tape constructor synthesizes nq,2^nb and P*H*2^nq from original descriptors, builds the actual correction table, physically repeats it, and erases generated metadata while retaining original control.
 
-- `Machine/BinaryCorrectionOffsetRepeatBudget.lean`: Pays all correction table construction, repetition and erasure in actual full rotation volume, with constant selectedRepeatConstant+1000 and an explicit record-width allowance.
 
-- `Machine/BinaryCorrectionOffsetRepeatCoordinates.lean`: Exact physical row alignment for every source address, spectator and dirty-back value. Signed field value is packed z*(1-2*w) modulo2^nq; full output length and exact modular row value are proved.
 
-- `Machine/BinaryPackedOffsetOriginalPlaced.lean`: Places the actual original-header packed action on six arbitrary caller tapes with blank appended workspace. Executes count preparation, both physical interchanges, payload rotation and cleanup internally; exact output and every spectator head/tape are retained.
 
-- `Machine/CompactGadgetReservationHeadersDivision.lean`: Physical fixed divisor command computes the canonical role quotient on the shared descriptor bank, preserves its sources and clears its fifteen-tape private work. Divisor is the static role count.
 
-- `Machine/CompactGadgetReservationHeadersRows.lean`: Actual original-R to paddedRows(R,c)/c synthesis on arbitrary permanent caller ports. Initializes staticc, roundsR, divides, erasesc and roundedR, preserves originalR and all caller frame, and returns fifteen private tapes blank. Full cost at most(RecursiveRowsQuotient.constant c+4106)*(c+1)*R for positive original rows.
 
-- `Machine/BinaryParityXorOffsetRow.lean`: Physically copies one runtime-width source row into blank scratch, executes real two-complement negation from fresh state, erases row scratch and preserves the exact modular negative value. No state or carry crosses row boundaries.
 
-- `Machine/BinaryParityXorOffsetLoop.lean`: Fixed counted traversal independently negates every packed offset row, with exact concatenated outputs, consumed source advancement and reusable row scratch; all joins and countdown transitions are charged.
 
-- `Machine/BinaryParityXorOffsetNegate.lean`: Complete fixed seven-tape row-negation constructor from original canonical width/count and literal packed input. Physically initializes/clears clocks, erases consumed input, rewinds output and restores all private storage; bound120*N*(W+1) for positive count. Original-address parity-XOR operand construction and repetition remain separate.
 
-- `Machine/BinaryParityXorOffsetData.lean`: Literal per-address parity-XOR rows and independently negated output words, specifying the fourth early-source correction with exact widths and total lengths.
 
-- `Machine/BinaryParityXorOffsetPositive.lean`: Proves original-address parity-XOR row semantics with retained original control, identifying the positive packed parity/control XOR operand before physical negation.
 
-- `Machine/BinaryParityXorOffsetValue.lean`: Exact fourth-offset integer value is negative packed parity-XOR modulo2^(n*b); bridges actual independent row negation to the required modular arithmetic.
 
-- `Machine/BinaryParityXorOffsetGather.lean`: Actual original-header parity-XOR gather consumes the generated address source and original-control repetitions, with exact resulting words and paid runtime.
 
-- `Machine/BinaryParityXorOffsetPrepare.lean`: Physically constructs and gathers original-input operands, synthesizes runtime target width and positions source/output heads for counted per-row negation.
 
-- `Machine/BinaryParityXorOffsetFinish.lean`: Physically clears all generated address/control words and metadata, including complete source tails, while retaining original headers/control and the negative offset output.
 
-- `Machine/BinaryParityXorOffset.lean`: Complete fixed thirty-one-tape fourth-offset constructor from original q/b/n and control. Output14 holds exact negative packed parity-XOR offsets; all twenty-six private tapes are blank. Paid cost at most(selectedBaseConstant+1000)*2^(n*q)*(n+1)*(q+b+1).
 
-- `Machine/BinaryParityXorOffsetPlaced.lean`: Five arbitrary larger-alphabet caller ports q/b/n/control/output with twenty-six blank private tapes appended and restored. Exact output word and every caller spectator/head are preserved.
 
-- `Machine/BinaryParityXorOffsetRepeatData.lean`: Literal negative parity-XOR rows, spectator expansion and repetition preserve the actual source-address order.
 
-- `Machine/BinaryParityXorOffsetRepeatConstruct.lean`: Fixed fifty-tape constructor synthesizes nb,2^nq and P*H*2^nb from original inputs, builds actual negative parity-XOR offsets, repeats them and erases generated metadata while retaining control.
 
-- `Machine/BinaryParityXorOffsetRepeatBudget.lean`: Complete fourth-offset table construction, repetition and cleanup fit actual payload volume with an explicit suffix-width allowance; all physical setup and joins are charged.
 
-- `Machine/BinaryParityXorOffsetRepeatCoordinates.lean`: Exact negative packed parity-XOR at every selected source address, repeated independently of spectators and dirty-back coordinates. The physical row ordering and literal full word length are proved.
 
 
 
@@ -1802,30 +1629,18 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/CompactGadgetReservationHeadersRouting.lean`: Fixed routing shares the actual fifteen-tape header workspace across original-R row synthesis and header construction, while retaining arbitrary caller spectators.
 
-- `Machine/CompactGadgetReservationHeadersCaller.lean`: One fixed machine derives padded roleRows from originalR, synthesizes P/G/B/w, and executes the actual packed load on arbitrary retained spectators. No supplied derived shape words or action Hoare premise; the offset word remains a physical input.
 
-- `Machine/CompactGadgetReservationHeadersReserved.lean`: Specializes synthesized-header execution to the actual reservation endpoint, reading retained originalR and acting on the actual selected role tape. Other roles and originals are retained; payload contract is discharged internally.
 
-- `Machine/CompactGadgetReservationHeadersCost.lean`: Uniform physical header opcode/list cost charges arithmetic and descriptor erasure to a bound on actual stored values and canonical word lengths.
 
-- `Machine/CompactGadgetReservationHeadersVolume.lean`: All thirty-two header commands are proved to stay within actual role volume. Complete header preparation costs at most32*(4196+fixedBasePowerConstant2)*roleVolume.
 
-- `Machine/CompactGadgetReservationHeadersBudget.lean`: Entire original-R row synthesis, reservation shape preparation and actual load preserve the certified width exponent with constant depending only static role count; no extra chunk-size factor. Width is n*globalGuard; distinct narrower packed widths and generated-offset reservation routing remain separate.
 
 
-- `Machine/CompactGadgetReservationHeadersCarvedData.lean`: General carved-width geometry keeps one fixed globalShape/H/layout while selecting n*packingFactor front/back bits; unused interval bits remain literal spectators. Simultaneous n*b/n*q capacities and disjoint slots are proved.
 
-- `Machine/CompactGadgetReservationHeadersCarvedSchedule.lean`: One fixed actual header schedule physically reads original n/packingFactor, constructs width n*packingFactor and exact P/G/B descriptors inside the unchanged global reservation, with generated intermediate cleanup.
 
-- `Machine/CompactGadgetReservationHeadersCarvedRouting.lean`: Shared-bank placement of narrow-width construction and original-R role-count synthesis retains all original global descriptors and caller spectators.
 
-- `Machine/CompactGadgetReservationHeadersCarvedCaller.lean`: Fixed original-R and original packing-factor caller derives actual roleRows/width/P/G/B and invokes the real packed load. Same finite program for b and q; no derived shape words or action callback supplied.
 
-- `Machine/CompactGadgetReservationHeadersCarvedVolume.lean`: All real row/header/width setup values and products are bounded within actual role volume, including n*packingFactor product preparation.
 
-- `Machine/BinaryPackedEarlyData.lean`: Actual selected/parity/signed-correction/negative row-word translations compose in current-source order to packedEarly. On good addresses, the target is the ideal toggle and temporary value restores, with arbitrary spectators unchanged. Physical common-bank execution remains separate.
 
 
 
@@ -1850,121 +1665,68 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/CompactGadgetReservationHeadersCarvedPlaced.lean`: The actual carved-header schedule shares eleven arbitrary caller ports without copying original descriptors, preserves every spectator and restores forty private tapes. Exact P/G/B synthesis and full-volume setup cost hold for any compact carved width within the fixed reservation.
 
-- `Machine/CompactGadgetReservationHeadersCarvedPlacedWidth.lean`: Physically multiplies original n and packing-factor words through three arbitrary caller ports with one shared forty-tape workspace, preserving originals and returning exact canonical width with full paid cost.
 
-- `Machine/CompactGadgetReservationHeadersCarvedPlacedRun.lean`: Actual original packing factor and seven original shape descriptors generate width/P/G/B on distinct caller outputs with complete workspace restoration. Setup cost is at most(31*headerCoefficient+82)*roleVolume; compact-width capacity remains explicit.
 
-- `Machine/CompactGadgetReservationHeadersCarvedPlacedCleanup.lean`: Four actual shape descriptors are physically erased after use, preserving every other caller tape/head. Exact cost2 times all descriptor lengths plus19 is bounded by35*roleVolume from the carved geometry.
 
 
-- `Machine/ActiveTargetRotation.lean`: A direct actual caller-owned active-target rotation retains original prefix/suffix/width descriptors, packed offsets and all spectators with twelve private tapes blank. Full destination semantics and a uniform linear-volume bound hold for every target width, without target interchanges or front-capacity premises. Offset production remains an explicit physical stage input.
 
-- `Machine/BinaryPackedLateData.lean`: Actual late row-word arithmetic composes early, dirty-control load, early and unload with exact unrestricted packedLate values and unconditional dirty-control restoration. Guarded ideal toggling and arbitrary spectator preservation are proved; varying-prefix offset tables and active-target physical assembly remain separate.
 
-- `Machine/CompactActiveTargetLayout.lean`: Exact full-volume address bijection places the wide target inside active coordinates, with compact U/T fields, all dirty tails, active spectators, back and payload independent. Only compact width fits H; no target-capacity premise or target move is assumed.
 
-- `Machine/CompactActiveTargetGeometry.lean`: Literal active-target rotation fibers and both compact interchange rectangles equal the original unchanged array ordinal. Carved descriptor shapes, real source-prefix factors and the common back-rotation prefix are proved; physical varying-offset production and whole schedule remain separate.
 
-- `Machine/SelectedSourceBitsData.lean`: Least-significant-first source-bit selection has exact length and testBit semantics at rho+i*q, including zero selected digits and the source-span bounds.
 
-- `Machine/SelectedSourceBitsCore.lean`: Actual source-bit copy and runtime-q counted head movement retain arbitrary source cells and append exactly one physical selected bit with charged cost.
 
-- `Machine/SelectedSourceBitsBank.lean`: Three independent countdown clocks are physically initialized and erased on the exact original-header source/output bank, retaining originals and restoring all clock cells and heads.
 
-- `Machine/SelectedSourceBitsScan.lean`: Actual runtime-rho positioning followed by the runtime-n sampling loop returns the exact selected source word, preserving complete source cells without requiring interior blanks.
 
-- `Machine/SelectedSourceBitsRewind.lean`: Physical source and selected-output rewinds restore both heads from actual scan endpoints, retaining full words and exterior cells with charged source-span cost.
 
-- `Machine/SelectedSourceBitsRun.lean`: One fixed extraction machine reads the full f*q-bit original source and q/n/rho/f descriptors, returns exactly n selected source bits, retains originals and restores every private clock. Actual cost at most400 times original source length includes all positioning, scans, rewinds and cleanup.
 
-- `Machine/SelectedSourceBitsPlaced.lean`: Complete extraction on six injective caller ports preserves all complementary tapes and heads and restores nine appended private tapes. Output controls are physically derived from the full source address, with exact testBit semantics and400-times-source-length cost.
 
-- `Machine/BinaryVaryingSelectedOffsetGather.lean`: One fixed mask-shift gather reads a literal source-digit stream and independently varying controls using sole original q/b/count descriptors. Actual derived-header construction, scan and cleanup restore fourteen private tapes; output length and full320-times-stride cost are proved. Source/control stream generation and final head returns remain separate.
 
-- `Machine/BinaryVaryingSelectedOffsetData.lean`: Each physically gathered offset row equals mask-shift arithmetic applied to that row’s current source digits and controls. Arbitrary varying rows have exact widths and order; there is no fixed-control repetition hypothesis.
 
-- `Machine/SelectedSourceBitsStreamData.lean`: Literal per-source-row selected controls have exact P*n length and full-stream testBit positions r*(f*q)+rho+i*q, with all selected positions proved inside the source stream.
 
-- `Machine/SelectedSourceBitsStreamCore.lean`: Physical runtime-rho backward positioning retains arbitrary stream cells and provides exact paid head movements for advancing between full source rows.
 
-- `Machine/SelectedSourceBitsStreamBank.lean`: Four independent original-header countdown clocks are physically initialized and erased, retaining q/n/rho/f/P and restoring all private cells and heads.
 
-- `Machine/SelectedSourceBitsStreamRow.lean`: One actual row positions by rho, samples n selected bits with runtime-q movements and reaches the next full f*q-row boundary. Complete stream contents are retained, with no temporary row copy or supplied selected controls.
 
-- `Machine/SelectedSourceBitsStreamRun.lean`: One fixed batch extractor physically enumerates all P original source rows, returns P*n exact selected controls at origin and restores source/head/originals and every private clock. Cost400*(sourceStream.length+1) includes empty batches, scans, all head returns and cleanup.
 
-- `Machine/SelectedSourceBitsStreamPlaced.lean`: Complete batch extraction on seven arbitrary caller ports retains source/original descriptors and every spectator, restores eleven appended private tapes and returns the literal varying control stream at origin with400-times-stream-plus-one cost.
 
-- `Machine/BinaryVaryingControlOffsetGather.lean`: A fixed original-q/b/count machine physically builds stride-q control offsets from independently varying controls, retaining source/control words and all originals. Fourteen private tapes are constructed and erased; complete cost320 times full stride and exact output length hold. Full control-stream generation and final head returns remain separate.
 
-- `Machine/BinaryVaryingControlOffsetData.lean`: Each physical control-offset row equals its own stride-q toggle mask and has exact packed control value. These varying masks and selected offsets supply the existing rowwise correction subtraction without any whole-stream fixed-source premise.
 
-- `Machine/BinaryPrefixFieldTableData.lean`: Literal runtime field projection from every full-width address has exact row-major order, lengths and individual fields, including zero-width addresses/fields.
 
-- `Machine/BinaryPrefixFieldTablePrimitives.lean`: Actual generated range/count, zero descriptor, descriptor duplication, address table and dummy-control fill share a framed original-header bank with charged execution.
 
-- `Machine/BinaryPrefixFieldTableSetup.lean`: From sole W/start/d originals, physically generates the complete prefix-address table, 2^W dummy controls and every required derived descriptor; all individual setup costs are charged.
 
-- `Machine/BinaryPrefixFieldTableGather.lean`: The runtime counted gather physically projects each original address field in order and restores all internal gather metadata; exact projected word is proved.
 
-- `Machine/BinaryPrefixFieldTableCleanup.lean`: Physically erases generated address/control tables and count/zero/copy descriptors, rewinds projected output and retains all three originals with paid cost.
 
-- `Machine/BinaryPrefixFieldTableRun.lean`: One fixed original-input field-table producer generates and erases all intermediate streams and returns exact projected fields at origin. Full cost at most(powerConstant+addressTableConstant+1000)*2^W*(W+1), including W/d zero.
 
-- `Machine/BinaryPrefixFieldTableAlphabet.lean`: Checked literal field-table construction is encoded on arbitrary larger alphabets without changing runtime, source order, restored originals or blank native workspace.
 
-- `Machine/BinaryPrefixFieldTablePlaced.lean`: Actual projected-field table generation on four arbitrary caller ports requires only canonical W/start/d and blank output, retains every spectator and restores twenty-four private tapes. Exact row words and full linear table cost are proved.
 
-- `Machine/BinaryVaryingParityOffsetGather.lean`: Actual parity-XOR gather reads current target digits and independently varying controls with only original q/b/count descriptors. Exact positive fourth-load word, preserved original streams and blank fourteen private tapes have full320-times-stride cost; rowwise negative residues and complete load assembly remain separate.
 
-- `Machine/BinaryVaryingOffsetGatherPlaced.lean`: All selected/control-mask/parity-XOR runtime gathers execute on six arbitrary caller ports, preserving all original header/stream contents and every complementary tape. Exact source/control/output heads and literal output follow the actual native machine; twenty private tapes are restored with unchanged320-times-stride bound.
 
-- `Machine/ActivePrefixSelectedOffsetData.lean`: Physically projected full-source rows and batch-extracted controls agree with selected testBits of each original prefix address. The varying selected gather therefore uses each current temporary/source field in the unchanged prefix, with exact offsets and row order; physical producer assembly remains separate.
 
-- `Machine/ActivePrefixOffsetHeadersData.lean`: Original W/q/b/n/f descriptors have explicit source/destination port maps for P,f*q,n*b,n*P,n*q, with exact generated value families and full source/temp fit premises.
 
-- `Machine/ActivePrefixOffsetHeadersRun.lean`: One real power and four physical products synthesize all five varying-offset descriptors on arbitrary caller ports, retaining originals/spectators and restoring fifteen shared private tapes. No supplied derived descriptor is assumed.
 
-- `Machine/ActivePrefixOffsetHeadersBudget.lean`: Every actual header-setup transition is bounded by(powerConstant+328)*2^W*(W+1) under source/temp fit and n+1=f. Applies to the actual caller machine, not a semantic arithmetic cost.
 
 
-- `Machine/ActiveTargetHighestRun.lean`: A fixed tracked physical coefficient-one shift executes the highest selected one-bit toggle from an earlier source-address bit, retaining six supplied canonical descriptors and returning the exact array at origin. All private and tracking tapes are blank; complete cost137575*volume, with no offset table or target front-capacity premise.
 
-- `Machine/ActiveTargetHighestValue.lean`: Exact full-array transport of the actual highest-bit machine is target XOR with the real earlier prefix bit, preserving all preceding/intervening/suffix coordinates. The combined realizes theorem includes actual execution, cleanup and linear bound; source-layout/header synthesis and later-source placement remain separate.
 
 
 
 
-- `Machine/VaryingControlRepairLayoutRank.lean`: Actual unchanged active-layout ranks recover V/T/U and active-before/after coordinates exactly, including arbitrary payload suffix. Explicit source-slot offsets yield exact source-word/value recovery from genuine short counter values; no padded-counter input or physical rank parser is assumed.
 
-- `Machine/ActivePrefixOffsetStreamsCleanup.lean`: Fixed thirteen-state caller-placed cleanup physically erases the temporary, full-source and varying-control streams and rewinds the retained offset output. Exact stream-length cost, empty cases and the complete complementary frame are proved; no private workspace is appended.
 
-- `Machine/ActivePrefixSelectedOffsetBank.lean`: Defines the original eight-descriptor bank and shared prefix-field, source-extraction and selected-gather placements. Exact physical gathered output equals the canonical varying first-offset stream; original descriptors and complementary bank are retained.
 
 
 
 
-- `Machine/ActiveRepairRankFieldsPosition.lean`: Fixed caller-placed runtime seek and restore operations traverse address fields from original canonical offsets, retaining all tape contents and erasing countdown scratch with exact charged costs.
 
-- `Machine/ActiveRepairRankFieldsField.lean`: Physical runtime field extraction reads a genuine short rank word with zero fill beyond its blank tail, produces exactly the requested fixed-width address field, restores the rank and descriptors and clears private storage.
 
-- `Machine/ActiveRepairRankFieldsPlaced.lean`: Places the actual short-rank field extractor on arbitrary caller ports, preserving the complementary frame and restoring all private tapes with the original exact cost.
 
-- `Machine/ActiveRepairRankFieldsBank.lean`: Shared twenty-seven-tape repair parser bank retains the genuine short record counter, eight field descriptors and q/n/rho/f, while separately storing V/T/U, full source and selected source bits.
 
-- `Machine/ActiveRepairRankFieldsRun.lean`: One fixed physical parser extracts V/T/U and the full source from the actual short rank, then runs actual source-bit selection. All originals and heads are retained, nine private tapes erased and cost bounded by1200 times address width plus one, plus four. Derived offset/width descriptor synthesis remains separate.
 
-- `Machine/ActiveRepairRankFieldsGeometry.lean`: Recovers exact active-layout V/T/U and before/after source words from the original record ordinal, with payload width one for address ranks. Field geometry includes source/back/spectator bits without introducing a free physical reorder.
 
 
 
-- `Machine/ActivePrefixOffsetRepeatRun.lean`: One fixed four-tape machine physically repeats a generated base offset word using the original canonical row descriptor. An actual empty-source branch avoids per-row overhead for empty words. Exact repeated output, retained source/descriptor, erased clock and cost54 times repeated volume plus one include arbitrary rows, zero rows and empty input.
 
-- `Machine/ActivePrefixOffsetRepeatAlphabet.lean`: Lifts the actual fixed row-repetition machine to any larger alphabet, preserving literal binary words, canonical descriptor, full workspace cleanup and the same runtime bound.
 
-- `Machine/ActivePrefixOffsetRepeatPlaced.lean`: Clean repetition on arbitrary rows/base/output caller ports returns exactly the flattened original-row copies, retaining all original descriptors, source and spectators and erasing four private tapes. No power-of-two row assumption or supplied repetition table is needed.
 
 
 
@@ -1972,40 +1734,30 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/ActivePrefixControlOffsetData.lean`: The complete generated control-mask stream uses selected source bits of each actual prefix rank. Exact length and per-prefix toggleMask identity are proved; the auxiliary width-n projected source is only a paid physical clock.
 
-- `Machine/ActivePrefixControlOffsetBank.lean`: Original eight-descriptor caller bank generates a width-n clock projection, full source projection and current source controls. Exact gathered bank equals the canonical control-mask offsets, retaining all original descriptors.
 
 
 
 
 
-- `Machine/GatherStreamData.lean`: Generic Boolean gathers preserve uniform source/control row boundaries for independently varying rows. Exact per-row semantics and reconstruction from fixed-width fields include zero-width rows; no repeated-control premise is needed.
 
-- `Machine/ActivePrefixParityOffsetData.lean`: Exact parity-XOR offsets use the current target field and source controls of each original prefix rank. Per-row identity, uniform width n*b, row count2^W and flatten equality connect the physical output to rowwise modular negation.
 
-- `Machine/ActivePrefixParityOffsetBank.lean`: Original eight-descriptor bank physically projects the current n*q-bit target and full source fields, extracts varying controls and gathers positive parity-XOR offsets. Exact bank identity retains every original descriptor.
 
 
 
 
 
-- `Machine/ActivePrefixCorrectionOffsetData.lean`: Exact current-prefix correction rows subtract the physically selected temporary/source offset A from that address’s source-control mask B modulo2^(n*q). Uniform row length, output length and independent row semantics include n=0.
 
-- `Machine/ActivePrefixCorrectionOffsetSubtract.lean`: Actual modular row-subtraction machine lifted to arbitrary alphabets and caller operand/output/width/count ports. It consumes and erases both complete operand tables, retains original descriptors and restores nine private tapes with a linear row-volume bound.
 
 
 
 
 
-- `Machine/ActiveTargetHighestLaterValue.lean`: Exact rectangular later-source target XOR is swap–earlier-XOR–swap, preserving arbitrary prefix, gap and suffix coordinates. Native-array geometry and full-volume casts identify the conjugated mathematical action.
 
 
 
 
-- `Machine/BinaryVaryingParityOnlyGather.lean`: Actual fixed runtime-header gather uses the pure source-parity operation and ignores control values logically. Source/control words and original q/b/count survive; every derived descriptor/clock is generated and erased with a uniform stride bound.
 
-- `Machine/BinaryVaryingParityOnlyPlaced.lean`: Own clean six-port placement of the physical pure-parity gather preserves every complementary caller tape and restores its twenty native private tapes. Exact output, retained originals and charged runtime are proved.
 
 
 
@@ -2014,17 +1766,13 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/ActivePrefixParityNegativeNegate.lean`: Actual modular-negation machine lifted to arbitrary alphabets consumes and erases the complete positive table, retains width/count descriptors and returns the exact negative stream at origin with shared forty-one private tapes blank.
 
 
 
 
 
-- `Machine/ActivePrefixLayoutFields.lean`: Fixed-width generated prefix words at rank modulo2^W recover every fitting original field. Literal repeated-table lookup handles arbitrary original rows, without a power-of-two row assumption or phantom ranks.
 
-- `Machine/ActivePrefixLayoutGeometry.lean`: Exact little-endian source/temporary/target offsets in the unchanged target and back prefixes recover their real address fields. Target/back counts equal original rows times the exact two-to-prefix-width factor.
 
-- `Machine/ActivePrefixLayoutShapes.lean`: Actual active reservation dimensions instantiate the selected and parity producer Shapes with proved prefix fits. Compact n*b fits H; wide n*q remains active. Before/after source slots and original-rank bounds are explicit.
 
 
 
@@ -2167,70 +1915,39 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/ActivePrefixDirtyControlParityPlaced.lean`: Clean caller wrapper for actual compact-U block-parity extraction with real clock and complete retained frame.
 
-- `Machine/ActivePrefixDirtyControlData.lean`: Six-original-header shape and exact compact source fields, generated descriptor words and prefix-ordered stream endpoints.
 
-- `Machine/ActivePrefixDirtyControlHeaders.lean`: Physical synthesis of prefix cardinality and three width/count products from the original six descriptors.
 
-- `Machine/ActivePrefixDirtyControlBank.lean`: Exact gather head/content endpoints and complementary frame for dirty-U offset production.
 
-- `Machine/ActivePrefixDirtyControlRun.lean`: Three physical prefix projections, compact-U parity extraction and actual selected/control-mask/parity-XOR gather.
 
-- `Machine/ActivePrefixDirtyControlCleanup.lean`: Erases target/U/control streams, real clock and all four generated descriptors, and rewinds the generated offset.
 
-- `Machine/ActivePrefixDirtyControl.lean`: Complete clean selected/control/parity-XOR producer with explicit prefix volume bound, retaining wide target costs without assuming nq fits the compact prefix.
 
-- `Machine/ActivePrefixDirtyControlPlaced.lean`: Arbitrary-caller seven-port clean producer with39 appended private tapes; only six original descriptors and blank output are required.
 
-- `Machine/ActivePrefixDirtyControlSemantics.lean`: Physically generated prefix-ordered controls equal compact radix digit parities; selected/control-mask/parity-XOR output rows have exact current-address semantics.
 
-- `Machine/ActivePrefixDirtyControlCorrectionData.lean`: Rowwise correction operands and modular difference match current-prefix compact-U control semantics.
 
-- `Machine/ActivePrefixDirtyControlCorrectionBank.lean`: Six-original-header correction bank and exact generated subtraction width/count and operand storage.
 
-- `Machine/ActivePrefixDirtyControlCorrectionRun.lean`: Actual selected and control-mask producers feed fresh-row subtraction; both operands and all generated headers are erased.
 
-- `Machine/ActivePrefixDirtyControlCorrection.lean`: Complete dirty-U correction has the same explicit prefix-volume bound, including all operand production and cleanup.
 
-- `Machine/ActivePrefixDirtyControlCorrectionPlaced.lean`: Arbitrary-caller seven-port correction restores50 private tapes and the original frame.
 
-- `Machine/ActivePrefixDirtyControlNegativeData.lean`: Current-prefix parity-XOR rows and independent modular negative semantics include zero digits.
 
-- `Machine/ActivePrefixDirtyControlNegativeBank.lean`: Six-original-header negative bank with positive/output streams and only synthesized compact width/count.
 
-- `Machine/ActivePrefixDirtyControlNegativeRun.lean`: Actual positive producer, physical width/count construction, source-consuming rowwise negation and both header erasures.
 
-- `Machine/ActivePrefixDirtyControlNegative.lean`: Complete clean dirty-U negative parity-XOR producer has explicit uniform prefix-volume cost, including all preparation and erasure.
 
-- `Machine/ActivePrefixDirtyControlNegativePlaced.lean`: Arbitrary-caller seven-port negative producer restores51 private tapes and all original descriptors.
 
-- `Machine/ActivePrefixDirtyControlPureBank.lean`: Target-only parity gather has exact endpoints in the common dirty-U prefix bank.
 
-- `Machine/ActivePrefixDirtyControlPureCleanup.lean`: Physically erases all shared projected streams, real clock and generated metadata after target-only parity gather.
 
-- `Machine/ActivePrefixDirtyControlPure.lean`: Complete actual projection and extraction prefix followed by target-only parity gather has a paid uniform prefix-volume bound; no wide source padding is required.
 
-- `Machine/ActivePrefixDirtyControlPurePlaced.lean`: Clean seven-port pure-parity caller restores39 appended private tapes and every original descriptor.
 
-- `Machine/ActivePrefixDirtyControlPureSemantics.lean`: Each physically generated pure-parity row reads current target low bits with compact padding and is independent of dirty U.
 
 
 
 
-- `Machine/ActivePrefixDirtyControlLoadProducer.lean`: Four physical selected/correction/pure/negative producers share51 private tapes; every mode reads actual compact-U parities, with no supplied offset stream.
 
-- `Machine/ActivePrefixDirtyControlLoadData.lean`: Original six layout words, row/suffix descriptors and full array define one load bank with five initially blank work tapes.
 
-- `Machine/ActivePrefixDirtyControlLoadHeaders.lean`: Real power and two product programs synthesize prefix cardinality, target/compact rotation width and repeated fiber count.
 
-- `Machine/ActivePrefixDirtyControlLoadRun.lean`: Actual producer, dimension construction, physical row repetition and full-array payload rotation compose on a shared bank.
 
-- `Machine/ActivePrefixDirtyControlLoadCleanup.lean`: Physically erases both offset streams and all generated dimension words and restores all private storage.
 
-- `Machine/ActivePrefixDirtyControlLoad.lean`: Each of four complete dirty-U payload loads has exact bit destinations and paid linear full-array volume cost under explicit producer-work absorption.
 
-- `Machine/ActivePrefixDirtyControlLoadPlaced.lean`: Arbitrary nine-port caller placement retains original descriptors and spectators and restores65 private tapes; no generated offsets/dimensions are supplied.
 
 
 
@@ -2325,13 +2042,9 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/ActiveTargetHighestPairData.lean`: Two actual one-bit fields have full-array geometry with arbitrary positive outer row counts, genuine numeric load/swap descriptors and exact earlier/later actions.
 
-- `Machine/ActiveTargetHighestPairRun.lean`: Prepared highest-bit early and later machines execute literal pure loads and actual width-one swap/load/swap, retain all original arrays and descriptors and restore every private tape.
 
-- `Machine/ActiveTargetHighestPairBudget.lean`: Both physical highest-bit actions have uniform linear original-volume runtime; width-one interchanges introduce no fractional width factor.
 
-- `Machine/ActiveTargetHighestPairSemantics.lean`: Actual arbitrary-row highest-bit actions equal the exact earlier-source and later-source XOR at every full-array address.
 
 
 
@@ -2355,7 +2068,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/ActiveTargetHighestPairLayoutGeometry.lean`: The highest-bit split has exact early/later source and target bit positions in the unchanged active layout, with arbitrary outer rows and full volume equality; source/target positivity conditions remain explicit.
 
 
 
@@ -2387,7 +2099,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/ActivePrefixStageParameters.lean`: Actual ordered source/target slots and node decomposition determine all active-target Parameters; compact capacity, active partition, highest geometry and dyadic side conditions are derived rather than supplied.
 
 
 - `Machine/CompactGlobalRowPadding.lean`: Original row axes dominate the full runtime recursive divisor; one global pad costs at most twice the original volume and supplies inherited depth divisibility, no per-node re-padding and exact role volumes.
@@ -2498,14 +2209,12 @@ Compact packed controls, repair, and density bounds.
   exceptional fraction times the volume, the radix passes traverse
   `k · |ℬ| · w` cells, and the written cost expression is at most three
   volumes under the density bound. Tape execution of the scan is not here.
-- `Compact/TapeRepairStage.lean`: the pipeline's extracted records, keyed by
   their destination ranks in binary, are the keyed records of the fixed
   eleven-tape stage machine `Machine/RepairStage`; on them and the flagged
   actual output stream it halts with the ideal stream on its output tape,
   within `74k + 4` extracted volumes, one full-stream volume, and `k + 7`,
   the extracted volume being at most `|ℬ|·(k + 2 + w)`. The flagging scan and
   the destination-rank arithmetic that produce the keyed records remain open.
-- `Compact/TapeRepair.lean`: the complete repair machine `Machine/RepairScan`
   on the unflagged actual output stream, with the scan's flags and keys being
   membership and the destination rank `e (T (S⁻¹ q))` of the rank's address,
   halts with the ideal stream on the output slot, within the key cost plus
@@ -2519,29 +2228,24 @@ Compact packed controls, repair, and density bounds.
   the packing of its digit words, and the per-digit forms of the compact
   control arithmetic, a masked shifted block, a block's parity, a toggled
   parity, have their stated values.
-- `Compact/PackedArithValue.lean`: the forward packed program on tapes
   computes `packedEarly` in the radices `2^q` and `2^b`: each gathered offset
   word packs as the corresponding integer offset (masked shifted blocks,
   controls, parities, toggled parities), each modular transduction is the
   corresponding modular update, and the signed third line is the difference
   of two packings; the final words are exactly the packed program's output
   integers.
-- `Compact/PackedInverseValue.lean`: the inverse packed program on tapes
   computes the packed permutation's inverse: `packedEarly` applied to the
   integers of its recovered words returns the integers of its input words,
   each forward line cancelling the corresponding inverse line modulo the
   radix power, so by injectivity the recovered address is the preimage.
-- `Compact/ToggleValue.lean`: the ideal selected-parity toggle on bit words
   is exclusive or with the control mask, the control bits at stride `q`
   (which is the controls gather); it flips the lowest bit of each block
   exactly when its control is set and packs as `toggleList` of the block
   digits.
-- `Compact/GuardValue.lean`: the guard test on tapes decides membership in
   the exceptional set: with the constants `2B`, `L - 2B - 1` and `B - 2` as
   words of the block widths, some flag is set exactly when the address fails
   `earlyGood` in the radices `2^q` and `2^b`, the upper bits of a block
   being its digit halved.
-- `Compact/KeyValue.lean`: the key routine's words are the repair scan's
   key data for the concrete early instance with ranks in lexicographic
   order: the fixed-width counter's word at rank `j` has value `j` and splits
   into the address words, the guard flags are the membership flag of the
@@ -2581,9 +2285,7 @@ Compact packed controls, repair, and density bounds.
 
 
 
-- `Compact/ActiveTargetSubsegmentValue.lean`: Lifts actual early/later packed kernels on good addresses to the full containing target slot, with exact low/high spectator reconstruction and restoration of all dirty companions. No target front-capacity premise or unguarded full-slot equality is assumed.
 
-- `Compact/ActiveTargetSubsegmentWords.lean`: Guarded packed toggles equal the literal stride-q selected XOR mask inside the full target slot, with exact spectator intervals. The omitted highest selected toggle acts separately on the first retained high bit; the combined full-selected mask and full slot width are proved. Physical highest-toggle execution remains separate.
 
 ## Networks
 
