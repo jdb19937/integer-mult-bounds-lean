@@ -95,33 +95,59 @@ theorem coefficient_origin (p : List (Swap.Shear.Op ι ℚ)) (op : AffineFieldPr
 
 end Origin
 
-/-- Occurrence in the fixed actual scalar schedules, including cross-group ±1. -/
+/-- Occurrence in the fixed actual scalar schedules, including cross-group ±1, or a coefficient
+within the supplier bound. -/
 def Occurs (r : ℚ) : Prop :=
-  ∃ p ∈ rationalSchedules, ∃ op ∈ p, Coefficient r op
+  (∃ p ∈ rationalSchedules, ∃ op ∈ p, Coefficient r op) ∨
+    (r.num.natAbs ≤ coefficientBound ∧ r.den ≤ coefficientBound)
 
-/-- A genuine diagonal scale in one actual refined H/D transform. -/
+/-- A genuine diagonal scale in one actual refined H/D transform, or a nonzero coefficient within
+the supplier bound. -/
 def ScaleOccurs (r : ℚ) : Prop :=
-  ∃ p ∈ rationalSchedules, ∃ i : Index,
-    AffineFieldProgram.Op.affineH (.scale i r) ∈ p ∨ AffineFieldProgram.Op.affineD (.scale i r) ∈ p
+  (∃ p ∈ rationalSchedules, ∃ i : Index,
+    AffineFieldProgram.Op.affineH (.scale i r) ∈ p ∨ AffineFieldProgram.Op.affineD (.scale i r) ∈ p) ∨
+    (r ≠ 0 ∧ r.num.natAbs ≤ coefficientBound ∧ r.den ≤ coefficientBound)
 
 theorem scale_occurs {r : ℚ} (hr : ScaleOccurs r) : Occurs r := by
-  obtain ⟨p,hp,i,hi⟩ := hr
-  rcases hi with hi | hi
-  · exact ⟨p,hp,_,hi,rfl⟩
-  · exact ⟨p,hp,_,hi,rfl⟩
+  rcases hr with ⟨p,hp,i,hi⟩ | ⟨_,hn,hd⟩
+  · rcases hi with hi | hi
+    · exact Or.inl ⟨p,hp,_,hi,rfl⟩
+    · exact Or.inl ⟨p,hp,_,hi,rfl⟩
+  · exact Or.inr ⟨hn,hd⟩
 
-/-- Denominator protection is derived from actual schedule membership. -/
+/-- Denominator protection is derived from actual schedule membership or the supplier bound. -/
 theorem denominator_bound {r : ℚ} (hr : Occurs r) : r.den < prime := by
-  obtain ⟨p,hp,op,hop,hcoeff⟩ := hr
-  obtain ⟨src,hsrc,rfl⟩ := List.mem_map.mp hp
-  rcases coefficient_origin src op hop hcoeff with hunit | ⟨E,hE,i,j,rfl⟩
-  · rcases hunit with rfl | rfl <;>
-      simpa using (show 1 < prime from lt_trans (by decide) Shared50ModularControl.prime_odd)
-  · exact Shared50CoefficientMachines.coefficient_bound E ⟨src,hsrc,hE⟩ i j
+  rcases hr with ⟨p,hp,op,hop,hcoeff⟩ | ⟨_,hd⟩
+  · obtain ⟨src,hsrc,rfl⟩ := List.mem_map.mp hp
+    rcases coefficient_origin src op hop hcoeff with hunit | ⟨E,hE,i,j,rfl⟩
+    · rcases hunit with rfl | rfl <;>
+        simpa using (show 1 < prime from lt_trans (by decide) Shared50ModularControl.prime_odd)
+    · exact Shared50CoefficientMachines.coefficient_bound E ⟨src,hsrc,hE⟩ i j
+  · exact lt_of_le_of_lt hd Shared50ModularControl.coefficientBound_lt_prime
+
+/-- A nonzero coefficient within the supplier bound reduces to a unit. -/
+theorem bounded_ratMod_unit {r : ℚ} (h0 : r ≠ 0) (hn : r.num.natAbs ≤ coefficientBound)
+    (hd : r.den ≤ coefficientBound) : IsUnit (Swap.Modular.ratMod prime r) := by
+  let : Fact prime.Prime := ⟨Shared50ModularControl.prime_prime⟩
+  have hlt : r.num.natAbs < prime := lt_of_le_of_lt hn Shared50ModularControl.coefficientBound_lt_prime
+  have hpos : 0 < r.num.natAbs := Int.natAbs_pos.mpr (Rat.num_ne_zero.mpr h0)
+  have hden : r.den.Coprime prime :=
+    (Nat.coprime_of_lt_prime r.den_pos.ne' (lt_of_le_of_lt hd
+      Shared50ModularControl.coefficientBound_lt_prime) Shared50ModularControl.prime_prime).symm
+  have hnum : (r.num : ZMod prime) ≠ 0 := by
+    intro h
+    rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h
+    have hdvd := Int.natAbs_dvd_natAbs.mpr h
+    rw [Int.natAbs_natCast] at hdvd
+    exact absurd (Nat.le_of_dvd hpos hdvd) (not_le.mpr hlt)
+  refine Ne.isUnit fun hz => hnum ?_
+  rw [← Swap.Modular.ratMod_mul_den prime hden, hz, zero_mul]
 
 /-- The same actual scale remains a unit at the first prime-power width. -/
 theorem scale_ratMod_unit {r : ℚ} (hr : ScaleOccurs r) : IsUnit (Swap.Modular.ratMod prime r) := by
-  obtain ⟨p,hp,i,hi⟩ := hr
+  rcases hr with ⟨p,hp,i,hi⟩ | ⟨h0,hn,hd⟩
+  swap
+  · exact bounded_ratMod_unit h0 hn hd
   let mapped := p.map (AffineFieldProgram.mapOp (Swap.Modular.ratMod prime))
   have hm : mapped ∈ schedules prime := by
     rw [Shared50AffineControl.schedules_eq_map]

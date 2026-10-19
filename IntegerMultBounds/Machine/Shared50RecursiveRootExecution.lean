@@ -105,12 +105,12 @@ theorem constant_positive : 0 < constant := by
   linarith
 
 theorem rootBudget_bound (depth V : ℕ) :
-    (rootBudget depth V : ℝ) ≤ constant*(V : ℝ)*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+    (rootBudget depth V : ℝ) ≤ constant*(V : ℝ)*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
   have hbound := Shared50RecursiveBudgetBound.power_width_bound returnWidth depth V
   have hw : (1 : ℝ) ≤ ((125000^depth : ℕ) : ℝ) := by
     exact_mod_cast (show 1 ≤ (125000 : ℕ)^depth from Nat.one_le_iff_ne_zero.mpr (pow_ne_zero _ (by decide)))
-  have hpow := Real.one_le_rpow hw Shared50RecursiveBudgetBound.exponent_range.1.le
-  have hlin : (rootOverhead : ℝ)*V ≤ (rootOverhead : ℝ)*V*((125000^depth : ℕ) : ℝ)^Parameters.tau := by
+  have hpow := Real.one_le_rpow hw Shared50RecursiveBudgetBound.tau_range.1.le
+  have hlin : (rootOverhead : ℝ)*V ≤ (rootOverhead : ℝ)*V*((125000^depth : ℕ) : ℝ)^Shared50Parameters.tau := by
     nlinarith [show (0 : ℝ) ≤ (rootOverhead : ℝ)*V by positivity]
   simp only [rootBudget,Nat.cast_add,Nat.cast_mul,constant]
   nlinarith

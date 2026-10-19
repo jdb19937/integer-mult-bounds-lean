@@ -88,16 +88,16 @@ theorem piece_cost (P e G B : ℕ) (hs : Fin 6 → List Bool)
     (ArbitraryWidthPieceRun.cost (descriptor P e G B) hs : ℝ) ≤
       (2*ArbitraryWidthPieceCost.coefficient)*
         (volume prime (ArbitraryWidthHighLayout.originalDescriptor P e G B) : ℝ)*
-        (e : ℝ)^Parameters.tau := by
+        (e : ℝ)^Shared50Parameters.tau := by
   have hp := positive P e G B hP hG hB
   have hw : 0 < (descriptor P e G B).width := by change 0 < e-highDepth prime e; omega
   have h := ArbitraryWidthPieceCost.cost_tau (descriptor P e G B) hs hp hv hw
   have hV : (volume prime (descriptor P e G B) : ℝ) ≤
       2*(volume prime (ArbitraryWidthHighLayout.originalDescriptor P e G B) : ℝ) := by
     exact_mod_cast volume_le P e G B hr.le
-  have he : ((descriptor P e G B).width : ℝ)^Parameters.tau ≤ (e : ℝ)^Parameters.tau :=
+  have he : ((descriptor P e G B).width : ℝ)^Shared50Parameters.tau ≤ (e : ℝ)^Shared50Parameters.tau :=
     Real.rpow_le_rpow (Nat.cast_nonneg _) (by exact_mod_cast (show (descriptor P e G B).width ≤ e from Nat.sub_le _ _))
-      Shared50RecursiveBudgetBound.exponent_range.1.le
+      Shared50RecursiveBudgetBound.tau_range.1.le
   have h1 := mul_le_mul_of_nonneg_left hV ArbitraryWidthPieceCost.coefficient_positive.le
   have h2 := mul_le_mul h1 he (Real.rpow_nonneg (Nat.cast_nonneg _) _)
     (mul_nonneg ArbitraryWidthPieceCost.coefficient_positive.le (by positivity))

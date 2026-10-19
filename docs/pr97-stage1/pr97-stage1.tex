@@ -1,0 +1,378 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\setlength{\emergencystretch}{3em}
+\raggedbottom
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\lean}[1]{\texttt{#1}}
+\newcommand{\tagL}{\textsc{[Lean]}}
+\newcommand{\tagP}{\textsc{[paper]}}
+\newcommand{\tagC}{\textsc{[computation]}}
+
+\begin{document}
+\sloppy
+
+\title[A cover-free bit supplier]{A cover-free bit supplier for integer multiplication below
+$n \log n$ in Lean}
+
+\author{Dan Brown$^*$}
+\email{jdb1729@gmail.com}
+\thanks{$^*$Author of \emph{The Da Vinci Code}.}
+\author{Kenny Daniel}
+\email{platypii@gmail.com}
+
+\date{October 2026}
+
+\begin{abstract}
+The Lean development~\cite{IMB} proves that one fixed machine of Mathlib's \lean{Turing.FinTM2}
+model multiplies $n$-bit numbers in time $O\bigl(n(\log n)^{1-\kappa}\bigr)$. With the T16
+complex supplier in place, its bit interchange, the Shared50 network of~\cite{OAI} with
+exponent $\tau = 1 - 296\cdot 10^{-11}$, bounds the saving at $\kappa = 88279 \cdot 2^{-46}
+\approx 2^{-29.57}$. We replace that interchange with the two-stage partial-swap word of
+PR97~\cite{PR97}, built on Swapnil Jain's round-7 witness~\cite{SJ}. The word needs no routes,
+charts, cover classes or helper hosting, so it runs on the existing recursive interchange
+machine. The proof adds a constructive exchange lemma, which makes a rank-$r$ frame change $r$
+child calls between lower-triangular passes; an explicit height bound, which fixes the machine's
+prime; a machine generic in the bit network; and a seam that selects the supplier. The new
+saving is $\kappa = 111364923 \cdot 2^{-46} \approx 2^{-19.27}$. We also record why the selected
+PR589 supplier does not port, rank the cover-free suppliers of~\cite{CS}, and describe the next
+stage, the opposite-bank compiler of~\cite{ICE}, at about $2^{-14.5}$.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+The saving $\kappa$ of~\cite{IMB} is the least of five margins of the compact multiplier, with
+$\varepsilon = 31/64$ and chunk exponent $c = 7/8$:
+\[
+  \varepsilon c (1-\tau),\quad \varepsilon(1-\lambda'),\quad (1-\varepsilon)(1-\tau),\quad
+  \tfrac12 - \delta - \varepsilon(1+2^{-33}),\quad \varepsilon(1-c).
+\]
+Here $\tau$ is the exponent of the bit interchange, $\lambda < \lambda' < 1$ are the layer
+exponents, and the constraints $\tau < \lambda$ and $\sigma < \lambda$ tie the layers to both
+suppliers. Kenny Daniel's T16 node on the layer machine gives $\sigma < 999/1000$
+(\lean{br\_branching\_999}). With T16 the binding margin is the layout margin
+$\varepsilon c (1-\tau)$, so the bit supplier sets $\kappa$: at Shared50's $1 - \tau = 2.96 \cdot
+10^{-9}$ this is $88279 \cdot 2^{-46}$.
+
+Each claim carries a tag. \tagL{} marks a theorem checked in~\cite{IMB} under the name given, on
+the axioms \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound}. \tagP{} marks a
+written argument. \tagC{} marks a number computed by a script from pinned upstream data.
+
+\section{The machine model}\label{sec:model}
+
+A node of the recursive interchange machine holds records addressed by two fields $H$ and $D$ of
+$m$ sub-fields each, and interchanges them. For an idempotent $U$ write
+\[
+  D_U(h, d) = \bigl((1-U)h + Ud,\; Uh + (1-U)d\bigr),
+\]
+so the parent interchange is $D_1$. The node's cheap operations are the field operations of
+\lean{AffineFieldProgram.Op}: scalings, ordered shifts, the cross shears $D \mathrel{+}= KH$, and
+XOR gates between role arrays. On the address coordinates of one role these act by lower
+triangular matrices in the $H$-before-$D$ order. A child is \lean{interchange i j}, which swaps
+$H_i$ with $D_j$ for independent $i$ and $j$, on volume $V/W$ for $W$ roles. A node with $s$
+children over $W$ roles costs $O(V)$ plus its children, and the uniform recursion gives
+$O\bigl(V w^{\tau}\bigr)$ for every $\tau$ with $s/W < m^{\tau}$.
+
+\section{Choosing a bit supplier}\label{sec:choice}
+
+\subsection{The Shared50 family}
+\tagC{} Shared50 has $h = 50$, $m = h^3$, and deficit $\eta = D/(Wm) = 23/661055000$. With
+rank-one children its saving is $\eta/\ln m = 2.96 \cdot 10^{-9}$. In the three-stage cube
+family $\eta = (v - 6h^2)/(2(v+R+h)h^3)$ with $v = \binom{h}{3}$; more roles $R$ only lower it,
+and the loss $6h^2$ forces $h > 36$. The family is capped at $7.99 \cdot 10^{-8}$ with rank-one
+children. A better shear program gains nothing, because lower-triangular factors preserve the
+rank of the $H$-to-$D$ block, so \lean{exists\_prime\_shear}'s $\operatorname{rank} A$ children
+are already minimal.
+
+\subsection{PR589}
+The selected bit supplier of~\cite{CS}, PR589, has $a_b = 10/5769$. Our earlier
+note~\cite{HOLE} shows that its accounting assumes free port routes, which this machine has to
+pay for. A further study \tagP\tagC{} sharpens that verdict:
+\begin{itemize}
+\item In upstream's geometry, $970$ of the word's $5472$ gates join registers of two different
+  ports, so every column needs common coordinates at every invocation.
+\item With split windows the route question reduces to one scalar condition per port. One
+  window family serves $88$ of the $111$ E8 ports with no route cost, with full-size solves to
+  residuals below $10^{-8}$.
+\item Hosting the full word over those $88$ ports costs about $0.66$ rank units per role, so the
+  moment at $\lambda = 1$ is $1.0073$ and nothing is saved. Keeping $97$ ports with corrections
+  gives $a_b \le 4.06 \cdot 10^{-4}$ only if a corner defect can be repaired with two rank-one
+  children per family, the parity minimum; no such repair is known.
+\item A word whose ports all share one line saves nothing in any geometry.
+\end{itemize}
+
+\subsection{Cover-free suppliers}
+\tagC{} Every supplier of~\cite{CS} with $a_b > 1.24 \cdot 10^{-4}$ needs a class-indexed cover
+or the compressed nine-stage geometry with port routes. Those that run on this machine:
+\begin{center}
+\begin{tabular}{llc}
+\toprule
+supplier & mechanism & $a_b$\\
+\midrule
+\#104 on PR97 & opposite-bank whole projector, design-B frames & $1.2402 \cdot 10^{-4}$\\
+\#104 on PR97 & opposite-bank whole projector, plain frames & $9.70 \cdot 10^{-5}$\\
+PR97 & flag-basis corner runs & $6.3974 \cdot 10^{-5}$\\
+PR97 & rank-one children & $3.734 \cdot 10^{-6}$\\
+cube family & rank-one ceiling & $\le 7.99 \cdot 10^{-8}$\\
+Shared50 & rank-one children & $2.96 \cdot 10^{-9}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+This note proves the PR97 row with rank-one children.
+
+\section{Frame changes on the machine}\label{sec:exchange}
+
+\begin{theorem}[\lean{M8.exchange\_factor}, \lean{M8.ExchangeProgram.program\_run},
+\lean{program\_interchanges}; \tagL]\label{thm:exchange}
+Let $U = E_1 \Pi E_2$ be an idempotent over a commutative ring, with $E_1, E_2$ invertible lower
+triangular and $\Pi$ a pivot matrix with pivot pairs $L$. Put $M = E_2 E_1$, $P_E = \Pi\Pi^{\mathsf
+T}$, $P_F = \Pi^{\mathsf T}\Pi$ and
+\[
+  K = M P_E - P_F M + P_F M P_E - \Pi^{\mathsf T}.
+\]
+Then $D_U$ equals: transform $H$ by $E_1^{-1}$ and $D$ by $E_2$; shear $D \mathrel{+}= KH$; swap
+$H_i$ with $D_j$ for each $(i, j) \in L$; shear $D \mathrel{-}= KH$; transform back. It uses
+exactly $|L| = \operatorname{rank} U$ interchanges.
+\end{theorem}
+
+\begin{proof}[Sketch]
+In the coordinates $(E_1^{-1}h, E_2 d)$ the map is $g = 1 + CR$ with $C = [\Pi; -M\Pi]$ and
+$R = [-M, 1]$. Idempotency of $U$ is $\Pi M \Pi = \Pi$. The matrix $K$ satisfies $KE = ME - F$
+and $F^{\mathsf T}K = E^{\mathsf T} - F^{\mathsf T}M$ for the pivot columns $\Pi = EF^{\mathsf
+T}$, so conjugating by the shear $S = \bigl[\begin{smallmatrix}1&0\\K&1\end{smallmatrix}\bigr]$
+gives $SgS^{-1} = 1 + [E; -F][-E^{\mathsf T}, F^{\mathsf T}]$, the swap on the pivot pairs.
+\end{proof}
+
+For nested frames $A \le B$ the frame change is $D_A D_B = D_{B-A}$ (\lean{exchange\_comp}), of
+rank $\operatorname{rank} B - \operatorname{rank} A$ (\lean{rank\_sub\_add}) \tagL. With rank-one
+children the cost along a wire telescopes to its final rank minus its initial rank, so the count
+$s$ does not depend on the intermediate frames \tagP.
+
+\subsection{The prime}
+The machine runs over $\Z/q^b$ for one odd prime $q$. Lower-triangular factorizations are not
+unique, so a factorization chosen by \lean{Classical.choice} has no height. The development
+proves a height-bounded elimination (\lean{M8.Height.exists\_bounded}) \tagL: for an $n \times n$
+rational matrix whose entries have numerator and denominator at most $H$, some factorization has
+all entries below an explicit $G(n, H)$. Every number the exchange program needs is then below
+\lean{coefficientBound} $= 2^{e}$, $e$ a sealed choice above $2^{2^{16}}$, for $n \le 529$ and $H
+= 10^{10000}$ (\lean{numbers\_le\_coefficientBound}) \tagL. The kernel never evaluates the
+tower.
+
+Two edits to the Shared50 network files make that prime available. \lean{Shared50ModularControl.prime}
+is chosen beyond \lean{coefficientBound} and Shared50's denominators
+(\lean{coefficientBound\_lt\_prime}), and the coefficient classes \lean{Occurs} and
+\lean{ScaleOccurs} admit every rational within the bound \tagL.
+
+\section{The PR97 word}\label{sec:word}
+
+\tagC{} The word has $h = 23$, $v = \binom{23}{3} = 1771$, $m = h^2 = 529$, $N = v^2 = 3136441$,
+$R = 28866$ side roles per invocation, $W = 2N + 2vR = 108516254$ roles, and rank mass
+\[
+  s = Wm - N + 2vh(h-1) = 57403754177.
+\]
+The pinned ledger replays: $1080616$ events, $s$ as stated, and the complete forward and
+reflected $\F_2$ shear.
+
+\subsection{Plain frames}
+The development uses the simplest nested frames the gates allow \tagP\tagC. Readouts start at
+frame $0$; the source of triple $S$ sits at the line $t_S$; node $n$ of the side DAG sits at
+$\operatorname{span}(n) = \sum_{S \in \operatorname{supp} n} \Q t_S$; the roots read at the
+hyperplanes $t_T^{\perp}$ and the star spaces $U_c$. The frames are the $G$-orthogonal
+projectors for $G = I - J/9$ on $\Q^{23}$ (\lean{M8.Frames.Projector}). Nondegeneracy is a
+theorem: every support lies in a star, and on $U_c$ the form $G$ is the Euclidean form of the
+pair vectors, which is positive definite. The plain word has the same $s$ as upstream's
+design-B frames. Every projector entry has numerator and denominator at most $10^{200}$
+(\lean{frame\_height\_le}) \tagL.
+
+\subsection{The local word}
+The local word is $\mathrm{OPS}' \,;\, \mathrm{RR} \,;\, \mathrm{OPS}'^{-1} \,;\, \mathrm{OPS}
+\,;\, \mathrm{RR} \,;\, \mathrm{OPS}^{-1}$, with $\mathrm{OPS}$ the compiled XOR list of the side
+DAG and $\mathrm{RR}$ the root reads \tagL:
+\begin{itemize}
+\item \lean{compile\_correct}: for every valid DAG, from zero side slots, each root's slot holds
+  the root's value.
+\item \lean{word\_run}: on arbitrary contents the garbage of the side slots cancels over $\F_2$.
+\item The certificate data, as Lean structures in sixteen chunks, pass \lean{decide +kernel} in
+  about $2.5$ minutes; they give \lean{dag\_valid} and \lean{supp\_add}.
+\item \lean{word\_run\_target}: by the triple identity
+  $\sum_{c \in T}[c \in S,\ S \cap T = \{c\}] + \sum_{c \in T}[c \in S] \equiv [S = T] \pmod 2$,
+  the word adds $x_t$ into $y_t$ for every triple and leaves everything else unchanged.
+  \lean{reflected\_run\_source} is the bank-exchanged word.
+\end{itemize}
+
+\subsection{The global node}
+Stage one runs the doubled local word in invocation $T$ with frames $K \otimes Q_T$; stage two
+runs it reversed and complemented, lifted to $(1 - P_S) \otimes 1 + P_S \otimes K$, with the banks
+exchanged. The data role $X_{ST}$ starts in $P_S \otimes Q_T$, and after the rank-one correction
+$Y_{ST}$ ends in $1 - P_S \otimes Q_T$. Since $D_U D_{1-U} = D_1$, every contract role ends with
+its route's stream, address fields exchanged \tagL:
+\begin{itemize}
+\item \lean{node\_scalar}: on scalars the node maps $(x, y) \mapsto (y, x)$;
+\item \lean{node\_run}: the identity on streams, the field \lean{run\_identity};
+\item \lean{calls\_node\_le}: the node makes at most $s$ child calls;
+\item \lean{Global.pr97} : \lean{BitNetwork}, with \lean{runs\_pr97} and \lean{pr97\_tau}.
+\end{itemize}
+The node uses $3217908$ zero temporaries, each in the frame its first gate needs, since a zero
+stream is valid in every frame.
+
+\section{The machine and the seam}\label{sec:machine}
+
+\lean{M8.BitNetwork} packages a bit network: contract roles and temporaries, the width $m$, the
+prime, a control list of edges, XOR gates and resets, the route, and the certificates
+\lean{calls\_exact}, \lean{legal}, \lean{legal\_mod}, \lean{xor\_gate}, \lean{run\_identity} and
+\lean{branching}. \lean{Runs} adds the shared prime, the coefficient bound and $m \le W$.
+
+The machine \lean{M8.Machine} is the Shared50 recursive machine made generic in the network
+\tagL:
+\begin{itemize}
+\item \lean{Induction.contract} at every depth, and \lean{RootExecution.halts\_power\_bound}: the
+  root halts within $C \cdot V \cdot w^{\tau}$ with the array transposed;
+\item \lean{BinaryInterchangeRun.runs} and \lean{BinaryInterchangeRun.uniform\_bound}: the
+  rectangular interchange in $C \cdot V \cdot \max(1, h, d)^{\tau}$, $\tau$ the network's
+  exponent.
+\end{itemize}
+The arbitrary-width tail uses $43$ modules of the tree unchanged and $76$ ported ones.
+
+The cost chain reaches the interchange through three modules of \lean{Machine}:
+\lean{BinaryInterchangeRun}, \lean{BinaryInterchangeBudget} and \lean{BinaryRadixEqualShared}. They are seams that
+re-export the chosen supplier, and \lean{Parameters.tau} is the supplier's exponent; Shared50's
+own exponent is \lean{Shared50Parameters.tau}. No consumer of the interchange changes. The script
+\texttt{scripts/s6/apply\_seam.py} selects \texttt{shared50}, \texttt{m8} (Shared50 as a
+network on the generic machine, \lean{Shared50Network}) or \texttt{pr97}; it is idempotent.
+
+\section{The retune}\label{sec:retune}
+
+\tagL{} \lean{Global.Branching97.branching} gives $s'/W < 529^{\tau_{97}}$ for every $s' \le s$
+with
+\[
+  \tau_{97} = 1 - 3734039 \cdot 10^{-12},
+\]
+within $10^{-12}$ of the threshold, from a $26$-term series for $\log 529$ and rationals. With
+$\lambda = 1 - 35 \cdot 10^{-7}$ and $\lambda' = 1 - 33 \cdot 10^{-7}$ the margins are
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+margin & value & slack over $\kappa$\\
+\midrule
+layout $\varepsilon c(1-\tau)$ & $1.582591 \cdot 10^{-6}$ & $6.9 \cdot 10^{-15}$\\
+layers $\varepsilon(1-\lambda')$ & $1.598438 \cdot 10^{-6}$ & $1.6 \cdot 10^{-8}$\\
+CRT $(1-\varepsilon)(1-\tau)$ & $1.925364 \cdot 10^{-6}$ & $3.4 \cdot 10^{-7}$\\
+resampling $\tfrac12 - \delta - \varepsilon(1+2^{-33})$ & $7.8125 \cdot 10^{-3}$ &
+$7.8 \cdot 10^{-3}$\\
+direct $\varepsilon(1-c)$ & $6.0547 \cdot 10^{-2}$ & $6.1 \cdot 10^{-2}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{theorem}[\lean{MathlibTM2.mulInTime}; \tagL]
+One fixed \lean{Turing.FinTM2} machine multiplies in time $O\bigl(n (\log n)^{1-\kappa}\bigr)$
+with $\kappa = 111364923 \cdot 2^{-46} \approx 2^{-19.27}$.
+\end{theorem}
+
+The F$_p$ transform of~\cite{DFT} inherits the same saving through
+\lean{DFT.finalHostMultiplier}.
+
+\section{Next steps}\label{sec:next}
+
+\subsection{Stage 2: the opposite-bank compiler, about $2^{-14.5}$}
+The compiler of~\cite{ICE} replaces the $r$ rank-one children of a frame change with one
+reversed child $F_{rf}(H, D) = (C_{rf} D, C_{rf} H)$ of rank $r f$ over fields of $f$ atoms, and
+stops the recursion at $w = e^{1/1000}$. On plain frames its whole-projector moment gives $a^* =
+9.70 \cdot 10^{-5}$, so $\kappa \approx 2^{-14.5}$ \tagC. Done so far \tagL:
+\begin{itemize}
+\item \lean{exists\_generic\_basis\_of\_idempotent}: one basis with natural entries bounded in
+  terms of $m$ and the ranks gives every residual projector nonzero leading minors, by Mathlib's
+  combinatorial Nullstellensatz;
+\item \lean{revExchange\_generic} and \lean{revExchange\_atoms}: in that basis a projector's
+  reversed exchange is lower-triangular passes, shears and the $rf$ interchanges of one child
+  $F_{rf}$, and the adapters read only earlier atoms (\lean{lower\_kron\_one}).
+\end{itemize}
+Remaining: the stopped recurrence $T(n, w) \le A n + B n^{\tau^*} w^{1 - a_{\mathrm{leaf}}}$ from
+two moment gaps; the atom adapters at cost $O(Vn)$ per node; the reversed recursive family, which
+needs variable-rank block children and nodes at every width; and the outer wrapper $F L F$. The
+seam stays, so the switch is again one script run and one retune.
+
+\subsection{Further options}
+\begin{itemize}
+\item Upstream's design-B frames raise $a^*$ to $1.2402 \cdot 10^{-4}$, about $2^{-14.1}$, with
+  about 15 MB of integer frame data.
+\item PR589 needs either one window family for all $111$ ports or a two-unit corner repair; the
+  latter would give $a_b \le 4.06 \cdot 10^{-4}$, about $2^{-12.4}$.
+\item The Gaussian margin limits $\varepsilon < 1/2$. The phase-cell inverse of the NearOne
+  plan lifts it toward $2/3$, which scales every margin above by about $1.37$.
+\item With the generic machine carrying the theorem, the Shared50 tail and root
+  (\lean{Shared50BinaryInterchangeRun} and its dependencies) can retire.
+\end{itemize}
+
+\section{Status}
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{@{}Xl@{}}
+\toprule
+item & status\\
+\midrule
+Exchange lemma, exchange program, height bound, prime & Lean\\
+Plain frames, frame heights, local word, global node & Lean\\
+Generic machine, arbitrary-width tail, seam, Shared50 as a network & Lean\\
+Branching certificate and retune, $\kappa = 111364923 \cdot 2^{-46}$ & Lean\\
+Shared50 family ceiling, ranking of cover-free suppliers & computation\\
+PR589 on this machine: no certified saving & paper and computation\\
+Stage 2: generic basis, reversed exchange over atoms & Lean\\
+Stage 2: stopped recurrence, adapters, reversed family, wrapper & open\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{thebibliography}{9}\raggedright
+
+\bibitem{CS} D. Colkitt (maintainer) and contributors, \texttt{integer-mult-bounds}: community
+research on integer multiplication below $n \log n$, head \texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds}.
+
+\bibitem{DFT} D. Brown and K. Daniel, \emph{The discrete Fourier transform over prime fields below
+$N \log N$ on multitape machines}, \texttt{docs/dft/dft.pdf} in~\cite{IMB}.
+
+\bibitem{HOLE} D. Brown and K. Daniel, \emph{Hosting and realizability in the selected PR589 bit
+supplier}, \texttt{docs/pr589-hole/pr589-hole.pdf} in~\cite{IMB}.
+
+\bibitem{ICE} icekylinx, the stopped-product notes \texttt{notes/stopped-product-*.tex} and
+\texttt{notes/partial-gauge-*.tex}, in~\cite{CS} at \texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/463113d675af7410ac91d53a4fed51ec6494eb9a/notes}.
+
+\bibitem{IMB} K. Daniel, \texttt{integer-mult-bounds-lean}: integer multiplication below
+$n \log n$ in Lean on Mathlib's finite Turing machines,
+\url{https://github.com/platypii/integer-mult-bounds-lean}.
+
+\bibitem{OAI} OpenAI, \emph{Integer multiplication below $n \log n$}, OpenAI Math Release
+preprint, September 23, 2026,
+\url{https://github.com/openai/math/blob/main/preprints/Integer-multiplication-below-n-log-n-September-23-2026/paper.pdf}.
+
+\bibitem{PR97} Z. Chen, PR97 of~\cite{CS}, commit \texttt{e15350b6} of
+\texttt{jacklightChen/integer-mult-bounds},
+\url{https://github.com/CrocSwap/integer-mult-bounds/pull/97}; pinned in~\cite{CS} at
+\texttt{references/partial-gauge/pr97}.
+
+\bibitem{SJ} S. Jain, \texttt{integer-mult-kappa}, round-7 witness, commit \texttt{741e7aa0},
+\url{https://github.com/Swapnil-jain/integer-mult-kappa/tree/741e7aa078392553815df7926ee17ac5e25a8c38}.
+
+\end{thebibliography}
+
+\end{document}

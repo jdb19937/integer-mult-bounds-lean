@@ -85,14 +85,14 @@ theorem cost_bound (V D P e G B : ℕ) (rh : Fin 6 → List Bool)
     (hP : 0 < P) (hG : 0 < G) (hB : 0 < B) (hr : highDepth prime e < e)
     (hroot : RecursiveDimensionBank.Headers (ArbitraryWidthHighPaddedBudget.descriptor P e G B) rh) :
     (cost V P e G B rh : ℝ) ≤ coefficient D*
-      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Parameters.tau := by
+      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Shared50Parameters.tau := by
   have hbody := ArbitraryWidthHighRun.cost_bound P e G B rh hP hG hB hr hroot
   have hdom' : (V : ℝ) ≤ (D : ℝ)*(volume prime (originalDescriptor P e G B) : ℝ) := by
     exact_mod_cast hdom
   have hV' : (1 : ℝ) ≤ V := by exact_mod_cast hV
   have he : 0 < e := by omega
-  have hpower : 1 ≤ (e : ℝ)^Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
-    Shared50RecursiveBudgetBound.exponent_range.1.le
+  have hpower : 1 ≤ (e : ℝ)^Shared50Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
+    Shared50RecursiveBudgetBound.tau_range.1.le
   have hlinear := mul_le_mul_of_nonneg_left hpower
     (show 0 ≤ (424 : ℝ)*(D : ℝ)*(volume prime (originalDescriptor P e G B) : ℝ) by positivity)
   unfold cost coefficient
@@ -105,7 +105,7 @@ theorem cost_bound_twice (P e G B : ℕ) (rh : Fin 6 → List Bool)
     (hP : 0 < P) (hG : 0 < G) (hB : 0 < B) (hr : highDepth prime e < e)
     (hroot : RecursiveDimensionBank.Headers (ArbitraryWidthHighPaddedBudget.descriptor P e G B) rh) :
     (cost (2*volume prime (originalDescriptor P e G B)) P e G B rh : ℝ) ≤ coefficient 2*
-      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Parameters.tau := by
+      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Shared50Parameters.tau := by
   have hp : (originalDescriptor P e G B).Positive :=
     ⟨hP,(by change 0 < 1; decide),(by change 0 < 1; decide),hG,hB⟩
   have hvol := RecursiveAffinePrepare.volume_positive Shared50ModularControl.prime_prime.two_le _ hp

@@ -55,13 +55,16 @@ theorem rank_balance : s + N = W * m + 2 * L := by
 
 noncomputable section
 
+/-- The width exponent certified for the Shared50 node. -/
+def tau : ℝ := 1 - 296 / 10 ^ 11
+
 theorem deficit_slack :
-    (23 / 661055000 : ℝ) - (1 - Parameters.tau) * (11737 / 1000) =
+    (23 / 661055000 : ℝ) - (1 - Shared50Parameters.tau) * (11737 / 1000) =
       84861241 / 1652637500000000000 := by
-  norm_num [Parameters.tau]
+  norm_num [Shared50Parameters.tau]
 
 theorem deficit_strict :
-    (1 - Parameters.tau) * (11737 / 1000 : ℝ) < 23 / 661055000 := by
+    (1 - Shared50Parameters.tau) * (11737 / 1000 : ℝ) < 23 / 661055000 := by
   have hh := deficit_slack
   norm_num at hh ⊢
   linarith
@@ -76,28 +79,28 @@ theorem log_bound : Real.log 125000 < 11737 / 1000 := by
   exact hsum.trans_le hseries
 
 /-- The optimized bit budget satisfies the existing chosen branching exponent. -/
-theorem branching_bound : (s : ℝ) / W < (m : ℝ) ^ Parameters.tau := by
+theorem branching_bound : (s : ℝ) / W < (m : ℝ) ^ Shared50Parameters.tau := by
   have hlog := log_bound
   have hdef := deficit_strict
-  have hpos : (0 : ℝ) < 1 - Parameters.tau := by norm_num [Parameters.tau]
+  have hpos : (0 : ℝ) < 1 - Shared50Parameters.tau := by norm_num [Shared50Parameters.tau]
   have hlin := mul_lt_mul_of_pos_left hlog hpos
-  have hexp := Real.add_one_le_exp (-(1 - Parameters.tau) * Real.log 125000)
+  have hexp := Real.add_one_le_exp (-(1 - Shared50Parameters.tau) * Real.log 125000)
   have hr : (1 : ℝ) - 23 / 661055000 <
-      Real.exp (-(1 - Parameters.tau) * Real.log 125000) := by linarith
-  have heq : (125000 : ℝ) ^ Parameters.tau =
-      125000 * Real.exp (-(1 - Parameters.tau) * Real.log 125000) := by
+      Real.exp (-(1 - Shared50Parameters.tau) * Real.log 125000) := by linarith
+  have heq : (125000 : ℝ) ^ Shared50Parameters.tau =
+      125000 * Real.exp (-(1 - Shared50Parameters.tau) * Real.log 125000) := by
     rw [Real.rpow_def_of_pos (by norm_num)]
-    have he : Real.log 125000 * Parameters.tau =
-        Real.log 125000 + -(1 - Parameters.tau) * Real.log 125000 := by ring
+    have he : Real.log 125000 * Shared50Parameters.tau =
+        Real.log 125000 + -(1 - Shared50Parameters.tau) * Real.log 125000 := by ring
     rw [he, Real.exp_add, Real.exp_log (by norm_num)]
   rw [rank_count, wire_count]
-  change (50790175992864000000 / 406321422080000 : ℝ) < (125000 : ℝ) ^ Parameters.tau
+  change (50790175992864000000 / 406321422080000 : ℝ) < (125000 : ℝ) ^ Shared50Parameters.tau
   rw [heq]
   nlinarith
 
 /-- A rank-sum upper bound inherits the strict analytic branching inequality. -/
 theorem branching_of_rank_le (rankSum : ℕ) (hr : rankSum ≤ s) :
-    (rankSum : ℝ) / W < (m : ℝ) ^ Parameters.tau := by
+    (rankSum : ℝ) / W < (m : ℝ) ^ Shared50Parameters.tau := by
   have hr' : (rankSum : ℝ) ≤ s := by exact_mod_cast hr
   exact lt_of_le_of_lt (div_le_div_of_nonneg_right hr' (by rw [wire_count]; positivity)) branching_bound
 
@@ -110,7 +113,7 @@ theorem rank_le_of_balance (rankSum loss : ℕ)
 
 theorem branching_of_balance (rankSum loss : ℕ)
     (hb : rankSum + N ≤ W * m + 2 * loss) (hl : loss ≤ L) :
-    (rankSum : ℝ) / W < (m : ℝ) ^ Parameters.tau :=
+    (rankSum : ℝ) / W < (m : ℝ) ^ Shared50Parameters.tau :=
   branching_of_rank_le rankSum (rank_le_of_balance rankSum loss hb hl)
 
 end

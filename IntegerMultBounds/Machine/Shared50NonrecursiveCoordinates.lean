@@ -32,7 +32,7 @@ theorem neg_one_scale_occurs : Shared50AffineCoefficients.ScaleOccurs (-1) := by
       (List.mem_map.mpr ⟨w,Shared50GlobalTrace.mem_wires w,rfl⟩))
   let p := AffineFieldProgram.compile (Shared50FiniteInterchange.preFields : List (Swap.Shear.Op Index ℚ))
   have hp : p ∈ rationalSchedules := List.mem_map.mpr ⟨_,hpre,rfl⟩
-  refine ⟨p,hp,(0 : Index),Or.inr ?_⟩
+  refine Or.inl ⟨p,hp,(0 : Index),Or.inr ?_⟩
   apply List.mem_flatMap.mpr
   refine ⟨.transformD (-1),?_,?_⟩
   · simp [Shared50FiniteInterchange.preFields]
@@ -54,29 +54,29 @@ theorem expanded_supported (p : List (AffineFieldProgram.Op Index ℚ)) (hp : p 
     have he : out = liftH op := by simpa only [expand,List.mem_singleton] using hout
     subst out
     cases op with
-    | scale i r => exact ⟨p,hp,i,Or.inl hop⟩
-    | shift i j r => exact ⟨hl,⟨p,hp,_,hop,rfl⟩⟩
+    | scale i r => exact Or.inl ⟨p,hp,i,Or.inl hop⟩
+    | shift i j r => exact ⟨hl,Or.inl ⟨p,hp,_,hop,rfl⟩⟩
   | affineD op =>
     intro out hout
     have he : out = liftD op := by simpa only [expand,List.mem_singleton] using hout
     subst out
     cases op with
-    | scale i r => exact ⟨p,hp,i,Or.inr hop⟩
+    | scale i r => exact Or.inl ⟨p,hp,i,Or.inr hop⟩
     | shift i j r =>
-      refine ⟨?_,⟨p,hp,_,hop,rfl⟩⟩
+      refine ⟨?_,Or.inl ⟨p,hp,_,hop,rfl⟩⟩
       change 125000+j.val < 125000+i.val
       exact Nat.add_lt_add_left hl _
   | addToD i j =>
     intro out hout
     have he : out = .shift (dIndex j) (hIndex i) 1 := by simpa only [expand,List.mem_singleton] using hout
     subst out
-    exact ⟨h_before_d i j,⟨p,hp,_,hop,rfl⟩⟩
+    exact ⟨h_before_d i j,Or.inl ⟨p,hp,_,hop,rfl⟩⟩
   | subFromD i j =>
     intro out hout
     simp only [expand,List.mem_cons,List.not_mem_nil,or_false] at hout
     rcases hout with rfl | rfl
     · exact neg_one_scale_occurs
-    · exact ⟨h_before_d i j,⟨p,hp,_,hop,Or.inl rfl⟩⟩
+    · exact ⟨h_before_d i j,Or.inl ⟨p,hp,_,hop,Or.inl rfl⟩⟩
   | interchange i j => exact hn.elim
 
 /-- Concrete fixed stage description for one actual nonrecursive operation. -/

@@ -30,14 +30,14 @@ def cost (K P e G B : ℕ) (hs : Fin 6 → List Bool) : ℕ :=
   K*volume prime (originalDescriptor P e G B)+5
 
 def coefficient (K : ℕ) : ℝ :=
-  (movementCoefficient : ℝ)*ArbitraryWidthHighBudget.constant prime Parameters.tau+
+  (movementCoefficient : ℝ)*ArbitraryWidthHighBudget.constant prime Shared50Parameters.tau+
   2*ArbitraryWidthPieceCost.coefficient+(K : ℝ)+1657
 
 theorem coefficient_positive (K : ℕ) : 0 < coefficient K := by
-  have hc := ArbitraryWidthHighBudget.constant_positive prime Parameters.tau
-    Shared50ModularControl.prime_prime.two_le Shared50RecursiveBudgetBound.exponent_range.1
+  have hc := ArbitraryWidthHighBudget.constant_positive prime Shared50Parameters.tau
+    Shared50ModularControl.prime_prime.two_le Shared50RecursiveBudgetBound.tau_range.1
   have hp := ArbitraryWidthPieceCost.coefficient_positive
-  have hm : 0 ≤ (movementCoefficient : ℝ)*ArbitraryWidthHighBudget.constant prime Parameters.tau :=
+  have hm : 0 ≤ (movementCoefficient : ℝ)*ArbitraryWidthHighBudget.constant prime Shared50Parameters.tau :=
     mul_nonneg (Nat.cast_nonneg _) hc.le
   have hk : 0 ≤ (K : ℝ) := Nat.cast_nonneg _
   unfold coefficient
@@ -49,15 +49,15 @@ theorem bound (K P e G B : ℕ) (hs : Fin 6 → List Bool)
     (hP : 0 < P) (hG : 0 < G) (hB : 0 < B) (hr : highDepth prime e < e)
     (hv : RecursiveDimensionBank.Headers (descriptor P e G B) hs) :
     (cost K P e G B hs : ℝ) ≤ coefficient K*
-      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Parameters.tau := by
+      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Shared50Parameters.tau := by
   let V := volume prime (originalDescriptor P e G B)
   have hpositive : (originalDescriptor P e G B).Positive := ⟨hP,(by change 0 < 1; decide),(by change 0 < 1; decide),hG,hB⟩
   have hV : 0 < V := RecursiveAffinePrepare.volume_positive Shared50ModularControl.prime_prime.two_le _ hpositive
   have he : 0 < e := by omega
-  have hpower : 1 ≤ (e : ℝ)^Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
-    Shared50RecursiveBudgetBound.exponent_range.1.le
-  have hmovement := ArbitraryWidthHighBudget.movement_bound prime e V movementCoefficient Parameters.tau
-    Shared50ModularControl.prime_prime.two_le he Shared50RecursiveBudgetBound.exponent_range.1
+  have hpower : 1 ≤ (e : ℝ)^Shared50Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
+    Shared50RecursiveBudgetBound.tau_range.1.le
+  have hmovement := ArbitraryWidthHighBudget.movement_bound prime e V movementCoefficient Shared50Parameters.tau
+    Shared50ModularControl.prime_prime.two_le he Shared50RecursiveBudgetBound.tau_range.1
   have hpiece := ArbitraryWidthHighPaddedBudget.piece_cost P e G B hs hP hG hB hr hv
   have hpad : (volume prime (descriptor P e G B) : ℝ) ≤ 2*(V : ℝ) := by
     exact_mod_cast ArbitraryWidthHighPaddedBudget.volume_le P e G B hr.le

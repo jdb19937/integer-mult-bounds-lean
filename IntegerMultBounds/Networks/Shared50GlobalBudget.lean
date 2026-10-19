@@ -194,7 +194,7 @@ theorem branching_of_balance (ordinaryRank loss : ℕ)
     (hb : ordinaryRank + sourceTotal = sinkTotal + 2 * loss)
     (hl : loss ≤ Shared50Parameters.L) :
     ((ordinaryRank + sourceTotal : ℕ) : ℝ) / Shared50Parameters.W <
-      (Shared50Parameters.m : ℝ) ^ Parameters.tau :=
+      (Shared50Parameters.m : ℝ) ^ Shared50Parameters.tau :=
   Shared50Parameters.branching_of_rank_le _ (corrected_rank_budget ordinaryRank loss hb hl)
 
 end

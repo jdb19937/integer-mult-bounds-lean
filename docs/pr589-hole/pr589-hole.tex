@@ -59,15 +59,16 @@ completion is open by upstream's own account. The finite certificates of the sup
 \section{Introduction}
 
 The verified multiplier of~\cite{IMB} runs in time $O\bigl(n(\log n)^{1-\kappa}\bigr)$ on Mathlib's
-finite multi-stack Turing machines, with $\kappa = 88279 \cdot 2^{-46}$. Upstream's selected record~\cite{CS} combines a complex
+finite multi-stack Turing machines, with $\kappa = 111364923 \cdot 2^{-46}$. Upstream's selected record~\cite{CS} combines a complex
 supplier (T16) with a bit supplier (PR589, tuned by DreamingOfClouds on eumemic's PR555) and states
 the conditional exponent $\kappa = 0.001672660197076918$. Its README lists the open parts: ``All-size/compiler,
 common-label/mutable-source realization, whole-call hosting, precision/tape, exact recovery and
 analytic obligations remain conditional.''
 
 The Lean development runs T16 on its complex side, through Kenny Daniel's T16 node on the layer
-machine, and its bit interchange binds $\kappa$. Under upstream's accounting, adding PR589 would
-move the cap on $\kappa$ from about $2^{-29.4}$ to about $2^{-10.3}$. This note records what the
+machine, and the two-stage word of PR97 on its bit side~\cite{P97}. Its bit interchange binds
+$\kappa$. Under upstream's accounting, PR589 would move $\kappa$ from about $2^{-19.3}$ to about
+$2^{-10.3}$. This note records what the
 port of PR589 found.
 
 Each claim carries a tag. \tagL{} marks a theorem checked in~\cite{IMB}, under the name given, with
@@ -412,6 +413,9 @@ below $n \log n$ in Lean on Mathlib's finite Turing machines,
 \bibitem{OAI} OpenAI,
 \emph{Integer multiplication below $n \log n$}, OpenAI Math Release preprint, September 23, 2026,
 \url{https://github.com/openai/math/blob/main/preprints/Integer-multiplication-below-n-log-n-September-23-2026/paper.pdf}.
+
+\bibitem{P97} D. Brown and K. Daniel, \emph{A cover-free bit supplier for integer multiplication
+below $n \log n$ in Lean}, \texttt{docs/pr97-stage1/pr97-stage1.pdf} in~\cite{IMB}.
 
 \bibitem{RCa} \texttt{research/selected-bit-recursive-caller}, in~\cite{CS} at
 \texttt{463113d6},

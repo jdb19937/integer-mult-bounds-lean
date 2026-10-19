@@ -163,7 +163,7 @@ theorem rankSum50_exact : rankSum Shared50GlobalCircuit.enumeration = Shared50Pa
 /-- The real signed physical network meets the selected strict branching bound. -/
 theorem branching_bound :
     ((rankSum Shared50GlobalCircuit.enumeration : ℕ) : ℝ) / Shared50Parameters.W <
-      (Shared50Parameters.m : ℝ) ^ Parameters.tau := by
+      (Shared50Parameters.m : ℝ) ^ Shared50Parameters.tau := by
   rw [rankSum50_exact]
   exact Shared50Parameters.branching_bound
 

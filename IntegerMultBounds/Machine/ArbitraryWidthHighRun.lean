@@ -122,7 +122,7 @@ theorem cost_bound (P e G B : ℕ) (hs : Fin 6 → List Bool)
     (hP : 0 < P) (hG : 0 < G) (hB : 0 < B) (hr : highDepth prime e < e)
     (hv : RecursiveDimensionBank.Headers (ArbitraryWidthHighPaddedBudget.descriptor P e G B) hs) :
     (ArbitraryWidthHighCost.cost 0 P e G B hs : ℝ) ≤ ArbitraryWidthHighCost.coefficient 0*
-      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Parameters.tau :=
+      (volume prime (originalDescriptor P e G B) : ℝ)*(e : ℝ)^Shared50Parameters.tau :=
   ArbitraryWidthHighCost.bound 0 P e G B hs hP hG hB hr hv
 
 end

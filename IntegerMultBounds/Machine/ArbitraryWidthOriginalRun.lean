@@ -88,7 +88,7 @@ theorem cost_bound (cutoff : ℕ)
       ArbitraryWidthHighPrepare.highDepth prime n < n)
     (d : Descriptor) (hs : Fin 6 → List Bool) (hp : d.Positive)
     (hv : RecursiveDimensionBank.Headers d hs) (he : 0 < d.width) :
-    (cost d hs : ℝ) ≤ coefficient cutoff*(volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by
+    (cost d hs : ℝ) ≤ coefficient cutoff*(volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by
   have hb := ArbitraryWidthHighCommonDispatchCost.bound cutoff hcut d hs hp hv he
   have hV := RecursiveAffinePrepare.volume_positive Shared50ModularControl.prime_prime.two_le d hp
   have hs := ArbitraryWidthHighCommonPrepare.setup_budget prime cutoff d
@@ -109,8 +109,8 @@ theorem cost_bound (cutoff : ℕ)
       ((ArbitraryWidthHighCommonPrepare.setupCoefficient prime cutoff+
         ArbitraryWidthHighCommonPrepare.cleanupCoefficient prime cutoff+2 : ℕ) : ℝ)*(volume prime d : ℝ) := by
     exact_mod_cast ho
-  have hpower : 1 ≤ (d.width : ℝ)^Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
-    Shared50RecursiveBudgetBound.exponent_range.1.le
+  have hpower : 1 ≤ (d.width : ℝ)^Shared50Parameters.tau := Real.one_le_rpow (by exact_mod_cast he)
+    Shared50RecursiveBudgetBound.tau_range.1.le
   have hlin := mul_le_mul_of_nonneg_left hpower
     (show 0 ≤ ((ArbitraryWidthHighCommonPrepare.setupCoefficient prime cutoff+
       ArbitraryWidthHighCommonPrepare.cleanupCoefficient prime cutoff+2 : ℕ) : ℝ)*(volume prime d : ℝ) by exact mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
@@ -120,7 +120,7 @@ theorem cost_bound (cutoff : ℕ)
 
 theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (d : Descriptor) (hs : Fin 6 → List Bool),
     d.Positive → RecursiveDimensionBank.Headers d hs → 0 < d.width →
-    (cost d hs : ℝ) ≤ C*(volume prime d : ℝ)*(d.width : ℝ)^Parameters.tau := by
+    (cost d hs : ℝ) ≤ C*(volume prime d : ℝ)*(d.width : ℝ)^Shared50Parameters.tau := by
   obtain ⟨cutoff,hcut⟩ := ArbitraryWidthHighGuard.bounded_fallback prime Shared50ModularControl.prime_prime.two_le
   exact ⟨coefficient cutoff,coefficient_positive cutoff,fun d hs hp hv he => cost_bound cutoff hcut d hs hp hv he⟩
 

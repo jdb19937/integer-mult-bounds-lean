@@ -166,7 +166,7 @@ theorem coefficient_positive : 0 < coefficient := by
 theorem cost_tau (v : Descriptor) (hs : Fin 6 → List Bool) (hp : v.Positive)
     (hv : RecursiveDimensionBank.Headers v hs) (hN : 0 < v.width) :
     (ArbitraryWidthPieceRun.cost v hs : ℝ) ≤
-      coefficient*(volume prime v : ℝ)*(v.width : ℝ)^Parameters.tau := by
+      coefficient*(volume prime v : ℝ)*(v.width : ℝ)^Shared50Parameters.tau := by
   have hn : v.width ≠ 0 := by omega
   have hslices := ArbitrarySliceStepBudget.sum_bound (volume prime v) v.width
     (Nat.log 125000 v.width) (Nat.pow_log_le_self _ hn)
@@ -174,7 +174,7 @@ theorem cost_tau (v : Descriptor) (hs : Fin 6 → List Bool) (hp : v.Positive)
   have hslices' :
       ((∑ i ∈ Finset.range (count 125000 v.width),
         digit 125000 v.width i*ArbitrarySliceStepBudget.budget i (volume prime v) : ℕ) : ℝ) ≤
-      ArbitrarySliceStepBudget.constant*(volume prime v : ℝ)*(v.width : ℝ)^Parameters.tau := by
+      ArbitrarySliceStepBudget.constant*(volume prime v : ℝ)*(v.width : ℝ)^Shared50Parameters.tau := by
     simpa only [count,ite_eq_right hn,digit,ArbitraryWidthPieceLoop.remaining,
       Nat.cast_sum,Nat.cast_mul] using hslices
   have hcost := (Nat.cast_le (α := ℝ)).mpr (cost_bound v hs hp hv)
@@ -185,8 +185,8 @@ theorem cost_tau (v : Descriptor) (hs : Fin 6 → List Bool) (hp : v.Positive)
   have hc : (0 : ℝ) ≤ constant := Nat.cast_nonneg _
   have hlin : ((v.width+1 : ℕ) : ℝ) ≤ 2*(volume prime v : ℝ) := by
     exact_mod_cast (show v.width+1 ≤ 2*volume prime v by omega)
-  have hpow : (1 : ℝ) ≤ (v.width : ℝ)^Parameters.tau :=
-    Real.one_le_rpow (by exact_mod_cast hN) Shared50RecursiveBudgetBound.exponent_range.1.le
+  have hpow : (1 : ℝ) ≤ (v.width : ℝ)^Shared50Parameters.tau :=
+    Real.one_le_rpow (by exact_mod_cast hN) Shared50RecursiveBudgetBound.tau_range.1.le
   have hcv : (0 : ℝ) ≤ (constant : ℝ)*(volume prime v : ℝ) :=
     mul_nonneg hc (Nat.cast_nonneg _)
   simp only [Nat.cast_add,Nat.cast_one] at hlin
