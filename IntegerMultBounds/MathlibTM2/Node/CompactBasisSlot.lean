@@ -290,7 +290,7 @@ theorem compactBasisSlot_exec {n a₀ k ρ left right o rowCount r w : ℕ}
   · rw [← compactOffsetArray_encZ_pullM (compactRecursiveBits layout)
       (compactRecursiveBits_injective layout) x y Z]
     unfold compactBasisSlotProg
-    rw [dif_pos hA]
+    rw [dite_eq_left hA]
     exact hex
 
 end

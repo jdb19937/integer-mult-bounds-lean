@@ -63,7 +63,7 @@ lemma bad_windows (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {i : ℕ}
     rw [digit, Nat.testBit_mod_two_pow, Nat.testBit_div_two_pow, Nat.add_comm j]
     simp [hj]
   unfold GoodIdx Good at hi
-  push_neg at hi
+  push Not at hi
   obtain ⟨c, hc, hgood⟩ := hi
   have hcG : c * p.G + p.G ≤ p.wc := by
     have := Nat.mul_le_mul_right p.G (show c + 1 ≤ p.n by omega)
@@ -74,7 +74,7 @@ lemma bad_windows (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {i : ℕ}
     · have hy : ¬ (seg p.ρ p.K c (view len F i).y / 2 + 2 ^ p.G < 2 ^ (p.K - 1)) :=
         not_lt.2 (hgood ht hu)
       rw [seg_good_iff hGK] at hy
-      push_neg at hy
+      push Not at hy
       refine Or.inr (Or.inr fun j hj => ?_)
       have hj' : posS p c + 1 + p.G + j < len F.y := by
         rw [hF.ly]
@@ -85,12 +85,12 @@ lemma bad_windows (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {i : ℕ}
         fieldOff len F.y + (posS p c + 1 + p.G + j) by omega, ← hbit F.y _ hj']
       exact hy j hj
     · rw [cdig_good_iff] at hu
-      push_neg at hu
+      push Not at hu
       refine Or.inr (Or.inl fun j hj => ?_)
       rw [Nat.add_assoc, ← hbit F.u _ (by rw [hF.lu]; omega)]
       exact hu j hj
   · rw [cdig_good_iff] at ht
-    push_neg at ht
+    push Not at ht
     refine Or.inl fun j hj => ?_
     rw [Nat.add_assoc, ← hbit F.t _ (by rw [hF.lt]; omega)]
     exact ht j hj

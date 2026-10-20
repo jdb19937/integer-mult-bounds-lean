@@ -98,7 +98,7 @@ lemma OK.lo_hi (h : d.OK) : d.lo < d.hi := by
   have : d.x.val ≠ d.y.val := fun e => this (Fin.ext e)
   omega
 
-lemma OK.hi_lt (h : d.OK) : d.hi < m := by unfold hi; exact max_lt d.x.isLt d.y.isLt
+lemma OK.hi_lt (_h : d.OK) : d.hi < m := by unfold hi; exact max_lt d.x.isLt d.y.isLt
 
 lemma OK.offsets (h : d.OK) :
     d.wc ≤ d.sLo ∧ d.sLo + d.wy ≤ d.sHi ∧ d.sHi + d.wy ≤ d.sT := by

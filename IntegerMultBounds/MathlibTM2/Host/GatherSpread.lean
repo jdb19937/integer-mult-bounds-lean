@@ -49,7 +49,7 @@ lemma length_gatherL : ∀ (ss ms : List Bool), ss.length = ms.length →
   | [], [], _ => rfl
   | s :: ss, m :: ms, h => by
     have := length_gatherL ss ms (by simpa using h)
-    cases m <;> simp [gatherL, this, List.count_cons]
+    cases m <;> simp [gatherL, this]
   | [], _ :: _, h => by simp at h
   | _ :: _, [], h => by simp at h
 
@@ -141,13 +141,13 @@ theorem gather_loop {src mask ts tm dst cs : Fin T} (h : [src, mask, ts, tm, dst
             scan := Function.update v.scan cs (bitSymbol s)
             flag := ms.head?.isSome } { S with R := R₂ } := by
       cases m <;>
-      simp [gatherStep, Action.run, peekR, update_rt, hm', hs', R₂, R₁, Function.update_apply,
-        a1, a2, a3, a4, b1, b2, b3, c1, c2, d1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4,
-        Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm c1, Ne.symm c2, Ne.symm d1]
+      simp [gatherStep, Action.run, peekR, update_rt, hm', hs', R₂, R₁,
+        a1, b1, b2, b3, c1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4,
+        Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm c2, Ne.symm d1]
     have hR₂m : R₂ mask = ms.map bitSymbol := by
-      cases m <;> simp [R₂, R₁, Function.update_apply, Ne.symm a1, b1, b2, b3]
+      cases m <;> simp [R₂, R₁, Ne.symm a1, b1, b2, b3]
     have hR₂s : R₂ src = ss.map bitSymbol := by
-      cases m <;> simp [R₂, R₁, Function.update_apply, a2, a3, a4]
+      cases m <;> simp [R₂, R₁, a2, a3, a4]
     obtain ⟨v', hu, he⟩ := ih ss { v with
         sym := some (bitSymbol m)
         scan := Function.update v.scan cs (bitSymbol s)
@@ -158,8 +158,7 @@ theorem gather_loop {src mask ts tm dst cs : Fin T} (h : [src, mask, ts, tm, dst
     congr 2
     funext k
     cases m <;>
-    simp [loopR, R₂, R₁, gatherL, Function.update_apply, a1, a2, a3, a4, b1, b2, b3, c1, c2, d1,
-      Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4, Ne.symm b1, Ne.symm b2, Ne.symm b3,
+    simp [loopR, R₂, R₁, gatherL, Function.update_apply, c2, d1, Ne.symm a4, Ne.symm b3,
       Ne.symm c1, Ne.symm c2, Ne.symm d1] <;> split_ifs <;> simp_all
 
 /-- **Gathering.** With `src` holding `ss` and `mask` holding `ms` (equal lengths) and the spares
@@ -193,15 +192,15 @@ theorem gather_exec {src mask ts tm dst out cs : Fin T} (h : GSRegs src mask ts 
   have hg := length_gatherL ss ms hl.symm
   have hcount := List.count_le_length (a := true) (l := ms)
   have ht₁ : R₁ tm = (ms.map bitSymbol).reverse := by
-    simp [hR₁, loopR, Function.update_apply, c1, d1, htm, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₁, loopR, htm, d1, c1']
   have hs₁ : R₁ ts = (ss.map bitSymbol).reverse := by
-    simp [hR₁, loopR, Function.update_apply, c2, hts, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₁, loopR, hts, c2]
   have hd₁ : R₁ dst = ((gatherL ss ms).map bitSymbol).reverse := by
     simp [hR₁, loopR, hdst]
   have hs₂ : R₂ ts = (ss.map bitSymbol).reverse := by
-    simp [hR₂, movedR, Function.update_apply, Ne.symm b1, c1, hs₁, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₂, movedR, Ne.symm b1, hs₁, c1]
   have hd₃ : R₃ dst = ((gatherL ss ms).map bitSymbol).reverse := by
-    simp [hR₃, hR₂, movedR, Function.update_apply, Ne.symm a4, Ne.symm b3, c2, d1, hd₁, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₃, hR₂, movedR, Ne.symm a4, Ne.symm b3, hd₁, a1, a3, c1, b1', c2', d1']
   refine ⟨v₄, 1 + (2 * ms.length + 1) + ((2 * (R₁ tm).length + 2) + ((2 * (R₂ ts).length + 2) +
     (2 * (R₃ dst).length + 2))), by rw [hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.seq (Exec.seq (peekR_run mask v S ▸ Exec.act (body := body) (peekR mask) (mk v S)) he₁)
@@ -211,9 +210,9 @@ theorem gather_exec {src mask ts tm dst out cs : Fin T} (h : GSRegs src mask ts 
     omega
   · congr 2
     funext k
-    simp [hR₃, hR₂, hR₁, movedR, loopR, Function.update_apply, hm, hs, hts, htm, hdst, a1, a2,
-      a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
-      Ne.symm a4, Ne.symm a5, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm c1,
+    simp [hR₃, hR₂, hR₁, movedR, loopR, Function.update_apply, hts, htm, hdst, a1, a2,
+      a3, a4, b1, b2, b3, c1, c2, d1, Ne.symm a1,
+      Ne.symm a4, Ne.symm a5, Ne.symm b1, Ne.symm b3, Ne.symm b4, Ne.symm c1,
       Ne.symm c2, Ne.symm c3, Ne.symm d1, Ne.symm d2, Ne.symm e1]
     split_ifs <;> simp_all
 
@@ -257,35 +256,33 @@ theorem spread_loop {src mask ts tm dst : Fin T} (h : [src, mask, ts, tm, dst].N
     refine Stacks.ext rfl rfl rfl ?_
     funext k
     simp only [loopR]
-    simp [spreadL, Function.update_apply, hm, hs]
+    simp [spreadL, Function.update_apply]
     split_ifs <;> simp_all
   | cons m ms ih =>
     intro ss rest v S hl hm hs hf
     have hm' : S.R mask = bitSymbol m :: ms.map bitSymbol := hm
     cases m with
     | false =>
-      simp only [List.count_cons, Bool.false_eq_true, ite_false, Nat.add_zero, beq_self_eq_true,
+      simp only [List.count_cons, Bool.false_eq_true, ite_false, Nat.add_zero,
         beq_iff_eq] at hl
       set R₂ := Function.update (Function.update (Function.update S.R mask (ms.map bitSymbol)) tm
         (bitSymbol false :: S.R tm)) dst (bitSymbol false :: S.R dst) with hR₂
       have hrun : (spreadStep src mask ts tm dst : Act T Q A U).run (mk v S) =
           mk { v with sym := some (bitSymbol false), flag := ms.head?.isSome }
             { S with R := R₂ } := by
-        simp [spreadStep, Action.run, peekR, update_rt, hm', R₂, Function.update_apply,
-          b2, b3, d1, Ne.symm b2, Ne.symm b3, Ne.symm d1]
+        simp [spreadStep, Action.run, peekR, update_rt, hm', R₂,
+          b2, b3, Ne.symm b2, Ne.symm b3, Ne.symm d1]
       obtain ⟨v', hu, he⟩ := ih ss rest
         { v with sym := some (bitSymbol false), flag := ms.head?.isSome } { S with R := R₂ }
         (by simpa using hl)
-        (by simp [R₂, Function.update_apply, b2, b3])
-        (by simp [R₂, Function.update_apply, a1, a3, a4, hs]) rfl
+        (by simp [R₂, b2, b3])
+        (by simp [R₂, a1, a3, a4, hs]) rfl
       refine ⟨v', hu, Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
         (hrun ▸ Exec.act (body := body) (spreadStep src mask ts tm dst) (mk v S)) he)
         (by simp; ring) ?_⟩
       congr 2
       funext k
-      simp [loopR, R₂, spreadL, Function.update_apply, a1, a2, a3, a4, b1, b2, b3, c1, c2, d1,
-        Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4, Ne.symm b1, Ne.symm b2, Ne.symm b3,
-        Ne.symm c1, Ne.symm c2, Ne.symm d1]
+      simp [loopR, R₂, spreadL, Function.update_apply, c1, c2, d1, Ne.symm b1]
       split_ifs <;> simp_all
     | true =>
       obtain ⟨s, ss, rfl⟩ : ∃ s ss', ss = s :: ss' := by
@@ -301,22 +298,21 @@ theorem spread_loop {src mask ts tm dst : Fin T} (h : [src, mask, ts, tm, dst].N
       have hrun : (spreadStep src mask ts tm dst : Act T Q A U).run (mk v S) =
           mk { v with sym := some (bitSymbol s), flag := ms.head?.isSome }
             { S with R := R₂ } := by
-        simp [spreadStep, Action.run, peekR, update_rt, hm', hs', R₂, Function.update_apply,
-          a1, a2, a3, a4, b1, b2, b3, c1, c2, d1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4,
-          Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm c1, Ne.symm c2, Ne.symm d1]
+        simp [spreadStep, Action.run, peekR, update_rt, hm', hs', R₂,
+          a1, a3, b1, b2, b3, c1, Ne.symm a1, Ne.symm a2, Ne.symm a4,
+          Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm c2, Ne.symm d1]
       obtain ⟨v', hu, he⟩ := ih ss rest
         { v with sym := some (bitSymbol s), flag := ms.head?.isSome } { S with R := R₂ }
         (by simpa using hl)
-        (by simp [R₂, Function.update_apply, Ne.symm a1, b1, b2, b3])
-        (by simp [R₂, Function.update_apply, a2, a4]) rfl
+        (by simp [R₂, Ne.symm a1, b1, b2, b3])
+        (by simp [R₂, a2, a4]) rfl
       refine ⟨v', hu, Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
         (hrun ▸ Exec.act (body := body) (spreadStep src mask ts tm dst) (mk v S)) he)
         (by simp; ring) ?_⟩
       congr 2
       funext k
-      simp [loopR, R₂, spreadL, Function.update_apply, a1, a2, a3, a4, b1, b2, b3, c1, c2, d1,
-        Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4, Ne.symm b1, Ne.symm b2, Ne.symm b3,
-        Ne.symm c1, Ne.symm c2, Ne.symm d1]
+      simp [loopR, R₂, spreadL, Function.update_apply, c2, d1, Ne.symm a3,
+        Ne.symm c1]
       split_ifs <;> simp_all
 
 /-- **Spreading.** With `mask` holding `ms`, `src` holding `ss` with one bit per set mask bit,
@@ -351,15 +347,15 @@ theorem spread_exec {src mask ts tm dst out : Fin T} (h : GSRegs src mask ts tm 
   have hsp := length_spreadL ss ms
   have hcount := List.count_le_length (a := true) (l := ms)
   have ht₁ : R₁ tm = (ms.map bitSymbol).reverse := by
-    simp [hR₁, loopR, Function.update_apply, c1, d1, htm, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₁, loopR, htm, d1, c1']
   have hs₁ : R₁ ts = (ss.map bitSymbol).reverse := by
-    simp [hR₁, loopR, Function.update_apply, c2, hts, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₁, loopR, hts, c2]
   have hd₁ : R₁ dst = ((spreadL ss ms).map bitSymbol).reverse := by
     simp [hR₁, loopR, hdst]
   have hs₂ : R₂ ts = (ss.map bitSymbol).reverse := by
-    simp [hR₂, movedR, Function.update_apply, Ne.symm b1, c1, hs₁, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₂, movedR, Ne.symm b1, hs₁, c1]
   have hd₃ : R₃ dst = ((spreadL ss ms).map bitSymbol).reverse := by
-    simp [hR₃, hR₂, movedR, Function.update_apply, Ne.symm a4, Ne.symm b3, c2, d1, hd₁, a1, a2, a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, a1', a2', a3', a4', a5', b1', b2', b3', b4', c1', c2', c3', d1', d2', e1']
+    simp [hR₃, hR₂, movedR, Ne.symm a4, Ne.symm b3, hd₁, a1, a3, c1, b1', c2', d1']
   refine ⟨v₄, 1 + (2 * ms.length + 1) + ((2 * (R₁ tm).length + 2) + ((2 * (R₂ ts).length + 2) +
     (2 * (R₃ dst).length + 2))), by rw [hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.seq (Exec.seq (peekR_run mask v S ▸ Exec.act (body := body) (peekR mask) (mk v S)) he₁)
@@ -369,9 +365,9 @@ theorem spread_exec {src mask ts tm dst out : Fin T} (h : GSRegs src mask ts tm 
     omega
   · congr 2
     funext k
-    simp [hR₃, hR₂, hR₁, movedR, loopR, Function.update_apply, hm, hs, hts, htm, hdst, a1, a2,
-      a3, a4, a5, b1, b2, b3, b4, c1, c2, c3, d1, d2, e1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
-      Ne.symm a4, Ne.symm a5, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm c1,
+    simp [hR₃, hR₂, hR₁, movedR, loopR, Function.update_apply, hts, htm, hdst, a1, a2,
+      a3, a4, b1, b2, b3, c1, c2, d1, Ne.symm a1,
+      Ne.symm a4, Ne.symm a5, Ne.symm b1, Ne.symm b3, Ne.symm b4, Ne.symm c1,
       Ne.symm c2, Ne.symm c3, Ne.symm d1, Ne.symm d2, Ne.symm e1]
     split_ifs <;> simp_all
 

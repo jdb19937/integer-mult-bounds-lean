@@ -30,7 +30,7 @@ lemma moveRecs_refl {α : Type*} {M : ℕ} (l : List (List α)) (hl : l.length =
   subst hl
   apply List.ext_getElem (by simp [length_moveRecs])
   intro j h1 h2
-  simp [moveRecs, List.getD_eq_getElem _ _ h2]
+  simp [moveRecs]
 
 /-! ### The index map of a list of instructions -/
 

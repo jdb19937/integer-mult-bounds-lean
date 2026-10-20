@@ -180,9 +180,9 @@ lemma OK.bad_le (hd : d.OK) :
   have e4 : 8 * k₁ * g / (h * (2 * g)) = 4 * k₁ / h := by field_simp; ring
   rw [e4]
   have e5 : r * (a * g) * (2 * k₁ / g + 4 * k₁ / h) = 2 * (r * a * k₁) + 4 * (r * a * g * k₁ / h) := by
-    field_simp <;> ring
+    field_simp
   have e6 : k₁ * (2 * (r * a) + r * (a * g / h)) = 2 * (r * a * k₁) + r * a * g * k₁ / h := by
-    field_simp <;> ring
+    field_simp
   rw [e5, e6]
   have : 0 ≤ r * a * g * k₁ / h := by positivity
   linarith
@@ -336,7 +336,7 @@ lemma OK.progCost_le (hd : d.OK) {T : ℕ} {bankLen : Fin 2 → ℕ} {W S : ℕ}
       24 * (3 * swapConst * (T + 12 * swapT 6 + 5 : ℕ) * W *
         ((max 1 d.wc : ℕ) : ℝ) ^ Parameters.tau +
         (((61000 + 600) * W + 2 * T + 6 * swapT 6 + 23 : ℕ) : ℝ)) := by
-  have := List.sum_le_card_nsmul
+  have := List.sum_le_length_nsmul
     (prog.map (opCost d.par d.lens T d.R d.n (fieldsLen d.lens + d.B) bankLen)) _ fun x hx => by
       obtain ⟨op, -, rfl⟩ := List.mem_map.1 hx
       exact hd.opCost_le (T := T) hW hbl hS op

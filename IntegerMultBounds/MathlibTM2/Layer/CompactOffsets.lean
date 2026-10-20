@@ -150,7 +150,7 @@ lemma offv_rPlain (L x y : ℕ) : offv rPlain L false ![x, y] = y % 2 ^ L := by
   apply Nat.eq_of_testBit_eq
   intro q
   rw [testBit_offv, auxAt_rPlain, Nat.testBit_mod_two_pow]
-  simp [rPlain, Bool.and_comm]
+  simp [rPlain]
 
 lemma offv_rXor (L x y z m : ℕ) : (offv rXor L false ![x, y, z, m]).testBit =
     fun q => decide (q < L) && (m.testBit q && xor (y.testBit q) (z.testBit q)) := by
@@ -170,14 +170,14 @@ lemma auxAt_rLatch (hK : 0 < p.K) (x y z : ℕ) {c : ℕ} (hc : c < p.n) : ∀ d
     rw [Nat.add_zero, auxAt_succ]
     simp only [rLatch, Matrix.cons_val_three, Matrix.cons_val_two, Matrix.cons_val_zero,
       Matrix.cons_val_one, Matrix.tail_cons, Matrix.head_cons, testBit_maskVal hmono]
-    rw [if_pos (by simp; exact ⟨c, hc, rfl⟩)]
+    rw [ite_eq_left (by simp; exact ⟨c, hc, rfl⟩)]
   | succ d ih =>
     intro hd
     rw [show posS p c + 1 + (d + 1) = posS p c + 1 + d + 1 by ring, auxAt_succ,
       ih (by omega)]
     simp only [rLatch, Matrix.cons_val_three, Matrix.cons_val_two, Matrix.cons_val_zero,
       Matrix.cons_val_one, Matrix.tail_cons, Matrix.head_cons, testBit_maskVal hmono]
-    rw [if_neg]
+    rw [ite_eq_right]
     simp only [decide_eq_true_eq, not_exists, not_and]
     intro c' _ h
     unfold posS at h
@@ -228,7 +228,7 @@ lemma offA_eq (hG : 0 < p.G) (v : V) :
     rw [posA_split hG n g hg', hdiv]
     simp only [posS, posC]
     cases v.u.testBit (n * p.G) <;> cases v.t.testBit (n * p.G + g) <;>
-      simp [Nat.pow_add, Nat.pow_succ] <;> ring
+      (simp [Nat.pow_add, Nat.pow_succ]; try ring)
 
 lemma rLatch_fst (a : Bool) (col : Fin 4 → Bool) :
     (rLatch.ob a col).1 = ((if col 3 then col 2 else a) && col 1) := rfl

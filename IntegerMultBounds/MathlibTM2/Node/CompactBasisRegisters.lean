@@ -100,7 +100,7 @@ theorem compactBasisW_exec {s : Shape} {n a₀ k ρ left right o rowCount r w j 
     (hL : ∀ z,S.L z=[])
     (hpar : ParState S.R j u s.chunk ρ (o+a₀) (s.chunk*k) rowCount (o+n) w (r*w))
     (hbc : ∀ z,compactBasisRest s o r z (S.R (reg (.bc z))))
-    (htmp : S.R (reg .tmp)=[]) (hstream : S.R (reg (.wire fw))=encZ (prime+K) w Z) :
+    (_htmp : S.R (reg .tmp)=[]) (hstream : S.R (reg (.wire fw))=encZ (prime+K) w Z) :
     ∃ v' steps,v'.user=v.user ∧
       steps ≤ ((basisTargets vv x).map
         (compactBasisTargetCost layout x hG hGK hr hrecord D hp (nT CompactBReg) K o r w)).sum+1 ∧

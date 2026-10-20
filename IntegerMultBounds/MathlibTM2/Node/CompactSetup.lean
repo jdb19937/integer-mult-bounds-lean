@@ -186,8 +186,8 @@ lemma hs_value (hd : d.OK) (c : Fin 2) (k : Fin 5) :
   have hoff := swapFld_off hd c
   simp only [swapDimsIdx, hb0, hoff, par_wc, pow_zero, Nat.one_mul, Nat.sub_zero]
   fin_cases c <;> fin_cases k <;>
-    simp [hs, he, hbits, sx_value_rep_false, value_sxBits, BinaryInterchangeRun.values,
-      Counter.value, Nat.mul_comm] <;> (ring_nf; try simp)
+    (simp [hs, he, hbits, sx_value_rep_false, value_sxBits, BinaryInterchangeRun.values,
+      Counter.value, Nat.mul_comm]; try (ring_nf; try simp))
 
 lemma hs_canonical (hd : d.OK) (c : Fin 2) (k : Fin 5) :
     GrowingCounterData.Canonical (d.hs c k) := by

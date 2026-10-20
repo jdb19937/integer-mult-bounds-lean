@@ -547,7 +547,7 @@ theorem lr_synDivModR {x k q r t₁ t₂ t₃ : Fin T} (hreg : [x, k, q, r, t₁
   · funext z
     simp only [Φ, Function.update_apply]
     split_ifs <;> simp_all
-  · simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, ht₁, List.length_nil,
+  · simp only [Finset.sum_const, Finset.card_range, smul_eq_mul,
       synDivModCost]
     ring_nf
     omega

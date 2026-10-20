@@ -208,7 +208,7 @@ theorem codeYZ_spec (hι : Function.Injective ι) (hF : F.Valid p len) (hK : 0 <
       rfl
 
 /-- The masked-XOR automaton reads `Off.YZ`. -/
-theorem offv_rXor_YZ (hK : 0 < p.K) (hG : 0 < p.G) (v : V) (hu : v.u < 2 ^ p.wc) :
+theorem offv_rXor_YZ (hK : 0 < p.K) (hG : 0 < p.G) (v : V) (_hu : v.u < 2 ^ p.wc) :
     offv rXor p.wc false ![v.b, placeVal p.n (posC p) (fun c => v.y.testBit (posS p c)), v.u,
       mCV p] = Off.eval p .YZ v := by
   rw [offYZ_eq hK hG]
@@ -259,7 +259,7 @@ def codeA {nd : ℕ} (C : CAuto A 4 nd) : Pr P T Q A U :=
 lemma spread_mAV (hG : 0 < p.G) (hGK : p.G < p.K) (t : ℕ) :
     spreadL (binBits p.wc t) (binBits p.wy (mAV p)) =
       binBits p.wy (placeVal (p.n * p.G) (posA p) fun j => t.testBit j) :=
-  spreadL_mask (posA_mono hG hGK) (fun j hj => posA_lt hG hGK hj) _
+  spreadL_mask (posA_mono hG hGK) (fun _ hj => posA_lt hG hGK hj) _
 
 /-- **The code program of `Off.A`.** -/
 theorem codeA_spec (hι : Function.Injective ι) (hF : F.Valid p len) (hK : 0 < p.K)
@@ -370,7 +370,7 @@ theorem codeA_spec (hι : Function.Injective ι) (hF : F.Valid p len) (hK : 0 < 
       rw [hR₃, Function.update_of_ne (hne (by decide)), Function.update_of_ne (hne (by decide)), hR₂,
         Function.update_self, hk₁ _ (by simp) (by simp), hs2]
       simp [length_spreadL]
-    simp only [List.length_map, hF.lu, binBits, List.length_ofFn] at hm₁ hm₂
+    simp only [binBits, List.length_ofFn] at hm₁ hm₂
     rw [l2, l3]
     omega
   cf_inj := fun g g' e => by simpa using hι e

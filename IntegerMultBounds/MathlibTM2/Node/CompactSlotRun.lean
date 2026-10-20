@@ -34,6 +34,7 @@ variable (hall : Function.Injective (cxAll ι bank inp)) (hb : Banks ι bank)
   (hbank : ∀ c c' j j', bank c j = bank c' j' → c = c')
 include hall hb hbank
 
+omit hall in
 /-- A bank register other than a header is not a setup register. -/
 lemma cx_bank_out {c : Fin 2} {j : Fin (swapT 6)} (hj : ∀ k, j ≠ reg (cxHd k)) (x : CxSet) :
     cxSetReg ι bank x ≠ bank c j := by
@@ -44,7 +45,7 @@ lemma cx_bank_out {c : Fin 2} {j : Fin (swapT 6)} (hj : ∀ k, j ≠ reg (cxHd k
     exact hj k (hb.inj _ e).symm
 
 /-- After the setup the registers hold the pass state of `cxCore`. -/
-lemma cxPassState {d : CxData} (hd : d.OK) {R₀ : Fin T → List (Fin (prime + K + 4))}
+lemma cxPassState {d : CxData} (_hd : d.OK) {R₀ : Fin T → List (Fin (prime + K + 4))}
     (h0 : ∀ x : CxSet, x ≠ .reg .src → R₀ (cxSetReg ι bank x) = [])
     (hbank0 : ∀ c j, R₀ (bank c j) = []) (S : Stacks T (prime + K)) (hL : ∀ y, S.L y = []) :
     PassState ι bank d.par d.lens (d.n + d.rb + d.B) (d.R * 2 ^ d.n) d.hs
@@ -59,7 +60,7 @@ lemma cxPassState {d : CxData} (hd : d.OK) {R₀ : Fin T → List (Fin (prime + 
     fun x hs hx => (cxFile_unset hall (x := .reg x) (Or.inr hx)).trans
       (h0 _ fun e => hs (CxSet.reg.inj e))
   have hout : ∀ c j, (∀ k, j ≠ reg (cxHd k)) → cxFile ι bank d 41 R₀ (bank c j) = [] :=
-    fun c j hj => (stFill_out _ _ _ (cx_bank_out hall hb hbank hj)).trans (hbank0 c j)
+    fun c j hj => (stFill_out _ _ _ (cx_bank_out hb hbank hj)).trans (hbank0 c j)
   refine ⟨hL, ?_, ?_, hun _ (by simp) rfl, hun _ (by simp) rfl, hun _ (by simp) rfl, fun _ => hun _ (by simp) rfl, fun _ => hun _ (by simp) rfl,
     ⟨fun g => ?_, ?_, ?_, ?_, ?_, hun _ (by simp) rfl, hun _ (by simp) rfl, hun _ (by simp) rfl, hun _ (by simp) rfl, hun _ (by simp) rfl, hun _ (by simp) rfl,
       fun _ => hun _ (by simp) rfl⟩, fun c => hout c _ fun k e => ?_, fun c j hj => hout c j fun k e => ?_,
@@ -74,10 +75,10 @@ lemma cxPassState {d : CxData} (hd : d.OK) {R₀ : Fin T → List (Fin (prime + 
   · exact hset _ (by simp [cxStage])
   · exact hset _ (by simp [cxStage])
   · have := congrArg Fin.val e
-    simp only [reg_val, cxPay, cxHd, Fin.val_last, Fin.coe_castSucc] at this
+    simp only [reg_val, cxPay, cxHd, Fin.val_last, Fin.val_castSucc] at this
     exact absurd this (by have := k.isLt; omega)
   · have := congrArg Fin.val e
-    simp only [reg_val, cxHd, Fin.coe_castSucc] at this
+    simp only [reg_val, cxHd, Fin.val_castSucc] at this
     have := k.isLt
     omega
   · exact cxFile_set hall (x := .hdr c k) (by simp only [cxStage]; omega) (hle _)
@@ -85,7 +86,7 @@ lemma cxPassState {d : CxData} (hd : d.OK) {R₀ : Fin T → List (Fin (prime + 
 /-- After the setup a bank holds its five headers. -/
 lemma cx_bankLen_le {d : CxData} (hd : d.OK) (o hB act cr cw : ℕ)
     {R₀ : Fin T → List (Fin (prime + K + 4))}
-    (h0 : ∀ x : CxSet, x ≠ .reg .src → R₀ (cxSetReg ι bank x) = [])
+    (_h0 : ∀ x : CxSet, x ≠ .reg .src → R₀ (cxSetReg ι bank x) = [])
     (hbank0 : ∀ c j, R₀ (bank c j) = []) (c : Fin 2) :
     ∑ j, (cxFile ι bank d 41 R₀ (bank c j)).length ≤ 5 * d.setupStep o hB act cr cw := by
   classical
@@ -102,7 +103,7 @@ lemma cx_bankLen_le {d : CxData} (hd : d.OK) (o hB act cr cw : ℕ)
     refine (Finset.sum_subset (Finset.subset_univ _) fun j _ hj => ?_).symm
     have hj' : ∀ k, j ≠ reg (cxHd k) := fun k e => hj (Finset.mem_image.2 ⟨k, by simp, e.symm⟩)
     have : cxFile ι bank d 41 R₀ (bank c j) = [] :=
-      (stFill_out _ _ _ (cx_bank_out hall hb hbank hj')).trans (hbank0 c j)
+      (stFill_out _ _ _ (cx_bank_out hb hbank hj')).trans (hbank0 c j)
     rw [this]
     rfl
   rw [hsub]
