@@ -30,7 +30,7 @@ does `rmulOne` for real second factors (`rmulOne_spec`).
   Every other register ends as it started, within `n (c + 6 w + 8) + 6` steps, `n = |xs|`.
 
 `cmulStream_runs`, `cmulTable_runs`: the instances for `cmulOne` with `g x y = tdivN p (x y)` and
-`c = cmulCost T w`; `rmulStream_runs`, `rmulTable_runs`: for `rmulOne` and real second factors.
+`c = cmulCost w`; `rmulStream_runs`, `rmulTable_runs`: for `rmulOne` and real second factors.
 -/
 
 @[expose] public section
@@ -340,14 +340,14 @@ theorem cmulOne_spec (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A) {w p : ℕ}
     (hw : 1 ≤ w) (hp : p ≤ w) :
     OneSpec body cr ι (cmulOne ι hι hT hQ cr) (fun x y => Fits w x ∧ Fits w y)
-      (fun x y => tdivN p (x * y)) w p (cmulCost T w) :=
+      (fun x y => tdivN p (x * y)) w p (cmulCost w) :=
   fun _ _ _ _ _ hr hok hx hy => cmulOne_runs hcr hdisj hι hT hQ hA hr hw hp hok.1 hok.2 hx hy
 
 theorem rmulOne_spec (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A) {w p : ℕ}
     (hw : 1 ≤ w) (hp : p ≤ w) :
     OneSpec body cr ι (rmulOne ι hι hT hQ cr) (fun x y => Fits w x ∧ Fits w y ∧ y.im = 0)
-      (fun x y => tdivN p (x * y)) w p (rmulCost T w) :=
+      (fun x y => tdivN p (x * y)) w p (rmulCost w) :=
   fun _ _ _ _ _ hr hok hx hy =>
     rmulOne_runs hcr hdisj hι hT hQ hA hr hw hp hok.1 hok.2.1 hok.2.2 hx hy
 
@@ -355,7 +355,7 @@ theorem rmulOne_spec (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι
 `xs`, `ys` (equal length `n`, all coefficients fitting `w` bits), `xsv`, `ysv`, `acc` are empty
 and the register file is ready. Afterwards `out` gains the stream of `red w (tdivN p (xᵢ yᵢ))` on
 top (first coefficient on top), every other register is as before (`xs` and `ys` restored), within
-`n (cmulCost T w + 6 w + 2) + 8` steps. -/
+`n (cmulCost w + 6 w + 2) + 8` steps. -/
 theorem cmulStream_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
     {ρ : CR → List (Fin (A + 4))} {w p : ℕ} (hr : Ready ρ w p) (hw : 1 ≤ w) (hp : p ≤ w)
@@ -365,7 +365,7 @@ theorem cmulStream_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠
     CRuns body cr ι (cmulStream cr (cmulOne ι hι hT hQ cr)) ρ
       (Function.update ρ .out
         (cstream A w (List.zipWith (fun x y => tdivN p (x * y)) xs ys) ++ ρ .out))
-      (xs.length * (cmulCost T w + 6 * w + 2) + 8) :=
+      (xs.length * (cmulCost w + 6 * w + 2) + 8) :=
   stream_runs hcr hdisj (cmulOne_spec hcr hdisj hι hT hQ hA hw hp) hw hr xs ys hlen
     (fun _ hz => ⟨hfx _ (List.of_mem_zip hz).1, hfy _ (List.of_mem_zip hz).2⟩) hX hY hxsv hysv
     hacc
@@ -374,7 +374,7 @@ theorem cmulStream_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠
 `blocks.flatten`, every block of the length `L ≥ 1` of the table `ts` held on `ys`; coefficient
 `i` of every block is multiplied by table entry `i` (`tableOut_getElem`: output `k` is
 `red w (tdivN p (xs[k] ts[k % L]))`). Afterwards `out` gains the result stream on top, every
-other register is as before, within `n (cmulCost T w + 6 w + 8) + 6` steps, `n = |xs|`. -/
+other register is as before, within `n (cmulCost w + 6 w + 8) + 6` steps, `n = |xs|`. -/
 theorem cmulTable_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
     {ρ : CR → List (Fin (A + 4))} {w p : ℕ} (hr : Ready ρ w p) (hw : 1 ≤ w) (hp : p ≤ w)
@@ -385,7 +385,7 @@ theorem cmulTable_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ 
     CRuns body cr ι (cmulTable cr (cmulOne ι hι hT hQ cr)) ρ
       (Function.update ρ .out
         (cstream A w (tableOut (fun x y => tdivN p (x * y)) blocks ts) ++ ρ .out))
-      (blocks.flatten.length * (cmulCost T w + 6 * w + 8) + 6) :=
+      (blocks.flatten.length * (cmulCost w + 6 * w + 8) + 6) :=
   table_runs hcr hdisj (cmulOne_spec hcr hdisj hι hT hQ hA hw hp) hw hr blocks ts hL hlen
     (fun b hb _ hz => ⟨hfx _ (List.mem_flatten.2 ⟨b, hb, (List.of_mem_zip hz).1⟩),
       hft _ (List.of_mem_zip hz).2⟩) hX hY hxsv hysv hacc
@@ -393,7 +393,7 @@ theorem cmulTable_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ 
 /-- **One coefficient pair, operands restored.** `xs`, `ys` hold exactly the coefficients
 `coeffSyms A w (red w N₁)`, `coeffSyms A w (red w N₂)`; afterwards `out` gains
 `coeffSyms A w (red w (tdivN p (N₁ N₂)))` on top (least significant pair first) and every other
-register is as before, within `cmulCost T w + 6 w + 10` steps. -/
+register is as before, within `cmulCost w + 6 w + 10` steps. -/
 theorem cmulPair_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
     {ρ : CR → List (Fin (A + 4))} {w p : ℕ} (hr : Ready ρ w p) (hw : 1 ≤ w) (hp : p ≤ w)
@@ -401,7 +401,7 @@ theorem cmulPair_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ �
     (hY : ρ .ys = csyms A w N₂) (hxsv : ρ .xsv = []) (hysv : ρ .ysv = []) (hacc : ρ .acc = []) :
     CRuns body cr ι (cmulStream cr (cmulOne ι hι hT hQ cr)) ρ
       (Function.update ρ .out (csyms A w (tdivN p (N₁ * N₂)) ++ ρ .out))
-      (cmulCost T w + 6 * w + 10) := by
+      (cmulCost w + 6 * w + 10) := by
   have H := cmulStream_runs (body := body) hcr hdisj hι hT hQ hA hr hw hp [N₁] [N₂] rfl (by simpa using h₁)
     (by simpa using h₂) (by simp [hX]) (by simp [hY]) hxsv hysv hacc
   refine (H.congr ?_).mono (by simp)
@@ -417,7 +417,7 @@ theorem rmulStream_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠
     CRuns body cr ι (cmulStream cr (rmulOne ι hι hT hQ cr)) ρ
       (Function.update ρ .out
         (cstream A w (List.zipWith (fun x y => tdivN p (x * y)) xs ys) ++ ρ .out))
-      (xs.length * (rmulCost T w + 6 * w + 2) + 8) :=
+      (xs.length * (rmulCost w + 6 * w + 2) + 8) :=
   stream_runs hcr hdisj (rmulOne_spec hcr hdisj hι hT hQ hA hw hp) hw hr xs ys hlen
     (fun _ hz => ⟨hfx _ (List.of_mem_zip hz).1, hfy _ (List.of_mem_zip hz).2⟩) hX hY hxsv hysv
     hacc
@@ -433,7 +433,7 @@ theorem rmulTable_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ 
     CRuns body cr ι (cmulTable cr (rmulOne ι hι hT hQ cr)) ρ
       (Function.update ρ .out
         (cstream A w (tableOut (fun x y => tdivN p (x * y)) blocks ts) ++ ρ .out))
-      (blocks.flatten.length * (rmulCost T w + 6 * w + 8) + 6) :=
+      (blocks.flatten.length * (rmulCost w + 6 * w + 8) + 6) :=
   table_runs hcr hdisj (rmulOne_spec hcr hdisj hι hT hQ hA hw hp) hw hr blocks ts hL hlen
     (fun b hb _ hz => ⟨hfx _ (List.mem_flatten.2 ⟨b, hb, (List.of_mem_zip hz).1⟩),
       hft _ (List.of_mem_zip hz).2⟩) hX hY hxsv hysv hacc

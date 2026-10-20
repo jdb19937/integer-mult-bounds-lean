@@ -150,7 +150,7 @@ def bandAxisP : Pr P T Q A U :=
   .seq (rsbWhile (rg .src) (bandLineP rg hι hT hQ)) (moveR (rg .dst) (rg .src) id)
 
 /-- The step bound of `bandAxisP` on `n` lines. -/
-def bandAxisCost (T w s t B n : ℕ) : ℕ := n * (bandLineCost T w s t B + 2) + 2 * (n * t * w) + 4
+def bandAxisCost (w s t B n : ℕ) : ℕ := n * (bandLineCost w s t B + 2) + 2 * (n * t * w) + 4
 
 variable {body : P → Pr P T Q A U} {rg}
 
@@ -165,14 +165,14 @@ theorem band_axis_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ 
     (hsrc : σ .src = cstream A w lines.flatten) :
     RsbRuns body rg ι (bandAxisP rg hι hT hQ) σ
       (Function.update σ .src (cstream A w (lines.flatMap (bandLineT P s t B Lc Uc rcs Dl cin cout))))
-      (bandAxisCost T w s t B lines.length) := by
+      (bandAxisCost w s t B lines.length) := by
   have ht : 1 ≤ t := by omega
   set g := bandLineT P s t B Lc Uc rcs Dl cin cout with hg
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
       Function.update (Function.update σ .src (cstream A w (lines.drop j).flatten)) .dst
         (cstream A w ((lines.take j).flatMap g)).reverse := ⟨_, rfl⟩
   have hbody : ∀ j < lines.length, RsbRuns body rg ι (bandLineP rg hι hT hQ) (Ψ j) (Ψ (j + 1))
-      (bandLineCost T w s t B) := by
+      (bandLineCost w s t B) := by
     intro j hj
     obtain ⟨hlen, hfx, hf1, hf2, hf3, hf4, hf5⟩ := hok lines[j] (List.getElem_mem hj)
     have hsrcj : Ψ j .src = cstream A w (rsbArr (rsbVec (t := t) lines[j])) ++
@@ -214,7 +214,7 @@ theorem band_axis_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ 
       rw [htk]; simp only [reverse_cstream_append, hg, bandLineT, List.append_assoc]
     · cases r <;> first | exact absurd rfl hr | simp [hΨ]
   have H := rsb_while_runs (body := body) hdisj (ra := .src) (bandLineP rg hι hT hQ) Ψ
-    lines.length (bandLineCost T w s t B)
+    lines.length (bandLineCost w s t B)
     (fun j hj => by
       obtain ⟨hlen, -⟩ := hok lines[j] (List.getElem_mem hj)
       rw [hΨ]

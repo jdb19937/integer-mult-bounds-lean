@@ -32,13 +32,13 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
 /-! ### The lines -/
 
 /-- The per-record factor of one line of the banded `B̃₀`. -/
-def mtBandX (Tm w B : ℕ) : ℕ := (2 * B + 4) * (rmulCost Tm w + 40 * w + 60) + 30 * (B * w) +
+def mtBandX (w B : ℕ) : ℕ := (2 * B + 4) * (rmulCost w + 40 * w + 60) + 30 * (B * w) +
   400 * w + 1500
 
-theorem mt_band_lineCost_le {Tm w s t B : ℕ} (hst : s ≤ t) (ht : 1 ≤ t) :
-    bandLineCost Tm w s t B + 2 + 2 * (t * w) ≤ t * mtBandX Tm w B := by
+theorem mt_band_lineCost_le {w s t B : ℕ} (hst : s ≤ t) (ht : 1 ≤ t) :
+    bandLineCost w s t B + 2 + 2 * (t * w) ≤ t * mtBandX w B := by
   unfold bandLineCost bandLineInCost bandLinePassCost bandLineOutCost bandFwdStepCost mtBandX
-  set R := rmulCost Tm w
+  set R := rmulCost w
   have h1 : s * (B * R) ≤ t * (B * R) := Nat.mul_le_mul_right _ hst
   have h2 : s * (B * w) ≤ t * (B * w) := Nat.mul_le_mul_right _ hst
   have h3 : s * B ≤ t * B := Nat.mul_le_mul_right _ hst
@@ -50,25 +50,25 @@ theorem mt_band_lineCost_le {Tm w s t B : ℕ} (hst : s ≤ t) (ht : 1 ≤ t) :
   have h9 : B ≤ t * B := Nat.le_mul_of_pos_left _ ht
   nlinarith
 
-theorem mt_band_axisCost_le {Tm w s t B : ℕ} (N : ℕ) (hst : s ≤ t) (ht : 1 ≤ t) :
-    bandAxisCost Tm w s t B (N / t) ≤ N * mtBandX Tm w B + 4 := by
+theorem mt_band_axisCost_le {w s t B : ℕ} (N : ℕ) (hst : s ≤ t) (ht : 1 ≤ t) :
+    bandAxisCost w s t B (N / t) ≤ N * mtBandX w B + 4 := by
   unfold bandAxisCost
-  have h1 := mt_band_lineCost_le (Tm := Tm) (w := w) (B := B) hst ht
+  have h1 := mt_band_lineCost_le (w := w) (B := B) hst ht
   have h2 : N / t * t ≤ N := Nat.div_mul_le_self N t
-  set X := mtBandX Tm w B
+  set X := mtBandX w B
   set M := N / t
-  have h3 : M * (bandLineCost Tm w s t B + 2) + 2 * (M * t * w) ≤ M * (t * X) := by
-    have : M * (bandLineCost Tm w s t B + 2 + 2 * (t * w)) ≤ M * (t * X) :=
+  have h3 : M * (bandLineCost w s t B + 2) + 2 * (M * t * w) ≤ M * (t * X) := by
+    have : M * (bandLineCost w s t B + 2 + 2 * (t * w)) ≤ M * (t * X) :=
       Nat.mul_le_mul_left _ h1
-    have e : M * (bandLineCost Tm w s t B + 2 + 2 * (t * w)) =
-        M * (bandLineCost Tm w s t B + 2) + 2 * (M * t * w) := by ring
+    have e : M * (bandLineCost w s t B + 2 + 2 * (t * w)) =
+        M * (bandLineCost w s t B + 2) + 2 * (M * t * w) := by ring
     omega
   have h4 : M * (t * X) ≤ N * X := by
     rw [← mul_assoc]; exact Nat.mul_le_mul_right _ h2
   omega
 
 /-- The constant of one banded line against `α √p M(p)` per record. -/
-noncomputable def mtBandCX (Tm cw : ℕ) : ℝ := 54 * mtCM Tm cw + 3310 * cw + 4740
+noncomputable def mtBandCX (cw : ℕ) : ℝ := 54 * mtCM cw + 3310 * cw + 4740
 
 /-- The band of the pipeline: `B = 2·8m + 1 ≤ 25 α √p`. -/
 theorem mt_band_B_le {n : ℕ} (h : Big n) :
@@ -86,11 +86,11 @@ theorem mt_band_B_le {n : ℕ} (h : Big n) :
   linarith
 
 /-- **One banded line per record**: `mtBandX ≤ mtBandCX · α √p M(p)`. -/
-theorem mt_band_X_le {n w cw : ℕ} (Tm : ℕ) (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
-    (mtBandX Tm w (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) : ℝ) ≤
-      mtBandCX Tm cw * ((alpha n : ℝ) * Real.sqrt (p n) * totMp n) := by
-  have hR := mt_rmul_le Tm h hw hwc
-  have hc := mt_CM_nonneg Tm cw
+theorem mt_band_X_le {n w cw : ℕ} (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
+    (mtBandX w (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) : ℝ) ≤
+      mtBandCX cw * ((alpha n : ℝ) * Real.sqrt (p n) * totMp n) := by
+  have hR := mt_rmul_le h hw hwc
+  have hc := mt_CM_nonneg cw
   have hM1 := mt_one_le_mp h
   have hpM := mt_p_le_mp h
   have hw' : (w : ℝ) ≤ cw * p n := by exact_mod_cast hwc
@@ -101,20 +101,21 @@ theorem mt_band_X_le {n w cw : ℕ} (Tm : ℕ) (h : Big n) (hw : 1 ≤ w) (hwc :
   set Bn := 2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1
   set y : ℝ := (alpha n : ℝ) * Real.sqrt (p n)
   set M := totMp n
-  set R : ℝ := (rmulCost Tm w : ℝ)
-  set c := mtCM Tm cw
+  set R : ℝ := (rmulCost w : ℝ)
+  set c := mtCM cw
   have hR0 : (0 : ℝ) ≤ R := Nat.cast_nonneg _
   have hB0 : (0 : ℝ) ≤ (Bn : ℝ) := Nat.cast_nonneg _
   have hw0 : (0 : ℝ) ≤ w := Nat.cast_nonneg _
-  have e : (mtBandX Tm w Bn : ℝ) =
+  have e : (mtBandX w Bn : ℝ) =
       (2 * Bn + 4) * (R + 40 * w + 60) + 30 * (Bn * w) + 400 * w + 1500 := by
     simp only [mtBandX, R]; push_cast; ring
   rw [e]
   have k1 : R + 40 * w + 60 ≤ (c + 40 * cw + 60) * M := by nlinarith
-  have k1' : 0 ≤ R + 40 * w + 60 := by positivity
+  have k1' : 0 ≤ R + 40 * w + 60 := by linarith
   have k2 : (2 * (Bn : ℝ) + 4) ≤ 54 * y := by linarith
   have k3 : (2 * (Bn : ℝ) + 4) * (R + 40 * w + 60) ≤ 54 * y * ((c + 40 * cw + 60) * M) := by
-    calc (2 * (Bn : ℝ) + 4) * (R + 40 * w + 60) ≤ 54 * y * (R + 40 * w + 60) := by gcongr
+    calc (2 * (Bn : ℝ) + 4) * (R + 40 * w + 60) ≤ 54 * y * (R + 40 * w + 60) :=
+        mul_le_mul_of_nonneg_right k2 k1'
       _ ≤ 54 * y * ((c + 40 * cw + 60) * M) := by gcongr
   have k4 : 30 * ((Bn : ℝ) * w) ≤ 750 * cw * (y * M) := by
     have : (Bn : ℝ) * w ≤ 25 * y * (cw * M) := by
@@ -126,7 +127,7 @@ theorem mt_band_X_le {n w cw : ℕ} (Tm : ℕ) (h : Big n) (hw : 1 ≤ w) (hwc :
     have : (400 * (w : ℝ) + 1500) ≤ (400 * cw + 1500) * M := by nlinarith
     have h0 : (0 : ℝ) ≤ (400 * cw + 1500) * M := by positivity
     nlinarith
-  have : mtBandCX Tm cw * (y * M) = 54 * y * ((c + 40 * cw + 60) * M) + 750 * cw * (y * M) +
+  have : mtBandCX cw * (y * M) = 54 * y * ((c + 40 * cw + 60) * M) + 750 * cw * (y * M) +
       (400 * cw + 1500) * (y * M) := by
     simp only [mtBandCX, c]; ring
   rw [this]
@@ -309,15 +310,15 @@ theorem mt_rsbG_all_le {n : ℕ} (Tm t₀ A : ℕ) (h : Big n) (hd0 : 0 < d n) {
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
 /-- The small loader terms of all axes: `(d + 1) mtBandU ≤ A b^6 r`. -/
-theorem mt_band_small_le {n : ℕ} (h : Big n) (Tm cw cW : ℕ) :
-    (d n + 1) * mtBandU n Tm cw cW ≤
-      2 * (4 * 10 ^ 9 * (ssMulConst + 1) * (Tm + 1)) * 6 ^ 5 * (cW + cw + 6) ^ 5 * b n ^ 6 *
+theorem mt_band_small_le {n : ℕ} (h : Big n) (cw cW : ℕ) :
+    (d n + 1) * mtBandU n cw cW ≤
+      2 * (4 * 10 ^ 9 * (ssMulConst + 1)) * 6 ^ 5 * (cW + cw + 6) ^ 5 * b n ^ 6 *
         r n := by
   have hdb : d n + 1 ≤ 2 * b n := by have := d_le_b n; have := h.sixteen_le_b; omega
   unfold mtBandU p
-  calc (d n + 1) * (4 * 10 ^ 9 * (ssMulConst + 1) * (Tm + 1) * r n *
+  calc (d n + 1) * (4 * 10 ^ 9 * (ssMulConst + 1) * r n *
         ((cW + cw + 6) * (6 * b n)) ^ 5) ≤
-      (2 * b n) * (4 * 10 ^ 9 * (ssMulConst + 1) * (Tm + 1) * r n *
+      (2 * b n) * (4 * 10 ^ 9 * (ssMulConst + 1) * r n *
         ((cW + cw + 6) * (6 * b n)) ^ 5) := Nat.mul_le_mul_right _ hdb
     _ = _ := by ring
 
@@ -389,28 +390,28 @@ theorem mt_band_stage_le_linear (Tm t₀ Ka cw cW : ℕ) :
       1 ≤ w → w ≤ cw * p n → W ≤ cW * p n → BandBase σ₀ w hd → 3 ≤ prime + Ka →
       (∀ r ∈ bandClrB hd, (σ₀ r).length ≤ T n * w) →
       (rsbAllCostG Tm t₀ w (d n) (t n) hd0 (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)
-          (fun i nl => bandAxisCost Tm w (s n i) (t n i)
+          (fun i nl => bandAxisCost w (s n i) (t n i)
             (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) nl)
-          (prime + Ka) hd (bandCpB Tm σ₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
+          (prime + Ka) hd (bandCpB σ₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
         C * (totResamp n + totDirectCRT n + T n * p n) := by
-  refine ⟨2 * mtBandCX Tm cw + mtRsbCL Tm t₀ cw + 84 * cw + 704, ?_⟩
+  refine ⟨2 * mtBandCX cw + mtRsbCL Tm t₀ cw + 84 * cw + 704, ?_⟩
   filter_upwards [eventually_big,
-    mt_small_le (2 * (4 * 10 ^ 9 * (ssMulConst + 1) * (Tm + 1)) * 6 ^ 5 * (cW + cw + 6) ^ 5) 6]
+    mt_small_le (2 * (4 * 10 ^ 9 * (ssMulConst + 1)) * 6 ^ 5 * (cW + cw + 6) ^ 5) 6]
     with n h hsm hd0 w W σ₀ hd rest hw hwc hWc hbase hA3 hσ₀
-  have hcp : ∀ k, (bandCpB Tm σ₀ hd n w W hd0 rest k : ℝ) ≤
-      42 * ((T n : ℝ) * w) + 300 * T n + 42 + (mtBandU n Tm cw cW : ℝ) := fun k => by
-    exact_mod_cast mt_band_cp_le h hd0 (Tm := Tm) hwc hWc hA3 σ₀ hd rest hbase hσ₀ k
+  have hcp : ∀ k, (bandCpB σ₀ hd n w W hd0 rest k : ℝ) ≤
+      42 * ((T n : ℝ) * w) + 300 * T n + 42 + (mtBandU n cw cW : ℝ) := fun k => by
+    exact_mod_cast mt_band_cp_le h hd0 hwc hWc hA3 σ₀ hd rest hbase hσ₀ k
   have hall := mt_rsbG_all_le Tm t₀ (prime + Ka) h hd0
-    (X := mtBandX Tm w (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1)) hw hwc hd
-    (fun i nl => bandAxisCost Tm w (s n i) (t n i)
+    (X := mtBandX w (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1)) hw hwc hd
+    (fun i nl => bandAxisCost w (s n i) (t n i)
       (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) nl)
     (fun i => mt_band_axisCost_le _ (mt_s_lt_t h i).le (mt_t_pos n i))
-    (bandCpB Tm σ₀ hd n w W hd0 rest) _ _ (hcp 0) (fun j => hcp (j + 1))
-  have hU := hsm _ (mt_band_small_le h Tm cw cW)
+    (bandCpB σ₀ hd n w W hd0 rest) _ _ (hcp 0) (fun j => hcp (j + 1))
+  have hU := hsm _ (mt_band_small_le h cw cW)
   push_cast at hU
   exact mt_band_tail (by exact_mod_cast h.one_le_d) (mt_one_le_T n) (mt_one_le_p h)
-    (Nat.cast_nonneg _) (Nat.cast_nonneg _) (by exact_mod_cast hwc) (Nat.cast_nonneg _) (mt_band_X_le Tm h hw hwc)
-    (mt_rsb_resamp_eq n) (by unfold mtBandCX; have := mt_CM_nonneg Tm cw; positivity)
+    (Nat.cast_nonneg _) (Nat.cast_nonneg _) (by exact_mod_cast hwc) (Nat.cast_nonneg _) (mt_band_X_le h hw hwc)
+    (mt_rsb_resamp_eq n) (by unfold mtBandCX; have := mt_CM_nonneg cw; positivity)
     (mt_rsb_CL_nonneg Tm t₀ cw) (mt_resamp_nonneg n)
     (by unfold mtRsbV totDirectCRT; ring) (mt_directCRT_dTp_le n) hU hall
 

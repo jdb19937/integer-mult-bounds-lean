@@ -91,27 +91,27 @@ theorem length_fwdZC (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List Gaussia
   | _ :: _, [], h => by simp at h
 
 /-- The step bound of the input phase. -/
-def bandLineInCost (T w s t B : ℕ) : ℕ :=
+def bandLineInCost (w s t B : ℕ) : ℕ :=
   t * (6 * w + 10) + 6 + (60 * (s + 1) * w + 60 * s + 60) +
-    (s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (s * w) + 2)) + (4 * (B * w) + 4) +
+    (s * (rmulCost w + 6 * w + 8) + 6 + (2 * (s * w) + 2)) + (4 * (B * w) + 4) +
     (2 * (s * w) + 2) + (2 * (s * w) + 2)
 
 /-- The step bound of the passes. -/
-def bandLinePassCost (T w s B : ℕ) : ℕ :=
-  (6 * (s * B * w) + 6) + (s * (bandFwdStepCost T w B + 6) + 4) + (2 * (B * w) + 2) +
+def bandLinePassCost (w s B : ℕ) : ℕ :=
+  (6 * (s * B * w) + 6) + (s * (bandFwdStepCost w B + 6) + 4) + (2 * (B * w) + 2) +
     (4 * (B * w) + 4) + (2 * (s * w) + 2) + (2 * (s * w) + 2) + (6 * (s * B * w) + 6) +
-    (6 * (s * w) + 6) + (s * (rmulCost T w + 30 * w + 40 + bandFwdStepCost T w B + 6) + 4) +
+    (6 * (s * w) + 6) + (s * (rmulCost w + 30 * w + 40 + bandFwdStepCost w B + 6) + 4) +
     (2 * (B * w) + 2)
 
 /-- The step bound of the output phase. -/
-def bandLineOutCost (T w s t : ℕ) : ℕ :=
-  (60 * (s + 1) * w + 60 * s + 60) + (s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (s * w) + 2)) +
-    (4 * (s * w) + 4) + (2 * (s * w) + 2) + (s * (rmulCost T w + 6 * w + 2) + 8) +
+def bandLineOutCost (w s t : ℕ) : ℕ :=
+  (60 * (s + 1) * w + 60 * s + 60) + (s * (rmulCost w + 6 * w + 8) + 6 + (2 * (s * w) + 2)) +
+    (4 * (s * w) + 4) + (2 * (s * w) + 2) + (s * (rmulCost w + 6 * w + 2) + 8) +
     (2 * (s * w) + 2) + (2 * (s * w) + 2) + (2 * (s * w) + 2) + (4 * ((t - s) * w) + 4)
 
 /-- The step bound of one line. -/
-def bandLineCost (T w s t B : ℕ) : ℕ :=
-  bandLineInCost T w s t B + bandLinePassCost T w s B + bandLineOutCost T w s t
+def bandLineCost (w s t B : ℕ) : ℕ :=
+  bandLineInCost w s t B + bandLinePassCost w s B + bandLineOutCost w s t
 
 theorem length_bandOut (P : ℕ) (cs : List (List ℤ)) (pend : List GaussianInt) :
     ∀ j, (Mult.BandList.bandOut P cs pend j).length = j
@@ -137,7 +137,7 @@ theorem band_scale_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     RsbRuns body rg ι (bandScaleP rg hι hT hQ x y o) σ
       (Function.update (Function.update σ o
         (cstream A w (xs.map fun a => tdivN P (a * ⟨c, 0⟩)))) x [])
-      (xs.length * (rmulCost T w + 6 * w + 8) + 6 + (2 * (xs.length * w) + 2)) := by
+      (xs.length * (rmulCost w + 6 * w + 8) + 6 + (2 * (xs.length * w) + 2)) := by
   have hsing : ∀ l : List GaussianInt, (l.map fun a => [a]).flatten = l := by
     intro l; induction l <;> simp_all
   obtain ⟨hxy, hxo, hyo, -⟩ := id hfree
@@ -168,7 +168,7 @@ theorem band_lineIn_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     RsbRuns body rg ι (bandLineInP rg hι hT hQ) σ
       (Function.update (Function.update σ .src rest) .vk
         (cstream A w ((Mult.BandFactor.foldList (rsbArr fun ℓ : ZMod s => N (rowIndex s t ℓ))).map
-          (fun a => tdivN P (a * ⟨cin, 0⟩)) ++ List.replicate B 0))) (bandLineInCost T w s t B) := by
+          (fun a => tdivN P (a * ⟨cin, 0⟩)) ++ List.replicate B 0))) (bandLineInCost w s t B) := by
   have hwn := hr.wn
   have hlen : (rsbArr N).length = (rsbMask s t).length := by rw [length_rsbArr, length_rsbMask]
   set SL := rsbArr fun ℓ : ZMod s => N (rowIndex s t ℓ) with hSL
@@ -244,7 +244,7 @@ theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
       (Function.update (Function.update σ .vk []) .dout
         (cstream A w (Mult.BandList.bwdZC P Uc rcs
           ((Mult.BandList.fwdZC P Lc (b ++ List.replicate B 0)).reverse ++ List.replicate B 0)).reverse))
-      (bandLinePassCost T w s B) := by
+      (bandLinePassCost w s B) := by
   set pend := b ++ List.replicate B (0 : GaussianInt) with hpend
   have hpl : pend.length = s + B := by simp [hpend, hb]
   have h₁ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .bo) (b := .ef)
@@ -373,7 +373,7 @@ theorem band_lineOut_runs (rg : RsbR → Fin T) (hrg : Function.Injective rg)
         ((cstream A w (List.zipWith (fun a b => tdivN P (a * b))
           ((Mult.BandFactor.unfoldList x).map fun a => tdivN P (a * ⟨cout, 0⟩))
           (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) ++ List.replicate (t - s) 0)).reverse ++ σ .dst))
-      (bandLineOutCost T w s t) := by
+      (bandLineOutCost w s t) := by
   have hwn := hready.wn
   have h₁ := band_unfoldLine_runs (body := body) (ι := ι) hrg hdisj (w := w) σ x hdout
     (by rw [hm2wn, hxl]) (by rw [hkn, hxl]) hwn hsel hya hxs htK htC hac2
@@ -526,7 +526,7 @@ theorem band_line_runs (rg : RsbR → Fin T) (hrg : Function.Injective rg)
     RsbRuns body rg ι (bandLineP rg hι hT hQ) σ
       (Function.update (Function.update σ .src rest) .dst
         ((cstream A w (bandOutVec P cout Dl (bandSolveVec P B Lc Uc rcs (bandInVec P s t cin N)) ++
-          List.replicate (t - s) 0)).reverse ++ σ .dst)) (bandLineCost T w s t B) := by
+          List.replicate (t - s) 0)).reverse ++ σ .dst)) (bandLineCost w s t B) := by
   set b := bandInVec P s t cin N with hbdef
   have hbl : b.length = s := by
     simp [hbdef, bandInVec, length_foldList, length_rsbArr]

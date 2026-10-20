@@ -281,9 +281,9 @@ def srcCore (M : SrcMach t₀ T Q) (fwdP oppP : Pr P T Q (prime + K) U) :
 def srcCoreCost (M : SrcMach t₀ T Q) (n w W cF cO : ℕ) (hd0 : 0 < d n)
     (V₀ : RsaV (RsaX t₀) (prime + K)) (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
     (restA restB : List (Fin (prime + K + 4))) : ℕ :=
-  srcCostA M n w W hd0 V₀ restA + srcCostK (K := K) (T := T) n w W +
-    srcCostC T w (∏ i, t n i) + srcCostV T n w cF cO +
-    (srcCostC T w (∏ i, t n i) + (2 * ((∏ i, t n i) * w) + 2)) +
+  srcCostA M n w W hd0 V₀ restA + srcCostK (K := K) n w W +
+    srcCostC w (∏ i, t n i) + srcCostV n w cF cO +
+    (srcCostC w (∏ i, t n i) + (2 * ((∏ i, t n i) * w) + 2)) +
     (4 * ((∏ i, t n i) * w) + 4 + srcCostB M n w W hd0 σ₀ restB) +
     ((∏ i, t n i) * (6 * w + 4 * gamma n + 14) + 4)
 

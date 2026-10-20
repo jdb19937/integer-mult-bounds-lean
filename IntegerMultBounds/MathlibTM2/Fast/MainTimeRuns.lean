@@ -72,8 +72,8 @@ lemma mn_le_max_mul {a c Y Z : ℝ} (h : a ≤ c * Y) (hY : 0 ≤ Y) (hYZ : Y �
   linarith
 
 /-- The transforms enter the convolution box additively. -/
-lemma mn_cvBoxCost_split (T p l w S M cF cO : ℕ) :
-    cvBoxCost T p l w S M cF cO = cvBoxCost T p l w S M 0 0 + (2 * cF + cO) := by
+lemma mn_cvBoxCost_split (p l w S M cF cO : ℕ) :
+    cvBoxCost p l w S M cF cO = cvBoxCost p l w S M 0 0 + (2 * cF + cO) := by
   unfold cvBoxCost cvSynthCost
   ring
 
@@ -200,15 +200,15 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
         C * mnRunSum n + ((2 * cF + cO : ℕ) : ℝ) := by
   obtain ⟨CA, hCA⟩ := mt_rsa_stage_le_linear mnT 6 K cw cW
   obtain ⟨CB, hCB⟩ := mt_band_stage_le_linear mnT 6 K cw cW
-  obtain ⟨CK, hCK⟩ := mt_ch_kernel_le mnT cw cW
-  set c4 : ℝ := mtCM mnT cw + 21 * cw + 28
+  obtain ⟨CK, hCK⟩ := mt_ch_kernel_le cw cW
+  set c4 : ℝ := mtCM cw + 21 * cw + 28
   set c5 : ℝ := 6 * cw + 19
-  set c6 : ℝ := mtCvC mnT cw
+  set c6 : ℝ := mtCvC cw
   set c7 : ℝ := ((60 * cw + 200 : ℕ) : ℝ)
   refine ⟨max CA 0 + max CB 0 + max CK 0 + 2 * max c4 0 + max c5 0 + max c6 0 + max c7 0,
     by positivity, ?_⟩
-  filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le mnT cw, mt_ch_scale_le cw,
-    mt_cv_box_le_conv mnT cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
+  filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le cw, mt_ch_scale_le cw,
+    mt_cv_box_le_conv cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
   intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨g1, g2, g3, g4, -, -⟩ := mn_runSum_ge h
   obtain ⟨-, -, -, q4, q5⟩ := mn_runSum_parts h
@@ -236,7 +236,7 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
   unfold srcCoreCost srcCostA srcCostK srcCostC srcCostV srcCostB
   rw [mn_cvBoxCost_split]
   simp only [mnM_hd]
-  generalize (∏ i, t n i) * (cmulCost mnT w + 21 * w + 8) + 20 = P1 at a4 ⊢
+  generalize (∏ i, t n i) * (cmulCost w + 21 * w + 8) + 20 = P1 at a4 ⊢
   generalize (∏ i, t n i) * (6 * w + 4 * gamma n + 14) + 4 = P2 at a5 ⊢
   generalize (∏ i, t n i) * w = XW at a7 ⊢
   push_cast at a1 a2 a3 a4 a5 a6 a7 ⊢

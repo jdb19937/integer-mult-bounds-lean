@@ -56,7 +56,7 @@ symbols, `kc` holds the coefficient `cstDiskC p`; `ax` holds `d - 1` symbols. Af
 register is as before except `kr` (gains the kernel stream) and the caller's registers
 (`cfg d`).
 
-**Cost** (`cstChirpCost`, `cst_chirpCost_le`): at most `∑_{k<d} bp k + 4 d V cmulCost T w`,
+**Cost** (`cstChirpCost`, `cst_chirpCost_le`): at most `∑_{k<d} bp k + 4 d V cmulCost w`,
 `V = ∏ t_k`, `bp k` the cost of loading axis `k`.
 
 **Conditions.** `96 ≤ A`, `1 ≤ d`, `1 ≤ t_k`, `p + g + 2 ≤ w` and every table entry, partial
@@ -352,8 +352,8 @@ def cstStep (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
   (.seq (uclear (rg (.c .xs))) (.seq (uclear (rg (.c .ys))) (uclear (rg .cL)))))
 
 /-- The step bound of `cstStep` on a box of `n` entries and a table of `L` entries. -/
-def cstStepCost (T w n L : ℕ) : ℕ :=
-  cstRepCost w n L + (n * L * (cmulCost T w + 6 * w + 8) + 6) + (2 * (n * L * w) + 2) +
+def cstStepCost (w n L : ℕ) : ℕ :=
+  cstRepCost w n L + (n * L * (cmulCost w + 6 * w + 8) + 6) + (2 * (n * L * w) + 2) +
     (2 * (L * w) + 2) + (2 * L + 2)
 
 variable (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
@@ -370,7 +370,7 @@ theorem cst_step_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.sta
     RsaRuns body rg ι (cstStep ι hι hT hQ rg) ρ
       (Function.update (Function.update (Function.update ρ (.c .out)
         (cstream A w (B.flatMap fun e => ts.map fun y => tdivN q (e * y)))) (.c .ys) []) .cL [])
-      (cstStepCost T w B.length ts.length) := by
+      (cstStepCost w B.length ts.length) := by
   -- the repetition pass
   have h1 := cst_rep_runs (body := body) (ι := ι) hrg hdisj (src := .c .out) (dst := .c .xs)
     (wn := .c .wn) (cb := .cb) (ra := .ra) (cL := .cL) (cL' := .cL') (s1 := .s1) (s2 := .s2)
@@ -422,7 +422,7 @@ theorem cst_step_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.sta
     have e4 : (B.map (List.replicate ts.length)).flatten.length = B.length * ts.length := by
       rw [hflat]; simp [List.length_flatMap, List.map_const', List.sum_replicate]
     rw [e1, e2, e3, e4]
-    unfold cstStepCost
+    unfold cstStepCost cstRepCost
     nlinarith
 
 end Step
@@ -562,12 +562,12 @@ def cstChirpBox (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     (uclear (rg (.c .out))))))))
 
 /-- The step bound of the stage, `bp k` the bound of loading axis `k`. -/
-def cstChirpCost (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) : ℕ :=
+def cstChirpCost (w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) : ℕ :=
   bp 0 + (6 * (ts.getD 0 0 * w) + 6) + (2 * (ts.getD 0 0 * w) + 2) + (2 * ts.getD 0 0 + 2) +
     (∑ j ∈ Finset.range (ts.length - 1),
-      (bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) +
+      (bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) +
       2 * (ts.length - 1) + 4) +
-    (ts.prod * (cmulCost T w + 6 * w + 8) + 6) + (2 * (ts.prod * w) + 2)
+    (ts.prod * (cmulCost w + 6 * w + 8) + 6) + (2 * (ts.prod * w) + 2)
 
 variable (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
 include hrg hdisj
@@ -597,7 +597,7 @@ theorem cst_chirpBox_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
     RsaRuns body rg ι (cstChirpBox ι hι hT hQ rg prep) ρ
       (cstSetX (Function.update ρ .kr (cstream A w (((cstAddrs ts).map (cstEnt (p + g) tab)).map
         fun M => tdivN (p + g + 2) (M * cstDiskC p)) ++ ρ .kr)) (cfg ts.length))
-      (cstChirpCost T w ts bp) := by
+      (cstChirpCost w ts bp) := by
   set q := p + g with hq
   have hw1 : 1 ≤ w := by omega
   have hqw : q ≤ w := by omega
@@ -622,7 +622,7 @@ theorem cst_chirpBox_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
     with hΦ
   have hloop := rsa_scanP_sum (body := body) (ι := ι) hrg hdisj (a := .ax) (t := .ax') (by simp)
     (p := .seq prep (cstStep ι hι hT hQ rg)) Φ
-    (b := fun j => bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0)) cs
+    (b := fun j => bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0)) cs
     (fun j hj => by
       have hj1 : j + 1 < ts.length := by omega
       set σ := Function.update (Function.update (Φ j) .ax (cs.drop (j + 1))) .ax'
@@ -721,13 +721,13 @@ end Stage
 
 section Cost
 
-lemma cst_cmulCost_ge (T w : ℕ) : 128 * w + 128 ≤ cmulCost T w := by
+lemma cst_cmulCost_ge (w : ℕ) : 128 * w + 128 ≤ cmulCost w := by
   unfold cmulCost; omega
 
-/-- One axis costs at most `2 n L cmulCost T w`. -/
-theorem cst_stepCost_le (T w n L : ℕ) (hn : 1 ≤ n) (hL : 1 ≤ L) :
-    cstStepCost T w n L ≤ 2 * (n * L) * cmulCost T w := by
-  have hC := cst_cmulCost_ge T w
+/-- One axis costs at most `2 n L cmulCost w`. -/
+theorem cst_stepCost_le (w n L : ℕ) (hn : 1 ≤ n) (hL : 1 ≤ L) :
+    cstStepCost w n L ≤ 2 * (n * L) * cmulCost w := by
+  have hC := cst_cmulCost_ge w
   set m := n * L with hm
   have h1 : n ≤ m := Nat.le_mul_of_pos_right n hL
   have h2 : L ≤ m := Nat.le_mul_of_pos_left L hn
@@ -735,19 +735,19 @@ theorem cst_stepCost_le (T w n L : ℕ) (hn : 1 ≤ n) (hL : 1 ≤ L) :
     rw [hm]; ring
   have h3 : n * (8 * w + 12) ≤ m * (8 * w + 12) := Nat.mul_le_mul_right _ h1
   have h4 : L * w ≤ m * w := Nat.mul_le_mul_right _ h2
-  have h5 : m * (24 * w + 49) ≤ m * cmulCost T w := Nat.mul_le_mul_left _ (by omega)
+  have h5 : m * (24 * w + 49) ≤ m * cmulCost w := Nat.mul_le_mul_left _ (by omega)
   have h6 : 1 ≤ m := le_trans hn h1
   unfold cstStepCost cstRepCost
   rw [e1, show n * L * w = m * w by rw [hm]]
   nlinarith
 
-/-- **The cost of the chirp stage**: the loads, and at most `4 d V cmulCost T w` for the
+/-- **The cost of the chirp stage**: the loads, and at most `4 d V cmulCost w` for the
 products, `V = ∏ t_k`. -/
-theorem cst_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 1 ≤ ts.length)
+theorem cst_chirpCost_le (w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 1 ≤ ts.length)
     (hts : ∀ x ∈ ts, 1 ≤ x) :
-    cstChirpCost T w ts bp ≤
-      ∑ k ∈ Finset.range ts.length, bp k + 4 * ts.length * ts.prod * cmulCost T w := by
-  have hC := cst_cmulCost_ge T w
+    cstChirpCost w ts bp ≤
+      ∑ k ∈ Finset.range ts.length, bp k + 4 * ts.length * ts.prod * cmulCost w := by
+  have hC := cst_cmulCost_ge w
   have hV1 : 1 ≤ ts.prod := by
     have := cst_one_le_prod_take ts hts ts.length
     rwa [List.take_length] at this
@@ -756,23 +756,23 @@ theorem cst_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 1 
     rw [cst_take_succ (by omega), List.take_zero, List.nil_append, List.prod_singleton] at h
     exact h
   have hstep : ∀ j ∈ Finset.range (ts.length - 1),
-      bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3 ≤
-        bp (j + 1) + (2 * ts.prod * cmulCost T w + 3) := by
+      bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3 ≤
+        bp (j + 1) + (2 * ts.prod * cmulCost w + 3) := by
     intro j hj
     have hj' : j + 1 < ts.length := by have := Finset.mem_range.1 hj; omega
     have hL : 1 ≤ ts.getD (j + 1) 0 := by rw [cst_getD hj']; exact hts _ (List.getElem_mem hj')
-    have h1 := cst_stepCost_le T w _ _ (cst_one_le_prod_take ts hts (j + 1)) hL
+    have h1 := cst_stepCost_le w _ _ (cst_one_le_prod_take ts hts (j + 1)) hL
     have h2 : (ts.take (j + 1)).prod * ts.getD (j + 1) 0 ≤ ts.prod := by
       have := cst_prod_take_le ts hts (j + 2)
       rwa [cst_take_succ hj', List.prod_append, List.prod_singleton] at this
-    have h3 : 2 * ((ts.take (j + 1)).prod * ts.getD (j + 1) 0) * cmulCost T w ≤
-        2 * ts.prod * cmulCost T w :=
+    have h3 : 2 * ((ts.take (j + 1)).prod * ts.getD (j + 1) 0) * cmulCost w ≤
+        2 * ts.prod * cmulCost w :=
       Nat.mul_le_mul_right _ (Nat.mul_le_mul_left 2 h2)
     omega
   have hsum : ∑ j ∈ Finset.range (ts.length - 1),
-      (bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) ≤
+      (bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) ≤
         ∑ j ∈ Finset.range (ts.length - 1), bp (j + 1) +
-          (ts.length - 1) * (2 * ts.prod * cmulCost T w + 3) := by
+          (ts.length - 1) * (2 * ts.prod * cmulCost w + 3) := by
     refine (Finset.sum_le_sum hstep).trans (le_of_eq ?_)
     rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, smul_eq_mul]
   have hbp : ∑ k ∈ Finset.range ts.length, bp k =
@@ -783,9 +783,9 @@ theorem cst_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 1 
   rw [hbp]
   have hLw : ts.getD 0 0 * w ≤ ts.prod * w := Nat.mul_le_mul_right _ hL0
   generalize ∑ j ∈ Finset.range (ts.length - 1),
-    (bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) = S at hsum ⊢
+    (bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) = S at hsum ⊢
   generalize ∑ j ∈ Finset.range (ts.length - 1), bp (j + 1) = Sb at hsum ⊢
-  generalize cmulCost T w = C at *
+  generalize cmulCost w = C at *
   generalize ts.prod = V at *
   generalize ts.getD 0 0 = L0 at *
   obtain ⟨e, he⟩ : ∃ e, ts.length = e + 1 := ⟨ts.length - 1, by omega⟩
@@ -833,8 +833,8 @@ include hrg hdisj
 (`cstTab_axTab`: the numerators of `axisPhase p g (t k) (s k) j` at scale `2^(p+g)`),
 `p + g + 3 ≤ w` and `d ≤ 2^(p+g)`, the stage pushes onto `kr` the numerator box at scale `2^p`
 of the chirp kernel `chirpProd p g t s` (`cstNumBox`, address order, axis `0` most
-significant), within `cstChirpCost T w (List.ofFn t) bp` steps, at most
-`∑_{k<d} bp k + 4 d (∏ t_k) cmulCost T w` (`cst_chirpCost_le`). -/
+significant), within `cstChirpCost w (List.ofFn t) bp` steps, at most
+`∑_{k<d} bp k + 4 d (∏ t_k) cmulCost w` (`cst_chirpCost_le`). -/
 theorem cst_chirpBox_pipeline (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
     (hA : 96 ≤ A) {w p g d : ℕ} (t s : Fin d → ℕ) [∀ i, NeZero (t i)] (hd : 1 ≤ d)
     (hw : p + g + 3 ≤ w) (hdq : d ≤ 2 ^ (p + g)) (prep : Pr P T Q A U)
@@ -850,7 +850,7 @@ theorem cst_chirpBox_pipeline (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ 
     RsaRuns body rg ι (cstChirpBox ι hι hT hQ rg prep) ρ
       (cstSetX (Function.update ρ .kr
         (cstream A w (cstNumBox p t (chirpProd p g t s)) ++ ρ .kr)) (cfg d))
-      (cstChirpCost T w (List.ofFn t) bp) := by
+      (cstChirpCost w (List.ofFn t) bp) := by
   have hlen : (List.ofFn t).length = d := List.length_ofFn
   have h := cst_chirpBox_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA (w := w) (p := p)
     (g := g) (by omega) (List.ofFn t) (by omega)
@@ -886,7 +886,7 @@ theorem cst_chirpBox_kernel (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : 
       (cstSetX (Function.update ρ .kr
         (cstream A w (cstNumBox (Mult.Sizes.p n) (Mult.Sizes.t n) (Mult.Pipeline.chirpKernel n)) ++
           ρ .kr)) (cfg (Mult.Sizes.d n)))
-      (cstChirpCost T w (List.ofFn (Mult.Sizes.t n)) bp) := by
+      (cstChirpCost w (List.ofFn (Mult.Sizes.t n)) bp) := by
   have hg := sixteen_mul_le_chirpGuard (Mult.Sizes.d n)
   have hdq : Mult.Sizes.d n ≤ 2 ^ (Mult.Sizes.p n + chirpGuard (Mult.Sizes.d n)) := by
     have : 2 ^ chirpGuard (Mult.Sizes.d n) ≤ 2 ^ (Mult.Sizes.p n + chirpGuard (Mult.Sizes.d n)) :=

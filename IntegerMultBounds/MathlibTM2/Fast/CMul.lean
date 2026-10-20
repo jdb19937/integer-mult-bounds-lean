@@ -31,7 +31,7 @@ the top of `xs` and of `ys`, pushes their symbols (reversed) onto `xsv`, `ysv`, 
 result coefficient (reversed) onto `acc`. Hypotheses: `96 ≤ A`, `1 ≤ w`, `p ≤ w`, `Fits w N₁`,
 `Fits w N₂`, `64 ≤ T`, `SS.states ≤ Q`.
 
-**Cost** (`cmulOne_runs`): at most `4 S + 128 w + 128` steps, `S = ssMulConst (T + 1) mLogLog w` the
+**Cost** (`cmulOne_runs`): at most `4 S + 128 w + 128` steps, `S = ssMulConst mLogLog w` the
 bound of one `ssMul` (`ssMul_exec_log`). `rmulOne_runs`: `2 S + 160 w + 128`.
 
 **Streams** (`CMulStream`). `cmulBlock` repeats `cmulOne` while `ys` is nonempty and then moves `ysv` back onto
@@ -196,7 +196,7 @@ theorem prods_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j
         (pnum A (topN w) (N₁.im.natAbs * N₂.im.natAbs))
         (pnum A (topN w) (N₁.re.natAbs * N₂.im.natAbs))
         (pnum A (topN w) (N₁.im.natAbs * N₂.re.natAbs)))
-      (4 * (ssMulConst * (T + 1) * mLogLog w)) := by
+      (4 * (ssMulConst * mLogLog w)) := by
   have H := CRuns.seq hdisj (ssMul_runs (body := body) hcr hdisj hι hT hQ (xa := .ma) (xb := .mc)
       (xn := .nn) (xc := .p1) (ρ := magSt ρ w N₁ N₂) (by decide) (by decide) hw (natAbs_lt_of_fits h₁.1)
       (natAbs_lt_of_fits h₂.1) (by simp [magSt]) (by simp [magSt]) (by simp [magSt, hr.nn]))
@@ -231,7 +231,7 @@ theorem rprods_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι 
       (prodSt (magSt ρ w N₁ N₂) (pnum A (topN w) (N₁.re.natAbs * N₂.re.natAbs))
         (binSyms (topN w) 0 ++ []) (binSyms (topN w) 0 ++ [])
         (pnum A (topN w) (N₁.im.natAbs * N₂.re.natAbs)))
-      (2 * (ssMulConst * (T + 1) * mLogLog w) + 2 * (4 * topN w + 4)) := by
+      (2 * (ssMulConst * mLogLog w) + 2 * (4 * topN w + 4)) := by
   have H := CRuns.seq hdisj (ssMul_runs (body := body) hcr hdisj hι hT hQ (xa := .ma) (xb := .mc)
       (xn := .nn) (xc := .p1) (ρ := magSt ρ w N₁ N₂) (by decide) (by decide) hw (natAbs_lt_of_fits h₁.1)
       (natAbs_lt_of_fits h₂.1) (by simp [magSt]) (by simp [magSt]) (by simp [magSt, hr.nn]))
@@ -442,22 +442,22 @@ def rmulOne (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
   .seq (cmulPre cr) (.seq (rmulProds ι hι hT hQ cr) (cmulPost cr))
 
 /-- The step bound of `cmulOne`. -/
-def cmulCost (T w : ℕ) : ℕ := 4 * (ssMulConst * (T + 1) * mLogLog w) + 128 * w + 128
+def cmulCost (w : ℕ) : ℕ := 4 * (ssMulConst * mLogLog w) + 128 * w + 128
 
 /-- The step bound of `rmulOne`. -/
-def rmulCost (T w : ℕ) : ℕ := 2 * (ssMulConst * (T + 1) * mLogLog w) + 160 * w + 128
+def rmulCost (w : ℕ) : ℕ := 2 * (ssMulConst * mLogLog w) + 160 * w + 128
 
 /-- **The complex fixed-point product of one coefficient pair.** From a ready register file with
 `coeffSyms A w (red w N₁)` on top of `xs` and `coeffSyms A w (red w N₂)` on top of `ys`, `cmulOne`
 pops both coefficients, pushes their symbols (reversed) onto `xsv` and `ysv`, and pushes
-`coeffSyms A w (red w (tdivN p (N₁ N₂)))` (reversed) onto `acc`, within `cmulCost T w` steps. -/
+`coeffSyms A w (red w (tdivN p (N₁ N₂)))` (reversed) onto `acc`, within `cmulCost w` steps. -/
 theorem cmulOne_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
     {ρ : CR → List (Fin (A + 4))} {w p : ℕ} (hr : Ready ρ w p) (hw : 1 ≤ w) (hp : p ≤ w)
     {N₁ N₂ : GaussianInt} (h₁ : Fits w N₁) (h₂ : Fits w N₂) {rx ry : List (Fin (A + 4))}
     (hx : ρ .xs = csyms A w N₁ ++ rx) (hy : ρ .ys = csyms A w N₂ ++ ry) :
     CRuns body cr ι (cmulOne ι hι hT hQ cr) ρ (oneSt ρ w N₁ N₂ rx ry (tdivN p (N₁ * N₂)))
-      (cmulCost T w) := by
+      (cmulCost w) := by
   obtain ⟨-, hNle, -⟩ := topN_facts hw
   have hr' := hr.opSt N₁ N₂ rx ry
   have hb := prod_bound hw h₁ h₂
@@ -469,12 +469,12 @@ theorem cmulOne_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι
   · rw [tq_eq, tq_eq, reOf_eq, imOf_eq]
     simp [oneSt, opSt, csyms, red, tdivN]
   · unfold cmulCost
-    generalize ssMulConst * (T + 1) * mLogLog w = S
+    generalize ssMulConst * mLogLog w = S
     generalize topN w = N at *
     omega
 
 /-- **The product by a real coefficient.** As `cmulOne_runs` when `im N₂ = 0`, with two
-Schönhage–Strassen products, within `rmulCost T w` steps. -/
+Schönhage–Strassen products, within `rmulCost w` steps. -/
 theorem rmulOne_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
     {ρ : CR → List (Fin (A + 4))} {w p : ℕ} (hr : Ready ρ w p) (hw : 1 ≤ w) (hp : p ≤ w)
@@ -482,7 +482,7 @@ theorem rmulOne_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι
     {rx ry : List (Fin (A + 4))}
     (hx : ρ .xs = csyms A w N₁ ++ rx) (hy : ρ .ys = csyms A w N₂ ++ ry) :
     CRuns body cr ι (rmulOne ι hι hT hQ cr) ρ (oneSt ρ w N₁ N₂ rx ry (tdivN p (N₁ * N₂)))
-      (rmulCost T w) := by
+      (rmulCost w) := by
   obtain ⟨-, hNle, -⟩ := topN_facts hw
   have hr' := hr.opSt N₁ N₂ rx ry
   have hb := prod_bound hw h₁ h₂
@@ -499,7 +499,7 @@ theorem rmulOne_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι
   · rw [tq_eq, tq_eq, e₁, e₂]
     simp [oneSt, opSt, csyms, red, tdivN]
   · unfold rmulCost
-    generalize ssMulConst * (T + 1) * mLogLog w = S
+    generalize ssMulConst * mLogLog w = S
     generalize topN w = N at *
     omega
 

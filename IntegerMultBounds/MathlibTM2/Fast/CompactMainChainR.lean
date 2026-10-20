@@ -303,7 +303,7 @@ theorem compactMainChainR_eventually : ∀ᶠ n : ℕ in Filter.atTop,
   obtain ⟨F₈, hF₈⟩ : ∃ F : SrcF 6 (prime + mnKa), F =
       { F₇ with v := Function.update F₇.v (.cm .out) PR } := ⟨_, rfl⟩
   replace s8 : SrcRuns (mnBody mnLb (.act .done)) mnRg mnι (fun _ => True) mnPoint (mnGlob F₇ g₆) (mnGlob F₈ g₆)
-      ((∏ i, t n i) * (cmulCost mnT (dsW n) + 6 * (dsW n) + 2) + 8) := by rw [hF₈]; exact s8
+      ((∏ i, t n i) * (cmulCost (dsW n) + 6 * (dsW n) + 2) + 8) := by rw [hF₈]; exact s8
   -- 9, 10. clear the operands
   have s9 := mn_clear_cm (body := mnBody mnLb (.act .done)) (Pre := fun _ => True) .xs F₈ g₆
   have hF₈xs : F₈.v (.cm .xs) = BX := by subst hF₈; simp [hF₇v]
@@ -426,7 +426,7 @@ theorem compactMainChainR_eventually : ∀ᶠ n : ℕ in Filter.atTop,
       g' = Function.update (Function.update g₁₃ (.rnd .src) []) (.rnd .dst) (mnWordsG mnKa n (compactRetunedCb n hbig hg) x y) :=
     ⟨_, rfl⟩
   replace s14 : SrcRuns (mnBody mnLb (.act .done)) mnRg mnι (fun _ => True) mnRound (mnGlob F₁₃ g₁₃) (mnGlob F₁₃ g₁₄)
-      (roundStageCost mnT (mnMw n (dsW n)) (dsW n) (b n) (p n) (mnWo n) (S n)) := by
+      (roundStageCost (mnMw n (dsW n)) (dsW n) (b n) (p n) (mnWo n) (S n)) := by
     rw [hg₁₄]; exact s14
   -- 15. the words onto the output stage
   have hg₁₄sp : g₁₄ (.io .sp) = [] := by subst hg₁₄ hg₁₃; simp [hg₆sp]

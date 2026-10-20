@@ -203,9 +203,9 @@ lemma costs_agree (h : AgreeOff σ τ) (L : List (RsbR ⊕ RsbX t₀))
     rw [h x a b c]
 
 /-- The step bound of the loader ignores the box and axis registers. -/
-theorem bandPreCost_agree (h : AgreeOff σ τ) (T : ℕ) (hd : Fin 5 → Fin t₀) (w : ℕ) (D : PreAxB)
+theorem bandPreCost_agree (h : AgreeOff σ τ) (hd : Fin 5 → Fin t₀) (w : ℕ) (D : PreAxB)
     [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
-    bandPreCost T σ hd w D rest = bandPreCost T τ hd w D rest := by
+    bandPreCost σ hd w D rest = bandPreCost τ hd w D rest := by
   have hB1 := agree_bandFB1 h hd w D rest
   have hB2a := agree_bandFB2a hB1 D w
   have hB2b := agree_bandFB2b hB2a D w
@@ -315,7 +315,7 @@ theorem bandPreB_rsbWith (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : 
       (bandInputs D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) m))
     (l a a' : List (Fin (prime + K + 4))) :
     RsbRuns body (Sum.elim rg rgx) ι (bandPreB rg rgx ι hd hι hT hQ) (rsbWith σ l a a')
-      (rsbWith (bandLoad σ hd w D rest) l a a') (bandPreCost T σ hd w D rest) := by
+      (rsbWith (bandLoad σ hd w D rest) l a a') (bandPreCost σ hd w D rest) := by
   have hag := rsbWith_agree σ l a a'
   have e : ∀ r : RsbR, r ≠ .src → rsbWith σ l a a' (.inl r) = σ (.inl r) := fun r hr =>
     hag _ (fun e => hr (Sum.inl_injective e)) (by simp) (by simp)
@@ -354,7 +354,7 @@ theorem band_axis_loaded (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.
           (bandUc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
           (bandRcs D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) (bandDl D)
           (2 ^ (9 * D.p - 1)) (2 ^ (D.p - D.α * D.α))))))
-      (bandAxisCost T w D.s D.t D.bB lines.length) := by
+      (bandAxisCost w D.s D.t D.bB lines.length) := by
   have c := (bandLoad_cfg σ hd D rest w hF hwn hnn (by omega)).with_src
     (cstream (prime + K) w lines.flatten)
   have h := band_axis_runs (body := body) (rg := rg) hι hT hQ hrg hdisj hA hst hw1 hPw _ _ _ _ _ _ htab lines
@@ -384,10 +384,10 @@ def bandCfgB (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : F
       (preRecsB n W hd0 (k + 2) ++ rest)
 
 /-- The step bound of the band loader at step `k`. -/
-def bandCpB (T : ℕ) (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+def bandCpB (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (n w W : ℕ) (hd0 : 0 < d n) (rest : List (Fin (prime + K + 4))) : ℕ → ℕ
-  | 0 => bandPreCost T σ₀ hd w (preDB n W hd0 0) (preRecsB n W hd0 1 ++ rest)
-  | k + 1 => bandPreCost T (bandCfgB σ₀ hd n w W hd0 rest k) hd w (preDB n W hd0 (k + 1))
+  | 0 => bandPreCost σ₀ hd w (preDB n W hd0 0) (preRecsB n W hd0 1 ++ rest)
+  | k + 1 => bandPreCost (bandCfgB σ₀ hd n w W hd0 rest k) hd w (preDB n W hd0 (k + 1))
       (preRecsB n W hd0 (k + 2) ++ rest)
 
 /-- A base register file for the band stage. -/
@@ -606,7 +606,7 @@ theorem band_stage_hcfg (h : Big n) (hd0 : 0 < d n) (hι : Function.Injective ι
           (cstream (prime + K) w lines.flatten))
         (Function.update (fun r => bandCfgB σ₀ hd n w W hd0 rest k (.inl r)) .src
           (cstream (prime + K) w (lines.flatMap (bandG n (rsbAx hd0 k)))))
-        (bandAxisCost T w (s n (rsbAx hd0 k)) (t n (rsbAx hd0 k))
+        (bandAxisCost w (s n (rsbAx hd0 k)) (t n (rsbAx hd0 k))
           (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) lines.length)) ∧
     (0 < k → (∀ j, bandCfgB σ₀ hd n w W hd0 rest k (.inr (.sw j)) =
         rsbBank hd (preHsB n w hd0 (rsbAx hd0 k)) j) ∧
@@ -653,7 +653,7 @@ theorem band_stage_hprep (h : Big n) (hd0 : 0 < d n) (hι : Function.Injective �
     (hprm : σ (.inl .prm) = preRecsB n W hd0 k ++ rest) (l a a' : List (Fin (prime + K + 4))) :
     RsbRuns body (Sum.elim rg rgx) ι (bandPreB rg rgx ι hd hι hT hQ) (rsbWith σ l a a')
       (rsbWith (bandLoad σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest)) l a a')
-      (bandPreCost T σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest)) := by
+      (bandPreCost σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest)) := by
   have hp13 := h.thirteen_le_p
   set i := rsbAx hd0 k
   exact bandPreB_rsbWith (body := body) hrg₂ hι hdisj₂ hT hQ hA hdi σ _ _ w hw1 (hok k hk) hσ.free
@@ -698,9 +698,9 @@ theorem bandStage_exec (n : ℕ) (h : Big n) (hd0 : 0 < d n)
         (rsbWith (bandCfgB σ₀ hd n w W hd0 rest (d n - 1))
           (cstream (prime + K) w (rsbBox (d n) (t n) G)) axs [])
         (rsbAllCostG T t₀ w (d n) (t n) hd0 (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)
-          (fun i nl => bandAxisCost T w (s n i) (t n i)
+          (fun i nl => bandAxisCost w (s n i) (t n i)
             (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) nl)
-          (prime + K) hd (bandCpB T σ₀ hd n w W hd0 rest) (∏ i, t n i)) := by
+          (prime + K) hd (bandCpB σ₀ hd n w W hd0 rest) (∏ i, t n i)) := by
   have hp13 := h.thirteen_le_p
   have hA3 : 3 ≤ prime + K := by omega
   have hbox : ∀ y ∈ rsbBox (d n) (t n) Fn, ‖rsbGrid (p n) y‖ ≤ 1 := by
@@ -716,7 +716,7 @@ theorem bandStage_exec (n : ℕ) (h : Big n) (hd0 : 0 < d n)
     (preHsB n w hd0) (bandG n) (fun i x => length_bandG h i x) (BandOk n) _ (t_pow_log n)
     (fun i hi1 => ?_) σ₀ (bandCfgB σ₀ hd n w W hd0 rest)
     (fun k hk => band_stage_hcfg (body := body) h hd0 hι hT hQ hrg₂ hdisj₂ hA hpre hax hok hw1 hDfit
-      hσ₀ rest k hk) (bandCpB T σ₀ hd n w W hd0 rest)
+      hσ₀ rest k hk) (bandCpB σ₀ hd n w W hd0 rest)
     (fun l a a' => band_stage_hprep (body := body) h hd0 hι hT hQ hrg₂ hdisj₂ hA hpre hax hok hw1 hi
       hσ₀ rest 0 hd0 hprm l a a')
     (fun k hk l a a' => band_stage_hprep (body := body) h hd0 hι hT hQ hrg₂ hdisj₂ hA hpre hax hok hw1

@@ -15,8 +15,8 @@ product on `m`-bit operands each) and the square `S²` it multiplies by (`rndSqu
 the term `S M(p)` of `Cost/Total.totBound`, for operand width `m ≤ cm p`, coefficient width
 `w ≤ cw p` and word size `W ≤ cW p` on a host of `Tm` stacks.
 
-* `mt_rnd_stage_le`: `roundStageCost Tm m w b p W S ≤ mtRndC Tm cm cw cW · S M(p)`.
-* `mt_rnd_square_le`: the square costs at most `mtRndC Tm cm 0 0 · M(p) ≤ mtRndC … · S M(p)`.
+* `mt_rnd_stage_le`: `roundStageCost m w b p W S ≤ mtRndC cm cw cW · S M(p)`.
+* `mt_rnd_square_le`: the square costs at most `mtRndC cm 0 0 · M(p) ≤ mtRndC … · S M(p)`.
 -/
 
 @[expose] public section
@@ -27,20 +27,20 @@ namespace IntegerMultBounds.MathlibTM2.Cost
 open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Fast
 
 /-- The constant of the rounding stage. -/
-noncomputable def mtRndC (Tm cm cw cW : ℕ) : ℝ :=
-  262144 * ssMulConst * (Tm + 1) * (cm : ℝ) ^ 2 + 16 * cw + 16 * cm + 8 * cW + 128
+noncomputable def mtRndC (cm cw cW : ℕ) : ℝ :=
+  262144 * ssMulConst * (cm : ℝ) ^ 2 + 16 * cw + 16 * cm + 8 * cW + 128
 
-theorem mt_rnd_C_nonneg (Tm cm cw cW : ℕ) : 0 ≤ mtRndC Tm cm cw cW := by
+theorem mt_rnd_C_nonneg (cm cw cW : ℕ) : 0 ≤ mtRndC cm cw cW := by
   unfold mtRndC; positivity
 
 /-- **The rounding stage** (`roundStage_exec` at `b n`, `p n`, `S n`): at most
-`mtRndC Tm cm cw cW · S M(p)` steps for `1 ≤ m ≤ cm p`, `w ≤ cw p`, `W ≤ cW p`. -/
-theorem mt_rnd_stage_le (Tm cm cw cW : ℕ) :
+`mtRndC cm cw cW · S M(p)` steps for `1 ≤ m ≤ cm p`, `w ≤ cw p`, `W ≤ cW p`. -/
+theorem mt_rnd_stage_le (cm cw cW : ℕ) :
     ∀ᶠ n in atTop, ∀ m w W : ℕ, 1 ≤ m → m ≤ cm * p n → w ≤ cw * p n → W ≤ cW * p n →
-      (roundStageCost Tm m w (b n) (p n) W (S n) : ℝ) ≤
-        mtRndC Tm cm cw cW * ((S n : ℝ) * totMp n) := by
+      (roundStageCost m w (b n) (p n) W (S n) : ℝ) ≤
+        mtRndC cm cw cW * ((S n : ℝ) * totMp n) := by
   filter_upwards [eventually_big] with n h m w W hm1 hm hw hW
-  have h1 := roundStageCost_le Tm hm1 w (b n) (p n) W (S n)
+  have h1 := roundStageCost_le hm1 w (b n) (p n) W (S n)
   have h2 := mt_mLogLog_le h hm1 hm
   have hpm := mt_p_le_mp h
   have hm1' := mt_one_le_mp h
@@ -61,21 +61,18 @@ theorem mt_rnd_stage_le (Tm cm cw cW : ℕ) :
   have hW' : (W : ℝ) ≤ cW * totMp n :=
     (show (W : ℝ) ≤ cW * p n by exact_mod_cast hW).trans
       (mul_le_mul_of_nonneg_left hpm (Nat.cast_nonneg _))
-  have h1' : (roundStageCost Tm m w (b n) (p n) W (S n) : ℝ) ≤
-      (S n : ℝ) * ((ssMulConst : ℝ) * ((Tm : ℝ) + 1) * (mLogLog m : ℝ) + 12 * w + 14 * m +
+  have h1' : (roundStageCost m w (b n) (p n) W (S n) : ℝ) ≤
+      (S n : ℝ) * ((ssMulConst : ℝ) * (mLogLog m : ℝ) + 12 * w + 14 * m +
         12 * b n + 4 * p n + 6 * W + 58) + 4 := by exact_mod_cast h1
   clear h1
   have hκ0 : (0 : ℝ) ≤ (ssMulConst : ℝ) := Nat.cast_nonneg _
   unfold mtRndC
-  generalize (roundStageCost Tm m w (b n) (p n) W (S n) : ℝ) = R at h1' ⊢
+  generalize (roundStageCost m w (b n) (p n) W (S n) : ℝ) = R at h1' ⊢
   generalize (ssMulConst : ℝ) = κ at h1' hκ0 ⊢
   generalize (mLogLog m : ℝ) = L at h1' h2
-  have hT0 : (0 : ℝ) ≤ (Tm : ℝ) + 1 := by positivity
-  have hκT : 0 ≤ κ * ((Tm : ℝ) + 1) := mul_nonneg hκ0 hT0
-  have h3 : κ * ((Tm : ℝ) + 1) * L ≤ κ * ((Tm : ℝ) + 1) * (262144 * (cm : ℝ) ^ 2 * totMp n) :=
-    mul_le_mul_of_nonneg_left h2 hκT
-  have h4 : κ * ((Tm : ℝ) + 1) * L + 12 * w + 14 * m + 12 * b n + 4 * p n + 6 * W + 58 ≤
-      (262144 * κ * ((Tm : ℝ) + 1) * (cm : ℝ) ^ 2 + 12 * cw + 14 * cm + 6 * cW + 64) * totMp n := by
+  have h3 : κ * L ≤ κ * (262144 * (cm : ℝ) ^ 2 * totMp n) := mul_le_mul_of_nonneg_left h2 hκ0
+  have h4 : κ * L + 12 * w + 14 * m + 12 * b n + 4 * p n + 6 * W + 58 ≤
+      (262144 * κ * (cm : ℝ) ^ 2 + 12 * cw + 14 * cm + 6 * cW + 64) * totMp n := by
     have : (12 : ℝ) * b n + 4 * p n ≤ 6 * totMp n := by rw [hp] at hpm ⊢; linarith
     nlinarith
   have hS0 : (0 : ℝ) ≤ S n := by linarith
@@ -86,20 +83,20 @@ theorem mt_rnd_stage_le (Tm cm cw cW : ℕ) :
   nlinarith
 
 /-- **The square `S²`** (`rndSquare_exec` with `S < 2^ℓ`, `topN ℓ + 1 ≤ m`): at most
-`mtRndC Tm cm 0 0 · M(p)` steps for `1 ≤ ℓ ≤ m ≤ cm p`. -/
-theorem mt_rnd_square_le (Tm cm : ℕ) :
+`mtRndC cm 0 0 · M(p)` steps for `1 ≤ ℓ ≤ m ≤ cm p`. -/
+theorem mt_rnd_square_le (cm : ℕ) :
     ∀ᶠ n in atTop, ∀ ℓ' m : ℕ, 1 ≤ ℓ' → ℓ' ≤ m → m ≤ cm * p n →
-      (((Tm + 773) * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 : ℕ) : ℝ) ≤
-        mtRndC Tm cm 0 0 * totMp n := by
+      ((3 * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 : ℕ) : ℝ) ≤
+        mtRndC cm 0 0 * totMp n := by
   filter_upwards [eventually_big] with n h ℓ' m hl hlm hm
-  have h1 := ssMul_cost_le Tm hl
+  have h1 := ssMul_cost_le hl
   have h2 := mt_mLogLog_le h hl (hlm.trans hm)
   have hpm := mt_p_le_mp h
   have hm1' := mt_one_le_mp h
-  have h1' : (((Tm + 773) * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 : ℕ) : ℝ) ≤
-      (ssMulConst : ℝ) * ((Tm : ℝ) + 1) * (mLogLog ℓ' : ℝ) + 8 * m + 8 := by
-    have : (Tm + 773) * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 ≤
-        ssMulConst * (Tm + 1) * mLogLog ℓ' + 8 * m + 8 := by omega
+  have h1' : ((3 * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 : ℕ) : ℝ) ≤
+      (ssMulConst : ℝ) * (mLogLog ℓ' : ℝ) + 8 * m + 8 := by
+    have : 3 * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 ≤
+        ssMulConst * mLogLog ℓ' + 8 * m + 8 := by omega
     exact_mod_cast this
   clear h1
   have hm' : (m : ℝ) ≤ cm * totMp n :=
@@ -107,13 +104,10 @@ theorem mt_rnd_square_le (Tm cm : ℕ) :
       (mul_le_mul_of_nonneg_left hpm (Nat.cast_nonneg _))
   have hκ0 : (0 : ℝ) ≤ (ssMulConst : ℝ) := Nat.cast_nonneg _
   unfold mtRndC
-  generalize ((((Tm + 773) * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 : ℕ) : ℝ)) = R at h1' ⊢
+  generalize (((3 * ssCostBound ℓ' + 164 * ℓ' + 463 + 8 * m + 8 : ℕ) : ℝ)) = R at h1' ⊢
   generalize (ssMulConst : ℝ) = κ at h1' hκ0 ⊢
   generalize (mLogLog ℓ' : ℝ) = L at h1' h2
-  have hT0 : (0 : ℝ) ≤ (Tm : ℝ) + 1 := by positivity
-  have hκT : 0 ≤ κ * ((Tm : ℝ) + 1) := mul_nonneg hκ0 hT0
-  have h3 : κ * ((Tm : ℝ) + 1) * L ≤ κ * ((Tm : ℝ) + 1) * (262144 * (cm : ℝ) ^ 2 * totMp n) :=
-    mul_le_mul_of_nonneg_left h2 hκT
+  have h3 : κ * L ≤ κ * (262144 * (cm : ℝ) ^ 2 * totMp n) := mul_le_mul_of_nonneg_left h2 hκ0
   push_cast
   nlinarith
 

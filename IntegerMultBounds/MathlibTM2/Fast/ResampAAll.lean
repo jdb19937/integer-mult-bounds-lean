@@ -48,7 +48,7 @@ with spare `ax'`, and the exchange spares `e1`, `e2`. The alphabet is `Fin (prim
   `tensorZR (d n) (s n) (t n) (lineA n) u`.
 
 **Cost** (`rsaAllCost`): `prep` on every axis; `Ã` along the last axis (`rsaAxisCost`, at most
-`T_box ((2m + 1)(rmulCost T w + 13 w + 17) + 60 w + 8 L + 80) + 4` by `rsaAxisCost_le`); for
+`T_box ((2m + 1)(rmulCost w + 13 w + 17) + 60 w + 8 L + 80) + 4` by `rsaAxisCost_le`); for
 each other axis `rsaStepCost`: two interchanges (`rsaSwapCost`, each at most
 `3 C (T + 12 swapT t₀ + 5) T_box w max(1, L_i, L_{d-1})^τ + O(T_box w)` by `rsaSwapCost_le`),
 the same `rsaAxisCost`, and two header exchanges of `O(L)` steps.
@@ -239,7 +239,7 @@ def rsaStepP (rg : RsaR (RsaX t₀) → Fin T) (ι : Fin 64 → Fin T) (hι : Fu
 interchanges (`c₁`, `c₂` interchange steps, `b₁`, `b₂` bank symbols), the lines
 (`n / t_i` of them), and the two header exchanges (headers `e` symbols). -/
 def rsaStepCost (T t₀ w s ti m L n c₁ c₂ b₁ b₂ e : ℕ) : ℕ :=
-  rsaSwapCost T t₀ c₁ b₁ (n * w) + rsaAxisCost T w s ti m L (n / ti) + (4 * e + 8) +
+  rsaSwapCost T t₀ c₁ b₁ (n * w) + rsaAxisCost w s ti m L (n / ti) + (4 * e + 8) +
     rsaSwapCost T t₀ c₂ b₂ (n * w) + (4 * e + 8)
 
 lemma rsa_values_swap34 (P G B h d : ℕ) (k : Fin 5) :
@@ -326,7 +326,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
   set V₂ : RsaV (RsaX t₀) (prime + K) := { V with ln := cstream (prime + K) w (lines.flatMap g) }
     with hV₂
   have h2 : RsaRuns body rg ι (rsaAxisP rg ι hι hT hQ) V₁.get V₂.get
-      (rsaAxisCost T w s H m Lb lines.length) :=
+      (rsaAxisCost w s H m Lb lines.length) :=
     rsa_axis hrg hdisj hι hT hQ hA hw hq V₁ (hI.with_ln_ob _ V.ob) ht hst hms hs0 hFT lines
       (fun l hl => length_rsaChunks_mem hlsw hl)
       (fun l hl x hx => hFsw x (mem_rsaChunks hl (List.mem_of_mem_take hx)))
@@ -492,7 +492,7 @@ def rsaStepAx {d : ℕ} (hd0 : 0 < d) (k : ℕ) : Fin d := ⟨d - 1 - k, by omeg
 /-- The step bound of `Ã` along all axes. -/
 def rsaAllCost (T t₀ w m d : ℕ) (t : Fin d → ℕ) (hd0 : 0 < d) (Dt : Fin d → RsaAxisData)
     (hd : Fin 5 → Fin t₀) (cp : ℕ → ℕ) (n : ℕ) : ℕ :=
-  cp 0 + rsaAxisCost T w (Dt (rsaStepAx hd0 0)).s (t (rsaStepAx hd0 0)) m
+  cp 0 + rsaAxisCost w (Dt (rsaStepAx hd0 0)).s (t (rsaStepAx hd0 0)) m
     (Dt (rsaStepAx hd0 0)).Lb (n / t (rsaStepAx hd0 0)) +
   (∑ j ∈ Finset.range (d - 1), (cp (j + 1) +
     rsaStepCost T t₀ w (Dt (rsaStepAx hd0 (j + 1))).s (t (rsaStepAx hd0 (j + 1))) m
@@ -592,7 +592,7 @@ theorem rsa_all (prep : Pr F T Q (prime + K) U) (hrg : Function.Injective rg)
   have h2' : RsaRuns body rg ι (rsaAxisP rg ι hι hT hQ)
       (rsaWith (cfg 0) (cstream (prime + K) w l₀) axs []).get
       (rsaWith (cfg 0) (cstream (prime + K) w (rsaFlat d t g (d - 1) l₀)) axs []).get
-      (rsaAxisCost T w (Dt last).s (t last) m (Dt last).Lb (l₀.length / t last)) := by
+      (rsaAxisCost w (Dt last).s (t last) m (Dt last).Lb (l₀.length / t last)) := by
     have hnl : lines.length = l₀.length / t last := by
       rw [hlines, rsaChunks, List.length_map, List.length_range, hl₀',
         Nat.mul_div_cancel _ (htpos last)]

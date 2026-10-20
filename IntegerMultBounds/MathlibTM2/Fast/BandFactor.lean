@@ -164,7 +164,7 @@ section Contracts
 variable {body : P → Pr P T Q A U} {rg : RsbR → Fin T} {ι : Fin 64 → Fin T}
 
 /-- The cost of one Newton step. -/
-def bandNewtonStepCost (T w : ℕ) : ℕ := 2 * rmulCost T w + 80 * w + 120
+def bandNewtonStepCost (w : ℕ) : ℕ := 2 * rmulCost w + 80 * w + 120
 
 /-- One Newton step: `xa` goes from `r` to `2r - r(cr)`, truncated, everything else kept. -/
 theorem band_newtonStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
@@ -179,7 +179,7 @@ theorem band_newtonStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
     (htA : σ .tA = []) :
     RsbRuns body rg ι (bandNewtonStepP rg hι hT hQ) σ
       (Function.update σ .xa (csyms A w ⟨newtonStepZ P c r, 0⟩))
-      (bandNewtonStepCost T w) := by
+      (bandNewtonStepCost w) := by
   have hwn := hready.wn
   set t : ℤ := (c*r).tdiv (2^P) with ht
   set q : ℤ := (r*t).tdiv (2^P) with hq
@@ -266,7 +266,7 @@ theorem band_newton_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     (htA : σ .tA = []) (htK : σ .tK = []) (hkn : (σ .kn).length = K) :
     RsbRuns body rg ι (bandNewtonP rg hι hT hQ) σ
       (Function.update σ .xa (csyms A w ⟨Mult.BandFactor.newtonZ P c K, 0⟩))
-      (6 * w + 6 + (K * (bandNewtonStepCost T w + 6) + 4)) := by
+      (6 * w + 6 + (K * (bandNewtonStepCost w + 6) + 4)) := by
   have hcsl : (csyms A w (⟨Mult.BandFactor.newtonZ P c 0, 0⟩ : GaussianInt)).length = w := by
     simp [csyms]
   have h₁ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .bx) (b := .xa)
@@ -276,7 +276,7 @@ theorem band_newton_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
       Function.update σ .xa (csyms A w ⟨Mult.BandFactor.newtonZ P c j, 0⟩) := ⟨_, rfl⟩
   have hbody : ∀ j < (σ₁ .kn).length, ∀ X Y, RsbRuns body rg ι (bandNewtonStepP rg hι hT hQ)
-      (rsbUpd2 (Ψ j) .kn X .tK Y) (rsbUpd2 (Ψ (j + 1)) .kn X .tK Y) (bandNewtonStepCost T w) := by
+      (rsbUpd2 (Ψ j) .kn X .tK Y) (rsbUpd2 (Ψ (j + 1)) .kn X .tK Y) (bandNewtonStepCost w) := by
     intro j hj X Y
     have hj' : j < K := by simpa [σ₁, hkn] using hj
     have hready' : RsbReady (rsbUpd2 (Ψ j) .kn X .tK Y) w P := by
@@ -300,8 +300,8 @@ theorem band_newton_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   · simp [σ₁, hkn]
 
 /-- The cost of one non-pivot row (rows of `2B` tail records). -/
-def bandFacRowCost (T w B : ℕ) : ℕ :=
-  rmulCost T w + 30 * w + 40 + bandFwdStepCost T w (2 * B) + 4 * (2 * B * w) + 4 * w + 8
+def bandFacRowCost (w B : ℕ) : ℕ :=
+  rmulCost w + 30 * w + 40 + bandFwdStepCost w (2 * B) + 4 * (2 * B * w) + 4 * w + 8
 
 /-- One non-pivot row: `vk` loses the row, `dout` gains its multiplier `x`, and `sr`
 gains the updated tail followed by a zero record, reversed. -/
@@ -327,7 +327,7 @@ theorem band_facRow_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         ((cstream A w (List.zipWith (· - ·) rs
           (List.zipWith (fun a b => tdivN P (a * b))
             (List.replicate (2 * B) (tdivN P (q * ⟨r, 0⟩))) col) ++ [0])).reverse ++ SR))
-      (bandFacRowCost T w B) := by
+      (bandFacRowCost w B) := by
   set rs' := List.zipWith (· - ·) rs (List.zipWith (fun a b => tdivN P (a * b))
     (List.replicate (2 * B) (tdivN P (q * ⟨r, 0⟩))) col) with hrs'
   have hrs'l : rs'.length = 2 * B := by simp [hrs', hrs, hcol]
@@ -502,7 +502,7 @@ theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         []) .tb TB) .ef []) .dout
         (cstream A w ((rest.map fun row => (⟨facMul P r row, 0⟩ : GaussianInt)).reverse) ++ D)) .sr
         ((cstream A w (rest.map fun row => colC (facRow P r tail0 row)).flatten).reverse ++ SR))
-      (B * (bandFacRowCost T w B + 6) + 4) := by
+      (B * (bandFacRowCost w B + 6) + 4) := by
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
       Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
         (cstream A w ((rest.drop j).map colC).flatten)) .tb
@@ -512,7 +512,7 @@ theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         .sr ((cstream A w ((rest.take j).map fun row => colC (facRow P r tail0 row)).flatten).reverse ++
           SR) := ⟨_, rfl⟩
   have hbody : ∀ j < (σ .ms).length, ∀ X Y, RsbRuns body rg ι (bandFacRowP rg hι hT hQ)
-      (rsbUpd2 (Ψ j) .ms X .tL Y) (rsbUpd2 (Ψ (j + 1)) .ms X .tL Y) (bandFacRowCost T w B) := by
+      (rsbUpd2 (Ψ j) .ms X .tL Y) (rsbUpd2 (Ψ (j + 1)) .ms X .tL Y) (bandFacRowCost w B) := by
     intro j hj X Y
     rw [hms] at hj
     have hjr : j < rest.length := by omega
@@ -624,9 +624,9 @@ lemma flatten_replicate_csyms {w : ℕ} (B : ℕ) (x : GaussianInt) :
   | succ B ih => simp [List.replicate_succ, ih]
 
 /-- The cost of one window step. -/
-def bandFacStepCost (T w B K : ℕ) : ℕ :=
-  100 * (B + 1) * (B + 1) * w + 200 + (K * (bandNewtonStepCost T w + 6) + 4) +
-    (B * (bandFacRowCost T w B + 6) + 4)
+def bandFacStepCost (w B K : ℕ) : ℕ :=
+  100 * (B + 1) * (B + 1) * w + 200 + (K * (bandNewtonStepCost w + 6) + 4) +
+    (B * (bandFacRowCost w B + 6) + 4)
 
 /-- **One window step.** The pivot row `c :: tail0` goes to `hf`, its reciprocal
 `r = newtonZ P c K` to `df`, the multipliers of the `B` rows (last on top) to
@@ -664,7 +664,7 @@ theorem band_facStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         .df (csyms A w ⟨Mult.BandFactor.newtonZ P c K, 0⟩ ++ DF))
         .dout (cstream A w ((rest.map fun row =>
           (⟨facMul P (Mult.BandFactor.newtonZ P c K) row, 0⟩ : GaussianInt)).reverse) ++ D))
-      (bandFacStepCost T w B K) := by
+      (bandFacStepCost w B K) := by
   have hwn := hready.wn
   set r := Mult.BandFactor.newtonZ P c K with hr
   set RS := cstream A w (rest.map colC).flatten with hRS
@@ -842,7 +842,7 @@ theorem band_facLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
           (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt)) ++ DF))
         .dout (cstream A w (((List.range s).map fun j =>
           colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse) ++ D))
-      (s * (bandFacStepCost T w B K + 6) + 4) := by
+      (s * (bandFacStepCost w B K + 6) + 4) := by
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun m =>
       Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
         (cstream A w ((facState P K rows inputs m).map colC).flatten))
@@ -854,7 +854,7 @@ theorem band_facLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         .dout (cstream A w (((List.range m).map fun j =>
           colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse) ++ D) := ⟨_, rfl⟩
   have hbody : ∀ j < (σ .sn).length, ∀ X Y, RsbRuns body rg ι (bandFacStepP rg hι hT hQ)
-      (rsbUpd2 (Ψ j) .sn X .sel Y) (rsbUpd2 (Ψ (j + 1)) .sn X .sel Y) (bandFacStepCost T w B K) := by
+      (rsbUpd2 (Ψ j) .sn X .sel Y) (rsbUpd2 (Ψ (j + 1)) .sn X .sel Y) (bandFacStepCost w B K) := by
     intro j hj X Y
     rw [hsn] at hj
     obtain ⟨hlen, hrlen⟩ := facState_shape P K B rows inputs hrows hrl hin j (by omega)
@@ -1467,7 +1467,7 @@ theorem band_axisFac_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         .dout (cstream A w (((List.range s).map fun j =>
           colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse)))
       (4 * ((B + 1) * (2 * B + 1) * w) + 4 + (2 * ((B + 1) * (2 * B + 1) * w) + 2) +
-        (s * (bandFacStepCost T w B K + 6) + 4) + (2 * ((B + 1) * (2 * B + 1) * w) + 2)) := by
+        (s * (bandFacStepCost w B K + 6) + 4) + (2 * ((B + 1) * (2 * B + 1) * w) + 2)) := by
   have hwl : ((rows.map colC).flatten).length = (B + 1) * (2 * B + 1) := by
     rw [List.length_flatten, List.map_map]
     rw [List.map_congr_left (g := fun _ => 2 * B + 1) (fun r hr => by simp [colC, hrl r hr]),
@@ -1585,9 +1585,9 @@ def facUr (P K : ℕ) (rows inputs : List (List ℤ)) (s : ℕ) : List (List ℤ
   (List.range s).map fun j => (facState P K rows inputs j).headD []
 
 /-- The cost of the per-axis preparation. -/
-def bandAxisPrepCost (T w k K s : ℕ) : ℕ :=
+def bandAxisPrepCost (w k K s : ℕ) : ℕ :=
   (4 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 4 + (2 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 2) +
-    (s * (bandFacStepCost T w (k + 1) K + 6) + 4) + (2 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 2)) +
+    (s * (bandFacStepCost w (k + 1) K + 6) + 4) + (2 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 2)) +
   (bandAxisOrgCost s k w K + (s * (bandTStepCost w k + 6) + 4 + (2 * ((k + 1) * (k + 1) * w) + 2) +
     (2 * (s * (k + 1) * w) + 2) + (2 * (s * (k + 1) * w) + 2)))
 
@@ -1615,7 +1615,7 @@ theorem band_axisPrep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     (hmwn : (σ .mwn).length = 2 * (k + 1) * w)
     (hsmwn : (σ .smwn).length = (2 * (k + 1) + 1) * w) (hm2wn : (σ .m2wn).length = k * w)
     (hdst : (σ .dst).length = k) :
-    ∃ σ', RsbRuns body rg ι (bandAxisPrepP rg hι hT hQ) σ σ' (bandAxisPrepCost T w k K s) ∧
+    ∃ σ', RsbRuns body rg ι (bandAxisPrepP rg hι hT hQ) σ σ' (bandAxisPrepCost w k K s) ∧
       σ' .bo = cstream A w ((facLf P K rows inputs s).map fun x => (⟨x, 0⟩ : GaussianInt)) ∧
       σ' .hf = cstream A w ((List.range s).reverse.map fun m =>
         colC (Mult.BandFactor.ucolZ (k + 1) (facUr P K rows inputs s) m)).flatten ∧

@@ -47,7 +47,7 @@ ends as it started; within `cvBoxCost`. `cvBox_boxConvSucc`, `cvBox_boxConv`: th
 margin `hEs` of `Pipeline.convBox_spec` (`cv_eSynth_lt`); there `M r = T` (`cv_M_mul_r`).
 
 **Cost** (`cvBoxCost`), against `Cost/Total` (one transform `F'`; `totBound` counts three):
-* the three table products, `3 (M r (cmulCost T w + 6 w + 8) + 6)`: `3 T` products of
+* the three table products, `3 (M r (cmulCost w + 6 w + 8) + 6)`: `3 T` products of
   `w`-bit numbers, `O(T M(p))`, inside the term `3 T M(p)` ("chirp products and twists") of
   `totBound`;
 * the forward transforms `2 cF` and the opposite transform `cO`: the layer and twiddle part
@@ -414,7 +414,7 @@ theorem cv_table_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     CvRuns body rg ι Pre (cvTable rg ι hι hT hQ xs ys out) ρ
       (Function.update ρ out
         (cstream A w (tableOut (fun x y => tdivN q (x * y)) blocks ts) ++ ρ out))
-      (blocks.flatten.length * (cmulCost T w + 6 * w + 8) + 6) := by
+      (blocks.flatten.length * (cmulCost w + 6 * w + 8) + 6) := by
   have hcr : Function.Injective (fun x => rg (cvLay xs ys out x)) := hrg.comp hc
   have hd : ∀ r j, (fun x => rg (cvLay xs ys out x)) r ≠ ι j := fun r j => hdisj _ j
   have hr' : Ready (fun x => ρ (cvLay xs ys out x)) w q :=
@@ -452,8 +452,8 @@ end Program
 
 /-- The step bound of `cvBox`: three table products of `M r` coefficients, the synthetic
 convolution, the clear of its output. -/
-def cvBoxCost (T p l w S M cF cO : ℕ) : ℕ :=
-  3 * (M * 2 ^ l * (cmulCost T w + 6 * w + 8) + 6) + cvSynthCost T p l w S M cF cO +
+def cvBoxCost (p l w S M cF cO : ℕ) : ℕ :=
+  3 * (M * 2 ^ l * (cmulCost w + 6 * w + 8) + 6) + cvSynthCost p l w S M cF cO +
     2 * (M * 2 ^ l * w) + 2
 
 
@@ -507,7 +507,7 @@ theorem cvBox_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j
       (Function.update ρ .fo (cstream A w
         (cstNumBox p t (cconvApproxVia (boxSplit t h) p θp θm (synthMr a (cvN t) p) f g)) ++
           ρ .fo))
-      (cvBoxCost T p l w (List.ofFn a).sum (cvM a) cF cO) := by
+      (cvBoxCost p l w (List.ofFn a).sum (cvM a) cF cO) := by
   subst hrl
   have hMN : (List.ofFn (cvN t)).prod = cvM a := by
     rw [ofFn_eq_tsA a (cvN t) ha, tsA_prod]
@@ -716,7 +716,7 @@ theorem cvBox_boxConvSucc (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     (hshT : ρ .shT = []) (hshU : ρ .shU = []) :
     CvRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) ρ
       (Function.update ρ .fo (cstream A w (cstNumBox p t (boxConvSucc p D t f g)) ++ ρ .fo))
-      (cvBoxCost T p l w (List.ofFn fun i : Fin D => Nat.log 2 (t i.castSucc)).sum
+      (cvBoxCost p l w (List.ofFn fun i : Fin D => Nat.log 2 (t i.castSucc)).sum
         (cvM fun i : Fin D => Nat.log 2 (t i.castSucc)) cF cO) :=
   cvBox_runs hrg hdisj hι hP hT64 hQs hT hQ hA t rfl hrl (fun i => Nat.log 2 (t i.castSucc))
     (fun i => hpow i.castSucc) (fun i => by rw [← hpow i.castSucc]; exact hdvd i.castSucc) hF hO
@@ -762,7 +762,7 @@ theorem cvBox_boxConv (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     (hshT : ρ .shT = []) (hshU : ρ .shU = []) :
     CvRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) ρ
       (Function.update ρ .fo (cstream A w (cstNumBox p t (boxConv p D' t inst f g)) ++ ρ .fo))
-      (cvBoxCost T p l w (List.ofFn (cvAx t)).sum (cvM (cvAx t)) cF cO) := by
+      (cvBoxCost p l w (List.ofFn (cvAx t)).sum (cvM (cvAx t)) cF cO) := by
   obtain ⟨D, rfl⟩ : ∃ D, D' = D + 1 := ⟨D' - 1, by omega⟩
   have hl : t (Fin.last D) = 2 ^ l := hlast _ rfl
   exact cvBox_boxConvSucc hrg hdisj hι hP hT64 hQs hT hQ hA t hl hpow
@@ -824,7 +824,7 @@ variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U} {rg : CvR → Fi
 `∏ ZMod (t n i)` of sup norm at most `1`, `tp`, `tm` the twist streams of the table machine,
 the transforms meet their contracts for `a = cvAx (t n)` (`aᵢ = log₂ t_i`, `i < d - 1`) and a
 record order `π`; then `fo` gains the box stream of `convBox n f g`, every other register ends
-as it started, within `cvBoxCost T p ℓ w (Σ aᵢ) M cF cO` steps, `M r = T` (`cv_M_mul_r`). -/
+as it started, within `cvBoxCost p ℓ w (Σ aᵢ) M cF cO` steps, `M r = T` (`cv_M_mul_r`). -/
 theorem cvBox_convBox (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
     (hι : Function.Injective ι) (hP : CvFramed rg Pre) (hT64 : 64 ≤ T) (hQs : SS.states ≤ Q)
     (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (hA : 96 ≤ A) {n : ℕ} (hn : Sizes.Big n)
@@ -856,7 +856,7 @@ theorem cvBox_convBox (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     CvRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) ρ
       (Function.update ρ .fo
         (cstream A w (cstNumBox (Sizes.p n) (Sizes.t n) (convBox n f g)) ++ ρ .fo))
-      (cvBoxCost T (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
+      (cvBoxCost (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
         (cvM (cvAx (Sizes.t n))) cF cO) :=
   cvBox_boxConv hrg hdisj hι hP hT64 hQs hT hQ hA (Sizes.t n) (by have := hn.one_le_d; omega)
     (fun i hi => t_of_last hn i hi) (t_pow_log n) (t_dvd_two_r n) hF hO hPF hPO hπ

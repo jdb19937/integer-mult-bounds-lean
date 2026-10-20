@@ -1,3 +1,9 @@
+# Goal
+
+A proof from "the Book", in Erdős's sense: the cleanest proof of the theorem, as if taken straight
+from God's book. Prefer the simplest statement, the most direct construction and the shortest
+argument, and judge every cleanup and refactor by whether it moves the proof closer to that.
+
 # Local verification resources
 
 An unguarded parallel Lean build once grew past 200 GB and crashed the machine (128 GB, 16 cores).

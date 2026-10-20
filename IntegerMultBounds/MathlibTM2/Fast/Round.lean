@@ -53,9 +53,9 @@ Schönhage–Strassen multiplier, which are empty (both stacks) before and after
 (latest word on top, most significant bit first) onto `dst`.
 
 **Result** (`roundStage_exec`): the exact final stacks, the `user` component unchanged, within
-`roundStageCost T m w b p W S = S · (SS + 12 w + 14 m + 12 b + 4 p + 6 W + 58) + 4` steps, where
-`SS = (T + 773) · ssCostBound m + 164 m + 463` bounds one `ssMul` on `m`-bit operands
-(`ssMul_exec`); `roundStageCost_le` replaces `SS` by `ssMulConst (T + 1) m (log m + 1)
+`roundStageCost m w b p W S = S · (SS + 12 w + 14 m + 12 b + 4 p + 6 W + 58) + 4` steps, where
+`SS = 3 ssCostBound m + 164 m + 463` bounds one `ssMul` on `m`-bit operands
+(`ssMul_exec`); `roundStageCost_le` replaces `SS` by `ssMulConst m (log m + 1)
 (log log m + 1)`. Conditions: `4 ≤ A`, `1 ≤ w ≤ m`, `S² < 2^m`, `|(N i).re| < 2^(w-1)`. The words
 carry the low `W` bits of each coefficient; `carryOut_exec` needs every coefficient below `2^W`.
 -/
@@ -610,7 +610,7 @@ private theorem ssMul_runs (hdisj : ∀ r j, rg r ≠ ι j) (hι : Function.Inje
     RRuns body rg ι (ssMul ι hι hT hQ (rg ra) (rg rb) (rg rn) (rg rc)) ρ
       (Function.update ρ rc
         (binSyms (topN m + 1) (a * b) ++ ρ rc))
-      ((T + 773) * ssCostBound m + 164 * m + 463) := by
+      (3 * ssCostBound m + 164 * m + 463) := by
   intro v S hc hS
   obtain ⟨v', n, hu, hn, he⟩ := ssMul_exec body ι hι hT hQ (fun j => (hdisj ra j).symm)
     (fun j => (hdisj rb j).symm) (fun j => (hdisj rn j).symm) (fun j => (hdisj rc j).symm)
@@ -802,12 +802,12 @@ noncomputable def roundStage (rg : RndReg → Fin T) (ι : Fin 64 → Fin T)
   .seq (rndWhile (rg .src) (rndCoeffProg rg ι hι hT hQ)) (moveR (rg .acc) (rg .dst) id)
 
 /-- The step bound of one coefficient. -/
-def rndCoeffCost (T m w b p W : ℕ) : ℕ :=
-  ((T + 773) * ssCostBound m + 164 * m + 463) + 12 * w + 14 * m + 12 * b + 4 * p + 4 * W + 56
+def rndCoeffCost (m w b p W : ℕ) : ℕ :=
+  (3 * ssCostBound m + 164 * m + 463) + 12 * w + 14 * m + 12 * b + 4 * p + 4 * W + 56
 
 /-- The step bound of the rounding stage on `S` coefficients. -/
-def roundStageCost (T m w b p W S : ℕ) : ℕ :=
-  S * (((T + 773) * ssCostBound m + 164 * m + 463) + 12 * w + 14 * m + 12 * b + 4 * p + 6 * W +
+def roundStageCost (m w b p W S : ℕ) : ℕ :=
+  S * ((3 * ssCostBound m + 164 * m + 463) + 12 * w + 14 * m + 12 * b + 4 * p + 6 * W +
     58) + 4
 
 end Prog
@@ -881,12 +881,12 @@ private theorem phaseB_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : 
       (Function.update (Function.update ρ .xa []) .xc
         (binSyms (2 * b + 4 + (topN m + 1))
           (2 ^ (2 * b + 4) * (a * (S * S)))))
-      ((T + 773) * ssCostBound m + 164 * m + 463 + (2 * m + 2) + (4 * b + 4) + (4 * b + 4) +
+      (3 * ssCostBound m + 164 * m + 463 + (2 * m + 2) + (4 * b + 4) + (4 * b + 4) +
         1) := by
   set N := topN m with hN
   set ρ₁ := Function.update ρ .xc (binSyms (N + 1) (a * (S * S))) with hρ₁
   have t1 : RRuns body rg ι (ssMul ι hι hT hQ (rg .xa) (rg .sq) (rg .nn) (rg .xc)) ρ ρ₁
-      ((T + 773) * ssCostBound m + 164 * m + 463) :=
+      (3 * ssCostBound m + 164 * m + 463) :=
     rruns_congr (ssMul_runs hcr hdisj hι hT hQ (rc := .xc) (by decide) (by decide) hm ha hS hxa
       hsq hnn) (by rw [hxc, List.append_nil])
   set ρ₂ := Function.update ρ₁ .xa [] with hρ₂
@@ -969,7 +969,7 @@ private theorem coeff_runs (hA : 4 ≤ A) (hι : Function.Injective ι) (hT : 64
     RRuns body rg ι (rndCoeffProg rg ι hι hT hQ) ρ
       (Function.update (Function.update ρ .src rest) .acc
         ((binSyms W (rndCoeff b S p N.re)).reverse ++ ρ .acc))
-      (rndCoeffCost T m w b p W) := by
+      (rndCoeffCost m w b p W) := by
   have hm : 1 ≤ m := le_trans hw hwm
   obtain ⟨hNlt, hNle, -⟩ := topN_facts hm
   set v := (red w N).1.val with hv
@@ -992,7 +992,7 @@ private theorem coeff_runs (hA : 4 ≤ A) (hι : Function.Injective ι) (hT : 64
     exact Nat.mul_lt_mul_of_pos_left (k := 2 ^ (2 * b + 4)) h1 (by positivity)
   set ρB := Function.update (Function.update ρA .xa []) .xc (binSyms L X) with hρB
   have sB : RRuns body rg ι (rndPhaseB rg ι hι hT hQ) ρA ρB
-      ((T + 773) * ssCostBound m + 164 * m + 463 + (2 * m + 2) + (4 * b + 4) + (4 * b + 4) + 1) :=
+      (3 * ssCostBound m + 164 * m + 463 + (2 * m + 2) + (4 * b + 4) + (4 * b + 4) + 1) :=
     phaseB_runs hcr hdisj hι hT hQ hm hmagm hSm (by simp [ρA]) (by simp [ρA, hsq])
       (by simp [ρA, hnn]) (by simp [ρA, hbn]) (by simp [ρA, htm]) (by simp [ρA, hxc])
   have sC : RRuns body rg ι (rndPhaseC rg) ρB
@@ -1102,7 +1102,7 @@ theorem roundStage_exec (body : P → Pr P T Q A U) {rg : RndReg → Fin T}
     (hwo : (St.R (rg .wo)).length = W) (htm : St.R (rg .tm) = []) (hu1 : St.R (rg .u1) = [])
     (hsg : St.R (rg .sg) = []) (hxa : St.R (rg .xa) = []) (hxc : St.R (rg .xc) = [])
     (hcy : St.R (rg .cy) = []) (hacc : St.R (rg .acc) = []) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ roundStageCost T m w b p W S ∧
+    ∃ v' n, v'.user = v.user ∧ n ≤ roundStageCost m w b p W S ∧
       Exec body (roundStage rg ι hι hT hQ) (mk v St) n
         (mk v' { St with R := (Function.update (Function.update St.R (rg .src) []) (rg .dst)
           ((List.ofFn fun i => rndCoeff b S p (N i).re).flatMap (binSyms W) ++
@@ -1112,7 +1112,7 @@ theorem roundStage_exec (body : P → Pr P T Q A U) {rg : RndReg → Fin T}
   set st := rndSt ρ₀ w W b S p with hst
   have hstep : ∀ a rest done, |a.re| < 2 ^ (w - 1) →
       RRuns body rg ι (rndCoeffProg rg ι hι hT hQ) (st (a :: rest) done) (st rest (done ++ [a]))
-        (rndCoeffCost T m w b p W) := by
+        (rndCoeffCost m w b p W) := by
     intro a rest done ha
     refine rruns_congr (coeff_runs hcr hdisj hA hι hT hQ hw hwm hSm a ha
       ((rest.map (red w)).flatMap (coeffSyms A w)) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_)
@@ -1143,8 +1143,8 @@ theorem roundStage_exec (body : P → Pr P T Q A U) {rg : RndReg → Fin T}
       · subst h2; simp [hsrc, Ns, List.map_ofFn, Function.comp_def]
       · rfl)
   refine ⟨v', n, hu, ?_, ?_⟩
-  · have e : roundStageCost T m w b p W S =
-        S * (rndCoeffCost T m w b p W + 2) + 2 + (2 * (S * W) + 2) := by
+  · have e : roundStageCost m w b p W S =
+        S * (rndCoeffCost m w b p W + 2) + 2 + (2 * (S * W) + 2) := by
       unfold roundStageCost rndCoeffCost; ring
     rw [e]
     simpa [Ns] using hn
@@ -1166,11 +1166,11 @@ theorem roundStage_exec (body : P → Pr P T Q A U) {rg : RndReg → Fin T}
     exact he
 
 /-- `roundStageCost` with the multiplier's bound in logarithms (`ssMul_cost_le`). -/
-theorem roundStageCost_le (T : ℕ) {m : ℕ} (hm : 1 ≤ m) (w b p W S : ℕ) :
-    roundStageCost T m w b p W S ≤
-      S * (ssMulConst * (T + 1) * mLogLog m + 12 * w + 14 * m + 12 * b + 4 * p + 6 * W + 58) +
+theorem roundStageCost_le {m : ℕ} (hm : 1 ≤ m) (w b p W S : ℕ) :
+    roundStageCost m w b p W S ≤
+      S * (ssMulConst * mLogLog m + 12 * w + 14 * m + 12 * b + 4 * p + 6 * W + 58) +
         4 := by
-  have h := ssMul_cost_le T hm
+  have h := ssMul_cost_le hm
   unfold roundStageCost
   gcongr
 
@@ -1202,7 +1202,7 @@ theorem rndSquare_exec (body : P → Pr P T Q A U) {rg : RndReg → Fin T}
     (hns : (St.R (rg .ns)).length = topN ℓ) (hpd : (St.R (rg .pd)).length = m - (topN ℓ + 1))
     (hxc : St.R (rg .xc) = []) (htm : St.R (rg .tm) = []) (hu1 : St.R (rg .u1) = [])
     (hsq : St.R (rg .sq) = []) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ (T + 773) * ssCostBound ℓ + 164 * ℓ + 463 + 8 * m + 8 ∧
+    ∃ v' n, v'.user = v.user ∧ n ≤ 3 * ssCostBound ℓ + 164 * ℓ + 463 + 8 * m + 8 ∧
       Exec body (rndSquare rg ι hι hT hQ) (mk v St) n
         (mk v' { St with R := Function.update St.R (rg .sq) (binSyms m (S * S)) }) := by
   set ρ₀ : RndReg → List (Fin (A + 4)) := fun r => St.R (rg r) with hρ₀
@@ -1214,7 +1214,7 @@ theorem rndSquare_exec (body : P → Pr P T Q A U) {rg : RndReg → Fin T}
       _ ≤ 2 ^ (N + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
   set ρ₁ := Function.update ρ₀ .xc (binSyms (N + 1) (S * S)) with hρ₁
   have q1 : RRuns body rg ι (ssMul ι hι hT hQ (rg .sb) (rg .sb) (rg .ns) (rg .xc)) ρ₀ ρ₁
-      ((T + 773) * ssCostBound ℓ + 164 * ℓ + 463) :=
+      (3 * ssCostBound ℓ + 164 * ℓ + 463) :=
     rruns_congr (ssMul_runs hcr hdisj hι hT hQ (rc := .xc) (by decide) (by decide) hℓ hS hS
       hsb hsb hns) (by rw [show ρ₀ .xc = [] from hxc, List.append_nil])
   set ρ₂ := Function.update ρ₀ .tm (binSyms (N + 1) (S * S)).reverse with hρ₂

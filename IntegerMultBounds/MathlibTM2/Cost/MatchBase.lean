@@ -22,7 +22,7 @@ number of stacks of the final machine), the coefficient width `w` and the parame
 * `mt_poly_r_le_T`: a polynomial in `B = b n` times `r` is eventually below `T`: the tables and
   writers of the stages (`O(r · poly(B))` steps) cost `o(T)`.
 * `mt_mLogLog_le`, `mt_cmul_le`, `mt_rmul_le`: one Schönhage–Strassen product at width
-  `w ≤ cw · p` costs at most a constant (`mtCM Tm cw`) times `M(p) = p^{1+δ}` (`totMp`), from
+  `w ≤ cw · p` costs at most a constant (`mtCM cw`) times `M(p) = p^{1+δ}` (`totMp`), from
   `compact_mLogLog_le`.
 * `mt_swapN_le`, `mt_swap_le`: the vendored interchange bound `crtSwapCostN V h w` is at most
   `swapConst V max(1, h, w)^τ + 1`; `mt_rpow_tau_le`: `max(1, h, w)^τ ≤ L^τ` for `h, w ≤ L`.
@@ -227,23 +227,23 @@ theorem mt_mLogLog_le {n w cw : ℕ} (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw 
         nlinarith
     _ = 262144 * (cw : ℝ) ^ 2 * (p n : ℝ) ^ (129 / 128 : ℝ) := by ring
 
-/-- The constant of one complex fixed-point product at width `w ≤ cw p` on a host of `Tm`
-stacks, against `M(p)`. -/
-noncomputable def mtCM (Tm cw : ℕ) : ℝ :=
-  1048576 * ssMulConst * (Tm + 1) * (cw : ℝ) ^ 2 + 256 * cw + 128
+/-- The constant of one complex fixed-point product at width `w ≤ cw p`, against
+`M(p)`. -/
+noncomputable def mtCM (cw : ℕ) : ℝ :=
+  1048576 * ssMulConst * (cw : ℝ) ^ 2 + 256 * cw + 128
 
-theorem mt_CM_nonneg (Tm cw : ℕ) : 0 ≤ mtCM Tm cw := by unfold mtCM; positivity
+theorem mt_CM_nonneg (cw : ℕ) : 0 ≤ mtCM cw := by unfold mtCM; positivity
 
-/-- `cmulCost Tm w ≤ mtCM Tm cw · M(p)`. -/
-theorem mt_cmul_le {n w cw : ℕ} (Tm : ℕ) (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
-    (cmulCost Tm w : ℝ) ≤ mtCM Tm cw * totMp n := by
+/-- `cmulCost w ≤ mtCM cw · M(p)`. -/
+theorem mt_cmul_le {n w cw : ℕ} (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
+    (cmulCost w : ℝ) ≤ mtCM cw * totMp n := by
   have h1 := mt_mLogLog_le h hw hwc
   have hm1 := mt_one_le_mp h
   have hpm := mt_p_le_mp h
   have hw' : (w : ℝ) ≤ cw * p n := by exact_mod_cast hwc
   have hcw : (0 : ℝ) ≤ cw := Nat.cast_nonneg _
   have hwm : (w : ℝ) ≤ cw * totMp n := hw'.trans (mul_le_mul_of_nonneg_left hpm hcw)
-  have hS : (0 : ℝ) ≤ ssMulConst * ((Tm : ℝ) + 1) := by positivity
+  have hS : (0 : ℝ) ≤ ssMulConst := by positivity
   unfold cmulCost mtCM
   push_cast
   have h2 := mul_le_mul_of_nonneg_left h1 hS
@@ -251,16 +251,16 @@ theorem mt_cmul_le {n w cw : ℕ} (Tm : ℕ) (h : Big n) (hw : 1 ≤ w) (hwc : w
   have hcw2 : (0 : ℝ) ≤ (cw : ℝ) ^ 2 * totMp n := by positivity
   nlinarith
 
-/-- `rmulCost Tm w ≤ mtCM Tm cw · M(p)`. -/
-theorem mt_rmul_le {n w cw : ℕ} (Tm : ℕ) (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
-    (rmulCost Tm w : ℝ) ≤ mtCM Tm cw * totMp n := by
+/-- `rmulCost w ≤ mtCM cw · M(p)`. -/
+theorem mt_rmul_le {n w cw : ℕ} (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
+    (rmulCost w : ℝ) ≤ mtCM cw * totMp n := by
   have h1 := mt_mLogLog_le h hw hwc
   have hm1 := mt_one_le_mp h
   have hpm := mt_p_le_mp h
   have hw' : (w : ℝ) ≤ cw * p n := by exact_mod_cast hwc
   have hcw : (0 : ℝ) ≤ cw := Nat.cast_nonneg _
   have hwm : (w : ℝ) ≤ cw * totMp n := hw'.trans (mul_le_mul_of_nonneg_left hpm hcw)
-  have hS : (0 : ℝ) ≤ ssMulConst * ((Tm : ℝ) + 1) := by positivity
+  have hS : (0 : ℝ) ≤ ssMulConst := by positivity
   unfold rmulCost mtCM
   push_cast
   have h2 := mul_le_mul_of_nonneg_left h1 hS

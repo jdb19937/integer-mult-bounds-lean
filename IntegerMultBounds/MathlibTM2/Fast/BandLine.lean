@@ -83,7 +83,7 @@ noncomputable def bandBwdLoopP : Pr P T Q A U :=
   rsbRep (rg .sn) (rg .tL) (bandBwdStepP rg hι hT hQ)
 
 /-- The step bound of one forward column step. -/
-def bandFwdStepCost (T w B : ℕ) : ℕ := B * (rmulCost T w + 40 * w + 60) + 30 * w + 60
+def bandFwdStepCost (w B : ℕ) : ℕ := B * (rmulCost w + 40 * w + 60) + 30 * w + 60
 
 end Step
 
@@ -293,7 +293,7 @@ theorem band_fwdStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         (cstream A w (List.zipWith (· - ·) rs
           (List.zipWith (fun a b => tdivN p (a * b)) (List.replicate B y) col) ++ more)))
         .ef (cstream A w cols)) .dout (csyms A w y ++ D))
-      (bandFwdStepCost T w B) := by
+      (bandFwdStepCost w B) := by
   have hwn := hready.wn
   set prods := List.zipWith (fun a b => tdivN p (a * b)) (List.replicate B y) col with hprods
   have hprl : prods.length = B := by simp [hprods, hcol]
@@ -371,14 +371,14 @@ theorem band_fwdLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       (Function.update (Function.update (Function.update σ .vk
         (cstream A w (Mult.BandList.bandPend P cs pend s))) .ef []) .dout
         (cstream A w (Mult.BandList.bandOut P cs pend s) ++ D))
-      (s * (bandFwdStepCost T w B + 6) + 4) := by
+      (s * (bandFwdStepCost w B + 6) + 4) := by
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
       Function.update (Function.update (Function.update σ .vk
         (cstream A w (Mult.BandList.bandPend P cs pend j))) .ef
         (cstream A w ((cs.map colC).drop j).flatten)) .dout
         (cstream A w (Mult.BandList.bandOut P cs pend j) ++ D) := ⟨_, rfl⟩
   have hbody : ∀ j < (σ .sn).length, ∀ X Y, RsbRuns body rg ι (bandFwdStepP rg hι hT hQ)
-      (rsbUpd2 (Ψ j) .sn X .tL Y) (rsbUpd2 (Ψ (j + 1)) .sn X .tL Y) (bandFwdStepCost T w B) := by
+      (rsbUpd2 (Ψ j) .sn X .tL Y) (rsbUpd2 (Ψ (j + 1)) .sn X .tL Y) (bandFwdStepCost w B) := by
     intro j hj X Y
     rw [hsn] at hj
     have hlenj := Mult.BandList.length_bandPend P cs pend j (by omega)
@@ -442,7 +442,7 @@ theorem band_recip_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     (htC : σ .tC = []) :
     RsbRuns body rg ι (bandRecipP rg hι hT hQ) σ
       (Function.update (Function.update σ .vk (csyms A w (tdivN P (q * ⟨r, 0⟩)) ++ VK)) .tb TB)
-      (rmulCost T w + 30 * w + 40) := by
+      (rmulCost w + 30 * w + 40) := by
   have hwn := hready.wn
   have h₁ := band_pop_runs (body := body) (ι := ι) hrg hdisj σ q VK hvk hhv hac2 htC hwn
   set σ₁ := Function.update (Function.update σ .vk VK) .hv (csyms A w q)
@@ -501,7 +501,7 @@ theorem band_bwdStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
           (List.zipWith (fun a b => tdivN P (a * b)) (List.replicate B (tdivN P (q * ⟨r, 0⟩)))
             col) ++ more))) .tb TB) .ef (cstream A w cols)) .dout
         (csyms A w (tdivN P (q * ⟨r, 0⟩)) ++ D))
-      (rmulCost T w + 30 * w + 40 + bandFwdStepCost T w B) := by
+      (rmulCost w + 30 * w + 40 + bandFwdStepCost w B) := by
   obtain ⟨x, hx⟩ : ∃ x, x = tdivN P (q * ⟨r, 0⟩) := ⟨_, rfl⟩
   rw [← hx] at hfx ⊢
   have h₁ := band_recip_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA σ hready hw hp q r
@@ -542,7 +542,7 @@ theorem band_bwdLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       (Function.update (Function.update (Function.update (Function.update σ .vk
         (cstream A w (Mult.BandList.bandPendB P cs rcs pend s))) .tb []) .ef []) .dout
         (cstream A w (Mult.BandList.bandOutB P cs rcs pend s) ++ D))
-      (s * (rmulCost T w + 30 * w + 40 + bandFwdStepCost T w B + 6) + 4) := by
+      (s * (rmulCost w + 30 * w + 40 + bandFwdStepCost w B + 6) + 4) := by
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
       Function.update (Function.update (Function.update (Function.update σ .vk
         (cstream A w (Mult.BandList.bandPendB P cs rcs pend j))) .tb
@@ -551,7 +551,7 @@ theorem band_bwdLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         (cstream A w (Mult.BandList.bandOutB P cs rcs pend j) ++ D) := ⟨_, rfl⟩
   have hbody : ∀ j < (σ .sn).length, ∀ X Y, RsbRuns body rg ι (bandBwdStepP rg hι hT hQ)
       (rsbUpd2 (Ψ j) .sn X .tL Y) (rsbUpd2 (Ψ (j + 1)) .sn X .tL Y)
-      (rmulCost T w + 30 * w + 40 + bandFwdStepCost T w B) := by
+      (rmulCost w + 30 * w + 40 + bandFwdStepCost w B) := by
     intro j hj X Y
     rw [hsn] at hj
     have hlenj := Mult.BandList.length_bandPendB P cs rcs pend j (by omega)

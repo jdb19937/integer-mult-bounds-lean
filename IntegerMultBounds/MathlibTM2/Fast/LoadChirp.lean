@@ -59,7 +59,7 @@ variables become `binSyms W 0` (`zeroBits` from `wr`, `ldc_zero_runs`); `tblLoad
 * `ldcAxisCost W w p g t_k s_k`: one axis; `ldc_axisCost_le` bounds it by
   `(t_k (39 (p + g) + 641) + 200 (p + g) + 4 w + 1503) · tblC W w + 2 t_k w +
   2 (p + g + t_k + s_k + w) (4 W + 10) + 534 W + 568`, `tblC W w = 32 (W + 4)² + 8 w`.
-* `ldChirpStage_cost_le`: the stage costs at most `∑_{k<d} ldcAxisCost … + 4 d V cmulCost T w`,
+* `ldChirpStage_cost_le`: the stage costs at most `∑_{k<d} ldcAxisCost … + 4 d V cmulCost w`,
   `V = ∏ t_k`.
 -/
 
@@ -814,7 +814,7 @@ theorem ldChirpStage_exec (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
       (Function.update (Function.update (Function.update ρ .kr
         (cstream A w (cstNumBox (Mult.Sizes.p n) (Mult.Sizes.t n) (Mult.Pipeline.chirpKernel n)) ++
           ρ .kr)) (.x .tS) []) (.x .sS) [])
-      (cstChirpCost T w (List.ofFn (Mult.Sizes.t n)) fun k =>
+      (cstChirpCost w (List.ofFn (Mult.Sizes.t n)) fun k =>
         ldcAxisCost W w (Mult.Sizes.p n) (chirpGuard (Mult.Sizes.d n))
           ((List.ofFn (Mult.Sizes.t n)).getD k 0) ((List.ofFn (Mult.Sizes.s n)).getD k 0)) := by
   set xx : ldcX → List (Fin (A + 4)) := fun j => ρ (.x j) with hxx
@@ -862,16 +862,16 @@ theorem ldc_axisCost_le (W w p g N s : ℕ) :
   nlinarith
 
 /-- **The cost of the chirp stage** (`cst_chirpCost_le`): the loads of the `d` axes and at most
-`4 d V cmulCost T w` for the products, `V = ∏ t_k`. -/
-theorem ldChirpStage_cost_le (T n : ℕ) {w W : ℕ} (hd : 1 ≤ Mult.Sizes.d n) :
-    cstChirpCost T w (List.ofFn (Mult.Sizes.t n)) (fun k =>
+`4 d V cmulCost w` for the products, `V = ∏ t_k`. -/
+theorem ldChirpStage_cost_le (n : ℕ) {w W : ℕ} (hd : 1 ≤ Mult.Sizes.d n) :
+    cstChirpCost w (List.ofFn (Mult.Sizes.t n)) (fun k =>
         ldcAxisCost W w (Mult.Sizes.p n) (chirpGuard (Mult.Sizes.d n))
           ((List.ofFn (Mult.Sizes.t n)).getD k 0) ((List.ofFn (Mult.Sizes.s n)).getD k 0)) ≤
       ∑ k ∈ Finset.range (Mult.Sizes.d n),
           ldcAxisCost W w (Mult.Sizes.p n) (chirpGuard (Mult.Sizes.d n))
             ((List.ofFn (Mult.Sizes.t n)).getD k 0) ((List.ofFn (Mult.Sizes.s n)).getD k 0) +
-        4 * Mult.Sizes.d n * (List.ofFn (Mult.Sizes.t n)).prod * cmulCost T w := by
-  have h := cst_chirpCost_le T w (List.ofFn (Mult.Sizes.t n)) (fun k =>
+        4 * Mult.Sizes.d n * (List.ofFn (Mult.Sizes.t n)).prod * cmulCost w := by
+  have h := cst_chirpCost_le w (List.ofFn (Mult.Sizes.t n)) (fun k =>
       ldcAxisCost W w (Mult.Sizes.p n) (chirpGuard (Mult.Sizes.d n))
         ((List.ofFn (Mult.Sizes.t n)).getD k 0) ((List.ofFn (Mult.Sizes.s n)).getD k 0))
     (by simpa using hd)

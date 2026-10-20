@@ -13,7 +13,7 @@ import Mathlib.Algebra.Order.Ring.Star
 # Cost matching: the loader of the banded `B̃₀`
 
 `mt_band_cp_le`: the step bound `bandCpB` of the band loader (`Fast/BandStage.lean`) at every
-step is at most `42 T w + 300 T + 42 + mtBandU`, with `mtBandU = O((Tm + 1) r p^5)` the
+step is at most `42 T w + 300 T + 42 + mtBandU`, with `mtBandU = O(r p^5)` the
 polynomial part. The register lengths that enter the loader's cost are computed on the loader's
 frames (`band_scr_sum`, `band_costE_eq`, `band_load_*`); every other term is a polynomial in
 `Q = mtRsbQ D w` and `t + 1` (`band_cost*_le`, `band_preCost_le`). `mt_band_clr_cfg`: the
@@ -230,86 +230,61 @@ variable {t₀ K : ℕ}
 
 /-! ### The loader terms as polynomials -/
 
-theorem band_mono {S T1 u q : ℕ} (hS : 1 ≤ S) (hT : 1 ≤ T1) (hu : 1 ≤ u) (hq : 1 ≤ q)
-    {a b c k : ℕ} (ha : a ≤ 1) (hb : b ≤ 1) (hc : c ≤ 1) (hk : k ≤ 5) :
-    S ^ a * T1 ^ b * u ^ c * q ^ k ≤ S * T1 * u * q ^ 5 := by
+theorem band_mono {S u q : ℕ} (hS : 1 ≤ S) (hu : 1 ≤ u) (hq : 1 ≤ q)
+    {a c k : ℕ} (ha : a ≤ 1) (hc : c ≤ 1) (hk : k ≤ 5) :
+    S ^ a * u ^ c * q ^ k ≤ S * u * q ^ 5 := by
   have h1 : S ^ a ≤ S := by simpa using Nat.pow_le_pow_right hS ha
-  have h2 : T1 ^ b ≤ T1 := by simpa using Nat.pow_le_pow_right hT hb
   have h3 : u ^ c ≤ u := by simpa using Nat.pow_le_pow_right hu hc
   have h4 : q ^ k ≤ q ^ 5 := Nat.pow_le_pow_right hq hk
-  exact Nat.mul_le_mul (Nat.mul_le_mul (Nat.mul_le_mul h1 h2) h3) h4
+  exact Nat.mul_le_mul (Nat.mul_le_mul h1 h3) h4
 
-theorem band_costF1_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
+theorem band_costF1_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
     (hp : D.p ≤ q) (_hW : D.W ≤ q) (_hw : w ≤ q) (hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandCostF1 D ≤ 207 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, 
-    
-    
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (_hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandCostF1 D ≤ 207 * (S * u * q ^ 5) := by
+  simp only [bandCostF1,
+
+
     PreAxB.bWd, PreAxB.bB]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (4 * (8 * q) + 4) + 1 + (4 * (2 * (8 * q) + 1) + 4) + 1 + (4 * (2
           * (8 * q) + 1) + 4) + 1 + (4 * u + 4) := by
         gcongr
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_costVM_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_costVM_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (_hR : rmulCost w ≤ 288 * S * q ^ 3) :
     preVMCost 60 D.W w [D.bP, D.s, D.t, D.α, D.bWd, D.bB + 1 + D.s, 2 * D.bB + 1, D.bB]
-      (bandKFold D) ((D.bB + 1 + D.s) * (2 * D.bB + 1) * w) ≤ 943711899 * (S * T1 * u * q ^ 5) := by
+      (bandKFold D) ((D.bB + 1 + D.s) * (2 * D.bB + 1) * w) ≤ 943711899 * (S * u * q ^ 5) := by
   simp only [
-    
+
     preVMCost, bandKFold, tblC,
     PreAxB.bP, PreAxB.bWd, PreAxB.bB, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (60 * (4 * q + 4) + 1) + (5 * q * (4 * q + 10) + 6 * q + 10 + (u *
@@ -323,65 +298,41 @@ theorem band_costVM_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
           * q + 31) := by
         gcongr
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_costF2_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_costF2_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (_hp : D.p ≤ q) (_hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandCostF2 D w ≤ 13635 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, 
-    
-    
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (_hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandCostF2 D w ≤ 13635 * (S * u * q ^ 5) := by
+  simp only [bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d,
+
+
     PreAxB.bWd, PreAxB.bB]
   calc _ ≤ 2 * (2 * (8 * q) + 1 + 1 + u) + 2 + (4 * (2 * (8 * q) + 1) + 4 + (4 * (2 * (8 * q) + 1) + 4
           + (4 * (8 * q) + 4))) + (2 * (8 * q) * (4 * q + 7) + 2 * (2 * (8 * q)) + 4 + (2 * (2 * (8 *
@@ -394,64 +345,40 @@ theorem band_costF2_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
           + (2 * q + 2 + (4 * (q * q) + 4 + (4 * q + 4))))))) := by
         gcongr
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_costF3_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
+theorem band_costF3_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (_hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandCostF3 D w ≤ 24992 * (S * T1 * u * q ^ 5) := by
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (_hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandCostF3 D w ≤ 24992 * (S * u * q ^ 5) := by
   simp only [bandCostF3,
-    
+
     preVMCost, bandKH, tblC,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * q + 4 + (1 + (4 * 1 + 4 + (4 * q + 4 + (4 * q + 4) + (48 * (4 * q + 4) + 1) + ((5 * q) *
@@ -460,64 +387,40 @@ theorem band_costF3_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα 
           2))))) := by
         gcongr <;> omega
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_costB2a_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_costB2a_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandCostB2a D w ≤ 69374 * (S * T1 * u * q ^ 5) := by
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (_hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandCostB2a D w ≤ 69374 * (S * u * q ^ 5) := by
   simp only [
-    bandCostB2a, 
+    bandCostB2a,
     preVMCost, bandKH, preKM, tblC,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * u + 4 + (4 * u + 4 + ((u) * (4 * q + 7) + 2 * (u) + 4 + (2 * (u) + 2))) + (1 + (4 * q +
@@ -534,64 +437,40 @@ theorem band_costB2a_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα 
           2 + (2 * (u + 1) + 2))))))))))) := by
         gcongr <;> omega
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) {T w q u S T1 : ℕ} (_hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) {w q u S : ℕ} (_hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandCostB2b T σ D w ≤ 885034 * (S * T1 * u * q ^ 5) + (List.map (fun r => 2 * (σ r).length + 2) bandScrL).sum := by
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandCostB2b σ D w ≤ 885034 * (S * u * q ^ 5) + (List.map (fun r => 2 * (σ r).length + 2) bandScrL).sum := by
   simp only [
-    bandCostB2b, 
+    bandCostB2b,
     preVMCost, bandKH, preKD, tblC,
     List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (48 * (4 * q + 4) + 1) + (u * (4 * q + 10) + 6 * q + 10 + (u * (4
@@ -600,75 +479,51 @@ theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
           q) + 2) + (48 * (2 * q + 2) + 2 * q + 2 * q + 31) + (4 * q + 4 + (1 + (4 * q + 4 + (4 * q +
           4) + (48 * (4 * q + 4) + 1) + ((9 * q + 1) * (4 * q + 10) + 6 * q + 10 + 0 + 1) + ((3 + (4 *
           (9 * q + 1) + 5 + 2)) * (32 * (q + 4) ^ 2 + 8 * q) + 2 * q + 2) + (48 * (2 * q + 2) + 2 * q
-          + 2 * q + 31) + (2 * (9 * q + 1) + 2))) + (u * ((288 * S * T1 * q ^ 3) + 6 * q + 8) + 6 + (2
+          + 2 * q + 31) + (2 * (9 * q + 1) + 2))) + (u * ((288 * S * q ^ 3) + 6 * q + 8) + 6 + (2
           * (u * q) + 2) + ((List.map (fun r => 2 * (σ r).length + 2) bandScrL).sum + 1 + 2 * q + 2))) := by
         gcongr; omega
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_costPrep_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_costPrep_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (_hp : D.p ≤ q) (_hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandAxisPrepCost T w (2 * D.bWd) D.bK D.s ≤ 358262 * (S * T1 * u * q ^ 5) := by
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandAxisPrepCost w (2 * D.bWd) D.bK D.s ≤ 358262 * (S * u * q ^ 5) := by
   simp only [
     bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, 
+    bandFwdStepCost, bandTStepCost, bandAxisOrgCost,
     PreAxB.bWd, PreAxB.bK]
   calc _ ≤ 4 * ((2 * (8 * q) + 1 + 1) * (2 * (2 * (8 * q) + 1) + 1) * q) + 4 + (2 * ((2 * (8 * q) + 1 +
           1) * (2 * (2 * (8 * q) + 1) + 1) * q) + 2) + (u * (100 * (2 * (8 * q) + 1 + 1) * (2 * (8 *
-          q) + 1 + 1) * q + 200 + (4 * (q * q) * (2 * (288 * S * T1 * q ^ 3) + 80 * q + 120 + 6) + 4)
-          + ((2 * (8 * q) + 1) * ((288 * S * T1 * q ^ 3) + 30 * q + 40 + (2 * (2 * (8 * q) + 1) *
-          ((288 * S * T1 * q ^ 3) + 40 * q + 60) + 30 * q + 60) + 4 * (2 * (2 * (8 * q) + 1) * q) + 4
+          q) + 1 + 1) * q + 200 + (4 * (q * q) * (2 * (288 * S * q ^ 3) + 80 * q + 120 + 6) + 4)
+          + ((2 * (8 * q) + 1) * ((288 * S * q ^ 3) + 30 * q + 40 + (2 * (2 * (8 * q) + 1) *
+          ((288 * S * q ^ 3) + 40 * q + 60) + 30 * q + 60) + 4 * (2 * (2 * (8 * q) + 1) * q) + 4
           * q + 8 + 6) + 4) + 6) + 4) + (2 * ((2 * (8 * q) + 1 + 1) * (2 * (2 * (8 * q) + 1) + 1) * q)
           + 2) + (200 * (u + 2 * (8 * q) + 2) * (2 * (8 * q) + 2) * q + 2 * (4 * (q * q)) + 200 + (u *
           (40 * (2 * (8 * q) + 2) * (2 * (8 * q) + 2) * q + 40 * (2 * (8 * q)) + 100 + 6) + 4 + (2 *
@@ -676,65 +531,41 @@ theorem band_costPrep_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα
           (2 * (u * (2 * (8 * q) + 1) * q) + 2))) := by
         gcongr
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_polyE_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
+theorem band_polyE_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
     (_hp : D.p ≤ q) (_hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) :
+    (hu : 1 ≤ u) (hS : 1 ≤ S) :
     2 * (D.s * D.bB) + 2 * (2 * D.bWd) + 2 * (2 * D.bWd) + 2 * w + 2 * ((D.bB + 1) * (2 * D.bB +
     1) * w) + 2 * ((2 * D.bB + 1) * w) + 2 * (2 * D.bWd * w) + 2 * w + 16 + 1 + (2 * (2 * D.t +
     2) + (2 * (2 * w + 2) + (2 * (2 * w + 2) + ((2 * ((D.s + 1) / 2 * w) + 2) + ((2 * (D.s / 2)
-    + 2) + (2 * ((D.s + 1) / 2 - D.s / 2) + 2)))))) ≤ 1517 * (S * T1 * u * q ^ 5) := by
+    + 2) + (2 * ((D.s + 1) / 2 - D.s / 2) + 2)))))) ≤ 1517 * (S * u * q ^ 5) := by
   simp only [PreAxB.bB, PreAxB.bWd]
   calc _ ≤ 2 * (u * (2 * (8 * q) + 1)) + 2 * (2 * (8 * q)) + 2 * (2 * (8 * q)) + 2 * q + 2 * (((2 * (8
           * q) + 1) + 1) * (2 * (2 * (8 * q) + 1) + 1) * q) + 2 * ((2 * (2 * (8 * q) + 1) + 1) * q) +
@@ -742,214 +573,142 @@ theorem band_polyE_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D
           2) + ((2 * ((u) * q) + 2) + ((2 * ((u)) + 2) + (2 * (1) + 2)))))) := by
         gcongr <;> omega
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
-theorem band_polyScr_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_polyScr_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (_hw : w ≤ q) (_hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) :
-    2 * (D.t + D.m + D.α + D.p + D.W + D.α * D.α + D.bWd + D.bB + (2 * D.bB + 1)) + 20 ≤ 152 * (S * T1 * u * q ^ 5) := by
+    (hu : 1 ≤ u) (hS : 1 ≤ S) :
+    2 * (D.t + D.m + D.α + D.p + D.W + D.α * D.α + D.bWd + D.bB + (2 * D.bB + 1)) + 20 ≤ 152 * (S * u * q ^ 5) := by
   simp only [PreAxB.bB, PreAxB.bWd]
   calc _ ≤ 2 * (u + q + q + q + q + q * q + (8 * q) + (2 * (8 * q) + 1) + (2 * (2 * (8 * q) + 1) + 1))
           + 20 := by
         gcongr
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
 /-- **The loader of one axis** as a polynomial: the cleared registers of the previous file,
 the scratch register `tb`, `100 (P + G)` for the record fields and headers, and
 `10^9 S (T + 1) (t + 1) Q^5` for everything else. -/
 theorem band_preCost_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
-    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) {T q u S T1 : ℕ}
+    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) {q u S : ℕ}
     (hm : D.m ≤ q) (hα : D.α ≤ q) (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hL : D.L ≤ q)
     (hLd : D.Ld ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q) (hu : 1 ≤ u) (hS : 1 ≤ S)
-    (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
-    bandPreCost T σ hd w D rest ≤ ((bandClrB hd).map fun r => 2 * (σ r).length + 2).sum +
-      2 * (σ (.inl .tb)).length + 100 * (D.P + D.G) + 10 ^ 9 * (S * T1 * u * q ^ 5) := by
-  have hY1 : u + q ≤ 2 * (S * T1 * u * q ^ 5) := by
-    have h1 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num)
-      (by norm_num) (by norm_num) (by norm_num)
-    have h2 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num)
-      (by norm_num) (by norm_num) (by norm_num)
+    (hR : rmulCost w ≤ 288 * S * q ^ 3) :
+    bandPreCost σ hd w D rest ≤ ((bandClrB hd).map fun r => 2 * (σ r).length + 2).sum +
+      2 * (σ (.inl .tb)).length + 100 * (D.P + D.G) + 10 ^ 9 * (S * u * q ^ 5) := by
+  have hY1 : u + q ≤ 2 * (S * u * q ^ 5) := by
+    have h1 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num)
+      (by norm_num)
+    have h2 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num)
+      (by norm_num)
     simp only [pow_zero, pow_one, one_mul, mul_one] at h1 h2
     omega
   have hA : bandCostA σ hd w D ≤ ((bandClrB hd).map fun r => 2 * (σ r).length + 2).sum +
       21 * (D.P + D.G) + 200 * (u + q) := by
     simp only [bandCostA, preHdrCostB, PreAxB.fields, List.sum_cons, List.sum_nil]
     omega
-  have hF1 := band_costF1_le D hm hα hp hW hw hs ht hq hu hS hT hR
-  have hVM := band_costVM_le D hm hα hp hW hw hs ht hq hu hS hT hR
-  have hF2 := band_costF2_le D hm hα hp hW hw hs ht hq hu hS hT hR
-  have hF3 := band_costF3_le D hm hα hp hW hw hs ht hq hu hS hT hR
-  have hB2a := band_costB2a_le D hm hα hp hW hw hs ht hq hu hS hT hR
+  have hF1 := band_costF1_le D hm hα hp hW hw hs ht hq hu hS hR
+  have hVM := band_costVM_le D hm hα hp hW hw hs ht hq hu hS hR
+  have hF2 := band_costF2_le D hm hα hp hW hw hs ht hq hu hS hR
+  have hF3 := band_costF3_le D hm hα hp hW hw hs ht hq hu hS hR
+  have hB2a := band_costB2a_le D hm hα hp hW hw hs ht hq hu hS hR
   have hB2b := band_costB2b_le (bandFB2a (bandFB1 σ hd w D rest) D w) D hm hα hp hW hw hs ht hq hu
-    hS hT hR
-  have hPrep := band_costPrep_le D hm hα hp hW hw hs ht hq hu hS hT hR
-  have hE := band_polyE_le D hm hα hp hW hw hs ht hq hu hS hT
-  have hScr := band_polyScr_le D (w := w) hm hα hp hW hw hs ht hq hu hS hT
+    hS hR
+  have hPrep := band_costPrep_le D hm hα hp hW hw hs ht hq hu hS hR
+  have hE := band_polyE_le D hm hα hp hW hw hs ht hq hu hS
+  have hScr := band_polyScr_le D (w := w) hm hα hp hW hw hs ht hq hu hS
   rw [band_scr_sum] at hB2b
   unfold bandPreCost bandCostB1
   rw [band_costE_eq]
   omega
-theorem band_polyClr_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (hp : D.p ≤ q)
+theorem band_polyClr_le (D : PreAxB) {w q u S : ℕ} (hm : D.m ≤ q) (hp : D.p ≤ q)
     (hw : w ≤ q) (hL : D.L ≤ q) (hLd : D.Ld ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) :
+    (hu : 1 ≤ u) (hS : 1 ≤ S) :
     D.t + 2 * (D.s * (2 * (8 * D.m) + 1) * w) + 2 * (D.s * w) + (D.t - D.s) * w + D.s + (w + 2 *
     (8 * D.m) * w) + D.s / 2 + (2 * (8 * D.m) + 1) + w + (D.s + 1) / 2 * w + ((D.s + 1) / 2 -
-    D.s / 2) + w + 5 * D.p + 75 * w + 25 * D.L + 25 * D.Ld + 30 ≤ 238 * (S * T1 * u * q ^ 5) := by
+    D.s / 2) + w + 5 * D.p + 75 * w + 25 * D.L + 25 * D.Ld + 30 ≤ 238 * (S * u * q ^ 5) := by
   calc _ ≤ u + 2 * (u * (2 * (8 * q) + 1) * q) + 2 * (u * q) + (u) * q + u + (q + 2 * (8 * q) * q) +
           (u) + (2 * (8 * q) + 1) + q + (u) * q + (1) + q + 5 * q + 75 * q + 25 * q + 25 * q + 30 := by
         gcongr <;> omega
     _ ≤ _ := by
-      have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0002 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0003 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0004 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0005 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0010 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0011 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0012 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0013 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0014 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0015 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0100 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0101 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0102 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0103 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0104 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0105 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0110 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0111 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0112 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0113 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0114 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f0115 := band_mono hS hT hu hq (a := 0) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1000 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1001 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1002 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1003 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1004 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1005 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1010 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1011 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1012 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1013 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1014 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1015 := band_mono hS hT hu hq (a := 1) (b := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1100 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1101 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1102 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1103 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1104 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1105 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1110 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1111 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1112 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1113 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1114 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      have f1115 := band_mono hS hT hu hq (a := 1) (b := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      have f000 := band_mono hS hu hq (a := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f001 := band_mono hS hu hq (a := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f002 := band_mono hS hu hq (a := 0) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f003 := band_mono hS hu hq (a := 0) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f004 := band_mono hS hu hq (a := 0) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f005 := band_mono hS hu hq (a := 0) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f010 := band_mono hS hu hq (a := 0) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f011 := band_mono hS hu hq (a := 0) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f012 := band_mono hS hu hq (a := 0) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f013 := band_mono hS hu hq (a := 0) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f014 := band_mono hS hu hq (a := 0) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f015 := band_mono hS hu hq (a := 0) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f100 := band_mono hS hu hq (a := 1) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f101 := band_mono hS hu hq (a := 1) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f102 := band_mono hS hu hq (a := 1) (c := 0) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f103 := band_mono hS hu hq (a := 1) (c := 0) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f104 := band_mono hS hu hq (a := 1) (c := 0) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f105 := band_mono hS hu hq (a := 1) (c := 0) (k := 5) (by norm_num) (by norm_num) (by norm_num)
+      have f110 := band_mono hS hu hq (a := 1) (c := 1) (k := 0) (by norm_num) (by norm_num) (by norm_num)
+      have f111 := band_mono hS hu hq (a := 1) (c := 1) (k := 1) (by norm_num) (by norm_num) (by norm_num)
+      have f112 := band_mono hS hu hq (a := 1) (c := 1) (k := 2) (by norm_num) (by norm_num) (by norm_num)
+      have f113 := band_mono hS hu hq (a := 1) (c := 1) (k := 3) (by norm_num) (by norm_num) (by norm_num)
+      have f114 := band_mono hS hu hq (a := 1) (c := 1) (k := 4) (by norm_num) (by norm_num) (by norm_num)
+      have f115 := band_mono hS hu hq (a := 1) (c := 1) (k := 5) (by norm_num) (by norm_num) (by norm_num)
       ring_nf
-      ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
+      ring_nf at f000 f001 f002 f003 f004 f005 f010 f011 f012 f013 f014 f015 f100 f101 f102 f103 f104 f105 f110 f111 f112 f113 f114 f115
       linarith
 
 theorem band_clr_arith {t s m p L Ld P G w X1 X2 X3 X4 X5 Y1 Y2 B0 B1 B2 B3 B4 : ℕ}
@@ -1028,27 +787,26 @@ theorem mLogLog_le_cube (m : ℕ) : mLogLog m ≤ m ^ 3 := by
     _ = m ^ 3 := by ring
 
 /-- The product cost as a cubic in an upper bound `q ≥ w`. -/
-theorem band_rmul_le {T w q : ℕ} (hw : w ≤ q) (hq : 1 ≤ q) :
-    rmulCost T w ≤ 288 * (ssMulConst + 1) * (T + 1) * q ^ 3 := by
+theorem band_rmul_le {w q : ℕ} (hw : w ≤ q) (hq : 1 ≤ q) :
+    rmulCost w ≤ 288 * (ssMulConst + 1) * q ^ 3 := by
   unfold rmulCost
   have h1 : mLogLog w ≤ q ^ 3 := (mLogLog_le_cube w).trans (Nat.pow_le_pow_left hw 3)
-  have h2 : ssMulConst * (T + 1) * mLogLog w ≤ (ssMulConst + 1) * (T + 1) * q ^ 3 :=
-    Nat.mul_le_mul (Nat.mul_le_mul_right _ (by omega)) h1
+  have h2 : ssMulConst * mLogLog w ≤ (ssMulConst + 1) * q ^ 3 :=
+    Nat.mul_le_mul (by omega) h1
   have h3 : q ≤ q ^ 3 := by
     calc q = q ^ 1 := (pow_one q).symm
       _ ≤ q ^ 3 := Nat.pow_le_pow_right hq (by norm_num)
   have hS : 2 ≤ ssMulConst + 1 := by
     have : 627 ≤ ssMulConst := by unfold ssMulConst; omega
     omega
-  have h4 : 2 * q ^ 3 ≤ (ssMulConst + 1) * (T + 1) * q ^ 3 :=
-    Nat.mul_le_mul_right _ (le_trans hS (Nat.le_mul_of_pos_right _ (by omega)))
-  have e : 288 * (ssMulConst + 1) * (T + 1) * q ^ 3 =
-      288 * ((ssMulConst + 1) * (T + 1) * q ^ 3) := by ring
+  have h4 : 2 * q ^ 3 ≤ (ssMulConst + 1) * q ^ 3 := Nat.mul_le_mul_right _ hS
+  have e : 288 * (ssMulConst + 1) * q ^ 3 =
+      288 * ((ssMulConst + 1) * q ^ 3) := by ring
   omega
 
 /-- The bound of the polynomial loader terms of every axis at length `n`. -/
-def mtBandU (n Tm cw cW : ℕ) : ℕ :=
-  4 * 10 ^ 9 * (ssMulConst + 1) * (Tm + 1) * r n * ((cW + cw + 6) * p n) ^ 5
+def mtBandU (n cw cW : ℕ) : ℕ :=
+  4 * 10 ^ 9 * (ssMulConst + 1) * r n * ((cW + cw + 6) * p n) ^ 5
 
 theorem band_preDB_facts (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w ≤ cw * p n)
     (hWc : W ≤ cW * p n) (k : ℕ) :
@@ -1070,36 +828,36 @@ theorem band_preDB_facts (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w 
   nlinarith
 
 /-- The polynomial unit of one axis against `mtBandU`. -/
-theorem band_unit_le (h : Big n) (hd0 : 0 < d n) {Tm w W cw cW : ℕ} (hwc : w ≤ cw * p n)
+theorem band_unit_le (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w ≤ cw * p n)
     (hWc : W ≤ cW * p n) (k : ℕ) :
-    2 * 10 ^ 9 * ((ssMulConst + 1) * (Tm + 1) * ((preDB n W hd0 k).t + 1) *
-      mtRsbQ (preDB n W hd0 k) w ^ 5) ≤ mtBandU n Tm cw cW := by
+    2 * 10 ^ 9 * ((ssMulConst + 1) * ((preDB n W hd0 k).t + 1) *
+      mtRsbQ (preDB n W hd0 k) w ^ 5) ≤ mtBandU n cw cW := by
   obtain ⟨-, -, -, -, ht, hQ⟩ := band_preDB_facts h hd0 hwc hWc (w := w) k
-  have h1 : (ssMulConst + 1) * (Tm + 1) * ((preDB n W hd0 k).t + 1) *
+  have h1 : (ssMulConst + 1) * ((preDB n W hd0 k).t + 1) *
       mtRsbQ (preDB n W hd0 k) w ^ 5 ≤
-      (ssMulConst + 1) * (Tm + 1) * (2 * r n) * ((cW + cw + 6) * p n) ^ 5 :=
+      (ssMulConst + 1) * (2 * r n) * ((cW + cw + 6) * p n) ^ 5 :=
     Nat.mul_le_mul (Nat.mul_le_mul_left _ ht) (Nat.pow_le_pow_left hQ 5)
-  have e : mtBandU n Tm cw cW =
-      2 * 10 ^ 9 * ((ssMulConst + 1) * (Tm + 1) * (2 * r n) * ((cW + cw + 6) * p n) ^ 5) := by
+  have e : mtBandU n cw cW =
+      2 * 10 ^ 9 * ((ssMulConst + 1) * (2 * r n) * ((cW + cw + 6) * p n) ^ 5) := by
     unfold mtBandU; ring
   rw [e]
   exact Nat.mul_le_mul_left _ h1
 
 /-- **One step of the loader** at the pipeline records. -/
-theorem band_step_le (h : Big n) (hd0 : 0 < d n) {Tm w W cw cW : ℕ} (hwc : w ≤ cw * p n)
+theorem band_step_le (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w ≤ cw * p n)
     (hWc : W ≤ cW * p n) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (rest : List (Fin (prime + K + 4))) (k : ℕ) :
-    bandPreCost Tm σ hd w (preDB n W hd0 k) rest ≤
+    bandPreCost σ hd w (preDB n W hd0 k) rest ≤
       ((bandClrB hd).map fun r => 2 * (σ r).length + 2).sum + 2 * (σ (.inl .tb)).length +
-        200 * T n + 10 ^ 9 * ((ssMulConst + 1) * (Tm + 1) * ((preDB n W hd0 k).t + 1) *
+        200 * T n + 10 ^ 9 * ((ssMulConst + 1) * ((preDB n W hd0 k).t + 1) *
           mtRsbQ (preDB n W hd0 k) w ^ 5) := by
   obtain ⟨hst, hP, hG, -, -, -⟩ := band_preDB_facts h hd0 hwc hWc (w := w) k
   have hq : 1 ≤ mtRsbQ (preDB n W hd0 k) w := by simp only [mtRsbQ]; omega
-  have key := band_preCost_le σ hd w (preDB n W hd0 k) rest (T := Tm) (q := mtRsbQ (preDB n W hd0 k) w) (u := (preDB n W hd0 k).t + 1)
-    (S := ssMulConst + 1) (T1 := Tm + 1) (by simp only [mtRsbQ]; omega)
+  have key := band_preCost_le σ hd w (preDB n W hd0 k) rest (q := mtRsbQ (preDB n W hd0 k) w) (u := (preDB n W hd0 k).t + 1)
+    (S := ssMulConst + 1) (by simp only [mtRsbQ]; omega)
     (by simp only [mtRsbQ]; omega) (by simp only [mtRsbQ]; omega) (by simp only [mtRsbQ]; omega)
     (by simp only [mtRsbQ]; omega) (by simp only [mtRsbQ]; omega) (by simp only [mtRsbQ]; omega)
-    (by omega) (by omega) hq (by omega) (by omega) (by omega)
+    (by omega) (by omega) hq (by omega) (by omega)
     (band_rmul_le (by simp only [mtRsbQ]; omega) hq |>.trans (le_of_eq (by ring)))
   refine key.trans ?_
   have : 100 * ((preDB n W hd0 k).P + (preDB n W hd0 k).G) ≤ 200 * T n := by omega
@@ -1119,9 +877,9 @@ theorem bandCfgB_load {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))
 theorem band_cfg_clr_le (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w ≤ cw * p n)
     (hWc : W ≤ cW * p n) {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
     {hd : Fin 5 → Fin t₀} {rest : List (Fin (prime + K + 4))} (hbase : BandBase σ₀ w hd)
-    (hA3 : 3 ≤ prime + K) (k : ℕ) {S T1 : ℕ} (hS : 1 ≤ S) (hT : 1 ≤ T1) :
+    (hA3 : 3 ≤ prime + K) (k : ℕ) {S : ℕ} (hS : 1 ≤ S) :
     ((bandClrB hd).map fun r => 2 * (bandCfgB σ₀ hd n w W hd0 rest k r).length + 2).sum ≤
-      100 * T n + 476 * (S * T1 * ((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 5) := by
+      100 * T n + 476 * (S * ((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 5) := by
   obtain ⟨σ, hσ, e⟩ := bandCfgB_load (W := W) (hd0 := hd0) (rest := rest) hbase hA3 k
   obtain ⟨hst, hP, hG, hp1, -, -⟩ := band_preDB_facts h hd0 hwc hWc (w := w) k
   rw [e]
@@ -1129,21 +887,21 @@ theorem band_cfg_clr_le (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w �
   have hq : 1 ≤ mtRsbQ (preDB n W hd0 k) w := by simp only [mtRsbQ]; omega
   have h2 := band_polyClr_le (preDB n W hd0 k) (w := w) (q := mtRsbQ (preDB n W hd0 k) w) (u := (preDB n W hd0 k).t + 1) (by simp only [mtRsbQ]; omega)
     (by simp only [mtRsbQ]; omega) (by simp only [mtRsbQ]; omega) (by simp only [mtRsbQ]; omega)
-    (by simp only [mtRsbQ]; omega) (by omega) (by omega) hq (by omega) hS hT
+    (by simp only [mtRsbQ]; omega) (by omega) (by omega) hq (by omega) hS
   omega
 
 /-- **The cost of the band loader at every step**: the cleared registers of the base file
 (at most `T w` symbols each) at step `0`, `O(T)` for the record fields and headers, and the
 polynomial `mtBandU` for the tables, counters and the axis factorization. -/
-theorem mt_band_cp_le (h : Big n) (hd0 : 0 < d n) {Tm w W cw cW : ℕ} (hwc : w ≤ cw * p n)
+theorem mt_band_cp_le (h : Big n) (hd0 : 0 < d n) {w W cw cW : ℕ} (hwc : w ≤ cw * p n)
     (hWc : W ≤ cW * p n) (hA3 : 3 ≤ prime + K) (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
     (hd : Fin 5 → Fin t₀) (rest : List (Fin (prime + K + 4))) (hbase : BandBase σ₀ w hd)
     (hσ₀ : ∀ r ∈ bandClrB hd, (σ₀ r).length ≤ T n * w) (k : ℕ) :
-    bandCpB Tm σ₀ hd n w W hd0 rest k ≤ 42 * (T n * w) + 300 * T n + 42 + mtBandU n Tm cw cW := by
+    bandCpB σ₀ hd n w W hd0 rest k ≤ 42 * (T n * w) + 300 * T n + 42 + mtBandU n cw cW := by
   cases k with
   | zero =>
-    have hs := band_step_le h hd0 (Tm := Tm) hwc hWc σ₀ hd (preRecsB n W hd0 1 ++ rest) 0
-    have hU := band_unit_le h hd0 (Tm := Tm) hwc hWc (w := w) 0
+    have hs := band_step_le h hd0 hwc hWc σ₀ hd (preRecsB n W hd0 1 ++ rest) 0
+    have hU := band_unit_le h hd0 hwc hWc (w := w) 0
     have hclr : ((bandClrB hd).map fun r => 2 * (σ₀ r).length + 2).sum ≤
         21 * (2 * (T n * w) + 2) := by
       have := List.sum_le_length_nsmul ((bandClrB hd).map fun r => 2 * (σ₀ r).length + 2)
@@ -1157,12 +915,12 @@ theorem mt_band_cp_le (h : Big n) (hd0 : 0 < d n) {Tm w W cw cW : ℕ} (hwc : w 
     simp only [bandCpB, List.length_nil] at hs ⊢
     omega
   | succ j =>
-    have hs := band_step_le h hd0 (Tm := Tm) hwc hWc (bandCfgB σ₀ hd n w W hd0 rest j) hd
+    have hs := band_step_le h hd0 hwc hWc (bandCfgB σ₀ hd n w W hd0 rest j) hd
       (preRecsB n W hd0 (j + 2) ++ rest) (j + 1)
-    have hU := band_unit_le h hd0 (Tm := Tm) hwc hWc (w := w) (j + 1)
-    have hU' := band_unit_le h hd0 (Tm := Tm) hwc hWc (w := w) j
+    have hU := band_unit_le h hd0 hwc hWc (w := w) (j + 1)
+    have hU' := band_unit_le h hd0 hwc hWc (w := w) j
     have hc := band_cfg_clr_le h hd0 hwc hWc (rest := rest) hbase hA3 j (S := ssMulConst + 1)
-      (T1 := Tm + 1) (by omega) (by omega)
+      (by omega)
     obtain ⟨σ, -, e⟩ := bandCfgB_load (W := W) (hd0 := hd0) (rest := rest) hbase hA3 j
     have htb : (bandCfgB σ₀ hd n w W hd0 rest j (.inl .tb)).length = 0 := by
       rw [e, band_load_tb]
@@ -1181,15 +939,14 @@ theorem mt_band_clr_cfg (cw cW : ℕ) :
   filter_upwards [eventually_big, mt_poly_r_le_T (952 * (cW + cw + 6) ^ 5 * 6 ^ 5) 5]
     with n h hT
   intro t₀ K hd0 w W σ hd rest k hw hwc hWc hbase hA3 x hx
-  have hc := band_cfg_clr_le h hd0 hwc hWc (rest := rest) hbase hA3 k (S := 1) (T1 := 1) le_rfl
-    le_rfl
+  have hc := band_cfg_clr_le h hd0 hwc hWc (rest := rest) hbase hA3 k (S := 1) le_rfl
   obtain ⟨-, -, -, -, ht, hQ⟩ := band_preDB_facts h hd0 hwc hWc (w := w) k
   have hmem := List.le_sum_of_mem (List.mem_map_of_mem
     (f := fun r => 2 * (bandCfgB σ hd n w W hd0 rest k r).length + 2) hx)
-  have hY : 476 * (1 * 1 * ((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 5) ≤ T n := by
-    calc 476 * (1 * 1 * ((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 5) ≤
+  have hY : 476 * (1 * ((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 5) ≤ T n := by
+    calc 476 * (1 * ((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 5) ≤
         476 * ((2 * r n) * ((cW + cw + 6) * (6 * b n)) ^ 5) := by
-          rw [one_mul, one_mul]
+          rw [one_mul]
           exact Nat.mul_le_mul_left _ (Nat.mul_le_mul ht (Nat.pow_le_pow_left hQ 5))
       _ = 952 * (cW + cw + 6) ^ 5 * 6 ^ 5 * b n ^ 5 * r n := by ring
       _ ≤ T n := hT

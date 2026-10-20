@@ -181,7 +181,7 @@ theorem ssMul_runs (hdisj : ∀ r j, cr r ≠ ι j) (hι : Function.Injective ι
     (hSa : ρ xa = binSyms m a) (hSb : ρ xb = binSyms m b) (hSn : (ρ xn).length = topN m) :
     CRuns body cr ι (ssMul ι hι hT hQ (cr xa) (cr xb) (cr xn) (cr xc)) ρ
       (Function.update ρ xc (binSyms (topN m + 1) (a * b) ++ ρ xc))
-      (ssMulConst * (T + 1) * mLogLog m) := by
+      (ssMulConst * mLogLog m) := by
   intro v S hc hS
   obtain ⟨v', n, hu, hn, he⟩ := ssMul_exec_log body ι hι hT hQ (fun j => (hdisj xa j).symm)
     (fun j => (hdisj xb j).symm) (fun j => (hdisj xn j).symm) (fun j => (hdisj xc j).symm)

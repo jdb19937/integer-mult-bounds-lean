@@ -46,7 +46,7 @@ with `ln = rest` and `cstream (rsaOut …)` reversed on top of `ob`; every other
 restored. Conditions: `m ≤ s < t = 2^L`, the records of `N` and of the table fit `w` bits, the
 table is real, `q ≤ w`, `96 ≤ A`.
 
-**Cost** (`rsaLineCost`): `t` outputs of `2m + 1` terms of `rmulCost T w + 9 w + 12` steps,
+**Cost** (`rsaLineCost`): `t` outputs of `2m + 1` terms of `rmulCost w + 9 w + 12` steps,
 plus `O(w + L)` per output and `O((s + m + t) w)` per line (`rsaLineCost_le` in
 `Fast/ResampAAxis`).
 -/
@@ -330,7 +330,7 @@ lemma rsa_csyms_add (A w : ℕ) (P z : GaussianInt) :
   rw [csyms, red_add]
 
 /-- The step bound of one term. -/
-def rsaTermCost (T w : ℕ) : ℕ := rmulCost T w + 9 * w + 12
+def rsaTermCost (w : ℕ) : ℕ := rmulCost w + 9 * w + 12
 
 variable (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
 include hrg hdisj
@@ -347,7 +347,7 @@ theorem rsa_term (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
       { V with
         cr := rsaCr V.cr w xr (xd ++ [a]) tr (td ++ [b]), sm := csyms A w (P + tdivN q (a * b)),
         pz := [], sm2 := [] }.get
-      (rsaTermCost T w) := by
+      (rsaTermCost w) := by
   have hcr : Function.Injective (fun x => rg (RsaR.c x : RsaR X)) :=
     hrg.comp RsaR.c_injective
   have hdisj' : ∀ x j, rg (RsaR.c x : RsaR X) ≠ ι j := fun x j => hdisj _ j
@@ -363,7 +363,7 @@ theorem rsa_term (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     sm := [], pz := [], sm2 := (coeffSyms A w (red w P + red w z)).reverse } with hV₄
   set V₅ : RsaV X A := { V₄ with sm := csyms A w (P + z), sm2 := [] } with hV₅
   have h1 : RsaRuns body rg ι (rmulOne ι hι hT hQ (fun x => rg (.c x))) V₁.get V₂.get
-      (rmulCost T w) :=
+      (rmulCost w) :=
     (RsaRuns.of_c (c := RsaR.c) hrg RsaR.c_injective
       (rmulOne_runs (body := body) hcr hdisj' hι hT hQ hA (rsa_ready_cr hr _ _ _ _) hw hq ha hb hbi
         (rx := cstream A w xr) (ry := cstream A w tr) (by simp [rsaCr])
@@ -394,7 +394,7 @@ theorem rsa_term (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
 /-! ### The window of one output -/
 
 /-- The step bound of the terms of one window. -/
-def rsaTermsCost (T w n : ℕ) : ℕ := n * (rsaTermCost T w + 3) + 2 * n + 4
+def rsaTermsCost (w n : ℕ) : ℕ := n * (rsaTermCost w + 3) + 2 * n + 4
 
 /-- The register file inside a window, before term `i`. -/
 def rsaTV (V : RsaV X A) (q w : ℕ) (E tab : List GaussianInt) (e j i : ℕ) : RsaV X A :=
@@ -414,9 +414,9 @@ theorem rsa_terms (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states 
     (htab : j + n ≤ tab.length) (hFE : ∀ x ∈ E, Fits w x)
     (hFT : ∀ y ∈ tab, Fits w y ∧ y.im = 0) :
     RsaRuns body rg ι (scanP (rg .cW) (rg .kW) (rsaTermP rg ι hι hT hQ))
-      (rsaTV V q w E tab e j 0).get (rsaTV V q w E tab e j n).get (rsaTermsCost T w n) := by
+      (rsaTV V q w E tab e j 0).get (rsaTV V q w E tab e j n).get (rsaTermsCost w n) := by
   have H := rsa_scanP_runs (body := body) (ι := ι) hrg hdisj (a := .cW) (t := .kW) (by simp)
-    (fun i => (rsaTV V q w E tab e j i).get) (b := rsaTermCost T w) V.cW (fun i hi => by
+    (fun i => (rsaTV V q w E tab e j i).get) (b := rsaTermCost w) V.cW (fun i hi => by
       have hiE : e + i < E.length := by omega
       have hiT : j + i < tab.length := by omega
       have h := rsa_term (body := body) hrg hdisj hι hT hQ hA hw hq
@@ -454,8 +454,8 @@ def rsaRV (V : RsaV X A) (w L : ℕ) (E tab : List GaussianInt) (e j r : ℕ)
     ob := ob }
 
 /-- The step bound of one output. -/
-def rsaRowCost (T w n L : ℕ) : ℕ :=
-  4 * w + 4 + rsaTermsCost T w n + (2 * (n * w) + 2) + (2 * w + 2) + (8 * L + 8 + (4 * w + 5))
+def rsaRowCost (w n L : ℕ) : ℕ :=
+  4 * w + 4 + rsaTermsCost w n + (2 * (n * w) + 2) + (2 * w + 2) + (8 * L + 8 + (4 * w + 5))
 
 /-- **One output.** The window sum of `E` from `e` against the table from `j` goes on top of
 `ob`; the table advances by `n`; `rr` goes from `r` to `(r + s) mod 2^L` and the window start
@@ -472,7 +472,7 @@ theorem rsa_row (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     RsaRuns body rg ι (rsaRowP rg ι hι hT hQ) (rsaRV V w L E tab e j r ob).get
       (rsaRV V w L E tab (e + if 2 ^ L ≤ r + s then 1 else 0) (j + n) ((r + s) % 2 ^ L)
         ((csyms A w (rsaPart q E e (fun i => tab.getD (j + i) 0) n)).reverse ++ ob)).get
-      (rsaRowCost T w n L) := by
+      (rsaRowCost w n L) := by
   set V₁ : RsaV X A := { V with rr := binSyms L r, ob := ob } with hV₁
   have hwn : (V.cr .wn).length = w := hr.wn
   have h1 : RsaRuns body rg ι (umulSym 1 (pairSym A false false) (rg (.c .wn)) (rg .sm) (rg .kx))
@@ -546,7 +546,7 @@ theorem rsa_row (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     omega
 
 /-- The step bound of the outputs of one line. -/
-def rsaRowsCost (T w n L t : ℕ) : ℕ := t * (rsaRowCost T w n L + 3) + 2 * t + 4
+def rsaRowsCost (w n L t : ℕ) : ℕ := t * (rsaRowCost w n L + 3) + 2 * t + 4
 
 /-- **The outputs of one line.** From the extended line `E` (`s + 2m` records) on `xs` and the
 table `rsaTabL t n wt` on `ys` (`n = 2m + 1`, `t = 2^L`), the `t` outputs
@@ -565,7 +565,7 @@ theorem rsa_rows (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
       (rsaRV V w L E (rsaTabL t (2 * m + 1) wt) 0 0 0 V.ob).get
       (rsaRV V w L E (rsaTabL t (2 * m + 1) wt) s (t * (2 * m + 1)) 0
         ((cstream A w (rsaOut q s t (2 * m + 1) E wt)).reverse ++ V.ob)).get
-      (rsaRowsCost T w (2 * m + 1) L t) := by
+      (rsaRowsCost w (2 * m + 1) L t) := by
   set n := 2 * m + 1 with hn
   set tab := rsaTabL t n wt with htab
   set outs := rsaOut q s t n E wt with houts
@@ -573,7 +573,7 @@ theorem rsa_rows (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
   have htl : tab.length = t * n := length_rsaTabL t n wt
   have H := rsa_scanP_runs (body := body) (ι := ι) hrg hdisj (a := .cT) (t := .kT) (by simp)
     (fun k => (rsaRV V w L E tab (rsaCen s t k) (k * n) (s * k % t)
-      ((cstream A w (outs.take k)).reverse ++ V.ob)).get) (b := rsaRowCost T w n L) V.cT
+      ((cstream A w (outs.take k)).reverse ++ V.ob)).get) (b := rsaRowCost w n L) V.cT
     (fun k hk => by
       rw [hcT] at hk
       have hc := rsaCen_lt hst.le hk hs0
@@ -609,11 +609,11 @@ theorem rsa_rows (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     ext1 <;> simp [rsaRV, hkT, rsaCen_self ht0, e1, Nat.mul_comm s t]
 
 /-- The step bound of one line of `s` records, `t` outputs, window `2m + 1`, `t = 2^L`. -/
-def rsaLineCost (T w s t m L : ℕ) : ℕ :=
+def rsaLineCost (w s t m L : ℕ) : ℕ :=
   (6 * (s * w) + 4) + (2 * (s * w) + 2) + (6 * (s * w) + 6) + (6 * (m * w) + 4) +
     (2 * ((s - m) * w) + 2) + (2 * (m * w) + 2) + (6 * (s * w) + 6) + (2 * (s * w) + 2) +
     (6 * (m * w) + 4) + (2 * ((s - m) * w) + 2) + (4 * ((t - s) * w) + 4) +
-    rsaRowsCost T w (2 * m + 1) L t + (2 * (t * (2 * m + 1) * w) + 2) + (2 * (2 * m * w) + 2)
+    rsaRowsCost w (2 * m + 1) L t + (2 * (t * (2 * m + 1) * w) + 2) + (2 * (2 * m * w) + 2)
 
 /-- **One line of `Ã`.** The box register `ln` holds the line `N` (`s` records, numerators at
 scale `q`), then `t - s` padding records `Z`, then `rest`; `ys` holds the table
@@ -643,7 +643,7 @@ theorem rsa_line (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
       { V with
         ln := rest
         ob := (cstream A w (rsaOut q s t (2 * m + 1) (rsaExt m N) wt)).reverse ++ V.ob }.get
-      (rsaLineCost T w s t m L) := by
+      (rsaLineCost w s t m L) := by
   set D := cstream A w N with hD
   set Z' := cstream A w Z with hZ'
   set E := rsaExt m N with hE

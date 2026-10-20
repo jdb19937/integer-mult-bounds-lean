@@ -52,12 +52,12 @@ theorem mt_ch_sum_take_le :
     nlinarith
 
 /-- **The kernel box, axis by axis**: for lengths `t_k ≥ 2`, the loads plus at most
-`8 V cmulCost T w`, `V = ∏ t_k`. -/
-theorem mt_ch_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 1 ≤ ts.length)
+`8 V cmulCost w`, `V = ∏ t_k`. -/
+theorem mt_ch_chirpCost_le (w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 1 ≤ ts.length)
     (hts : ∀ x ∈ ts, 2 ≤ x) :
-    cstChirpCost T w ts bp ≤ ∑ k ∈ Finset.range ts.length, bp k + 8 * ts.prod * cmulCost T w := by
+    cstChirpCost w ts bp ≤ ∑ k ∈ Finset.range ts.length, bp k + 8 * ts.prod * cmulCost w := by
   have hts1 : ∀ x ∈ ts, 1 ≤ x := fun x hx => le_trans (by norm_num) (hts x hx)
-  have hC := cst_cmulCost_ge T w
+  have hC := cst_cmulCost_ge w
   have hV1 : 1 ≤ ts.prod := by
     have := cst_one_le_prod_take ts hts1 ts.length
     rwa [List.take_length] at this
@@ -67,16 +67,16 @@ theorem mt_ch_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 
     exact h
   -- each axis costs at most twice its prefix box
   have hstep : ∀ j ∈ Finset.range (ts.length - 1),
-      bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3 ≤
-        bp (j + 1) + (2 * cmulCost T w * (ts.take (j + 2)).prod + 3) := by
+      bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3 ≤
+        bp (j + 1) + (2 * cmulCost w * (ts.take (j + 2)).prod + 3) := by
     intro j hj
     have hj' : j + 1 < ts.length := by have := Finset.mem_range.1 hj; omega
     have hL : 1 ≤ ts.getD (j + 1) 0 := by rw [cst_getD hj']; exact hts1 _ (List.getElem_mem hj')
-    have h1 := cst_stepCost_le T w _ _ (cst_one_le_prod_take ts hts1 (j + 1)) hL
+    have h1 := cst_stepCost_le w _ _ (cst_one_le_prod_take ts hts1 (j + 1)) hL
     have h2 : (ts.take (j + 1)).prod * ts.getD (j + 1) 0 = (ts.take (j + 2)).prod := by
       rw [cst_take_succ hj', List.prod_append, List.prod_singleton]
     rw [h2] at h1
-    have : 2 * ((ts.take (j + 2)).prod) * cmulCost T w = 2 * cmulCost T w * (ts.take (j + 2)).prod := by
+    have : 2 * ((ts.take (j + 2)).prod) * cmulCost w = 2 * cmulCost w * (ts.take (j + 2)).prod := by
       ring
     omega
   -- the prefix boxes
@@ -90,9 +90,9 @@ theorem mt_ch_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 
       omega
     omega
   have hsum : ∑ j ∈ Finset.range (ts.length - 1),
-      (bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) ≤
+      (bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) ≤
         ∑ j ∈ Finset.range (ts.length - 1), bp (j + 1) +
-          (2 * cmulCost T w * ∑ j ∈ Finset.range (ts.length - 1), (ts.take (j + 2)).prod +
+          (2 * cmulCost w * ∑ j ∈ Finset.range (ts.length - 1), (ts.take (j + 2)).prod +
             (ts.length - 1) * 3) := by
     refine (Finset.sum_le_sum hstep).trans (le_of_eq ?_)
     rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_const, Finset.card_range,
@@ -113,10 +113,10 @@ theorem mt_ch_chirpCost_le (T w : ℕ) (ts : List ℕ) (bp : ℕ → ℕ) (hd : 
   rw [hbp]
   have hLw : ts.getD 0 0 * w ≤ ts.prod * w := Nat.mul_le_mul_right _ hL0
   generalize ∑ j ∈ Finset.range (ts.length - 1),
-    (bp (j + 1) + cstStepCost T w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) = S at hsum ⊢
+    (bp (j + 1) + cstStepCost w (ts.take (j + 1)).prod (ts.getD (j + 1) 0) + 3) = S at hsum ⊢
   generalize ∑ j ∈ Finset.range (ts.length - 1), bp (j + 1) = Sb at hsum ⊢
   generalize ∑ j ∈ Finset.range (ts.length - 1), (ts.take (j + 2)).prod = G at hsum hgeo
-  generalize cmulCost T w = C at *
+  generalize cmulCost w = C at *
   generalize ts.prod = V at *
   generalize ts.getD 0 0 = L0 at *
   generalize ts.length = d at *
@@ -186,13 +186,13 @@ theorem mt_ch_U {n w W cw cW : ℕ} (h : Big n) (hw : w ≤ cw * p n) (hW : W �
 
 /-- **The chirp kernel stage** (`ldChirpStage_exec`): for `1 ≤ w ≤ cw p`, `W ≤ cW p`, the stage
 costs eventually at most `C · T M(p)`. -/
-theorem mt_ch_kernel_le (Tm cw cW : ℕ) :
+theorem mt_ch_kernel_le (cw cW : ℕ) :
     ∃ C : ℝ, ∀ᶠ n in atTop, ∀ w W : ℕ, 1 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
-      (cstChirpCost Tm w (List.ofFn (t n)) (fun k =>
+      (cstChirpCost w (List.ofFn (t n)) (fun k =>
           ldcAxisCost W w (p n) (chirpGuard (d n)) ((List.ofFn (t n)).getD k 0)
             ((List.ofFn (s n)).getD k 0)) : ℝ) ≤ C * ((T n : ℝ) * totMp n) := by
   set c := 6 * cw + 6 * cW + 11 with hc
-  refine ⟨1 + 8 * mtCM Tm cw, ?_⟩
+  refine ⟨1 + 8 * mtCM cw, ?_⟩
   filter_upwards [eventually_big, mt_small_le (100000 * c ^ 3) 4] with n h hsm w W hw1 hw hW
   obtain ⟨hU1, hpg, hwU, hWU⟩ := mt_ch_U h hw hW
   set U := c * b n with hU
@@ -207,7 +207,7 @@ theorem mt_ch_kernel_le (Tm cw cW : ℕ) :
     · rw [show ℓ n = ℓ n - 1 + 1 by omega, pow_succ, Nat.mul_div_cancel _ two_pos]
       exact le_trans (by norm_num) (Nat.pow_le_pow_right two_pos (show 1 ≤ ℓ n - 1 by omega))
     · exact le_trans (by norm_num) (Nat.pow_le_pow_right two_pos (show 1 ≤ ℓ n by omega))
-  have h1 := mt_ch_chirpCost_le Tm w (List.ofFn (t n)) (fun k =>
+  have h1 := mt_ch_chirpCost_le w (List.ofFn (t n)) (fun k =>
       ldcAxisCost W w (p n) (chirpGuard (d n)) ((List.ofFn (t n)).getD k 0)
         ((List.ofFn (s n)).getD k 0)) (by rw [hlen]; exact h.one_le_d) hts
   rw [hlen, List.prod_ofFn, mt_prod_t h] at h1
@@ -232,29 +232,29 @@ theorem mt_ch_kernel_le (Tm cw cW : ℕ) :
     calc d n * (100000 * U ^ 3 * r n) ≤ b n * (100000 * U ^ 3 * r n) := Nat.mul_le_mul_right _ hd
       _ = 100000 * c ^ 3 * b n ^ 4 * r n := by rw [hU]; ring
   have h2 := hsm _ hsum
-  have h3 := mt_cmul_le Tm h hw1 hw
+  have h3 := mt_cmul_le h hw1 hw
   have hTp := mt_Tp_le_Tmp h
   have hT0 : (0 : ℝ) ≤ T n := Nat.cast_nonneg _
-  have h1' : (cstChirpCost Tm w (List.ofFn (t n)) (fun k =>
+  have h1' : (cstChirpCost w (List.ofFn (t n)) (fun k =>
       ldcAxisCost W w (p n) (chirpGuard (d n)) ((List.ofFn (t n)).getD k 0)
         ((List.ofFn (s n)).getD k 0)) : ℝ) ≤
       ((∑ k ∈ Finset.range (d n), ldcAxisCost W w (p n) (chirpGuard (d n))
         ((List.ofFn (t n)).getD k 0) ((List.ofFn (s n)).getD k 0) : ℕ) : ℝ) +
-        8 * T n * (cmulCost Tm w : ℝ) := by exact_mod_cast h1
-  have h4 : 8 * (T n : ℝ) * (cmulCost Tm w : ℝ) ≤ 8 * (T n : ℝ) * (mtCM Tm cw * totMp n) :=
+        8 * T n * (cmulCost w : ℝ) := by exact_mod_cast h1
+  have h4 : 8 * (T n : ℝ) * (cmulCost w : ℝ) ≤ 8 * (T n : ℝ) * (mtCM cw * totMp n) :=
     mul_le_mul_of_nonneg_left h3 (by positivity)
   nlinarith
 
 /-! ### Entrywise stages on the box -/
 
 /-- **Pointwise products** (`cst_point_runs` at the pipeline box): `O(T M(p))`. -/
-theorem mt_ch_point_le (Tm cw : ℕ) :
+theorem mt_ch_point_le (cw : ℕ) :
     ∀ᶠ n in atTop, ∀ w : ℕ, 1 ≤ w → w ≤ cw * p n →
-      (((∏ i, t n i) * (cmulCost Tm w + 6 * w + 2) + 8 : ℕ) : ℝ) ≤
-        (mtCM Tm cw + 6 * cw + 10) * ((T n : ℝ) * totMp n) := by
+      (((∏ i, t n i) * (cmulCost w + 6 * w + 2) + 8 : ℕ) : ℝ) ≤
+        (mtCM cw + 6 * cw + 10) * ((T n : ℝ) * totMp n) := by
   filter_upwards [eventually_big] with n h w hw1 hw
   rw [mt_prod_t h]
-  have h1 := mt_cmul_le Tm h hw1 hw
+  have h1 := mt_cmul_le h hw1 hw
   have hm1 := mt_one_le_mp h
   have hpm := mt_p_le_mp h
   have hT1 := mt_one_le_T n
@@ -263,24 +263,24 @@ theorem mt_ch_point_le (Tm cw : ℕ) :
   have hwm : (w : ℝ) ≤ cw * totMp n := hw'.trans (mul_le_mul_of_nonneg_left hpm hcw)
   have hTm := mt_Tmp_nonneg n
   push_cast
-  have e : (T n : ℝ) * ((cmulCost Tm w : ℝ) + 6 * w + 2) + 8 ≤
-      (T n : ℝ) * (mtCM Tm cw * totMp n + 6 * (cw * totMp n) + 2 * totMp n) +
+  have e : (T n : ℝ) * ((cmulCost w : ℝ) + 6 * w + 2) + 8 ≤
+      (T n : ℝ) * (mtCM cw * totMp n + 6 * (cw * totMp n) + 2 * totMp n) +
         8 * ((T n : ℝ) * totMp n) := by
-    have : (cmulCost Tm w : ℝ) + 6 * w + 2 ≤
-        mtCM Tm cw * totMp n + 6 * (cw * totMp n) + 2 * totMp n := by linarith
+    have : (cmulCost w : ℝ) + 6 * w + 2 ≤
+        mtCM cw * totMp n + 6 * (cw * totMp n) + 2 * totMp n := by linarith
     have h8 : (8 : ℝ) ≤ 8 * ((T n : ℝ) * totMp n) := by nlinarith
     nlinarith
   nlinarith
 
 /-- **Chirp products** (`cst_chirpMulKeep_runs` at the pipeline box, also the twists):
 `O(T M(p))`. -/
-theorem mt_ch_chirpMul_le (Tm cw : ℕ) :
+theorem mt_ch_chirpMul_le (cw : ℕ) :
     ∀ᶠ n in atTop, ∀ w : ℕ, 1 ≤ w → w ≤ cw * p n →
-      (((∏ i, t n i) * (cmulCost Tm w + 21 * w + 8) + 20 : ℕ) : ℝ) ≤
-        (mtCM Tm cw + 21 * cw + 28) * ((T n : ℝ) * totMp n) := by
+      (((∏ i, t n i) * (cmulCost w + 21 * w + 8) + 20 : ℕ) : ℝ) ≤
+        (mtCM cw + 21 * cw + 28) * ((T n : ℝ) * totMp n) := by
   filter_upwards [eventually_big] with n h w hw1 hw
   rw [mt_prod_t h]
-  have h1 := mt_cmul_le Tm h hw1 hw
+  have h1 := mt_cmul_le h hw1 hw
   have hm1 := mt_one_le_mp h
   have hpm := mt_p_le_mp h
   have hT1 := mt_one_le_T n
@@ -289,11 +289,11 @@ theorem mt_ch_chirpMul_le (Tm cw : ℕ) :
   have hwm : (w : ℝ) ≤ cw * totMp n := hw'.trans (mul_le_mul_of_nonneg_left hpm hcw)
   have hTm := mt_Tmp_nonneg n
   push_cast
-  have e : (T n : ℝ) * ((cmulCost Tm w : ℝ) + 21 * w + 8) + 20 ≤
-      (T n : ℝ) * (mtCM Tm cw * totMp n + 21 * (cw * totMp n) + 8 * totMp n) +
+  have e : (T n : ℝ) * ((cmulCost w : ℝ) + 21 * w + 8) + 20 ≤
+      (T n : ℝ) * (mtCM cw * totMp n + 21 * (cw * totMp n) + 8 * totMp n) +
         20 * ((T n : ℝ) * totMp n) := by
-    have : (cmulCost Tm w : ℝ) + 21 * w + 8 ≤
-        mtCM Tm cw * totMp n + 21 * (cw * totMp n) + 8 * totMp n := by linarith
+    have : (cmulCost w : ℝ) + 21 * w + 8 ≤
+        mtCM cw * totMp n + 21 * (cw * totMp n) + 8 * totMp n := by linarith
     have h8 : (20 : ℝ) ≤ 20 * ((T n : ℝ) * totMp n) := by nlinarith
     nlinarith
   nlinarith

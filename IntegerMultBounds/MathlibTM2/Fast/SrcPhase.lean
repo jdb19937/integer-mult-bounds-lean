@@ -246,7 +246,7 @@ lemma src_cstBase_of {A w p g : ℕ} {ρ ρ' : CsR ldcX → List (Fin (A + 4))}
 def srcCostK (n w W : ℕ) : ℕ :=
   (6 * (ldcBlocks (A := prime + K) (List.ofFn (t n))).length + 6) +
     (6 * (ldcBlocks (A := prime + K) (List.ofFn (s n))).length + 6) +
-    cstChirpCost T w (List.ofFn (t n)) fun k =>
+    cstChirpCost w (List.ofFn (t n)) fun k =>
       ldcAxisCost W w (p n) (Chirp.chirpGuard (d n)) ((List.ofFn (t n)).getD k 0)
         ((List.ofFn (s n)).getD k 0)
 
@@ -270,7 +270,7 @@ theorem srcK_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) (n : ℕ) {w W 
     RsaRuns body M.rg M.ι (srcPK M) E.get
       { E with k := (Function.update E.k .kr
           (cstream (prime + K) w (cstNumBox (p n) (t n) (chirpKernel n)) ++ E.k .kr)) }.get
-      (srcCostK (K := K) (T := T) n w W) := by
+      (srcCostK (K := K) n w W) := by
   have hdisj := M.hdisj
   have s1 := rsa_bcopy (body := body) (ι := M.ι) M.hrg (a := .x .tSp) (c := .k (.x .tS))
     (t₁ := .x .c1) (t₂ := .x .c2) (by simp) E.get hc1 hc2
@@ -346,7 +346,7 @@ theorem src_chirpMul1_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : S
     RsaRuns body rg ι (cstChirpMul ι hι hT hQ rg c kr tA tB t1 t2) ρ
       (Function.update ρ (c .out) (cstream A w (cstNumBox q t (cstChirpProd t q a' x)) ++
         ρ (c .out)))
-      ((∏ i, t i) * (cmulCost T w + 21 * w + 8) + 20) := by
+      ((∏ i, t i) * (cmulCost w + 21 * w + 8) + 20) := by
   have hd' := hd
   regs_ne hd'
   obtain ⟨a1, a2, a3, a4, a5⟩ := hcx .xs
@@ -426,8 +426,8 @@ section PhaseC1
 variable {K : ℕ} {U P : Type} {body : P → Pr P T Q (prime + K) U}
 
 /-- The cost of a chirp product phase on a box of `V` entries. -/
-def srcCostC (T w V : ℕ) : ℕ :=
-  (4 * (V * w) + 4) + (V * (cmulCost T w + 21 * w + 8) + 20) + (2 * (V * w) + 2)
+def srcCostC (w V : ℕ) : ℕ :=
+  (4 * (V * w) + 4) + (V * (cmulCost w + 21 * w + 8) + 20) + (2 * (V * w) + 2)
 
 /-- **Phase: the first chirp product.** `a .ln` holds the box of `x` at scale `2^{q+1}`, `k .kr`
 the kernel box at scale `2^q`; the `m` family is ready for `w` and the shift `q + 1`. Afterwards
@@ -448,7 +448,7 @@ theorem srcC1_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {w q : ℕ} (h
       { E with a := Function.update E.a .ln [],
                m := (Function.update E.m .out
                  (cstream (prime + K) w (cstNumBox q t (cstChirpProd t q a' x)))) }.get
-      (srcCostC T w (∏ i, t i)) := by
+      (srcCostC w (∏ i, t i)) := by
   have hdisj := M.hdisj
   have s1 := src_mv_runs (body := body) M.hrg hdisj (a := .a .ln) (b := .m .ys) (sp := .x .tr)
     (by simp) (by simp) (by simp) E.get htr
@@ -525,9 +525,9 @@ structure SrcConvBase {A : ℕ} (ρ : CvR → List (Fin (A + 4))) (n w : ℕ) : 
 
 /-- The cost of the convolution phase: the operand copy and transfer, the ring header, the
 stage, and the three clears. -/
-def srcCostV (T n w cF cO : ℕ) : ℕ :=
+def srcCostV (n w cF cO : ℕ) : ℕ :=
   (6 * ((∏ i, t n i) * w) + 6) + (4 * ((∏ i, t n i) * w) + 4) + ldrHeaderCost (p n) (ℓ n) w +
-    cvBoxCost T (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO +
+    cvBoxCost (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO +
     (2 * ((∏ i, t n i) * w) + 2) + (2 * ((∏ i, t n i) * w) + 2) +
     (2 * (header (p n) (2 ^ ℓ n) w).length + 2)
 
@@ -557,7 +557,7 @@ theorem srcV_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hn :
       { E with m := Function.update E.m .out [],
                v := (Function.update E.v .fo
                  (cstream (prime + K) w (cstNumBox (p n) (t n) (convBox n a' x₀)))) }.get
-      (srcCostV T n w cF cO) := by
+      (srcCostV n w cF cO) := by
   have hdisj := M.hdisj
   -- the kernel copy
   have s1 := rsa_bcopy (body := body) (ι := M.ι) M.hrg (a := .k .kr) (c := .v .fi)
@@ -693,7 +693,7 @@ theorem srcC2_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {w q : ℕ} (h
       { E with k := Function.update E.k .kr [],
                v := (Function.update (Function.update E.v .fo []) (.cm .out)
                  (cstream (prime + K) w (cstNumBox q t (cstChirpProd t q a' y)))) }.get
-      (srcCostC T w (∏ i, t i) + (2 * ((∏ i, t i) * w) + 2)) := by
+      (srcCostC w (∏ i, t i) + (2 * ((∏ i, t i) * w) + 2)) := by
   have hdisj := M.hdisj
   have s1 := src_mv_runs (body := body) M.hrg hdisj (a := .v .fo) (b := .v (.cm .ys))
     (sp := .x .tr) (by simp) (by simp) (by simp) E.get htr
@@ -754,9 +754,9 @@ lemma src_rsa_of_rsb {T Q A : ℕ} {U P R : Type} {body : P → Pr P T Q A U} {r
 def srcCostB (M : SrcMach t₀ T Q) (n w W : ℕ) (hd0 : 0 < d n)
     (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (rest : List (Fin (prime + K + 4))) : ℕ :=
   rsbAllCostG T t₀ w (d n) (t n) hd0 (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)
-    (fun i nl => bandAxisCost T w (s n i) (t n i)
+    (fun i nl => bandAxisCost w (s n i) (t n i)
       (2 * (8 * FastB0.fastWindow (p n) (alpha n)) + 1) nl)
-    (prime + K) M.hd (bandCpB T σ₀ M.hd n w W hd0 rest) (∏ i, t n i)
+    (prime + K) M.hd (bandCpB σ₀ M.hd n w W hd0 rest) (∏ i, t n i)
 
 /-- **Phase `B̃₀`.** `v (.cm .out)` holds the box of a grid function `c` at scale `2^p` of
 modulus at most `1` on the target box; the `B̃₀` family is the base file `σ₀` with the records

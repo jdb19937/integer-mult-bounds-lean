@@ -376,12 +376,12 @@ register and to `cm .ys`, the hold register to `cm .xs`, `cm .out` to `x .sb`), 
 box, the pointwise product. -/
 def mnGlue (n w : ℕ) : ℕ :=
   4 * (4 * ((∏ i, t n i) * w) + 4) + 2 * (2 * ((∏ i, t n i) * w) + 2) +
-    ((∏ i, t n i) * (cmulCost mnT w + 6 * w + 2) + 8)
+    ((∏ i, t n i) * (cmulCost w + 6 * w + 2) + 8)
 
 /-- The step bounds of the last stages: the coefficient stream onto the rounding stage, the
 rounding stage, the words onto the output stage, the output stage. -/
 def mnTail (n w : ℕ) : ℕ :=
-  (4 * (S n * w) + 4) + roundStageCost mnT (mnMw n w) w (b n) (p n) (mnWo n) (S n) +
+  (4 * (S n * w) + 4) + roundStageCost (mnMw n w) w (b n) (p n) (mnWo n) (S n) +
     (4 * (S n * mnWo n) + 4) + carryOutCost (mnWo n) (b n) (S n)
 
 /-- The sum of the stage bounds before the cleanup, at input length `n`. -/

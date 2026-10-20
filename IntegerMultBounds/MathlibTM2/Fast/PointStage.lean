@@ -23,7 +23,7 @@ Schönhage–Strassen registers `ι j`.
 the complex-product registers: from `xs`, `ys` holding the numerator boxes of `f`, `h` (grid
 values at scale `2^q`, numerators fitting `w` bits), `out` gains the numerator box of
 `rdV q (f * h)` (`= rdV q fun k => f k * h k`, the argument of `G'` in
-`ExactRecovery.computed`); `xs`, `ys` are restored. `(∏ t_i) (cmulCost T w + 6 w + 2) + 8`
+`ExactRecovery.computed`); `xs`, `ys` are restored. `(∏ t_i) (cmulCost w + 6 w + 2) + 8`
 steps.
 
 **Chirp products** (`cst_chirpMul_runs`). The same program with the conjugate kernel on `xs`:
@@ -33,7 +33,7 @@ applied to the chirp product of `u`. The conjugate kernel comes from `cst_conjKe
 once: `bcopy` of the kernel register, the conjugation automaton (`conj_exec`), and `moveR` back
 to forward order; the kernel register is kept. `cstChirpMul` combines the conjugation onto
 `xs`, the products and the clearing of `xs` (`cst_chirpMulKeep_runs`,
-`(∏ t_i) (cmulCost T w + 21 w + 8) + 20` steps).
+`(∏ t_i) (cmulCost w + 21 w + 8) + 20` steps).
 
 **Conjugation** (`cst_conj_runs`). The Gaussian automaton of `conj_exec` on one register: the
 input stream of `l` is consumed and the output register gains the stream of `l.map star`
@@ -169,7 +169,7 @@ include hrg hdisj
 /-- **The pointwise product of two box streams.** `xs` and `ys` (through `c`) hold the numerator
 boxes at scale `2^q` of grid functions `f` and `h` whose numerators fit `w` bits; `out` gains the
 numerator box of `rdV q (f * h)`, every other register as before, within
-`(∏ t_i) (cmulCost T w + 6 w + 2) + 8` steps. -/
+`(∏ t_i) (cmulCost w + 6 w + 2) + 8` steps. -/
 theorem cst_point_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
     (hA : 96 ≤ A) {c : CR → R} (hc : Function.Injective c) {w q : ℕ} (hw : 1 ≤ w)
     (hq : q ≤ w) {d : ℕ} (t : Fin d → ℕ) [∀ i, NeZero (t i)]
@@ -183,7 +183,7 @@ theorem cst_point_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.st
     (hysv : ρ (c .ysv) = []) (hacc : ρ (c .acc) = []) :
     RsaRuns body rg ι (cmulStream (fun x => rg (c x)) (cmulOne ι hι hT hQ (fun x => rg (c x)))) ρ
       (Function.update ρ (c .out) (cstream A w (cstNumBox q t (rdV q (f * h))) ++ ρ (c .out)))
-      ((∏ i, t i) * (cmulCost T w + 6 * w + 2) + 8) := by
+      ((∏ i, t i) * (cmulCost w + 6 * w + 2) + 8) := by
   have hcr : Function.Injective (fun x => rg (c x)) := fun a b e => hc (hrg e)
   have hdisj' : ∀ r j, (fun x => rg (c x)) r ≠ ι j := fun r j => hdisj _ j
   have mem_box : ∀ (g : ((i : Fin d) → ZMod (t i)) → ℂ),
@@ -216,7 +216,7 @@ theorem cst_chirpMul_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
     RsaRuns body rg ι (cmulStream (fun x => rg (c x)) (cmulOne ι hι hT hQ (fun x => rg (c x)))) ρ
       (Function.update ρ (c .out) (cstream A w (cstNumBox q t (cstChirpProd t q a' x)) ++
         ρ (c .out)))
-      ((∏ i, t i) * (cmulCost T w + 6 * w + 2) + 8) := by
+      ((∏ i, t i) * (cmulCost w + 6 * w + 2) + 8) := by
   rw [cstChirpProd_eq_rdV]
   exact cst_point_runs hrg hdisj hι hT hQ hA hc hw hq t _ x (fun k => cst_isFixed_conj (ha k)) hx
     (fun k => by rw [cst_numer_conj]; exact cst_fits_star (haw k)) hxw ρ hr hX hY hxsv hysv hacc
@@ -412,7 +412,7 @@ def cstChirpMul (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
 that of `x` (grid values at scale `2^q`, numerators fitting `w` bits), `xs` and the spares
 `tA`, `tB`, `t1`, `t2` are empty; `out` gains the numerator box of
 `cstChirpProd t q a' x = k ↦ rhoC q (conj (a' k) · x k)`, every other register ends as it
-started, within `(∏ t_i) (cmulCost T w + 21 w + 8) + 20` steps. -/
+started, within `(∏ t_i) (cmulCost w + 21 w + 8) + 20` steps. -/
 theorem cst_chirpMulKeep_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
     (hA : 96 ≤ A) {c : CR → R} (hc : Function.Injective c) {kr tA tB t1 t2 : R}
     (hd : [kr, tA, tB, t1, t2].Nodup)
@@ -430,7 +430,7 @@ theorem cst_chirpMulKeep_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ 
     RsaRuns body rg ι (cstChirpMul ι hι hT hQ rg c kr tA tB t1 t2) ρ
       (Function.update ρ (c .out) (cstream A w (cstNumBox q t (cstChirpProd t q a' x)) ++
         ρ (c .out)))
-      ((∏ i, t i) * (cmulCost T w + 21 * w + 8) + 20) := by
+      ((∏ i, t i) * (cmulCost w + 21 * w + 8) + 20) := by
   have hd' := hd
   regs_ne hd'
   obtain ⟨a1, a2, a3, a4, a5⟩ := hcx .xs

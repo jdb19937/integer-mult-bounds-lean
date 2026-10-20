@@ -38,9 +38,9 @@ multiplier on the registers `ι` (`WordCmd.tcompile`), and moves the product wor
 (`SS.readOut`).
 
 `ssMul_exec`: exact result, `v'.user = v.user`, every other stack unchanged, within
-`(T + 773) * ssCostBound m + 164 * m + 463` host steps, where `ssCostBound m` is the cleaned
+`3 * ssCostBound m + 164 * m + 463` host steps, where `ssCostBound m` is the cleaned
 multiplier's bound plus two. `ssMul_cost_le` bounds this by
-`ssMulConst * (T + 1) * (m * (log m + 1) * (log log m + 1))` (`Nat.log 2`), and `ssMul_exec_log`
+`ssMulConst * (m * (log m + 1) * (log log m + 1))` (`Nat.log 2`), and `ssMul_exec_log`
 states the execution with that bound.
 -/
 
@@ -601,8 +601,7 @@ open IntegerMultBounds.Schoenhage IntegerMultBounds.Schoenhage.Schedule
 
 variable {T Q A : ℕ} {U F : Type}
 
-/-- The step bound of one call of `ssMul` per unit of `T + 773`: the cleaned multiplier's
-bound `SS.cleanBound m` plus two. -/
+/-- The cleaned multiplier's bound `SS.cleanBound m` plus two. -/
 def ssCostBound (m : ℕ) : ℕ := SS.cleanBound m + 2
 
 /-- Multiply the operands in registers `xa`, `xb` by the cleaned Schönhage–Strassen multiplier
@@ -617,7 +616,7 @@ def ssMul (ι : Fin 64 → Fin T) (_hι : Function.Injective ι) (_hT : 64 ≤ T
 outside the range of `ι`, and `xn` differs from `xa` and `xb`; `xa`, `xb` hold `binSyms m a`,
 `binSyms m b` with `a, b < 2 ^ m` and `1 ≤ m`; `xn` holds `topN m` symbols. Afterwards
 `binSyms (topN m + 1) (a * b)` sits on top of `xc`, every other stack and the `user` component
-are unchanged, and at most `(T + 773) * ssCostBound m + 164 * m + 463` host steps were taken
+are unchanged, and at most `3 * ssCostBound m + 164 * m + 463` host steps were taken
 (the multiplier itself takes at most `3 (SS.cleanBound m + 1)`). -/
 theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Function.Injective ι)
     (hT : 64 ≤ T) (hQ : SS.states ≤ Q) {xa xb xn xc : Fin T}
@@ -625,7 +624,7 @@ theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Fu
     (hna : xn ≠ xa) (hnb : xn ≠ xb) {m a b : ℕ} (hm : 1 ≤ m) (ha : a < 2 ^ m) (hb : b < 2 ^ m)
     (v : HS T Q A U) (S : Stacks T A) (hL : ∀ j, S.L (ι j) = []) (hR : ∀ j, S.R (ι j) = [])
     (hSa : S.R xa = binSyms m a) (hSb : S.R xb = binSyms m b) (hSn : (S.R xn).length = topN m) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ (T + 773) * ssCostBound m + 164 * m + 463 ∧
+    ∃ v' n, v'.user = v.user ∧ n ≤ 3 * ssCostBound m + 164 * m + 463 ∧
       Exec body (ssMul ι hι hT hQ xa xb xn xc) (mk v S) n
         (mk v' { S with
           R := Function.update S.R xc (binSyms (topN m + 1) (a * b) ++ S.R xc) }) := by
@@ -699,8 +698,8 @@ theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Fu
   obtain ⟨v₃, u₃, e₃⟩ := readOut_exec body (rI := ι tIn) (s₁ := ι 0) (xc := xc) (i0 (by decide))
     (hxc _) (hxc _) v₂ { S₁ with R := R' } hout h0
   refine ⟨v₃, _, u₃.trans (u₂.trans u₁), ?_, Exec.cast (Exec.seq e₁ (Exec.seq e₂ e₃)) rfl ?_⟩
-  · have h3 : 3 * (SS.cleanBound m + 1) ≤ (T + 773) * ssCostBound m := by
-      unfold ssCostBound; nlinarith
+  · have h3 : 3 * (SS.cleanBound m + 1) ≤ 3 * ssCostBound m := by
+      unfold ssCostBound; omega
     simp only [length_binSyms]
     omega
   · congr 1
@@ -789,22 +788,20 @@ theorem ssCostBound_le {m : ℕ} (hm : 1 ≤ m) :
   generalize mLogLog m = P at *
   nlinarith
 
-/-- The constant of the `O((T + 1) m log m log log m)` step bound of `ssMul`. -/
-def ssMulConst : ℕ := 773 * (200 * costC cA cB cC0 + 57483) + 627
+/-- The constant of the `O(m log m log log m)` step bound of `ssMul`. -/
+def ssMulConst : ℕ := 3 * (200 * costC cA cB cC0 + 57483) + 627
 
 /-- The arithmetic of `ssMul_cost_le`. -/
-lemma cost_arith {T m B K P : ℕ} (hB : B ≤ K * P) (hP : m ≤ P) (hm : 1 ≤ m) :
-    (T + 773) * B + 164 * m + 463 ≤ (773 * K + 627) * (T + 1) * P := by
-  have h1 : (T + 773) * B ≤ (T + 773) * (K * P) := Nat.mul_le_mul_left _ hB
-  have h2 : (T + 773) * (K * P) ≤ 773 * (T + 1) * (K * P) :=
-    Nat.mul_le_mul_right _ (by omega)
-  have h3 : 164 * m + 463 ≤ 627 * (T + 1) * P := by nlinarith
-  calc (T + 773) * B + 164 * m + 463 ≤ 773 * (T + 1) * (K * P) + 627 * (T + 1) * P := by omega
-    _ = (773 * K + 627) * (T + 1) * P := by ring
+lemma cost_arith {m B K P : ℕ} (hB : B ≤ K * P) (hP : m ≤ P) (hm : 1 ≤ m) :
+    3 * B + 164 * m + 463 ≤ (3 * K + 627) * P := by
+  have h1 : 3 * B ≤ 3 * (K * P) := Nat.mul_le_mul_left _ hB
+  have h3 : 164 * m + 463 ≤ 627 * P := by omega
+  calc 3 * B + 164 * m + 463 ≤ 3 * (K * P) + 627 * P := by omega
+    _ = (3 * K + 627) * P := by ring
 
-/-- The step bound of `ssMul_exec` is `O((T + 1) m log m log log m)`. -/
-theorem ssMul_cost_le (T : ℕ) {m : ℕ} (hm : 1 ≤ m) :
-    (T + 773) * ssCostBound m + 164 * m + 463 ≤ ssMulConst * (T + 1) * mLogLog m :=
+/-- The step bound of `ssMul_exec` is `O(m log m log log m)`. -/
+theorem ssMul_cost_le {m : ℕ} (hm : 1 ≤ m) :
+    3 * ssCostBound m + 164 * m + 463 ≤ ssMulConst * mLogLog m :=
   cost_arith (ssCostBound_le hm) (le_mLogLog m) hm
 
 end Logs
@@ -815,20 +812,20 @@ open IntegerMultBounds.Schoenhage.Schedule
 
 variable {T Q A : ℕ} {U F : Type}
 
-/-- `ssMul_exec` with the step bound `ssMulConst * (T + 1) * (m (log m + 1) (log log m + 1))`. -/
+/-- `ssMul_exec` with the step bound `ssMulConst * (m (log m + 1) (log log m + 1))`. -/
 theorem ssMul_exec_log (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Function.Injective ι)
     (hT : 64 ≤ T) (hQ : SS.states ≤ Q) {xa xb xn xc : Fin T}
     (hxa : ∀ j, ι j ≠ xa) (hxb : ∀ j, ι j ≠ xb) (hxn : ∀ j, ι j ≠ xn) (hxc : ∀ j, ι j ≠ xc)
     (hna : xn ≠ xa) (hnb : xn ≠ xb) {m a b : ℕ} (hm : 1 ≤ m) (ha : a < 2 ^ m) (hb : b < 2 ^ m)
     (v : HS T Q A U) (S : Stacks T A) (hL : ∀ j, S.L (ι j) = []) (hR : ∀ j, S.R (ι j) = [])
     (hSa : S.R xa = binSyms m a) (hSb : S.R xb = binSyms m b) (hSn : (S.R xn).length = topN m) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ ssMulConst * (T + 1) * mLogLog m ∧
+    ∃ v' n, v'.user = v.user ∧ n ≤ ssMulConst * mLogLog m ∧
       Exec body (ssMul ι hι hT hQ xa xb xn xc) (mk v S) n
         (mk v' { S with
           R := Function.update S.R xc (binSyms (topN m + 1) (a * b) ++ S.R xc) }) := by
   obtain ⟨v', n, hu, hn, he⟩ := ssMul_exec body ι hι hT hQ hxa hxb hxn hxc hna hnb hm ha hb v S
     hL hR hSa hSb hSn
-  exact ⟨v', n, hu, hn.trans (ssMul_cost_le T hm), he⟩
+  exact ⟨v', n, hu, hn.trans (ssMul_cost_le hm), he⟩
 
 end MainLog
 

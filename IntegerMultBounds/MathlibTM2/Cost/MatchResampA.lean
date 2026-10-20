@@ -51,11 +51,11 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 /-! ### The lines -/
 
 /-- One line of `Ã`: at most `t ((2m + 1)(rmulCost + 13 w + 17) + 58 w + 8 L + 78)` steps. -/
-theorem mt_rsa_line_le (T w s t m L : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
-    rsaLineCost T w s t m L ≤
-      t * ((2 * m + 1) * (rmulCost T w + 13 * w + 17) + 58 * w + 8 * L + 78) := by
+theorem mt_rsa_line_le (w s t m L : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
+    rsaLineCost w s t m L ≤
+      t * ((2 * m + 1) * (rmulCost w + 13 * w + 17) + 58 * w + 8 * L + 78) := by
   unfold rsaLineCost rsaRowsCost rsaRowCost rsaTermsCost rsaTermCost
-  generalize rmulCost T w = R
+  generalize rmulCost w = R
   obtain ⟨a, rfl⟩ : ∃ a, s = m + a := ⟨s - m, by omega⟩
   obtain ⟨c, rfl⟩ : ∃ c, t = m + a + c := ⟨t - (m + a), by omega⟩
   rw [show m + a - m = a by omega, show m + a + c - (m + a) = c by omega]
@@ -64,15 +64,15 @@ theorem mt_rsa_line_le (T w s t m L : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht :
 
 /-- One axis of `Ã` on a box of `N` records: at most
 `N ((2m + 1)(rmulCost + 13 w + 17) + 60 w + 8 L + 80) + 4` steps. -/
-theorem mt_rsa_axis_le (T w s t m L N : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
-    rsaAxisCost T w s t m L (N / t) ≤
-      N * ((2 * m + 1) * (rmulCost T w + 13 * w + 17) + 60 * w + 8 * L + 80) + 4 := by
-  have h1 := mt_rsa_line_le T w s t m L hst hms ht
+theorem mt_rsa_axis_le (w s t m L N : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
+    rsaAxisCost w s t m L (N / t) ≤
+      N * ((2 * m + 1) * (rmulCost w + 13 * w + 17) + 60 * w + 8 * L + 80) + 4 := by
+  have h1 := mt_rsa_line_le w s t m L hst hms ht
   have hB : N / t * t ≤ N := Nat.div_mul_le_self N t
   unfold rsaAxisCost
-  set X := (2 * m + 1) * (rmulCost T w + 13 * w + 17) + 58 * w + 8 * L + 78 with hX
+  set X := (2 * m + 1) * (rmulCost w + 13 * w + 17) + 58 * w + 8 * L + 78 with hX
   generalize N / t = B at hB ⊢
-  have h2 : B * (rsaLineCost T w s t m L + 2) ≤ B * (t * X + 2) :=
+  have h2 : B * (rsaLineCost w s t m L + 2) ≤ B * (t * X + 2) :=
     Nat.mul_le_mul_left _ (by omega)
   have h3 : B * (t * X + 2) + 2 * (B * t * w) ≤ B * t * (X + 2 * w + 2) := by
     have : B ≤ B * t := Nat.le_mul_of_pos_right _ ht
@@ -356,9 +356,9 @@ theorem mt_rsa_term_nat {Tm w s ti m L N c₁ c₂ b₁ b₂ e cp Y r : ℕ} (hs
     (hN : 1 ≤ N) :
     cp + rsaStepCost Tm t₀ w s ti m L N c₁ c₂ b₁ b₂ e + 3 ≤
       (Tm + 12 * swapT t₀ + 5) * c₁ + (Tm + 12 * swapT t₀ + 5) * c₂ +
-        N * ((2 * m + 1) * (rmulCost Tm w + 13 * w + 17)) + 110 * (swapT t₀ * (N * Y)) +
+        N * ((2 * m + 1) * (rmulCost w + 13 * w + 17)) + 110 * (swapT t₀ * (N * Y)) +
         400 * (N * Y) + 4 * (Tm * (N * Y)) + 1600200 * (r * Y ^ 4) := by
-  have hax := mt_rsa_axis_le Tm w s ti m L N hst hms hti
+  have hax := mt_rsa_axis_le w s ti m L N hst hms hti
   unfold rsaStepCost rsaSwapCost
   generalize swapT t₀ = S at *
   have hNY : 1 ≤ N * Y := Nat.one_le_iff_ne_zero.2 (by positivity)
@@ -371,8 +371,8 @@ theorem mt_rsa_term_nat {Tm w s ti m L N c₁ c₂ b₁ b₂ e cp Y r : ℕ} (hs
   have f7 : N * w ≤ N * Y := Nat.mul_le_mul_left _ hw
   have f8 : N * L ≤ N * Y := Nat.mul_le_mul_left _ hL
   have g1 : S * (1 + 2 * N + 5 * Y) = S + 2 * (S * N) + 5 * (S * Y) := by ring
-  have g2 : N * ((2 * m + 1) * (rmulCost Tm w + 13 * w + 17) + 60 * w + 8 * L + 80) =
-      N * ((2 * m + 1) * (rmulCost Tm w + 13 * w + 17)) + 60 * (N * w) + 8 * (N * L) + 80 * N := by
+  have g2 : N * ((2 * m + 1) * (rmulCost w + 13 * w + 17) + 60 * w + 8 * L + 80) =
+      N * ((2 * m + 1) * (rmulCost w + 13 * w + 17)) + 60 * (N * w) + 8 * (N * L) + 80 * N := by
     ring
   omega
 
@@ -406,7 +406,7 @@ theorem mt_rsa_nat_le {K : ℕ} (Tm cw cW : ℕ) (h : Big n) (hd0 : 0 < d n) (w 
     (hV : ∀ x ∈ preClrA hd, (V₀.get x).length ≤ T n * w) :
     rsaAllCost (K := K) Tm t₀ w (windowA (p n) (alpha n)) (d n) (t n) hd0
         (rsaPipeData n (preHsA n w hd0)) hd (preCpA V₀ hd n w W hd0 rest) (∏ i, t n i) ≤
-      d n * ((∏ i, t n i) * ((2 * windowA (p n) (alpha n) + 1) * (rmulCost Tm w + 13 * w + 17)) +
+      d n * ((∏ i, t n i) * ((2 * windowA (p n) (alpha n) + 1) * (rmulCost w + 13 * w + 17)) +
           110 * (swapT t₀ * ((∏ i, t n i) * ((cw + cW + 2) * (p n + 1)))) +
           400 * ((∏ i, t n i) * ((cw + cW + 2) * (p n + 1))) +
           4 * (Tm * ((∏ i, t n i) * ((cw + cW + 2) * (p n + 1)))) +
@@ -418,7 +418,7 @@ theorem mt_rsa_nat_le {K : ℕ} (Tm cw cW : ℕ) (h : Big n) (hd0 : 0 < d n) (w 
   set N := ∏ i, t n i with hNdef
   set m := windowA (p n) (alpha n) with hm
   set Xn := ⌈swapConst * (T n * (3 * w) : ℕ) * (ℓ n : ℝ) ^ Parameters.tau⌉₊ + 1 with hXn
-  set G := N * ((2 * m + 1) * (rmulCost Tm w + 13 * w + 17)) + 110 * (swapT t₀ * (N * Y)) +
+  set G := N * ((2 * m + 1) * (rmulCost w + 13 * w + 17)) + 110 * (swapT t₀ * (N * Y)) +
     400 * (N * Y) + 4 * (Tm * (N * Y)) + 1600200 * (r n * Y ^ 4) with hG
   have hp1 : 1 ≤ p n := by have := h.thirteen_le_p; omega
   have hY1 : p n + 1 ≤ Y := Nat.le_mul_of_pos_left _ (by omega)
@@ -430,11 +430,11 @@ theorem mt_rsa_nat_le {K : ℕ} (Tm cw cW : ℕ) (h : Big n) (hd0 : 0 < d n) (w 
   have hNY : 1 ≤ N * Y := Nat.one_le_iff_ne_zero.2 (by positivity)
   -- the first axis and the first loader step
   have h0 : preCpA V₀ hd n w W hd0 rest 0 +
-      rsaAxisCost Tm w (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 0)).s
+      rsaAxisCost w (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 0)).s
         (t n (rsaStepAx hd0 0)) m (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 0)).Lb
         (N / t n (rsaStepAx hd0 0)) ≤ G := by
     have c1 := mt_rsa_cp_zero_le h hd0 w W V₀ hd rest hY1 hwY hWY hV
-    have c2 := mt_rsa_axis_le Tm w (s n (rsaStepAx hd0 0)) (t n (rsaStepAx hd0 0)) m
+    have c2 := mt_rsa_axis_le w (s n (rsaStepAx hd0 0)) (t n (rsaStepAx hd0 0)) m
       (Nat.log 2 (t n (rsaStepAx hd0 0))) N (mt_s_lt_t h _).le (pre_windowA_le_s h _)
       (mt_t_pos n _)
     have hL : Nat.log 2 (t n (rsaStepAx hd0 0)) ≤ Y :=
@@ -442,9 +442,9 @@ theorem mt_rsa_nat_le {K : ℕ} (Tm cw cW : ℕ) (h : Big n) (hd0 : 0 < d n) (w 
     have f1 : N * w ≤ N * Y := Nat.mul_le_mul_left _ hwY
     have f2 : N * Nat.log 2 (t n (rsaStepAx hd0 0)) ≤ N * Y := Nat.mul_le_mul_left _ hL
     have f3 : N ≤ N * Y := Nat.le_mul_of_pos_right _ (by omega)
-    have g2 : N * ((2 * m + 1) * (rmulCost Tm w + 13 * w + 17) + 60 * w +
+    have g2 : N * ((2 * m + 1) * (rmulCost w + 13 * w + 17) + 60 * w +
         8 * Nat.log 2 (t n (rsaStepAx hd0 0)) + 80) =
-        N * ((2 * m + 1) * (rmulCost Tm w + 13 * w + 17)) + 60 * (N * w) +
+        N * ((2 * m + 1) * (rmulCost w + 13 * w + 17)) + 60 * (N * w) +
           8 * (N * Nat.log 2 (t n (rsaStepAx hd0 0))) + 80 * N := by ring
     rw [← hN] at c1
     simp only [rsaPipeData]
@@ -636,7 +636,7 @@ interchange bank of `t₀` header registers, coefficient width `1 ≤ w ≤ cw p
 `W ≤ cW p`, and the registers cleared by the first loader step of length at most `T w`, the
 step bound of `rsaStage_exec` is eventually at most `C (totResamp + totCRT + T p)` with
 `C = 6 Q swapConst cw + 4 Q + 4 K₁ + 2 (cw + cW + 2)(110 swapT t₀ + 400 + 4 Tm) + 8`,
-`Q = Tm + 12 swapT t₀ + 5`, `K₁ = mtCM Tm cw + 13 cw + 17`: the line work
+`Q = Tm + 12 swapT t₀ + 5`, `K₁ = mtCM cw + 13 cw + 17`: the line work
 `d T (2m + 1) rmulCost` is `O(totResamp)`, the `2 (d - 1)` interchanges with the last axis are
 `O(d T w ℓ^τ) = O(totCRT)`, the loader is `O(d T)` (unary `P`, `G`) plus `O(d r B^4) = o(T)`
 for the tables, and the first loader step clears at most `14 (2 T w + 2)` symbols. -/
@@ -652,7 +652,7 @@ theorem mt_rsa_stage_le_route (route : ℕ → ℝ)
   set S := swapT t₀ with hS
   set CY := cw + cW + 2 with hCY
   set Q : ℝ := (Tm : ℝ) + 12 * S + 5 with hQ
-  set K1 : ℝ := mtCM Tm cw + 13 * cw + 17 with hK1
+  set K1 : ℝ := mtCM cw + 13 * cw + 17 with hK1
   refine ⟨6 * Q * swapConst * cw + 4 * Q + 4 * K1 + 2 * CY * (110 * S + 400 + 4 * Tm) + 8, ?_⟩
   filter_upwards [eventually_big, mt_poly_r_le_T (1600200 * (7 * CY) ^ 4) 5] with n h hsmall
   intro hd0 w W V₀ hd rest hw hwc hWc hV
@@ -666,7 +666,7 @@ theorem mt_rsa_stage_le_route (route : ℕ → ℝ)
   have hXc : (⌈X⌉₊ : ℝ) ≤ X + 1 := (Nat.ceil_lt_add_one hX0).le
   generalize ⌈X⌉₊ = Xc at hnat hXc
   set m := windowA (p n) (alpha n) with hm
-  set R := rmulCost Tm w with hRdef
+  set R := rmulCost w with hRdef
   set Y := CY * (p n + 1) with hY
   -- the small part
   have hb1 : 1 ≤ b n := by have := h.sixteen_le_b; omega
@@ -706,7 +706,7 @@ theorem mt_rsa_stage_le_route (route : ℕ → ℝ)
   have hTm0 : (0 : ℝ) ≤ Tm := Nat.cast_nonneg _
   have hCY0 : (0 : ℝ) ≤ CY := Nat.cast_nonneg _
   have hQ0 : 0 ≤ Q := by rw [hQ]; linarith
-  have hCM0 := mt_CM_nonneg Tm cw
+  have hCM0 := mt_CM_nonneg cw
   have hK10 : 0 ≤ K1 := by rw [hK1]; linarith
   have hτ : (0 : ℝ) ≤ (ℓ n : ℝ) ^ Parameters.tau := Real.rpow_nonneg (Nat.cast_nonneg _) _
   have hm0 : (0 : ℝ) ≤ 2 * (m : ℝ) + 1 := by
@@ -718,7 +718,7 @@ theorem mt_rsa_stage_le_route (route : ℕ → ℝ)
     linarith
   set u : ℝ := (p n : ℝ) ^ (1 / 2 : ℝ) * alpha n with hu
   have hwin : (2 * (m : ℝ) + 1) ≤ 4 * u := mt_rsa_window_real h
-  have hRm : (R : ℝ) ≤ mtCM Tm cw * totMp n := mt_rmul_le Tm h hw hwc
+  have hRm : (R : ℝ) ≤ mtCM cw * totMp n := mt_rmul_le h hw hwc
   have hw' : (w : ℝ) ≤ cw * p n := by exact_mod_cast hwc
   have hA : (R : ℝ) + 13 * w + 17 ≤ K1 * totMp n := by
     rw [hK1]; exact mt_rsa_linA hRm hw' hpM hMp1 hcw0

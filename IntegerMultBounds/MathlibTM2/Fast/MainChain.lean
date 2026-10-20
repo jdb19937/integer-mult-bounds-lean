@@ -286,7 +286,7 @@ lemma mn_point_runs (hA : 96 ≤ prime + K) {w q : ℕ} (hw : 1 ≤ w) (hq : q �
     SrcRuns body mnRg mnι Pre mnPoint ρ
       (Function.update ρ (.src (.v (.cm .out)))
         (cstream (prime + K) w (cstNumBox q t (rdV q (f * h))) ++ ρ (.src (.v (.cm .out)))))
-      ((∏ i, t i) * (cmulCost mnT w + 6 * w + 2) + 8) :=
+      ((∏ i, t i) * (cmulCost w + 6 * w + 2) + 8) :=
   SrcRuns.of_rsa (cst_point_runs (body := body) (c := fun x => MnR.src (.v (.cm x))) mnRg_inj
     mn_hdisj mnι_inj mnT_ge_64 mnQ_ss hA (fun _ _ e => CvR.cm.inj (SrcR.v.inj (MnR.src.inj e)))
     hw hq t f h hf hh hfw hhw ρ hr hX hY hxsv hysv hacc)
@@ -311,7 +311,7 @@ lemma mn_round_runs (hA : 4 ≤ prime + K) {w m b' p' W S' : ℕ} (hw : 1 ≤ w)
     SrcRuns body mnRg mnι Pre mnRound ρ
       (Function.update (Function.update ρ (.rnd .src) []) (.rnd .dst)
         ((List.ofFn fun i => rndCoeff b' S' p' (N i).re).flatMap (binSyms W) ++ ρ (.rnd .dst)))
-      (roundStageCost mnT m w b' p' W S') := by
+      (roundStageCost m w b' p' W S') := by
   refine SrcRuns.of_rsa (RsaRuns.of_raw fun v S hc hS => ?_)
   obtain ⟨v', k, hu, hk, he⟩ := roundStage_exec (body := body) (rg := mnRnd) (w := w) (m := m)
     (b := b') (p := p') (W := W) (S := S')
@@ -444,7 +444,7 @@ def mnWords (K n x y : ℕ) : List (Fin (prime + K + 4)) :=
 source-transform runs. -/
 def mnChainCost (n w runs : ℕ) : ℕ :=
   2 * digitCost (b n) (p n) w (S n) + runs + mnGlue n w +
-    ((4 * (S n * w) + 4) + roundStageCost mnT (mnMw n w) w (b n) (p n) (mnWo n) (S n) +
+    ((4 * (S n * w) + 4) + roundStageCost (mnMw n w) w (b n) (p n) (mnWo n) (S n) +
       (4 * (S n * mnWo n) + 4))
 
 set_option maxHeartbeats 4000000 in
@@ -678,7 +678,7 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
   obtain ⟨F₈, hF₈⟩ : ∃ F : SrcF 6 (prime + K), F =
       { F₇ with v := Function.update F₇.v (.cm .out) PR } := ⟨_, rfl⟩
   replace s8 : SrcRuns body mnRg mnι (mnSynPre σ) mnPoint (mnGlob F₇ g₆) (mnGlob F₈ g₆)
-      ((∏ i, t n i) * (cmulCost mnT w + 6 * w + 2) + 8) := by rw [hF₈]; exact s8
+      ((∏ i, t n i) * (cmulCost w + 6 * w + 2) + 8) := by rw [hF₈]; exact s8
   -- 9, 10. clear the operands
   have s9 := mn_clear_cm (body := body) (Pre := mnSynPre σ) .xs F₈ g₆
   have hF₈xs : F₈.v (.cm .xs) = BX := by subst hF₈; simp [hF₇v]
@@ -801,7 +801,7 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
       g' = Function.update (Function.update g₁₃ (.rnd .src) []) (.rnd .dst) (mnWords K n x y) :=
     ⟨_, rfl⟩
   replace s14 : SrcRuns body mnRg mnι (mnSynPre σ) mnRound (mnGlob F₁₃ g₁₃) (mnGlob F₁₃ g₁₄)
-      (roundStageCost mnT (mnMw n w) w (b n) (p n) (mnWo n) (S n)) := by
+      (roundStageCost (mnMw n w) w (b n) (p n) (mnWo n) (S n)) := by
     rw [hg₁₄]; exact s14
   -- 15. the words onto the output stage
   have hg₁₄sp : g₁₄ (.io .sp) = [] := by subst hg₁₄ hg₁₃; simp [hg₆sp]

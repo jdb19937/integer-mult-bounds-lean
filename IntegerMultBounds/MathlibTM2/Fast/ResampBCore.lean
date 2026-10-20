@@ -736,7 +736,7 @@ theorem rsb_rmulStream_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r
         (rmulOne ι hι hT hQ (fun c => rg (rsbRemap x y o c)))) ρ
       (Function.update ρ o
         (cstream A w (List.zipWith (fun a b => tdivN p (a * b)) xs ys) ++ ρ o))
-      (xs.length * (rmulCost T w + 6 * w + 2) + 8) := by
+      (xs.length * (rmulCost w + 6 * w + 2) + 8) := by
   have hinj := rsbRemap_injective hfree
   obtain ⟨hxy, hxo, hyo, hc⟩ := hfree
   have H := rmulStream_runs (body := body) (hrg.comp hinj) (fun c j => hdisj _ j) hι hT hQ hA
@@ -763,7 +763,7 @@ theorem rsb_rmulTable_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
         (rmulOne ι hι hT hQ (fun c => rg (rsbRemap x y o c)))) ρ
       (Function.update ρ o
         (cstream A w (tableOut (fun a b => tdivN p (a * b)) blocks ts) ++ ρ o))
-      (blocks.flatten.length * (rmulCost T w + 6 * w + 8) + 6) := by
+      (blocks.flatten.length * (rmulCost w + 6 * w + 8) + 6) := by
   have hinj := rsbRemap_injective hfree
   obtain ⟨hxy, hxo, hyo, hc⟩ := hfree
   have H := rmulTable_runs (body := body) (hrg.comp hinj) (fun c j => hdisj _ j) hι hT hQ hA

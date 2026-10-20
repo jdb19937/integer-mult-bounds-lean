@@ -1248,7 +1248,7 @@ theorem band_preL10 (hrg₂ : Function.Injective (Sum.elim rg rgx))
       (Function.update (Function.update σ (.inl .dtab)
         (cstream (prime + K) w ((rsbArr fun ℓ => rsbReal (tableD D.s D.t D.α D.p ℓ)).map
           fun a => tdivN D.bP (a * ⟨2 ^ (9 * D.p), 0⟩)))) (.inl .ef) [])
-      (D.s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (D.s * w) + 2)) := by
+      (D.s * (rmulCost w + 6 * w + 8) + 6 + (2 * (D.s * w) + 2)) := by
   have hrg : Function.Injective rg := fun a b h => Sum.inl_injective (hrg₂ (a₁ := .inl a) h)
   have hdisj : ∀ r j, rg r ≠ ι j := fun r j => hdisj₂ (.inl r) j
   have h := band_scale_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA (x := .ef) (y := .tb)
@@ -1357,7 +1357,7 @@ theorem band_preP (hrg₂ : Function.Injective (Sum.elim rg rgx))
     (hm2wn : (σ (.inl .m2wn)).length = 2 * D.bWd * w)
     (hdst : (σ (.inl .dst)).length = 2 * D.bWd) :
     RsbRuns body (Sum.elim rg rgx) ι (bandAxisPrepP rg hι hT hQ) σ (bandFP σ D w l)
-      (bandAxisPrepCost T w (2 * D.bWd) D.bK D.s) := by
+      (bandAxisPrepCost w (2 * D.bWd) D.bK D.s) := by
   have hrg : Function.Injective rg := fun a b h => Sum.inl_injective (hrg₂ (a₁ := .inl a) h)
   have hdisj : ∀ r j, rg r ≠ ι j := fun r j => hdisj₂ (.inl r) j
   have hB : D.bB = 2 * D.bWd + 1 := rfl
@@ -1762,11 +1762,11 @@ def bandFB2b (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAx
       rsbReal (tableD D.s D.t D.α D.p ℓ)).map fun a => tdivN D.bP (a * ⟨2 ^ (9 * D.p), 0⟩))) r
 
 /-- The step bound of the second half of step 3. -/
-def bandCostB2b (T : ℕ) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) (w : ℕ) : ℕ :=
+def bandCostB2b (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) (w : ℕ) : ℕ :=
   preVMCost 48 D.W w [D.s, D.t, D.α, D.p] (preKD D) (D.s * w) +
   (((4 * D.p + 4) + (1 + (preVMCost 48 D.W w [9 * D.p + 1] (bandKH (9 * D.p + 1)) w +
     (2 * (9 * D.p + 1) + 2)))) +
-  ((D.s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (D.s * w) + 2)) +
+  ((D.s * (rmulCost w + 6 * w + 8) + 6 + (2 * (D.s * w) + 2)) +
   ((bandScrL.map fun r => 2 * (σ r).length + 2).sum + 1 + 2 * w + 2)))
 
 set_option maxRecDepth 4000 in
@@ -1785,7 +1785,7 @@ theorem band_preB2b (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Funct
     (hef : σ (.inl .ef) = []) (htb : σ (.inl .tb) = []) (hdtab : σ (.inl .dtab) = [])
     (htC : σ (.inl .tC) = []) (hac2 : σ (.inl .ac2) = []) :
     RsbRuns body (Sum.elim rg rgx) ι (bandPreB2b rg rgx ι hι hT hQ) σ (bandFB2b σ D w)
-      (bandCostB2b T σ D w) := by
+      (bandCostB2b σ D w) := by
   have hwn := hready.wn
   have h1 := pre_rsbRuns (band_preL8 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ D w hsn hya hhc hac hhv
     hwn hef hp hα hαp hs hst hwW hW)
@@ -1954,10 +1954,10 @@ structure BandPreOk (D : PreAxB) (w : ℕ) : Prop where
   fc : Fits w (⟨2 ^ (9 * D.p), 0⟩ : GaussianInt)
 
 /-- The step bound of the loader. -/
-def bandPreCost (T : ℕ) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+def bandPreCost (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) : ℕ :=
-  bandCostB1 σ hd w D + (bandCostB2a D w + (bandCostB2b T (bandFB2a (bandFB1 σ hd w D rest) D w) D w +
-    (bandAxisPrepCost T w (2 * D.bWd) D.bK D.s +
+  bandCostB1 σ hd w D + (bandCostB2a D w + (bandCostB2b (bandFB2a (bandFB1 σ hd w D rest) D w) D w +
+    (bandAxisPrepCost w (2 * D.bWd) D.bK D.s +
       bandCostE (bandFP (bandFB2b (bandFB2a (bandFB1 σ hd w D rest) D w) D w) D w (σ (.inl .src))))))
 
 set_option maxRecDepth 4000 in
@@ -1974,7 +1974,7 @@ theorem band_preB_runs (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Fu
       (bandRows D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
       (bandInputs D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) m)) :
     RsbRuns body (Sum.elim rg rgx) ι (bandPreB rg rgx ι hd hι hT hQ) σ (bandLoad σ hd w D rest)
-      (bandPreCost T σ hd w D rest) := by
+      (bandPreCost σ hd w D rest) := by
   have hp1 : 1 ≤ D.p := by have := hok.p13; omega
   have hjp : D.α * D.α ≤ D.p := by have := hok.αp; nlinarith
   obtain ⟨-, -, -, -, -, -, hWM⟩ := pre_W_facts hok.α2 hok.s0 hok.st hok.W

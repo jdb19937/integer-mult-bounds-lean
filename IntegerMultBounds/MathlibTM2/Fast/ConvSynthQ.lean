@@ -157,7 +157,7 @@ theorem cvSynthQ_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     CvRuns body rg ι Pre (cvSynth rg hrg hT hQ fwdP oppP) ρ
       (Function.update (Function.update (Function.update ρ .io []) .sy []) .so
         (cstream A w (rpStream (cvM a) (cvConvNumQ p a F O Zu Zv)) ++ ρ .so))
-      (cvSynthCost T p l w (List.ofFn a).sum (cvM a) cF cO) := by
+      (cvSynthCost p l w (List.ofFn a).sum (cvM a) cF cO) := by
   set Fu := fwdRoundsQ F (nRounds a) (rpGrid p Zu) with hFu_def
   set Fv := fwdRoundsQ F (nRounds a) (rpGrid p Zv) with hFv_def
   set Xu := cvFwdOutQ p l a π F Zu with hXu_def

@@ -177,7 +177,7 @@ theorem cvBoxQ_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι 
       (Function.update ρ .fo (cstream A w
         (cstNumBox p t (cconvApproxVia (boxSplit t h) p θp θm (synthMrQ a (cvN t) F O) f g)) ++
           ρ .fo))
-      (cvBoxCost T p l w (List.ofFn a).sum (cvM a) cF cO) := by
+      (cvBoxCost p l w (List.ofFn a).sum (cvM a) cF cO) := by
   subst hrl
   have hMN : (List.ofFn (cvN t)).prod = cvM a := by
     rw [ofFn_eq_tsA a (cvN t) ha, tsA_prod]

@@ -48,11 +48,11 @@ lemma compactSource_sum_ge {n : ℕ} (h : Big n) :
   unfold compactSourceSum
   refine ⟨by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
 
-theorem compactSource_box_le (Tm cw : ℕ) :
+theorem compactSource_box_le (cw : ℕ) :
     ∀ᶠ n in atTop, ∀ w : ℕ, p n + 2 ≤ w → w ≤ cw * p n →
-      (cvBoxCost Tm (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) 0 0 : ℝ) ≤
-        mtCvC Tm cw * (CompactTotal.conv n + (T n : ℝ) * totMp n) := by
-  filter_upwards [mt_cv_box_le Tm cw, eventually_big] with n hn h w hw1 hw
+      (cvBoxCost (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) 0 0 : ℝ) ≤
+        mtCvC cw * (CompactTotal.conv n + (T n : ℝ) * totMp n) := by
+  filter_upwards [mt_cv_box_le cw, eventually_big] with n hn h w hw1 hw
   refine (hn w hw1 hw).trans (mul_le_mul_of_nonneg_left ?_ ?_)
   · have hI := CompactTotal.conv_inner_nonneg h
     have hdK : (0 : ℝ) ≤ (d n : ℝ) := Nat.cast_nonneg _
@@ -70,7 +70,7 @@ theorem compactSource_box_le (Tm cw : ℕ) :
     rw [e]
     linarith
   · unfold mtCvC
-    have := mt_CM_nonneg Tm cw
+    have := mt_CM_nonneg cw
     have hR : 0 ≤ grRingConst (6 + 4 * cw) := by
       have := gr_ringConst_ge (A := 6 + 4 * cw) (by omega)
       have : (0 : ℝ) ≤ 12 * ((6 + 4 * cw : ℕ) : ℝ) := by positivity
@@ -94,15 +94,15 @@ lemma compactSource_core_le {K : ℕ} (cw cW : ℕ) :
         C * compactSourceSum n + ((2 * cF + cO : ℕ) : ℝ) := by
   obtain ⟨CA, hCA⟩ := mt_rsa_stage_le_linear compactMnT 6 K cw cW
   obtain ⟨CB, hCB⟩ := mt_band_stage_le_linear compactMnT 6 K cw cW
-  obtain ⟨CK, hCK⟩ := mt_ch_kernel_le compactMnT cw cW
-  set c4 : ℝ := mtCM compactMnT cw + 21 * cw + 28
+  obtain ⟨CK, hCK⟩ := mt_ch_kernel_le cw cW
+  set c4 : ℝ := mtCM cw + 21 * cw + 28
   set c5 : ℝ := 6 * cw + 19
-  set c6 : ℝ := mtCvC compactMnT cw
+  set c6 : ℝ := mtCvC cw
   set c7 : ℝ := ((60 * cw + 200 : ℕ) : ℝ)
   refine ⟨max CA 0 + max CB 0 + max CK 0 + 2 * max c4 0 + max c5 0 + max c6 0 + max c7 0,
     by positivity, ?_⟩
-  filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le compactMnT cw, mt_ch_scale_le cw,
-    compactSource_box_le compactMnT cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
+  filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le cw, mt_ch_scale_le cw,
+    compactSource_box_le cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
   intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨g1, g2, g3, g4, -, -⟩ := compactSource_sum_ge h
   obtain ⟨-, -, -, q4, q5⟩ := compactSource_sum_parts h
@@ -130,7 +130,7 @@ lemma compactSource_core_le {K : ℕ} (cw cW : ℕ) :
   unfold srcCoreCost srcCostA srcCostK srcCostC srcCostV srcCostB
   rw [mn_cvBoxCost_split]
   simp only [show compactSrcM.hd = crtHd from rfl]
-  generalize (∏ i, t n i) * (cmulCost compactMnT w + 21 * w + 8) + 20 = P1 at a4 ⊢
+  generalize (∏ i, t n i) * (cmulCost w + 21 * w + 8) + 20 = P1 at a4 ⊢
   generalize (∏ i, t n i) * (6 * w + 4 * gamma n + 14) + 4 = P2 at a5 ⊢
   generalize (∏ i, t n i) * w = XW at a7 ⊢
   push_cast at a1 a2 a3 a4 a5 a6 a7 ⊢

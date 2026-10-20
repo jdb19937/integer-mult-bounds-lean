@@ -77,7 +77,7 @@ theorem cvBox_convBox_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     (hπ : ∀ m < cvM (cvAx (Sizes.t n)), π m < cvM (cvAx (Sizes.t n)))
     (hw : Sizes.p n + 2 ≤ w) (hSw : (List.ofFn (cvAx (Sizes.t n))).sum ≤ w) :
     CvBoxRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) n w (convBox n)
-      (cvBoxCost T (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
+      (cvBoxCost (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
         (cvM (cvAx (Sizes.t n))) cF cO) :=
   fun f g hf hg hf1 hg1 ρ hfi hgi htp htm hio hsy hso ht1 hrd hxsv hysv hacc hxs hout hsv hta
     htb hracc htmp hd0 hpriv hshD hshS hshR hshT hshU =>
@@ -105,7 +105,7 @@ theorem cvBoxQ_convBoxQ_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
     CvBoxRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) n w
       (convBoxQ n (roundPairsOf (Sizes.p n) τ (Sizes.ℓ n) (Sizes.d n) (Sizes.t n) inferInstance
         (fun i hi => Pipeline.t_of_last hn i hi) F O))
-      (cvBoxCost T (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
+      (cvBoxCost (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
         (cvM (cvAx (Sizes.t n))) cF cO) :=
   fun f g hf hg hf1 hg1 ρ hfi hgi htp htm hio hsy hso ht1 hrd hxsv hysv hacc hxs hout hsv hta
     htb hracc htmp hd0 hpriv hshD hshS hshR hshT hshU =>
@@ -190,7 +190,7 @@ theorem srcV_runsG (M : SrcMach t₀ T Q) {n : ℕ}
     {fwdP oppP : Pr P T Q (prime + K) U} {Pre : Stacks T (prime + K) → Prop}
     {w cF cO : ℕ} (cb : BoxConvOf n)
     (hBox : CvBoxRuns body M.rv M.ι Pre (cvBox M.rv M.ι M.hrv M.hι M.hT M.hQ M.hT91 M.hQrp fwdP oppP) n w cb
-      (cvBoxCost T (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
+      (cvBoxCost (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
     (hP : SrcFramed M.rg Pre)
     (a' x₀ : ((i : Fin (d n)) → ZMod (t n i)) → ℂ) (ha : ∀ y, IsFixed (p n) (a' y))
     (hx : ∀ y, IsFixed (p n) (x₀ y)) (ha1 : ‖a'‖ ≤ 1) (hx1 : ‖x₀‖ ≤ 1)
@@ -204,7 +204,7 @@ theorem srcV_runsG (M : SrcMach t₀ T Q) {n : ℕ}
       { E with m := Function.update E.m .out [],
                v := (Function.update E.v .fo
                  (cstream (prime + K) w (cstNumBox (p n) (t n) (cb a' x₀)))) }.get
-      (srcCostV T n w cF cO) := by
+      (srcCostV n w cF cO) := by
   have hdisj := M.hdisj
   -- the kernel copy
   have s1 := rsa_bcopy (body := body) (ι := M.ι) M.hrg (a := .k .kr) (c := .v .fi)
@@ -322,7 +322,7 @@ theorem srcCore_runsG (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (
     {w W cF cO : ℕ} (cb : BoxConvOf n) (hcb : BoxConvSpec n cb)
     (hfix : ∀ f g x, IsFixed (p n) (cb f g x))
     (hBox : CvBoxRuns body M.rv M.ι Pre (cvBox M.rv M.ι M.hrv M.hι M.hT M.hQ M.hT91 M.hQrp fwdP oppP) n w cb
-      (cvBoxCost T (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
+      (cvBoxCost (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
     (hP : SrcFramed M.rg Pre)
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
@@ -473,7 +473,7 @@ theorem srcDirectP_runsG (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ
     {w W cF cO : ℕ} (cb : BoxConvOf n) (hcb : BoxConvSpec n cb)
     (hfix : ∀ f g x, IsFixed (p n) (cb f g x))
     (hBox : CvBoxRuns body M.rv M.ι Pre (cvBox M.rv M.ι M.hrv M.hι M.hT M.hQ M.hT91 M.hQrp fwdP oppP) n w cb
-      (cvBoxCost T (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
+      (cvBoxCost (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
     (hP : SrcFramed M.rg Pre)
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
@@ -538,7 +538,7 @@ theorem srcDirectOpp_runsG (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : �
     {w W cF cO : ℕ} (cb : BoxConvOf n) (hcb : BoxConvSpec n cb)
     (hfix : ∀ f g x, IsFixed (p n) (cb f g x))
     (hBox : CvBoxRuns body M.rv M.ι Pre (cvBox M.rv M.ι M.hrv M.hι M.hT M.hQ M.hT91 M.hQrp fwdP oppP) n w cb
-      (cvBoxCost T (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
+      (cvBoxCost (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) cF cO))
     (hP : SrcFramed M.rg Pre)
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *

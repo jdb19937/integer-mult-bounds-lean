@@ -116,14 +116,14 @@ theorem rsa_line_idle (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.sta
       { V with
         ln := rest
         ob := (cstream A w (rsaOut q s t (2 * m + 1) (rsaExt m N) wt)).reverse ++ V.ob }.get
-      (rsaLineCost T w s t m L) :=
+      (rsaLineCost w s t m L) :=
   rsa_line hrg hdisj hι hT hQ hA hw hq V hI.ready ht hst hms hs0 wt N Z rest hN hZ hFN hFT hI.xs
     hI.xsv hI.ys hI.ysv hI.acc hln hI.ea hI.eb hI.er hI.ka hI.kb hI.kx hI.kW hI.kT hI.atm hI.sm
     hI.pz hI.sm2 hI.bxa hI.bya hI.bza hI.cS hI.cM hI.cP hI.cW hI.cT hI.rr hI.bS
 
 /-- The step bound of `Ã` along the innermost axis of a box of `B` lines. -/
-def rsaAxisCost (T w s t m L B : ℕ) : ℕ :=
-  B * (rsaLineCost T w s t m L + 2) + 2 + (2 * (B * t * w) + 2)
+def rsaAxisCost (w s t m L B : ℕ) : ℕ :=
+  B * (rsaLineCost w s t m L + 2) + 2 + (2 * (B * t * w) + 2)
 
 /-- **`Ã` along the innermost axis.** `ln` holds the box stream `lines.flatten` (every line `t`
 records, the first `s` of which fit `w` bits) and `ob` is empty; afterwards `ln` holds
@@ -137,7 +137,7 @@ theorem rsa_axis (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     (hln : V.ln = cstream A w lines.flatten) (hob : V.ob = []) :
     RsaRuns body rg ι (rsaAxisP rg ι hι hT hQ) V.get
       { V with ln := cstream A w (lines.flatMap (rsaLineMap q s t m wt)) }.get
-      (rsaAxisCost T w s t m L lines.length) := by
+      (rsaAxisCost w s t m L lines.length) := by
   set f := rsaLineMap q s t m wt with hf
   set st : List (List GaussianInt) → List (List GaussianInt) → RsaR X → List (Fin (A + 4)) :=
     fun l done => { V with
@@ -146,7 +146,7 @@ theorem rsa_axis (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
   have ht0 : 0 < t := by omega
   have hloop := rsa_cwhileP_runs (body := body) hdisj (α := List GaussianInt) .ln
     (rsaLineP rg ι hι hT hQ) (fun a => a.length = t ∧ ∀ x ∈ a.take s, Fits w x) st
-    (rsaLineCost T w s t m L)
+    (rsaLineCost w s t m L)
     (fun a rest done ⟨ha, haF⟩ => by
       have h := rsa_line_idle (body := body) hrg hdisj hι hT hQ hA hw hq
         { V with
@@ -192,13 +192,13 @@ end Axis
 
 /-! ### Cost bounds -/
 
-/-- One line costs at most `t ((2m + 1)(rmulCost T w + 13 w + 17) + 58 w + 8 L + 78)` steps:
+/-- One line costs at most `t ((2m + 1)(rmulCost w + 13 w + 17) + 58 w + 8 L + 78)` steps:
 `2m + 1` real fixed-point products per output, plus `O(w + L)` per output. -/
-theorem rsaLineCost_le (T w s t m L : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
-    rsaLineCost T w s t m L ≤
-      t * ((2 * m + 1) * (rmulCost T w + 13 * w + 17) + 58 * w + 8 * L + 78) := by
+theorem rsaLineCost_le (w s t m L : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
+    rsaLineCost w s t m L ≤
+      t * ((2 * m + 1) * (rmulCost w + 13 * w + 17) + 58 * w + 8 * L + 78) := by
   unfold rsaLineCost rsaRowsCost rsaRowCost rsaTermsCost rsaTermCost
-  generalize rmulCost T w = R
+  generalize rmulCost w = R
   have h1 : s * w ≤ t * w := Nat.mul_le_mul_right _ hst
   have h2 : m * w ≤ t * w := Nat.mul_le_mul_right _ (hms.trans hst)
   have h3 : (s - m) * w ≤ t * w := Nat.mul_le_mul_right _ (by omega)
@@ -209,13 +209,13 @@ theorem rsaLineCost_le (T w s t m L : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht :
   nlinarith [h1, h2, h3, h4, h5]
 
 /-- `Ã` along the innermost axis of a box of `n = B t` records costs at most
-`n ((2m + 1)(rmulCost T w + 13 w + 17) + 60 w + 8 L + 80) + 4` steps. -/
-theorem rsaAxisCost_le (T w s t m L B : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
-    rsaAxisCost T w s t m L B ≤
-      B * t * ((2 * m + 1) * (rmulCost T w + 13 * w + 17) + 60 * w + 8 * L + 80) + 4 := by
+`n ((2m + 1)(rmulCost w + 13 w + 17) + 60 w + 8 L + 80) + 4` steps. -/
+theorem rsaAxisCost_le (w s t m L B : ℕ) (hst : s ≤ t) (hms : m ≤ s) (ht : 1 ≤ t) :
+    rsaAxisCost w s t m L B ≤
+      B * t * ((2 * m + 1) * (rmulCost w + 13 * w + 17) + 60 * w + 8 * L + 80) + 4 := by
   unfold rsaAxisCost
-  have h := rsaLineCost_le T w s t m L hst hms ht
-  generalize rmulCost T w = R at h ⊢
+  have h := rsaLineCost_le w s t m L hst hms ht
+  generalize rmulCost w = R at h ⊢
   have h2 : 2 ≤ 2 * t := by omega
   nlinarith [Nat.mul_le_mul_left B h, Nat.mul_le_mul_left B h2]
 

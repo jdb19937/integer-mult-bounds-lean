@@ -103,8 +103,8 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
   obtain ⟨Cd, kd, hcost⟩ := D.costBound
   set k := kd + 4 with hk
   set Pm : ℝ := 2^36 + 2^12 * 6 with hPm
-  set CP : ℝ := mtCM mnT cw + 6 * cw + 10 with hCP
-  set CR : ℝ := mtRndC mnT (cw + 3) cw 1 with hCR
+  set CP : ℝ := mtCM cw + 6 * cw + 10 with hCP
+  set CR : ℝ := mtRndC (cw + 3) cw 1 with hCR
   set Cr' : ℝ := max Cr 0 with hCr'
   -- the coefficients of `n`, `B^k`, `totDirectCRT`, `totResamp`, `totConv`, `T M(p)`, `S M(p)`, `T p`
   set A1 : ℝ := 22 + Pm + Cd + 2 * 3072 * cw + 20 + 8 + 2304 * (1 + 1) with hA1
@@ -116,8 +116,8 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
   set C : ℕ := max k ⌈(1 + 2 * (c : ℝ)) * M + 2 * (mnT : ℝ) + 6⌉₊ with hC
   refine ⟨C, ?_⟩
   filter_upwards [eventually_big, hrat, hcost, D.widths, hR,
-    mt_pm_stage_le k (by omega) mnUs mn_us_small, mt_digit_le cw, mt_ch_point_le mnT cw,
-    mt_rnd_stage_le mnT (cw + 3) cw 1, mt_carry_le 1] with n h hr hc hwd hRn hpm hdig hpt hrnd hcar
+    mt_pm_stage_le k (by omega) mnUs mn_us_small, mt_digit_le cw, mt_ch_point_le cw,
+    mt_rnd_stage_le (cw + 3) cw 1, mt_carry_le 1] with n h hr hc hwd hRn hpm hdig hpt hrnd hcar
   obtain ⟨hwc, -⟩ := hr
   obtain ⟨hpw0, -⟩ := hwd
   have hpw : p n ≤ w n := by omega
@@ -138,8 +138,8 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
   have hbk0 : (0 : ℝ) ≤ (b n : ℝ) ^ k := by positivity
   have hCd0 : (0 : ℝ) ≤ Cd := Nat.cast_nonneg _
   have hcw0 : (0 : ℝ) ≤ cw := Nat.cast_nonneg _
-  have hCP0 : 0 ≤ CP := by have := mt_CM_nonneg mnT cw; rw [hCP]; positivity
-  have hCR0 : 0 ≤ CR := mt_rnd_C_nonneg _ _ _ _
+  have hCP0 : 0 ≤ CP := by have := mt_CM_nonneg cw; rw [hCP]; positivity
+  have hCR0 : 0 ≤ CR := mt_rnd_C_nonneg _ _ _
   have hCr'0 : 0 ≤ Cr' := le_max_right _ _
   -- the stages
   have t1 : (((4 * n + 6) + (4 * n + 8) : ℕ) : ℝ) ≤ 22 * n := by push_cast; linarith
@@ -181,10 +181,10 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
       CP * ((T n : ℝ) * totMp n) := by
     have hP := hpt (w n) (by omega) hwc
     have e : mnGlue n (w n) = 20 * (T n * w n) + 20 +
-        ((∏ i, t n i) * (cmulCost mnT (w n) + 6 * w n + 2) + 8) := by
+        ((∏ i, t n i) * (cmulCost (w n) + 6 * w n + 2) + 8) := by
       unfold mnGlue; rw [hprod]; ring
     rw [e]
-    generalize ((∏ i, t n i) * (cmulCost mnT (w n) + 6 * w n + 2) + 8) = P at hP ⊢
+    generalize ((∏ i, t n i) * (cmulCost (w n) + 6 * w n + 2) + 8) = P at hP ⊢
     have hTw' : ((T n * w n : ℕ) : ℝ) = (T n : ℝ) * w n := by push_cast; ring
     rw [hTw'] at hTw
     have e2 : ((20 * (T n * w n) + 20 + P : ℕ) : ℝ) = 20 * ((T n : ℝ) * w n) + 20 + P := by
@@ -198,11 +198,11 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
     have hrd := hrnd (mnMw n (w n)) (w n) (mnWo n) (by unfold mnMw; omega) hMw hwc hWo
     have hcr := hcar (mnWo n) hWo
     have e : mnTail n (w n) = 4 * (S n * w n) + 4 +
-        roundStageCost mnT (mnMw n (w n)) (w n) (b n) (p n) (mnWo n) (S n) +
+        roundStageCost (mnMw n (w n)) (w n) (b n) (p n) (mnWo n) (S n) +
         (4 * (S n * mnWo n) + 4) + carryOutCost (mnWo n) (b n) (S n) := by
       unfold mnTail; ring
     rw [e]
-    generalize roundStageCost mnT (mnMw n (w n)) (w n) (b n) (p n) (mnWo n) (S n) = Rd at hrd ⊢
+    generalize roundStageCost (mnMw n (w n)) (w n) (b n) (p n) (mnWo n) (S n) = Rd at hrd ⊢
     generalize carryOutCost (mnWo n) (b n) (S n) = Ca at hcr ⊢
     have e2 : ((4 * (S n * w n) + 4 + Rd + (4 * (S n * mnWo n) + 4) + Ca : ℕ) : ℝ) =
         4 * ((S n * w n : ℕ) : ℝ) + 4 + Rd + (4 * ((S n * mnWo n : ℕ) : ℝ) + 4) + Ca := by

@@ -364,7 +364,7 @@ end Program
 /-- The step bound of `cvSynth`: the two forward transforms, the opposite transform, the ring
 products, three stream transfers and two clears of `M r` coefficients of `w` symbols, and the
 shift. -/
-def cvSynthCost (T p l w S M cF cO : ℕ) : ℕ :=
+def cvSynthCost (p l w S M cF cO : ℕ) : ℕ :=
   2 * cF + cO + rpCost p l w M + 16 * (M * 2 ^ l * w) + 16 +
     (M * 2 ^ l) * (6 * w + 4 * S + 14) + 4
 
@@ -408,7 +408,7 @@ theorem cvSynth_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
     CvRuns body rg ι Pre (cvSynth rg hrg hT hQ fwdP oppP) ρ
       (Function.update (Function.update (Function.update ρ .io []) .sy []) .so
         (cstream A w (rpStream (cvM a) (cvConvNum p a Zu Zv)) ++ ρ .so))
-      (cvSynthCost T p l w (List.ofFn a).sum (cvM a) cF cO) := by
+      (cvSynthCost p l w (List.ofFn a).sum (cvM a) cF cO) := by
   set Fu := cvF p l a Zu with hFu_def
   set Fv := cvF p l a Zv with hFv_def
   set Xu := cvFwdOut p l a π Zu with hXu_def

@@ -81,7 +81,7 @@ theorem cvBoxQ_boxConvSuccQ (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r
     (hshT : ρ .shT = []) (hshU : ρ .shU = []) :
     CvRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) ρ
       (Function.update ρ .fo (cstream A w (cstNumBox p t (boxConvSuccQ p D t FO f g)) ++ ρ .fo))
-      (cvBoxCost T p l w (List.ofFn fun i : Fin D => Nat.log 2 (t i.castSucc)).sum
+      (cvBoxCost p l w (List.ofFn fun i : Fin D => Nat.log 2 (t i.castSucc)).sum
         (cvM fun i : Fin D => Nat.log 2 (t i.castSucc)) cF cO) :=
   cvBoxQ_runs hrg hdisj hι hP hT64 hQs hT hQ hA t rfl hrl (boxAx t)
     (fun i => hpow i.castSucc) (fun i => by show 2 ^ Nat.log 2 (t i.castSucc) ∣ _; rw [← hpow i.castSucc]; exact hdvd i.castSucc) FO.1 FO.2 hF hO
@@ -122,7 +122,7 @@ theorem cvBoxQ_boxConvQ (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     (hshT : ρ .shT = []) (hshU : ρ .shU = []) :
     CvRuns body rg ι Pre (cvBox rg ι hrg hι hT64 hQs hT hQ fwdP oppP) ρ
       (Function.update ρ .fo (cstream A w (cstNumBox p t (boxConvQ p D' t inst (roundPairsOf p τ l D' t inst hlast F O) f g)) ++ ρ .fo))
-      (cvBoxCost T p l w (List.ofFn (cvAx t)).sum (cvM (cvAx t)) cF cO) := by
+      (cvBoxCost p l w (List.ofFn (cvAx t)).sum (cvM (cvAx t)) cF cO) := by
   obtain ⟨D, rfl⟩ : ∃ D, D' = D + 1 := ⟨D' - 1, by omega⟩
   have hl : t (Fin.last D) = 2 ^ l := hlast _ rfl
   exact cvBoxQ_boxConvSuccQ hrg hdisj hι hP hT64 hQs hT hQ hA t hl hpow
@@ -201,7 +201,7 @@ theorem cvBoxQ_convBoxQ (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
         (cstream A w (cstNumBox (Sizes.p n) (Sizes.t n)
           (convBoxQ n (roundPairsOf (Sizes.p n) τ (Sizes.ℓ n) (Sizes.d n) (Sizes.t n) inferInstance
             (fun i hi => t_of_last hn i hi) F O) f g)) ++ ρ .fo))
-      (cvBoxCost T (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
+      (cvBoxCost (Sizes.p n) (Sizes.ℓ n) w (List.ofFn (cvAx (Sizes.t n))).sum
         (cvM (cvAx (Sizes.t n))) cF cO) :=
   cvBoxQ_boxConvQ hrg hdisj hι hP hT64 hQs hT hQ hA (Sizes.t n) (by have := hn.one_le_d; omega)
     (fun i hi => t_of_last hn i hi) (t_pow_log n) (t_dvd_two_r n) F O hF hO hPF hPO hπ
