@@ -362,8 +362,8 @@
   ],
   "scope": "Import closure only; unprotected candidates are retained unless separately reviewed as obsolete.",
   "primary_proof": {
-    "modules": 2025,
-    "lines": 504990,
+    "modules": 2029,
+    "lines": 507084,
     "by_directory": {
       "IntegerMultBounds": 7,
       "IntegerMultBounds/Compact": 12,
@@ -372,7 +372,7 @@
       "IntegerMultBounds/MathlibTM2/Balanced": 1,
       "IntegerMultBounds/MathlibTM2/Cost": 101,
       "IntegerMultBounds/MathlibTM2/Fast": 381,
-      "IntegerMultBounds/MathlibTM2/Host": 24,
+      "IntegerMultBounds/MathlibTM2/Host": 28,
       "IntegerMultBounds/MathlibTM2/Layer": 38,
       "IntegerMultBounds/MathlibTM2/M8": 5,
       "IntegerMultBounds/MathlibTM2/M8/Frames": 4,
@@ -418,11 +418,10 @@
     }
   },
   "candidates": {
-    "modules": 886,
-    "lines": 84878,
+    "modules": 883,
+    "lines": 82859,
     "by_directory": {
       "IntegerMultBounds/MathlibTM2/DFT": 39,
-      "IntegerMultBounds/MathlibTM2/Host": 3,
       "IntegerMultBounds/MathlibTM2/Layer": 3,
       "IntegerMultBounds/MathlibTM2/M6": 14,
       "IntegerMultBounds/MathlibTM2/M8": 4,
@@ -444,11 +443,10 @@
     "by_directory": {}
   },
   "conservative_candidates": {
-    "modules": 886,
-    "lines": 84878,
+    "modules": 883,
+    "lines": 82859,
     "by_directory": {
       "IntegerMultBounds/MathlibTM2/DFT": 39,
-      "IntegerMultBounds/MathlibTM2/Host": 3,
       "IntegerMultBounds/MathlibTM2/Layer": 3,
       "IntegerMultBounds/MathlibTM2/M6": 14,
       "IntegerMultBounds/MathlibTM2/M8": 4,
@@ -1511,6 +1509,10 @@
     "IntegerMultBounds/MathlibTM2/Host/StatePlacement.lean",
     "IntegerMultBounds/MathlibTM2/Host/StateTransport.lean",
     "IntegerMultBounds/MathlibTM2/Host/Stream.lean",
+    "IntegerMultBounds/MathlibTM2/Host/WordCmd.lean",
+    "IntegerMultBounds/MathlibTM2/Host/WordCopy.lean",
+    "IntegerMultBounds/MathlibTM2/Host/WordStream.lean",
+    "IntegerMultBounds/MathlibTM2/Host/WordTape.lean",
     "IntegerMultBounds/MathlibTM2/Layer/Basic.lean",
     "IntegerMultBounds/MathlibTM2/Layer/Carry.lean",
     "IntegerMultBounds/MathlibTM2/Layer/Columns.lean",
@@ -2602,9 +2604,6 @@
     "IntegerMultBounds/MathlibTM2/DFT/Top.lean",
     "IntegerMultBounds/MathlibTM2/DFT/Trunc.lean",
     "IntegerMultBounds/MathlibTM2/DFT/Unpack.lean",
-    "IntegerMultBounds/MathlibTM2/Host/WordCmd.lean",
-    "IntegerMultBounds/MathlibTM2/Host/WordCopy.lean",
-    "IntegerMultBounds/MathlibTM2/Host/WordStream.lean",
     "IntegerMultBounds/MathlibTM2/Layer/OccurrenceRecurrence.lean",
     "IntegerMultBounds/MathlibTM2/Layer/SelectedMoments.lean",
     "IntegerMultBounds/MathlibTM2/Layer/VariableRecurrence.lean",
@@ -3491,9 +3490,6 @@
     "IntegerMultBounds/MathlibTM2/DFT/Top.lean",
     "IntegerMultBounds/MathlibTM2/DFT/Trunc.lean",
     "IntegerMultBounds/MathlibTM2/DFT/Unpack.lean",
-    "IntegerMultBounds/MathlibTM2/Host/WordCmd.lean",
-    "IntegerMultBounds/MathlibTM2/Host/WordCopy.lean",
-    "IntegerMultBounds/MathlibTM2/Host/WordStream.lean",
     "IntegerMultBounds/MathlibTM2/Layer/OccurrenceRecurrence.lean",
     "IntegerMultBounds/MathlibTM2/Layer/SelectedMoments.lean",
     "IntegerMultBounds/MathlibTM2/Layer/VariableRecurrence.lean",

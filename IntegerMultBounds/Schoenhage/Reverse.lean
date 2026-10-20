@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Ops
+public import IntegerMultBounds.MathlibTM2.Host.WordCopy
 
 /-! Copying a word reversed. A two-tape machine scans the source's current
 word to its separator, walks back over it writing each bit to the
@@ -176,6 +177,10 @@ noncomputable abbrev prim : Prim a where
   pre σ := (σ 0).right ≠ [] ∧ (σ 1).right = []
   sem σ := fun i => if i.val = 0 then (σ 0).next else ⟨(σ 0).cur.reverse :: (σ 1).left, []⟩
   cost σ := 3 * (σ 0).cur.length + 10
+  nQ := 0
+  prog := MathlibTM2.Host.WordCmd.reverseProg
+  hspec := MathlibTM2.Host.WordCmd.reverse_hostSpec
+  hcalls := MathlibTM2.Host.WordCmd.reverseProg_noCalls
   spec σ hpre := by
     apply FMachine.hoare
     intro v hv; subst hv

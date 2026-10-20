@@ -1,5 +1,6 @@
 module
 public import IntegerMultBounds.Schoenhage.Ops
+public import IntegerMultBounds.MathlibTM2.Host.WordCopy
 public import IntegerMultBounds.Schoenhage.Rules
 
 
@@ -17,22 +18,6 @@ namespace IntegerMultBounds.Schoenhage
 open Machine
 
 variable {a t : ℕ}
-
-/-! ### Pieces -/
-
-/-- Consecutive pieces of width `w` (the last may be shorter); empty for the empty word. -/
-def cut (w : ℕ) (x : List Bool) : List (List Bool) :=
-  if _hx : x = [] then [] else if _hw : w = 0 then [x] else x.take w :: cut w (x.drop w)
-termination_by x.length
-decreasing_by
-  have : 0 < x.length := List.length_pos_of_ne_nil (by assumption)
-  simp; omega
-
-@[simp] theorem cut_nil (w : ℕ) : cut w [] = [] := by rw [cut]; simp
-
-theorem cut_cons {w : ℕ} {x : List Bool} (hx : x ≠ []) (hw : w ≠ 0) :
-    cut w x = x.take w :: cut w (x.drop w) := by
-  rw [cut]; simp [hx, hw]
 
 theorem cells_cons (c : List Bool) (cs : List (List Bool)) :
     cells (a := a) (c :: cs) = c.map bitSymbol ++ [separator] ++ cells cs := by
@@ -277,6 +262,10 @@ noncomputable abbrev prim : Prim a where
   sem σ := fun i => if i.val = 0 then (σ 0).next else if i.val = 1 then σ 1
     else ⟨(cut (σ 1).cur.length (σ 0).cur).reverse ++ (σ 2).left, []⟩
   cost σ := 4 * (σ 0).cur.length + 3
+  nQ := 0
+  prog := MathlibTM2.Host.WordCmd.chunkHProg
+  hspec := MathlibTM2.Host.WordCmd.chunk_hostSpec
+  hcalls := MathlibTM2.Host.WordCmd.chunkHProg_noCalls
   spec σ hpre := by
     obtain ⟨h0, hw, hreg, h2⟩ := hpre
     apply FMachine.hoare

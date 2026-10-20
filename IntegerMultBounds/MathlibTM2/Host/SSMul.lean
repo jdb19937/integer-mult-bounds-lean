@@ -5,28 +5,28 @@ public import IntegerMultBounds.MathlibTM2.Host.Placed
 public import IntegerMultBounds.MathlibTM2.Host.Index
 public import IntegerMultBounds.Schoenhage.SSClean
 public import IntegerMultBounds.Schoenhage.SSCost
+public import IntegerMultBounds.MathlibTM2.Host.WordCmd
 import IntegerMultBounds.Machine.PlacementBank
 
 /-!
 # Schönhage–Strassen multiplication as a host subroutine
 
 `ssMul` multiplies two binary integers held on host registers by running the vendored
-Schönhage–Strassen multiplier as a foreign machine.
+Schönhage–Strassen word program directly on host stacks.
 
-**The machine.** `SS.cleanProgram` is the compiled word program `ssClean` (the multiplier
-`ssMain` followed by a wipe of its registers), a literal 64-tape program over `Fin 4`.
-`SS.clean_hoare` is its exact contract: from the bank `SS.startBank (topN m) a b` (the words
-`rwd N a`, `rwd N b` on tape `tIn`, `ones N` on tape `pN`, every other tape empty) it halts within
-`SS.cleanBound m` transitions on the bank `SS.doneBank (topN m) (a * b)` (the word
-`rwd N (a * b)` alone on `tIn`). The host runs it through the alphabet encoding `SS.code A` of
-`Fin 4` into `Fin (A + 4)` (every symbol keeps its code) and the state embedding `liftQ`
-(`SS.machine`).
+**The multiplier.** `ssClean` is the word program of the multiplier (`ssMain` followed by a wipe of
+its registers) on a bank of 64 word tapes. `SS.clean_runs` is its run: from the bank
+`SS.startBank (topN m) a b` (the words `rwd N a`, `rwd N b` on tape `tIn`, `ones N` on tape `pN`,
+every other tape empty) to the bank `SS.doneBank (topN m) (a * b)` (the word `rwd N (a * b)` alone
+on `tIn`) within `SS.cleanBound m` steps. The host runs it as `WordCmd.tcompile ι ssClean` on the
+registers `ι` (`WordCmd.tcompile_runs`, within `3 (SS.cleanBound m + 1)` host steps), with
+`SS.states = WordCmd.cmdStates ssClean` control states.
 
-**Placed runs.** `placedRun M ι` runs a program placed on an injective family `ι` of host
-registers: it marks every unplaced register, runs the placed program with `foreign`, normalizes
-the placed registers and unmarks (the pattern of `placedSwapProg`). `placedRun_exec` turns an
-exact contract between word-tape banks into an execution: the placed registers go from the cells
-of the start bank to the cells of the final bank, every other stack is unchanged.
+**Placed runs.** `placedRun M ι` runs a multitape program placed on an injective family `ι` of
+host registers: it marks every unplaced register, runs the placed program with `foreign`,
+normalizes the placed registers and unmarks (the pattern of `placedSwapProg`). `placedRun_exec`
+turns an exact contract between word-tape banks into an execution. The ring product
+(`Fast/RingProdBase`) runs this way; `ssMul` does not.
 
 **Register interface of `ssMul ι … xa xb xn xc`.**
 * `ι : Fin 64 → Fin T` (injective) holds the multiplier's tapes; these registers are empty
@@ -40,8 +40,8 @@ of the start bank to the cells of the final bank, every other stack is unchanged
   (`SS.binSyms_product`).
 
 `ssMul` lays out the start bank (`SS.layout`: the operands padded with zero bits to `N + 1` bits
-by a counted copy `SS.padCopy` against `xn`, and `N` unary ones copied from `xn`), runs the placed
-multiplier (`placedRun`), and moves the product word without its separator to `xc`
+by a counted copy `SS.padCopy` against `xn`, and `N` unary ones copied from `xn`), runs the
+multiplier on the registers `ι` (`WordCmd.tcompile`), and moves the product word without its separator to `xc`
 (`SS.readOut`).
 
 `ssMul_exec`: exact result, `v'.user = v.user`, every other stack unchanged, within
@@ -65,10 +65,6 @@ namespace SS
 
 open IntegerMultBounds.Schoenhage IntegerMultBounds.Schoenhage.Schedule
   IntegerMultBounds.Schoenhage.Tp
-
-/-- The cleaned multiplier compiled to a literal 64-tape program over the binary alphabet. -/
-def cleanProgram : Program 64 (compile (a := 0) (by decide) ssClean).1 0 :=
-  (compile (a := 0) (by decide) ssClean).2
 
 /-- The start bank: the operands on `tIn`, `ones N` on `pN`, every other tape empty. -/
 def startBank (N x y : ℕ) : Fin 64 → WTape :=
@@ -96,24 +92,21 @@ theorem done_eq {N v : ℕ} {σ : Fin 64 → WTape} (h : SSDone N v σ) : σ = d
   · subst hi; simp [doneBank, h.1]
   · rw [doneBank, Function.update_of_ne hi, h.2 i hi]
 
-/-- The cleaned multiplier as an exact contract: operands below `2 ^ m` at size `topN m`, the
-exact product, within `cleanBound m` transitions. -/
-theorem clean_hoare {m a b : ℕ} (hm : 1 ≤ m) (ha : a < 2 ^ m) (hb : b < 2 ^ m) :
-    HoareTime cleanProgram (· = enc (startBank (topN m) a b)) (· = enc (doneBank (topN m) (a * b)))
-      (cleanBound m) := by
+/-- The cleaned multiplier's run: operands below `2 ^ m` at size `topN m`, the exact product,
+within `cleanBound m` steps. -/
+theorem clean_runs {m a b : ℕ} (hm : 1 ≤ m) (ha : a < 2 ^ m) (hb : b < 2 ^ m) :
+    Runs ssClean (startBank (topN m) a b) (· = doneBank (topN m) (a * b)) (cleanBound m) := by
   obtain ⟨hlt, hle, hk⟩ := topN_facts hm
-  have hm2 : 2 ^ m ≤ 2 ^ topN m := Nat.pow_le_pow_right (by norm_num) (by omega)
   have hab : a * b < Fm (topN m) := by
     have : a * b < 2 ^ m * 2 ^ m := Nat.mul_lt_mul'' ha hb
     have h2 : 2 ^ m * 2 ^ m ≤ 2 ^ topN m := by
       rw [← pow_add]; exact Nat.pow_le_pow_right (by norm_num) (by omega)
     unfold Fm; omega
+  have hm2 : 2 ^ m ≤ 2 ^ topN m := Nat.pow_le_pow_right (by norm_num) (by omega)
   obtain ⟨σ', k, hx, hq, hkb⟩ := runs_ssClean (N := topN m) (by omega) hk (by unfold Fm; omega)
     (by unfold Fm; omega) _ (startBank_start (topN m) a b)
   rw [Nat.mod_eq_of_lt hab] at hq
-  have hc := compile_correct (a := 0) (by decide) hx
-  rw [done_eq hq] at hc
-  refine hc.consequence (fun _ h => h) (fun _ h => h) ?_
+  refine ⟨σ', k, hx, done_eq hq, ?_⟩
   have h1 := ssCost_le (topN m) a b
   have h2 := cost_topN cA cB cC0 hm
   unfold cleanBound
@@ -121,9 +114,19 @@ theorem clean_hoare {m a b : ℕ} (hm : 1 ≤ m) (ha : a < 2 ^ m) (hb : b < 2 ^ 
     (3 * bitlen (bitlen (4 * m)) + 1) = X at *
   generalize cost cA cB cC0 (topN m) = Y at *
   generalize ssCost (topN m) [a, b] = Z at *
-  clear hk hm2 hab ha hb hx hq hc
+  clear hk hm2 hab ha hb hx hq
   generalize topN m = N at *
   linarith
+
+/-- No tape of the start bank has words left of the head. -/
+theorem startBank_left (N x y : ℕ) (j : Fin 64) : (startBank N x y j).left = [] := by
+  simp only [startBank, Function.update_apply]
+  split_ifs <;> rfl
+
+/-- No tape of the final bank has words left of the head. -/
+theorem doneBank_left (N v : ℕ) (j : Fin 64) : (doneBank N v j).left = [] := by
+  simp only [doneBank, Function.update_apply]
+  split_ifs <;> rfl
 
 end SS
 
@@ -304,21 +307,8 @@ lemma mapTapes_enc {t : ℕ} (A : ℕ) (σ : Fin t → WTape) :
   show (code A).encode (wordTape (cells (σ x).words) z) = wordTape (cells (σ x).words) z
   rw [code_wordTape, code_cells]
 
-/-- The state count of the compiled cleaned multiplier. -/
-abbrev states : ℕ := (compile (a := 0) (by decide) ssClean).1
-
-/-- The cleaned multiplier over the host alphabet with its states embedded in `Fin Q`. -/
-def machine (A : ℕ) {Q : ℕ} (hQ : states ≤ Q) : Program 64 Q A :=
-  liftQ (Alphabet.program (code A) cleanProgram) hQ
-
-/-- `clean_hoare` over the host alphabet with embedded states. -/
-theorem machine_hoare (A : ℕ) {Q : ℕ} (hQ : states ≤ Q) {m a b : ℕ} (hm : 1 ≤ m)
-    (ha : a < 2 ^ m) (hb : b < 2 ^ m) :
-    HoareTime (machine A hQ) (· = enc (startBank (topN m) a b))
-      (· = enc (doneBank (topN m) (a * b))) (cleanBound m) := by
-  refine HoareTime.liftQ hQ ((Alphabet.map_hoare (code A) (clean_hoare hm ha hb)).consequence
-    (fun w hw => ⟨_, rfl, by rw [hw, mapTapes_enc]⟩) (fun w ⟨o, ho, hw⟩ => ?_) le_rfl)
-  rw [hw, ho, mapTapes_enc]
+/-- The control states the cleaned multiplier needs on the host. -/
+abbrev states : ℕ := WordCmd.cmdStates ssClean
 
 end SS
 
@@ -800,18 +790,17 @@ def ssCostBound (m : ℕ) : ℕ := SS.cleanBound m + 2
 /-- Multiply the operands in registers `xa`, `xb` by the cleaned Schönhage–Strassen multiplier
 placed on the registers `ι`; register `xn` holds the multiplier size `topN m` in unary, and the
 product goes onto register `xc`. -/
-def ssMul (ι : Fin 64 → Fin T) (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+def ssMul (ι : Fin 64 → Fin T) (_hι : Function.Injective ι) (_hT : 64 ≤ T) (_hQ : SS.states ≤ Q)
     (xa xb xn xc : Fin T) : Pr F T Q A U :=
   .seq (layout (ι tIn) (ι pN) (ι 3) (ι 0) (ι 1) (ι 2) xa xb xn)
-    (.seq (placedRun (SS.machine A hQ) ι hι hT) (readOut (ι tIn) (ι 0) xc))
+    (.seq (WordCmd.tcompile ι ssClean) (readOut (ι tIn) (ι 0) xc))
 
 /-- Running `ssMul`. The registers `ι j` are empty (both stacks); `xa`, `xb`, `xn`, `xc` lie
 outside the range of `ι`, and `xn` differs from `xa` and `xb`; `xa`, `xb` hold `binSyms m a`,
 `binSyms m b` with `a, b < 2 ^ m` and `1 ≤ m`; `xn` holds `topN m` symbols. Afterwards
 `binSyms (topN m + 1) (a * b)` sits on top of `xc`, every other stack and the `user` component
-are unchanged, and at most `(T + 773) * ssCostBound m + 164 * m + 463` host steps were taken. The
-factor `T` comes from `foreign`, which scans every host tape once per simulated transition, and
-from the two passes over the unplaced registers. -/
+are unchanged, and at most `(T + 773) * ssCostBound m + 164 * m + 463` host steps were taken
+(the multiplier itself takes at most `3 (SS.cleanBound m + 1)`). -/
 theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Function.Injective ι)
     (hT : 64 ≤ T) (hQ : SS.states ≤ Q) {xa xb xn xc : Fin T}
     (hxa : ∀ j, ι j ≠ xa) (hxb : ∀ j, ι j ≠ xb) (hxn : ∀ j, ι j ≠ xn) (hxc : ∀ j, ι j ≠ xc)
@@ -863,32 +852,38 @@ theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Fu
       simp [S₁, SS.startBank, cells_ones]
     · simp [S₁, SS.startBank, Function.update_of_ne j1, Function.update_of_ne j2,
         Function.update_of_ne (i0 j1), Function.update_of_ne (i0 j2), hR, cells_nil', emp]
-  -- step 2: run the placed multiplier
-  obtain ⟨v₂, n₂, R', u₂, hn₂, hR'ι, hR'o, e₂⟩ := placedRun_exec body (SS.machine A hQ) ι hι hT
-    (SS.machine_hoare A hQ hm ha hb) (fun j => by
-      simp only [SS.startBank, Function.update_apply]
-      split_ifs <;> rfl) v₁ S₁ hL hstart
+  -- step 2: run the multiplier on the placed bank
+  have hS₁ : WordCmd.place S₁ ι (SS.startBank N a b) = S₁ :=
+    WordCmd.place_self hι (fun j => by simp [S₁, hL, SS.startBank_left, WordCmd.lcells]) hstart
+  obtain ⟨σ', hσ', v₂, n₂, u₂, hn₂, e₂⟩ :=
+    WordCmd.tcompile_runs body hι (SS.clean_runs hm ha hb) hQ v₁ S₁
+  rw [hS₁] at e₂
+  subst hσ'
+  set R' := (WordCmd.place S₁ ι (SS.doneBank N (a * b))).R
+  have hR'ι : ∀ j, R' (ι j) = cells (SS.doneBank N (a * b) j).right := WordCmd.place_R_at hι _ _
+  have hR'o : ∀ y, (∀ j, ι j ≠ y) → R' y = S₁.R y := fun y hy => WordCmd.place_R_off _ _ hy
+  have hpl : WordCmd.place S₁ ι (SS.doneBank N (a * b)) = { S₁ with R := R' } := by
+    refine Stacks.ext rfl rfl ?_ rfl
+    funext y
+    by_cases hy : ∃ j, ι j = y
+    · obtain ⟨j, rfl⟩ := hy
+      rw [WordCmd.place_L_at hι, SS.doneBank_left]
+      simp [S₁, hL, WordCmd.lcells]
+    · exact WordCmd.place_L_off _ _ fun j h => hy ⟨j, h⟩
+  rw [hpl] at e₂
   -- step 3: read the product back
   have hout : R' (ι tIn) = binSyms (N + 1) (a * b) ++ [separator] := by
     rw [hR'ι]
-    simp [SS.doneBank, WTape.words, cells_rwd, cells_nil']
-    rfl
+    simp [SS.doneBank, cells_rwd, cells_nil']
   have h0 : R' (ι 0) = [] := by
     rw [hR'ι]
-    simp [SS.doneBank, WTape.words, Function.update_of_ne (show (0 : Fin 64) ≠ tIn by decide),
-      emp, cells_nil']
+    simp [SS.doneBank, Function.update_of_ne (show (0 : Fin 64) ≠ tIn by decide), emp, cells_nil']
   obtain ⟨v₃, u₃, e₃⟩ := readOut_exec body (rI := ι tIn) (s₁ := ι 0) (xc := xc) (i0 (by decide))
     (hxc _) (hxc _) v₂ { S₁ with R := R' } hout h0
   refine ⟨v₃, _, u₃.trans (u₂.trans u₁), ?_, Exec.cast (Exec.seq e₁ (Exec.seq e₂ e₃)) rfl ?_⟩
-  · have hsum : ∑ j, (S₁.R (ι j)).length = 3 * N + 5 := by
-      rw [Finset.sum_eq_add tIn pN hTP (fun c _ hc => ?_) (by simp) (by simp)]
-      · simp [S₁, Function.update_of_ne hIN]
-        ring
-      · simp [S₁, Function.update_of_ne (i0 hc.1), Function.update_of_ne (i0 hc.2), hR]
-    rw [hsum, show T + 12 * 64 + 5 = T + 773 by norm_num] at hn₂
+  · have h3 : 3 * (SS.cleanBound m + 1) ≤ (T + 773) * ssCostBound m := by
+      unfold ssCostBound; nlinarith
     simp only [length_binSyms]
-    rw [ssCostBound, Nat.mul_add (T + 773)]
-    generalize (T + 773) * SS.cleanBound m = X at *
     omega
   · congr 1
     refine Stacks.ext rfl rfl rfl ?_
@@ -905,7 +900,7 @@ theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Fu
       by_cases j1 : j = tIn
       · rw [j1, Function.update_self]
       · rw [Function.update_of_ne (i0 j1), hR'ι]
-        simp [SS.doneBank, WTape.words, Function.update_of_ne j1, emp, cells_nil']
+        simp [SS.doneBank, Function.update_of_ne j1, emp, cells_nil']
     · have y2' : ∀ j, ι j ≠ y := fun j hj => y2 ⟨j, hj⟩
       rw [Function.update_of_ne y1, Function.update_of_ne y1, Function.update_of_ne (y2' _).symm,
         hR'o y y2', hS₁o y (y2' _).symm (y2' _).symm]

@@ -59,42 +59,11 @@ lemma compactMainMv_calls {A : ℕ} (a b : MnR) :
     callsWithin (fun g => g≠compactMainOldProc .main) (compactMainStage (mnMv (A := A) a b)) :=
   compactMainStage_calls _ (by trivial)
 
-private lemma seqList_calls {T Q A : ℕ} {P U : Type} (allowed : P → Prop)
-    (ps : List (Pr P T Q A U)) (h : ∀ p ∈ ps,callsWithin allowed p) :
-    callsWithin allowed (Prog.seqList ps) := by
-  induction ps with
-  | nil => trivial
-  | cons p ps ih => exact ⟨h p (by simp),ih (fun q hq => h q (by simp [hq]))⟩
-
-private lemma placedRun_calls {s T Q A : ℕ} {P U : Type} (allowed : P → Prop)
-    (M : Machine.Program s Q A) (ι : Fin s → Fin T) (hι : Function.Injective ι) (hT : s≤T) :
-    callsWithin allowed (placedRun (F := P) (U := U) M ι hι hT) := by
-  unfold placedRun
-  refine ⟨?_,?_,?_,?_⟩
-  · apply seqList_calls
-    simp only [List.mem_map]
-    rintro p ⟨i,hi,rfl⟩
-    trivial
-  · unfold foreign simIter
-    refine ⟨True.intro,True.intro,?_,True.intro⟩
-    apply seqList_calls
-    intro p hp
-    simp only [List.mem_append,List.mem_map,List.mem_singleton] at hp
-    rcases hp with ⟨i,hi,rfl⟩ | rfl <;> trivial
-  · apply seqList_calls
-    simp only [List.mem_map]
-    rintro p ⟨i,hi,rfl⟩
-    trivial
-  · apply seqList_calls
-    simp only [List.mem_map]
-    rintro p ⟨i,hi,rfl⟩
-    trivial
-
 private lemma ssMul_calls {T Q A : ℕ} {P U : Type} (allowed : P → Prop)
     (ι : Fin 64 → Fin T) (hι : Function.Injective ι) (hT : 64≤T) (hQ : SS.states≤Q)
     (a b n c : Fin T) : callsWithin allowed (ssMul (F := P) (U := U) (A := A) ι hι hT hQ a b n c) := by
   unfold ssMul
-  exact ⟨by trivial,placedRun_calls _ _ _ _ _,by trivial⟩
+  exact ⟨by trivial,callsWithin_of_noCalls _ _ (WordCmd.tcompile_noCalls _ _),by trivial⟩
 
 private lemma point_calls {T Q A : ℕ} {P U : Type} (allowed : P → Prop)
     (ι : Fin 64 → Fin T) (hι : Function.Injective ι) (hT : 64≤T) (hQ : SS.states≤Q)

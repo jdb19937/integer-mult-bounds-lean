@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Schoenhage.FMachine
 public import IntegerMultBounds.Schoenhage.Words
+public import IntegerMultBounds.MathlibTM2.Host.WordTape
 public import IntegerMultBounds.Machine.Branch
 public import IntegerMultBounds.Machine.InjectivePlacement
 import IntegerMultBounds.Machine.PlacementBank
@@ -34,6 +35,12 @@ structure Prim (a : ℕ) where
   sem : (Fin s → WTape) → (Fin s → WTape)
   cost : (Fin s → WTape) → ℕ
   spec : ∀ σ, pre σ → HoareTime (M.toProgram hs) (· = enc σ) (· = enc (sem σ)) (cost σ)
+  /-- The control states its host implementation needs. -/
+  nQ : ℕ
+  /-- The host implementation on host stacks. -/
+  prog : MathlibTM2.Host.WordCmd.HProg s
+  hspec : MathlibTM2.Host.WordCmd.HostSpec 3 nQ s pre sem cost prog
+  hcalls : MathlibTM2.Host.WordCmd.HNoCalls prog
 
 /-- Word programs over `t` tapes. -/
 inductive Cmd (a t : ℕ) : Type 1 where

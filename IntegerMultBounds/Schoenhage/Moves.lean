@@ -107,6 +107,10 @@ noncomputable abbrev prim : Prim a where
   pre _ := True
   sem σ := fun _ => ⟨[], (σ 0).left.reverse ++ (σ 0).right⟩
   cost σ := clen (σ 0).left + 2
+  nQ := 0
+  prog := MathlibTM2.Host.WordCmd.rewindProg
+  hspec := MathlibTM2.Host.WordCmd.rewind_hostSpec
+  hcalls := MathlibTM2.Host.WordCmd.rewindProg_noCalls
   spec σ _ := by
     apply FMachine.hoare
     intro v hv; subst hv
@@ -176,6 +180,10 @@ noncomputable abbrev prim : Prim a where
   pre σ := (σ 0).left ≠ []
   sem σ := fun _ => ⟨(σ 0).left.tail, (σ 0).left.headD [] :: (σ 0).right⟩
   cost σ := ((σ 0).left.headD []).length + 3
+  nQ := 0
+  prog := MathlibTM2.Host.WordCmd.backProg
+  hspec := MathlibTM2.Host.WordCmd.back_hostSpec
+  hcalls := MathlibTM2.Host.WordCmd.backProg_noCalls
   spec σ hpre := by
     apply FMachine.hoare
     intro v hv; subst hv
@@ -303,6 +311,10 @@ noncomputable abbrev prim : Prim a where
   pre _ := True
   sem _ := fun _ => ⟨[], []⟩
   cost σ := 2 * clen (σ 0).words + 2
+  nQ := 0
+  prog := MathlibTM2.Host.WordCmd.clearProg
+  hspec := MathlibTM2.Host.WordCmd.clear_hostSpec
+  hcalls := MathlibTM2.Host.WordCmd.clearProg_noCalls
   spec σ _ := by
     apply FMachine.hoare
     intro v hv; subst hv
@@ -369,6 +381,10 @@ noncomputable abbrev prim (ws : List (List Bool)) : Prim a where
   pre σ := (σ 0).right = []
   sem σ := fun _ => ⟨ws.reverse ++ (σ 0).left, []⟩
   cost _ := clen ws
+  nQ := 0
+  prog := MathlibTM2.Host.WordCmd.emitProg ws
+  hspec := MathlibTM2.Host.WordCmd.emit_hostSpec ws
+  hcalls := MathlibTM2.Host.WordCmd.emitProg_noCalls ws
   spec σ hpre := by
     apply FMachine.hoare
     intro v hv; subst hv

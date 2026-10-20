@@ -482,4 +482,20 @@ theorem output_mark (w : List Bool) (ws : Fin 0 → List Bool) (h : w ≠ []) :
 
 end Rules
 
+/-! ### Pieces -/
+
+/-- Consecutive pieces of width `w` (the last may be shorter); empty for the empty word. -/
+def cut (w : ℕ) (x : List Bool) : List (List Bool) :=
+  if _hx : x = [] then [] else if _hw : w = 0 then [x] else x.take w :: cut w (x.drop w)
+termination_by x.length
+decreasing_by
+  have : 0 < x.length := List.length_pos_of_ne_nil (by assumption)
+  simp; omega
+
+@[simp] theorem cut_nil (w : ℕ) : cut w [] = [] := by rw [cut]; simp
+
+theorem cut_cons {w : ℕ} {x : List Bool} (hx : x ≠ []) (hw : w ≠ 0) :
+    cut w x = x.take w :: cut w (x.drop w) := by
+  rw [cut]; simp [hx, hw]
+
 end IntegerMultBounds.Schoenhage

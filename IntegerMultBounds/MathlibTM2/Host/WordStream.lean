@@ -1,19 +1,18 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Host.WordCmd
+public import IntegerMultBounds.MathlibTM2.Host.WordTape
+public import IntegerMultBounds.Schoenhage.Stream
 
 /-!
 # The streaming primitive on host stacks
 
-A host implementation (`streamImpl`) of the streaming primitive `Schoenhage.streamPrim R ext` of
-word programs: tape `drv` is the driver, tapes `oth i` the further inputs and tape `out` the
-output (`Schoenhage.Strm`).
-
-**Straight-line code.** `actThen a b` runs the action `a` and then `b` in one host step; `actSeq`
-chains a list. Registers hold raw stacks: `regs S j F` has the left and right stacks `F x` on
-register `j x`. `mv1 x` pops the right stack of `x` onto its left stack (the head moves one cell to
-the right), `scan1 x` records its top in `scan x`; `moveIf test l` moves every further input
-`i ∈ l` whose test holds, the tests reading only `st` and `scan` (`run_moveIf`).
+A host implementation (`stream_hostSpec`) of the streaming primitive of word programs: tape `drv`
+is the driver, tapes `oth i` the further inputs and tape `out` the output (`Schoenhage.Strm`).
+Per driver bit one host action records the inputs' tops, moves the further inputs the rule
+advances (`moveIf`, the tests reading only `st` and `scan`), emits, steps the driver and enters the
+next rule state, held in `st` (`bitStep_run`, `bitLoop` against `Strm.go`); then the further
+inputs skip to their separators in parallel (`skipLoop`), the flush is emitted and every input
+steps past its separator. `2 n + 2 rest + 5` steps against the cost `time`.
 -/
 
 @[expose] public section
@@ -21,172 +20,7 @@ the right), `scan1 x` records its top in `scan x`; `moveIf test l` moves every f
 namespace IntegerMultBounds.MathlibTM2.Host.WordCmd
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
-open IntegerMultBounds.Schoenhage (WTape Prim Cmd cells clen upd syms parse)
-
-/-! ### Straight-line code -/
-
-section Seq
-
-variable {K : Type} {Γ : K → Type} {σ : Type}
-
-/-- Run `a`, then `b`. -/
-def actThen : Action Γ σ → Action Γ σ → Action Γ σ
-  | .done, b => b
-  | .push k f a, b => .push k f (actThen a b)
-  | .peek k f a, b => .peek k f (actThen a b)
-  | .pop k f a, b => .pop k f (actThen a b)
-  | .load f a, b => .load f (actThen a b)
-  | .branch t x y, b => .branch t (actThen x b) (actThen y b)
-
-/-- Run a list of actions in order. -/
-def actSeq : List (Action Γ σ) → Action Γ σ
-  | [] => .done
-  | a :: as => actThen a (actSeq as)
-
-variable [DecidableEq K]
-
-theorem run_actThen (a b : Action Γ σ) (s : Store Γ σ) : (actThen a b).run s = b.run (a.run s) := by
-  induction a generalizing s with
-  | done => rfl
-  | push k f a ih => simp only [actThen, Action.run, ih]
-  | peek k f a ih => simp only [actThen, Action.run, ih]
-  | pop k f a ih => simp only [actThen, Action.run, ih]
-  | load f a ih => simp only [actThen, Action.run, ih]
-  | branch t x y ihx ihy => simp only [actThen, Action.run]; split <;> simp [ihx, ihy]
-
-@[simp] theorem run_actSeq_nil (s : Store Γ σ) : (actSeq ([] : List (Action Γ σ))).run s = s := rfl
-
-@[simp] theorem run_actSeq_cons (a : Action Γ σ) (as : List (Action Γ σ)) (s : Store Γ σ) :
-    (actSeq (a :: as)).run s = (actSeq as).run (a.run s) := run_actThen _ _ _
-
-theorem run_actSeq_append (as bs : List (Action Γ σ)) (s : Store Γ σ) :
-    (actSeq (as ++ bs)).run s = (actSeq bs).run ((actSeq as).run s) := by
-  induction as generalizing s with
-  | nil => rfl
-  | cons a as ih => simp [ih]
-
-end Seq
-
-/-! ### Raw registers -/
-
-section Regs
-
-variable {T A s : ℕ}
-
-/-- A pair of stacks: left, right. -/
-abbrev LR (A : ℕ) := List (Fin (A + 4)) × List (Fin (A + 4))
-
-/-- The stacks `S` with the stacks `F x` on the registers `j x`. -/
-noncomputable def regs (S : Stacks T A) (j : Fin s → Fin T) (F : Fin s → LR A) : Stacks T A :=
-  { S with
-    L := fun r => if h : ∃ x, j x = r then (F h.choose).1 else S.L r
-    R := fun r => if h : ∃ x, j x = r then (F h.choose).2 else S.R r }
-
-variable {j : Fin s → Fin T}
-
-theorem regs_L_at (hj : Function.Injective j) (S : Stacks T A) (F : Fin s → LR A) (x : Fin s) :
-    (regs S j F).L (j x) = (F x).1 := by
-  have h : ∃ y, j y = j x := ⟨x, rfl⟩
-  simp only [regs, h, ↓reduceDIte]
-  rw [hj h.choose_spec]
-
-theorem regs_R_at (hj : Function.Injective j) (S : Stacks T A) (F : Fin s → LR A) (x : Fin s) :
-    (regs S j F).R (j x) = (F x).2 := by
-  have h : ∃ y, j y = j x := ⟨x, rfl⟩
-  simp only [regs, h, ↓reduceDIte]
-  rw [hj h.choose_spec]
-
-theorem regs_L_off (S : Stacks T A) (F : Fin s → LR A) {r : Fin T} (hr : ∀ x, j x ≠ r) :
-    (regs S j F).L r = S.L r := by
-  have h : ¬ ∃ x, j x = r := fun ⟨x, hx⟩ => hr x hx
-  simp [regs, h]
-
-theorem regs_R_off (S : Stacks T A) (F : Fin s → LR A) {r : Fin T} (hr : ∀ x, j x ≠ r) :
-    (regs S j F).R r = S.R r := by
-  have h : ¬ ∃ x, j x = r := fun ⟨x, hx⟩ => hr x hx
-  simp [regs, h]
-
-theorem place_eq_regs (S : Stacks T A) (σ : Fin s → WTape) :
-    place S j σ = regs S j (fun x => (lcells (σ x).left, cells (σ x).right)) := rfl
-
-/-- Changing the stacks of one register. -/
-theorem regs_set (hj : Function.Injective j) (S : Stacks T A) (F : Fin s → LR A) (x : Fin s)
-    (p : LR A) :
-    ({ regs S j F with
-        L := Function.update (regs S j F).L (j x) p.1
-        R := Function.update (regs S j F).R (j x) p.2 } : Stacks T A) =
-      regs S j (Function.update F x p) := by
-  ext1
-  · rfl
-  · rfl
-  all_goals
-    funext r
-    by_cases hr : ∃ y, j y = r
-    · obtain ⟨y, rfl⟩ := hr
-      by_cases hy : y = x
-      · subst hy; simp [regs_L_at hj, regs_R_at hj]
-      · have : j y ≠ j x := fun h => hy (hj h)
-        simp [this, regs_L_at hj, regs_R_at hj, hy]
-    · have hoff : ∀ y, j y ≠ r := fun y h => hr ⟨y, h⟩
-      have hne : r ≠ j x := fun h => hoff x h.symm
-      simp [hne, regs_L_off _ _ hoff, regs_R_off _ _ hoff]
-
-end Regs
-
-/-! ### Moves and peeks -/
-
-section Moves
-
-variable {T Q A : ℕ} {U : Type}
-
-/-- Pop the right stack of `x` onto its left stack. -/
-def mv1 (x : Fin T) : Act T Q A U :=
-  .pop (.rt x) (fun v o => { v with sym := o }) (.push (.lt x) (fun v => v.sym.getD blank) .done)
-
-/-- Record the top of the right stack of `x` in `scan x`. -/
-def scan1 (x : Fin T) : Act T Q A U :=
-  .peek (.rt x) (fun v o => { v with scan := Function.update v.scan x (o.getD blank) }) .done
-
-/-- One cell to the right: the top of the right stack onto the left stack. -/
-def adv (p : LR A) : LR A := (p.2.headD blank :: p.1, p.2.tail)
-
-@[simp] theorem adv_cons (L : List (Fin (A + 4))) (e : Fin (A + 4)) (R : List (Fin (A + 4))) :
-    adv (L, e :: R) = (e :: L, R) := rfl
-
-variable {s : ℕ} {j : Fin s → Fin T}
-
-theorem mv1_run (hj : Function.Injective j) (S : Stacks T A) (F : Fin s → LR A) (x : Fin s)
-    (v : HS T Q A U) :
-    (mv1 (j x)).run (mk v (regs S j F)) =
-      mk { v with sym := (F x).2.head? } (regs S j (Function.update F x (adv (F x)))) := by
-  rw [← regs_set hj]
-  rcases hF : F x with ⟨L, _ | ⟨e, R⟩⟩
-  · simp [mv1, Action.run, adv, regs_L_at hj, regs_R_at hj, hF, update_lt, update_rt]
-  · simp [mv1, Action.run, adv, regs_L_at hj, regs_R_at hj, hF, update_lt, update_rt]
-
-theorem scan1_run (S : Stacks T A) (x : Fin T) (v : HS T Q A U) :
-    (scan1 x).run (mk v S) =
-      mk { v with scan := Function.update v.scan x ((S.R x).head?.getD blank) } S := rfl
-
-/-- Record the tops of the right stacks of `xs`. -/
-def scanAll (xs : List (Fin T)) : Act T Q A U := actSeq (xs.map scan1)
-
-theorem scanAll_run (S : Stacks T A) :
-    ∀ (xs : List (Fin T)) (v : HS T Q A U), (scanAll xs).run (mk v S) =
-      mk { v with scan := fun x => if x ∈ xs then (S.R x).head?.getD blank else v.scan x } S
-  | [], v => by simp [scanAll]
-  | x :: xs, v => by
-    simp only [scanAll, List.map_cons, run_actSeq_cons, scan1_run] at *
-    rw [show actSeq (xs.map scan1) = (scanAll xs : Act T Q A U) from rfl, scanAll_run S xs]
-    congr 2
-    funext y
-    by_cases hy : y ∈ xs
-    · simp [hy]
-    · by_cases hyx : y = x
-      · subst hyx; simp [hy]
-      · simp [hy, hyx]
-
-end Moves
+open IntegerMultBounds.Schoenhage (WTape cells clen syms parse)
 
 /-! ### Conditional moves of the further inputs -/
 
@@ -738,104 +572,101 @@ section Impl
 
 open Schoenhage.Strm (Rule go drv oth)
 
-variable {A r : ℕ} (R : Rule r) (ext : Bool)
+variable {r : ℕ} (R : Rule r) (ext : Bool)
 
 theorem time_bound (w : List Bool) (ws : Fin r → List Bool) :
     w.length + Schoenhage.Strm.rest R w ws + 5 ≤ Schoenhage.Strm.time R w ws := by
   unfold Schoenhage.Strm.time; omega
 
+/-- The streaming primitive as a host program. -/
+noncomputable def streamHProg : HProg (r + 2) := fun j => streamProg R ext j
+
 /-- The streaming primitive on host stacks. -/
-noncomputable def streamImpl (C n : ℕ) (hC : 2 ≤ C) (hn : Fintype.card R.Q ≤ n) :
-    TImpl C n (Schoenhage.streamPrim (a := A) R ext) where
-  prog j := streamProg R ext j
-  spec body j hj hQ τ hpre v S := by
-    have hQ' := hn.trans hQ
-    obtain ⟨hdrv, hoth, hout, vs, hvs, hext⟩ := hpre
-    obtain ⟨w, R0, hw⟩ := Schoenhage.exists_cons hdrv
-    choose ws Rs hws using fun i => Schoenhage.exists_cons (hoth i)
-    have hcur : (τ drv).cur = w := by simp [WTape.cur, hw]
-    have hcurs : (fun i => (τ (oth i)).cur) = ws := funext fun i => by simp [WTape.cur, hws i]
-    rw [hcur, hcurs] at hvs
-    set g := go R R.q0 w ws
-    set Lu0 := if ext then (lcells (A := A) (τ Schoenhage.Strm.out).left).tail
-      else lcells (τ Schoenhage.Strm.out).left
-    have h0 : place S j τ = regs S j (cfg (lcells (τ drv).left, w.map bitSymbol ++ separator :: cells R0)
-        (fun i => (lcells (τ (oth i)).left, (ws i).map bitSymbol ++ separator :: cells (Rs i)))
-        (lcells (τ Schoenhage.Strm.out).left, [])) := by
-      rw [place_eq_regs]
-      congr 1
-      exact cfg_ext (by simp [hw, cells_cons']) (fun i => by simp [hws i, cells_cons'])
-        (by simp [hout, cells])
-    -- init
-    obtain ⟨v₀, hu₀, hq₀, hf₀, e₀⟩ := initAct_run R ext hQ' hj S
-      (lcells (τ drv).left, w.map bitSymbol ++ separator :: cells R0)
+theorem stream_hostSpec : HostSpec 3 (Fintype.card R.Q) (r + 2) (Schoenhage.StreamPre R ext)
+    (Schoenhage.streamSem R ext) (fun σ => Schoenhage.Strm.time R (σ drv).cur fun j => (σ (oth j)).cur)
+    (streamHProg R ext) := by
+  intro P T Q A U body j hj hQ' τ hpre v S
+  have hC : 2 ≤ 3 := by norm_num
+  obtain ⟨hdrv, hoth, hout, vs, hvs, hext⟩ := hpre
+  obtain ⟨w, R0, hw⟩ := Schoenhage.exists_cons hdrv
+  choose ws Rs hws using fun i => Schoenhage.exists_cons (hoth i)
+  have hcur : (τ drv).cur = w := by simp [WTape.cur, hw]
+  have hcurs : (fun i => (τ (oth i)).cur) = ws := funext fun i => by simp [WTape.cur, hws i]
+  rw [hcur, hcurs] at hvs
+  set g := go R R.q0 w ws
+  set Lu0 := if ext then (lcells (A := A) (τ Schoenhage.Strm.out).left).tail
+    else lcells (τ Schoenhage.Strm.out).left
+  have h0 : place S j τ = regs S j (cfg (lcells (τ drv).left, w.map bitSymbol ++ separator :: cells R0)
       (fun i => (lcells (τ (oth i)).left, (ws i).map bitSymbol ++ separator :: cells (Rs i)))
-      (lcells (τ Schoenhage.Strm.out).left) [] v
-    -- bits
-    obtain ⟨v₁, hu₁, hq₁, pre, hpre, he₁⟩ := bitLoop R body hQ' hj S (cells R0) (fun i => cells (Rs i)) []
-      w R.q0 ws (lcells (τ drv).left) (fun i => lcells (τ (oth i)).left) Lu0 v₀ hq₀
-      (by rw [hf₀]; exact isBit_head w _)
-    -- skip
-    set d₁ : LR A := ((w.map bitSymbol).reverse ++ lcells (τ drv).left, separator :: cells R0)
-    set u₁ : LR A := ((g.2.1.map Schoenhage.sym).reverse ++ Lu0, [])
-    obtain ⟨v₂, hu₂, hst₂, hf₂, e₂⟩ := flagAny_run hj S (cfg d₁
-      (fun i => ((pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left,
-        (g.2.2 i).map bitSymbol ++ separator :: cells (Rs i))) u₁) v₁
-    obtain ⟨v₃, m, hu₃, hst₃, hm, he₃⟩ := skipLoop body hj S d₁ u₁ (fun i => cells (Rs i))
-      (Schoenhage.Strm.rest R w ws) g.2.2 (fun i => (pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left)
-      v₂ (fun i => Finset.le_sup (f := fun i => (g.2.2 i).length) (Finset.mem_univ i))
-      (by rw [hf₂]; simp only [cfg_oth, isBit_head])
-    -- flush and step past the separators
-    have hq₃ : qdec R v₃.st = g.1 := by rw [hst₃, hst₂]; exact hq₁
-    have e₄ := flush_run R hj S d₁ (fun i => ((g.2.2 i).reverse.map bitSymbol ++
-      ((pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left), separator :: cells (Rs i)))
-      ((g.2.1.map Schoenhage.sym).reverse ++ Lu0) [] v₃
-    rw [hq₃] at e₄
-    obtain ⟨v₄, hu₄, e₅⟩ := finAct_run hj S d₁ (fun i => ((g.2.2 i).reverse.map bitSymbol ++
-      ((pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left), separator :: cells (Rs i)))
-      (((R.flush g.1).map Schoenhage.sym).reverse ++ ((g.2.1.map Schoenhage.sym).reverse ++ Lu0), []) v₃
-    refine ⟨v₄, 1 + ((2 * w.length + 1) + (1 + (m + 1))), ?_, ?_, ?_⟩
-    · rw [hu₄, hu₃, hu₂, hu₁, hu₀]
-    · have ht := time_bound R w ws
-      have h2 := Nat.mul_le_mul_right (Schoenhage.Strm.time R w ws + 1) hC
-      simp only [hcur, hcurs]
-      omega
-    · rw [h0]
-      refine Exec.seq ((Exec.act (body := body) _ _).cast rfl e₀) (Exec.seq he₁
-        (Exec.seq ((Exec.act (body := body) _ _).cast rfl e₂) (Exec.seq he₃
-          ((Exec.act (body := body) _ _).cast rfl ?_))))
-      rw [run_actThen, e₄, e₅, place_eq_regs]
-      congr 2
-      refine cfg_ext ?_ (fun i => ?_) ?_
-      · simp [d₁, Schoenhage.streamSem, Schoenhage.Strm.drv_ne_out, WTape.next, WTape.cur, hw, lcells,
-          List.map_reverse]
-      · have hp : pre i ++ g.2.2 i = ws i := hpre i
-        simp only [cfg_oth, adv_cons, Schoenhage.streamSem, Schoenhage.Strm.oth_ne_out, ↓reduceIte,
-          WTape.next, WTape.cur, hws i, List.headD_cons, List.tail_cons, lcells]
-        rw [← hp]
-        simp [List.map_reverse]
-      · have hout' : g.2.1 ++ R.flush g.1 = syms vs := hvs
-        have ecells : ((syms vs).map (Schoenhage.sym (a := A))) = cells vs := rfl
-        simp only [cfg_out, Schoenhage.streamSem, ↓reduceIte]
-        rw [hcur, hcurs, hvs, Schoenhage.parse_syms]
-        rw [← List.append_assoc, ← List.reverse_append, ← List.map_append, hout', ecells]
-        cases ext
-        · simp [Lu0, WTape.put, lcells_append, lcells_reverse, cells]
-        · obtain ⟨hL, hV⟩ := hext rfl
-          obtain ⟨u, L, hl⟩ := Schoenhage.exists_cons hL
-          obtain ⟨x, xs, hx⟩ := Schoenhage.exists_cons hV
-          subst hx
-          simp [Lu0, WTape.put, hl, lcells, lcells_append, lcells_reverse, cells,
-            Schoenhage.syms_cons, Schoenhage.sym, Function.comp_def, List.map_reverse]
+      (lcells (τ Schoenhage.Strm.out).left, [])) := by
+    rw [place_eq_regs]
+    congr 1
+    exact cfg_ext (by simp [hw, cells_cons']) (fun i => by simp [hws i, cells_cons'])
+      (by simp [hout, cells])
+  -- init
+  obtain ⟨v₀, hu₀, hq₀, hf₀, e₀⟩ := initAct_run R ext hQ' hj S
+    (lcells (τ drv).left, w.map bitSymbol ++ separator :: cells R0)
+    (fun i => (lcells (τ (oth i)).left, (ws i).map bitSymbol ++ separator :: cells (Rs i)))
+    (lcells (τ Schoenhage.Strm.out).left) [] v
+  -- bits
+  obtain ⟨v₁, hu₁, hq₁, pre, hpre, he₁⟩ := bitLoop R body hQ' hj S (cells R0) (fun i => cells (Rs i)) []
+    w R.q0 ws (lcells (τ drv).left) (fun i => lcells (τ (oth i)).left) Lu0 v₀ hq₀
+    (by rw [hf₀]; exact isBit_head w _)
+  -- skip
+  set d₁ : LR A := ((w.map bitSymbol).reverse ++ lcells (τ drv).left, separator :: cells R0)
+  set u₁ : LR A := ((g.2.1.map Schoenhage.sym).reverse ++ Lu0, [])
+  obtain ⟨v₂, hu₂, hst₂, hf₂, e₂⟩ := flagAny_run hj S (cfg d₁
+    (fun i => ((pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left,
+      (g.2.2 i).map bitSymbol ++ separator :: cells (Rs i))) u₁) v₁
+  obtain ⟨v₃, m, hu₃, hst₃, hm, he₃⟩ := skipLoop body hj S d₁ u₁ (fun i => cells (Rs i))
+    (Schoenhage.Strm.rest R w ws) g.2.2 (fun i => (pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left)
+    v₂ (fun i => Finset.le_sup (f := fun i => (g.2.2 i).length) (Finset.mem_univ i))
+    (by rw [hf₂]; simp only [cfg_oth, isBit_head])
+  -- flush and step past the separators
+  have hq₃ : qdec R v₃.st = g.1 := by rw [hst₃, hst₂]; exact hq₁
+  have e₄ := flush_run R hj S d₁ (fun i => ((g.2.2 i).reverse.map bitSymbol ++
+    ((pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left), separator :: cells (Rs i)))
+    ((g.2.1.map Schoenhage.sym).reverse ++ Lu0) [] v₃
+  rw [hq₃] at e₄
+  obtain ⟨v₄, hu₄, e₅⟩ := finAct_run hj S d₁ (fun i => ((g.2.2 i).reverse.map bitSymbol ++
+    ((pre i).reverse.map bitSymbol ++ lcells (τ (oth i)).left), separator :: cells (Rs i)))
+    (((R.flush g.1).map Schoenhage.sym).reverse ++ ((g.2.1.map Schoenhage.sym).reverse ++ Lu0), []) v₃
+  refine ⟨v₄, 1 + ((2 * w.length + 1) + (1 + (m + 1))), ?_, ?_, ?_⟩
+  · rw [hu₄, hu₃, hu₂, hu₁, hu₀]
+  · have ht := time_bound R w ws
+    have h2 := Nat.mul_le_mul_right (Schoenhage.Strm.time R w ws + 1) hC
+    simp only [hcur, hcurs]
+    omega
+  · rw [h0]
+    refine Exec.seq ((Exec.act (body := body) _ _).cast rfl e₀) (Exec.seq he₁
+      (Exec.seq ((Exec.act (body := body) _ _).cast rfl e₂) (Exec.seq he₃
+        ((Exec.act (body := body) _ _).cast rfl ?_))))
+    rw [run_actThen, e₄, e₅, place_eq_regs]
+    congr 2
+    refine cfg_ext ?_ (fun i => ?_) ?_
+    · simp [d₁, Schoenhage.streamSem, Schoenhage.Strm.drv_ne_out, WTape.next, WTape.cur, hw, lcells,
+        List.map_reverse]
+    · have hp : pre i ++ g.2.2 i = ws i := hpre i
+      simp only [cfg_oth, adv_cons, Schoenhage.streamSem, Schoenhage.Strm.oth_ne_out, ↓reduceIte,
+        WTape.next, WTape.cur, hws i, List.headD_cons, List.tail_cons, lcells]
+      rw [← hp]
+      simp [List.map_reverse]
+    · have hout' : g.2.1 ++ R.flush g.1 = syms vs := hvs
+      have ecells : ((syms vs).map (Schoenhage.sym (a := A))) = cells vs := rfl
+      simp only [cfg_out, Schoenhage.streamSem, ↓reduceIte]
+      rw [hcur, hcurs, hvs, Schoenhage.parse_syms]
+      rw [← List.append_assoc, ← List.reverse_append, ← List.map_append, hout', ecells]
+      cases ext
+      · simp [Lu0, WTape.put, lcells_append, lcells_reverse, cells]
+      · obtain ⟨hL, hV⟩ := hext rfl
+        obtain ⟨u, L, hl⟩ := Schoenhage.exists_cons hL
+        obtain ⟨x, xs, hx⟩ := Schoenhage.exists_cons hV
+        subst hx
+        simp [Lu0, WTape.put, hl, lcells, lcells_append, lcells_reverse, cells,
+          Schoenhage.syms_cons, Schoenhage.sym, Function.comp_def, List.map_reverse]
 
-theorem allTM_op0 {C n t : ℕ} (hC : 2 ≤ C) (R : Rule 0) (hn : Fintype.card R.Q ≤ n) (ext : Bool)
-    {d o : Fin t} (h : d ≠ o) : AllTM C n (Schoenhage.op0 (a := A) R ext d o h) :=
-  .prim ⟨streamImpl R ext C n hC hn⟩
-
-theorem allTM_op1 {C n t : ℕ} (hC : 2 ≤ C) (R : Rule 1) (hn : Fintype.card R.Q ≤ n) (ext : Bool)
-    {d e o : Fin t} (h1 : d ≠ e) (h2 : d ≠ o) (h3 : e ≠ o) :
-    AllTM C n (Schoenhage.op1 (a := A) R ext d e o h1 h2 h3) :=
-  .prim ⟨streamImpl R ext C n hC hn⟩
+theorem streamHProg_noCalls : HNoCalls (streamHProg R ext) := fun _ => by
+  simp [NoCalls, streamHProg, streamProg]
 
 end Impl
 

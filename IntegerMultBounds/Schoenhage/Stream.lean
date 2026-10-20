@@ -577,4 +577,59 @@ theorem stream_run (R : Rule r) (ext : Bool) (v : Tapes (r + 2) a) (w : List Boo
 
 end Strm
 
+/-! ### Word-tape effects of a streaming primitive -/
+
+section Spec
+
+open Strm
+
+variable {a r : ℕ}
+
+namespace WTape
+
+/-- The current word (empty at the end). -/
+def cur (T : WTape) : List Bool := T.right.headD []
+
+/-- Step past the current word. -/
+def next (T : WTape) : WTape := ⟨T.cur :: T.left, T.right.tail⟩
+
+/-- Append words at the end, optionally continuing the last word. -/
+def put (T : WTape) (ext : Bool) (vs : List (List Bool)) : WTape :=
+  match ext, T.left, vs with
+  | true, u :: L, v :: vs' => ⟨vs'.reverse ++ (u ++ v) :: L, []⟩
+  | _, L, vs => ⟨vs.reverse ++ L, []⟩
+
+theorem next_pos (T : WTape) {w : List Bool} {R : List (List Bool)} (h : T.right = w :: R) :
+    T.next.pos = T.pos + w.length + 1 := by
+  simp [next, pos, cur, h]; ring
+
+theorem next_tape (T : WTape) {w : List Bool} {R : List (List Bool)} (h : T.right = w :: R) :
+    T.next.tape (a := a) = T.tape := by
+  simp [next, tape, words, cur, h]
+
+theorem Rd_of (T : WTape) {w : List Bool} {R : List (List Bool)} (h : T.right = w :: R) :
+    Rd (T.tape (a := a)) T.pos w :=
+  ⟨fun c hc => T.tape_word h c hc, T.tape_sep h⟩
+
+end WTape
+
+/-- The precondition of a streaming primitive. -/
+def StreamPre (R : Rule r) (ext : Bool) (σ : Fin (r + 2) → WTape) : Prop :=
+  (σ drv).right ≠ [] ∧ (∀ j, (σ (oth j)).right ≠ []) ∧ (σ out).right = [] ∧
+  ∃ vs, output R (σ drv).cur (fun j => (σ (oth j)).cur) = syms vs ∧
+    (ext = true → (σ out).left ≠ [] ∧ vs ≠ [])
+
+/-- The effect of a streaming primitive. -/
+def streamSem (R : Rule r) (ext : Bool) (σ : Fin (r + 2) → WTape) : Fin (r + 2) → WTape :=
+  fun i => if i = out then
+    (σ out).put ext (parse (output R (σ drv).cur (fun j => (σ (oth j)).cur)))
+    else (σ i).next
+
+theorem exists_cons {l : List (List Bool)} (h : l ≠ []) : ∃ w R, l = w :: R := by
+  cases l with
+  | nil => exact absurd rfl h
+  | cons w R => exact ⟨w, R, rfl⟩
+
+end Spec
+
 end IntegerMultBounds.Schoenhage
