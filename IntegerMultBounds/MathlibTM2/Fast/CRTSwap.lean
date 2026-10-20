@@ -288,11 +288,11 @@ theorem crtSwapPass_exec (body : F → Pr F T Q (prime + K) U)
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega))]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h'))]
+      rw [hS₂ι _ (fun h' => hhd_pay k (swapReg_injective h'))]
       exact hhdr k)
     (by rw [hS₂pr, ← hxb])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (reg_injective h'))]
+      rw [hS₂ι _ (fun h' => hip (swapReg_injective h'))]
       exact hother i hip hk)
   set S₃ : Stacks T (prime + K) := { S₂ with
     L := fun _ => []
@@ -638,7 +638,7 @@ theorem crtSwapStep_runs {body : F → Pr F T Q (prime + K) U}
   regs_ne hreg'
   set hdr : Fin 5 → Fin T := fun k => ι (reg (crtHd k)) with hhdr
   have hdr_inj : Function.Injective hdr := fun a b h =>
-    crtHd_inj (reg_injective (hι h))
+    crtHd_inj (swapReg_injective (hι h))
   have hb : ∀ r ∈ [str, stmp, uU, vU, aJ, aK, e3B, tu, t₁, t₂], ∀ k, hdr k ≠ r :=
     fun r hr k => hbank r hr _
   have hreg₂ : [uU, vU, aJ, aK, e3B, tu, t₁, t₂, hdr 0, hdr 1, hdr 2, hdr 3, hdr 4].Nodup := by
@@ -714,7 +714,7 @@ theorem crtSwapStep_runs {body : F → Pr F T Q (prime + K) U}
       (by rw [hS, hR₁oth _ (hb stmp (by simp)), hstmp])
       (by
         rw [hS, hR₁oth _ (fun k' hk' => crtHd_ne_pay k'
-          (reg_injective (hι hk'))), hι0])
+          (swapReg_injective (hι hk'))), hι0])
       (fun i hi => by
         rw [hS, hR₁oth _ (fun k' hk' => by
           have h2 : (reg (crtHd k')).val = i.val := congrArg Fin.val (hι hk')

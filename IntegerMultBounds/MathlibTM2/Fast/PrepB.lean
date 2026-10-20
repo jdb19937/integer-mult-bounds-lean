@@ -370,7 +370,7 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (preHdrCostB D w) := by
   have htg := preLay_inj hg hι hdisj
   have hinj : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (swapReg_injective e), fun e => e ▸ rfl⟩
   refine twRuns_congr (twRuns_mono
     (twRuns_seq (twRuns_umul (body := body) htg 3 (a := .inl (.inl (.cm .wn))) (b := .inl (.inl .tL))
       (t := .inl (.inl .ac2)) (by simp) (by simp) (by simp) (preStB σ) ?_)

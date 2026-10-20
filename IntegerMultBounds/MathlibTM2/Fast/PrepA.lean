@@ -295,7 +295,7 @@ omit hrg hι hdisj in
 lemma preHA_nodup {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd) :
     ((preClrA hd).map (Sum.inl : _ → RsaR (RsaX t₀) ⊕ TblR 48)).Nodup := by
   have h : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (swapReg_injective e), fun e => e ▸ rfl⟩
   simp [preClrA, preHA, List.nodup_cons, h]
 
 theorem preA_clr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd) (V : RsaV (RsaX t₀) (prime + K)) :
@@ -390,7 +390,7 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (preSt { V with xr := preBankA V.xr hd (D.hs w) }) (preHdrCost D w) := by
   have htg := preLay_inj hrg hι hdisj
   have hinj : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (swapReg_injective e), fun e => e ▸ rfl⟩
   have hH' : ∀ k, V.get (preHA hd k) = [] := fun k => hH k
   refine twRuns_congr (twRuns_mono
     (twRuns_seq (twRuns_umul (body := body) htg 3 (a := .inl (.c .wn)) (b := .inl .sm2)

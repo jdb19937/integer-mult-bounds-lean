@@ -63,7 +63,7 @@ lemma cxSetReg_inj {ι : CxReg → Fin T} {bank : Fin 2 → Fin (swapT 6) → Fi
     (hbc : ∀ c c' j j', bank c j = bank c' j' → c = c') :
     Function.Injective (cxSetReg ι bank) := by
   have hreg : Function.Injective fun k : Fin 5 => (reg (cxHd k) : Fin (swapT 6)) :=
-    fun k k' e => cxHd_inj (reg_injective e)
+    fun k k' e => cxHd_inj (swapReg_injective e)
   rintro (x | ⟨c, k⟩) (y | ⟨c', k'⟩) e <;> simp only [cxSetReg] at e
   · rw [hι e]
   · exact absurd e.symm (hb.ne _ _ _)

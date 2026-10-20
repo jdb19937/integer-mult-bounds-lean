@@ -159,7 +159,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
   have hnd₀ : l₀.Nodup := by
     rw [hl₀, List.nodup_ofFn]
     intro a b hab
-    exact hi (reg_injective (hι hab))
+    exact hi (swapReg_injective (hι hab))
   have hmem : ∀ y, y ∈ l₀ ↔ ∃ k, ι (reg (hd k)) = y := fun y => List.mem_ofFn
   obtain ⟨v₁, hu₁, he₁⟩ := shiftList_exec body l₀ hnd₀ v S₀
   set S₁ : Stacks T (prime + K) := { S₀ with
@@ -214,7 +214,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
         · obtain ⟨k, rfl⟩ := hk
           rw [(hS₁hdr k).1, (hS₁hdr k).2, hheads k, hhdr k, readAt_single]
         · have hc0 : caller.head i = 0 := ite_eq_right hk
-          have hoth := hS₁oth (reg i) (fun k hk' => hk ⟨k, reg_injective hk'⟩)
+          have hoth := hS₁oth (reg i) (fun k hk' => hk ⟨k, swapReg_injective hk'⟩)
           rw [hoth.1, hoth.2, hc0, sub_zero, readAt_nil_left]
       · rw [dite_eq_right hj, dite_eq_right hj]
         have hoth := hS₁oth j (fun k hk' => hj (hk' ▸ (hd k).isLt))
@@ -259,7 +259,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
         rw [Function.update_self, hR', Function.update_self, BinaryRadixRangePrepareAlphabet.word,
           putWord_blank_zero, encode_wordTape, List.map_ofFn]
         rfl
-      · have hr : reg i ≠ reg pay := fun h' => hip (reg_injective h')
+      · have hr : reg i ≠ reg pay := fun h' => hip (swapReg_injective h')
         rw [Function.update_of_ne hip, hR'ι _ hr]
         exact encode_wordTape_decode _ (fun s hs => (hgood _ s hs).2) z
     · rw [dite_eq_right hj]
@@ -299,7 +299,8 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
     ((unplaced ι).length + 1)))), hu₃.trans (hu₂.trans hu₁), ?_,
     Exec.cast (Exec.seq he₀ (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ he₄)))) rfl ?_⟩
   · rw [List.map_ofFn, List.sum_ofFn] at hn₃
-    set k := swapCost P G B h d hs
+    rw [show swapCost P G B h d hs = BinaryInterchangeRun.cost P G B h d hs from rfl]
+    set k := BinaryInterchangeRun.cost P G B h d hs
     have hsum : ∑ j, ((fun i => 6 * ((S₂.L i).length + (S₂.R i).length) + 6) ∘ ι) j ≤
         ∑ j, (6 * (S.R (ι j)).length + (12 * k + 6)) := by
       apply Finset.sum_le_sum

@@ -182,7 +182,7 @@ lemma rsaBank_hd {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : Fi
   have h : ∃ k', reg (hd k') = reg (hd k) := ⟨k, rfl⟩
   rw [rsaBank, dite_eq_left h]
   have := Classical.choose_spec h
-  rw [hi (reg_injective this)]
+  rw [hi (swapReg_injective this)]
 
 lemma rsaBank_other {hd : Fin 5 → Fin t₀} (hs : Fin 5 → List Bool) {j : Fin (swapT t₀)}
     (hj : ∀ k, reg (hd k) ≠ j) : (rsaBank hd hs j : List (Fin (A + 4))) = [] := by
@@ -194,7 +194,7 @@ lemma rsaBank_xchg {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : 
       (reg (hd 3)) (rsaBank hd hs (reg (hd 4)))) (reg (hd 4)) (rsaBank hd hs (reg (hd 3))) =
       rsaBank hd (fun k => hs (Equiv.swap 3 4 k)) := by
   have hinj : Function.Injective fun k => reg (hd k) :=
-    fun a b h => hi (reg_injective h)
+    fun a b h => hi (swapReg_injective h)
   funext j
   by_cases h4 : j = reg (hd 4)
   · subst h4
@@ -296,8 +296,8 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
   have hL' : L.length = P * H * G * D := by
     rw [hL, ← rsaPre_mul t i, hsuf]; ring
   have hinj : Function.Injective fun k => reg (hd k) :=
-    fun a b h => hi (reg_injective h)
-  have hreg : ∀ k, reg (hd k) ≠ reg pay := fun k h => hdpay k (reg_injective h)
+    fun a b h => hi (swapReg_injective h)
+  have hreg : ∀ k, reg (hd k) ≠ reg pay := fun k h => hdpay k (swapReg_injective h)
   set hs' : Fin 5 → List Bool := fun k => hs (Equiv.swap 3 4 k) with hhs'
   -- 1. interchange axis `i` with the last axis
   set Lsw := swapList P (2 ^ Lb) G (2 ^ Ld) 1 0 L with hLsw
@@ -312,7 +312,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
     (fun k => by rw [hbank, rsaBank_hd hi])
     (fun i' _ hk => by
       rw [hbank, rsaBank_other]
-      intro k h; exact hk k (reg_injective h))
+      intro k h; exact hk k (swapReg_injective h))
   -- 2. `Ã` along the innermost axis
   have hlsw : Lsw.length = P * D * G * H := by
     rw [hLsw, rsa_length_swapList, ← ht, ← htd]; ring
@@ -379,7 +379,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
       (fun k => by rw [show V₃.xr = xr' from rfl, hbank', rsaBank_hd hi])
       (fun i' _ hk => by
         rw [show V₃.xr = xr' from rfl, hbank', rsaBank_other]
-        intro k h; exact hk k (reg_injective h))
+        intro k h; exact hk k (swapReg_injective h))
     have hbs : ∑ j, (V₃.xr (.sw j)).length =
         ∑ j, (rsaBank hd hs' j : List (Fin (prime + K + 4))).length := by
       simp only [show V₃.xr = xr' from rfl, hbank']

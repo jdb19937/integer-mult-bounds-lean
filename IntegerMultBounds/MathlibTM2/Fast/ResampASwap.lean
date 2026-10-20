@@ -252,11 +252,11 @@ theorem rsa_swap (body : F → Pr F T Q (prime + K) U) {rg : RsaR X → Fin T}
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega)), hSι]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h')), hSι]
+      rw [hS₂ι _ (fun h' => hhd_pay k (swapReg_injective h')), hSι]
       exact hhdr k)
     (by rw [hS₂pr, ← hx])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (reg_injective h')), hSι,
+      rw [hS₂ι _ (fun h' => hip (swapReg_injective h')), hSι,
         hoth i hip hk]
       simp)
   set S₃ : Stacks T (prime + K) := { S₂ with

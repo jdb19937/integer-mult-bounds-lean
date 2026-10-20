@@ -149,7 +149,7 @@ lemma rsbBank_hd {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : Fi
   have h : ∃ k', reg (hd k') = reg (hd k) := ⟨k, rfl⟩
   rw [rsbBank, dite_eq_left h]
   have := Classical.choose_spec h
-  rw [hi (reg_injective this)]
+  rw [hi (swapReg_injective this)]
 
 lemma rsbBank_other {hd : Fin 5 → Fin t₀} (hs : Fin 5 → List Bool) {j : Fin (swapT t₀)}
     (hj : ∀ k, reg (hd k) ≠ j) : (rsbBank hd hs j : List (Fin (A + 4))) = [] := by
@@ -371,9 +371,9 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
   have hL' : L.length = Pp * H * G * Dl := by
     rw [hL, ← rsbPre_mul t i, hsuf]; ring
   have hinj : Function.Injective fun k => reg (hd k) :=
-    fun a b h => hi (reg_injective h)
+    fun a b h => hi (swapReg_injective h)
   have hreg : ∀ k, reg (hd k) ≠ reg pay :=
-    fun k h => hdpay k (reg_injective h)
+    fun k h => hdpay k (swapReg_injective h)
   set hs' : Fin 5 → List Bool := fun k => hs (Equiv.swap 3 4 k) with hhs'
   -- 1. interchange axis `i` with the last axis
   set Lsw := swapList Pp (2 ^ Lb) G (2 ^ Ld) 1 0 L with hLsw
@@ -394,7 +394,7 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
     (fun i' _ hk => by
       simp only [Sum.elim_inr]
       rw [hbank, rsbBank_other]
-      intro k h; exact hk k (reg_injective h))
+      intro k h; exact hk k (swapReg_injective h))
   rw [Sum.update_elim_inl, ← hLsw] at h1
   -- 2. `B̃₀` along the innermost axis
   have hlsw : Lsw.length = Pp * Dl * G * H := by
@@ -448,7 +448,7 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
     (fun i' _ hk => by
       simp only [Sum.elim_inr]
       rw [hbank', rsbBank_other]
-      intro k h; exact hk k (reg_injective h))
+      intro k h; exact hk k (swapReg_injective h))
   have hsw_back : swapList Pp (2 ^ Ld) G (2 ^ Lb) 1 0 (lines.flatMap g) =
       rsbAxisL Pp H (rsbSuf t i) g L := by
     rw [hax, hLsw, ← ht, ← htd, rsbAxisL_swap Pp H G Dl g hglen L hL', hsuf]

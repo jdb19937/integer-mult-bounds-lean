@@ -250,7 +250,7 @@ lemma reg_val {t₀ : ℕ} (i : Fin t₀) : (reg i).val = i.val := rfl
 lemma self_le_swapT (t₀ : ℕ) : t₀ ≤ swapT t₀ := by
   unfold swapT BinaryInterchangeRun.bankCount; omega
 
-lemma reg_injective {t₀ : ℕ} : Function.Injective (reg (t₀ := t₀)) :=
+lemma swapReg_injective {t₀ : ℕ} : Function.Injective (reg (t₀ := t₀)) :=
   BinaryInterchangeRun.slot_injective
 
 /-- The header values of the interchange of `[P]×[2^h]×[G]×[2^d]×[B]`: register `k` holds
@@ -428,7 +428,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
   have hnd₀ : l₀.Nodup := by
     rw [hl₀, List.nodup_ofFn]
     intro a b hab
-    exact hi (reg_injective hab)
+    exact hi (swapReg_injective hab)
   have hmem : ∀ j, j ∈ l₀ ↔ ∃ k, reg (hd k) = j := fun j => List.mem_ofFn
   obtain ⟨v₁, hu₁, he₁⟩ := shiftList_exec body l₀ hnd₀ v S
   set S₁ : Stacks (swapT t₀) (prime + K) := { S with
@@ -461,7 +461,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
         rw [readAt_single]
       · have hm : reg i ∉ l₀ := fun hm => by
           obtain ⟨k, hk'⟩ := (hmem _).1 hm
-          exact hk ⟨k, reg_injective hk'⟩
+          exact hk ⟨k, swapReg_injective hk'⟩
         have hc0 : caller.head i = 0 := ite_eq_right hk
         simp only [S₁, hm, ite_false, hL, hc0, sub_zero]
         rw [readAt_nil_left]
@@ -498,7 +498,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
         rw [Function.update_self, Function.update_self, BinaryRadixRangePrepareAlphabet.word,
           putWord_blank_zero, encode_wordTape, List.map_ofFn]
         rfl
-      · have hr : reg i ≠ reg pay := fun h' => hip (reg_injective h')
+      · have hr : reg i ≠ reg pay := fun h' => hip (swapReg_injective h')
         rw [Function.update_of_ne hip, Function.update_of_ne hr]
         exact encode_wordTape_decode _ (fun s hs => (hgood _ s hs).2) z
     · rw [dite_eq_right hj]
@@ -520,7 +520,8 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
   refine ⟨v₃, l₀.length + 1 + (m₂ + n₃), hu₃.trans (hu₂.trans hu₁), ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) rfl ?_⟩
   · rw [← Fin.sum_univ_def] at hn₃
-    set k := swapCost P G B h d hs
+    rw [show swapCost P G B h d hs = BinaryInterchangeRun.cost P G B h d hs from rfl]
+    set k := BinaryInterchangeRun.cost P G B h d hs
     have hsum : ∑ i, (6 * ((S₂.L i).length + (S₂.R i).length) + 6) ≤
         ∑ i, (6 * (S.R i).length + (12 * k + 6)) := by
       apply Finset.sum_le_sum

@@ -617,11 +617,11 @@ theorem swapPass_exec_of (body : F → Pr F T Q (prime + K) U)
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega))]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h'))]
+      rw [hS₂ι _ (fun h' => hhd_pay k (swapReg_injective h'))]
       exact hhdr k)
     (by rw [hS₂pr, ← hx])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (reg_injective h'))]
+      rw [hS₂ι _ (fun h' => hip (swapReg_injective h'))]
       exact hother i hip hk)
   set S₃ : Stacks T (prime + K) := { S₂ with
     L := fun _ => []
