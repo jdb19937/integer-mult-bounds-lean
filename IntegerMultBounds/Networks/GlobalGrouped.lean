@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Networks.GroupedRouting
-public import IntegerMultBounds.Networks.GlobalCircuitBits
+public import IntegerMultBounds.Networks.GlobalCircuit
+public import IntegerMultBounds.Networks.CircuitBits
 
 /-! Actual grouped three-coordinate networks on the existing physical wire
 layout. Each invocation uses its own stage-indexed side and central banks.

@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.RecursiveViewedAction
-public import IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
+public import IntegerMultBounds.Machine.FlatCoordinateScheduleCompile
+public import IntegerMultBounds.Networks.AffineFieldCoordinates
 
 /-! Static routing of the actual ordered scalar descriptions to paid recursive
 coordinate views. The selected fields retain the original H-before-D numbering;
@@ -91,18 +92,6 @@ theorem compile_rational (wire : Fin t) (op : FlatCoordinateSchedule.Op (m+m)) :
       · rename_i hk
         dsimp only [Plan.rational,first,second,FlatCoordinateSchedule.Op.rational]
         congr 1 <;> apply Fin.ext <;> simp only [dIndex,Fin.val_natAdd] <;> omega
-
-/-- The actual scalar description, including the two-step reflected subtraction,
-is routed in its existing order. -/
-theorem description_rational (wire : Fin t)
-    (p : List (AffineFieldProgram.Op Shared50ModularSchedule.Index ℚ))
-    (hp : p ∈ Shared50AffineControl.rationalSchedules)
-    (op : AffineFieldProgram.Op Shared50ModularSchedule.Index ℚ)
-    (hop : op ∈ p) (hn : AffineFieldCoordinates.Nonrecursive op) :
-    ((Shared50NonrecursiveCoordinates.description p hp op hop hn).map (compile wire)).map Plan.rational =
-      AffineFieldCoordinates.expand op := by
-  simp only [List.map_map,Function.comp_def,compile_rational]
-  exact Shared50NonrecursiveCoordinates.description_rational p hp op hop hn
 
 end
 end IntegerMultBounds.Machine.RecursiveScalarSelection

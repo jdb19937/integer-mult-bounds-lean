@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Machine.ArbitrarySliceCall
+public import IntegerMultBounds.Machine.SliceHeaderPlacement
+public import IntegerMultBounds.Machine.ArbitraryWidthSchedule
 public import IntegerMultBounds.Machine.BinaryDescriptorAdvance
 
 /-! Physical offset advancement placed in the existing twelve-tape slice tail.

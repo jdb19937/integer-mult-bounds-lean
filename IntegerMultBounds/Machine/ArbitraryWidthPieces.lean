@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Swap.Recurrence
-public import IntegerMultBounds.Machine.Shared50RecursiveDepth
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
+public import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
 public import IntegerMultBounds.Machine.FlatCoordinateLayout
 
 /-! The manuscript's arbitrary-width partition into consecutive power-width
@@ -162,20 +163,6 @@ theorem slice_volume (q : ℕ) (v : Descriptor) (offset width : ℕ)
           (q^offset*q^width*q^(v.width-offset-width))*v.afterD := by ring
     _ = _ := by rw [hp]
 
-/-- A common W^k-padded row field meets the actual power-width machine's
-shape contract for every depth appearing in the arbitrary-width partition. -/
-theorem slice_shape {v : Descriptor} {k j : ℕ} (hp : v.Positive)
-    (hrows : Shared50TapeGlobal.roleCount^k ∣ v.rows) (hj : j ≤ k) (offset : ℕ) :
-    Shared50RecursiveDepth.Shape j (slice Shared50ModularControl.prime v offset (125000^j)) :=
-  ⟨slice_positive _ Shared50ModularControl.prime_prime.pos v hp offset _,rfl,
-    dvd_trans (pow_dvd_pow Shared50TapeGlobal.roleCount hj) hrows⟩
-
-/-- Every concrete list entry is ready for the power-width shape contract. -/
-theorem piece_shape {v : Descriptor} {n k j : ℕ} (hp : v.Positive)
-    (hrows : Shared50TapeGlobal.roleCount^k ∣ v.rows) (hj : j ∈ depths 125000 n k) (offset : ℕ) :
-    Shared50RecursiveDepth.Shape j (slice Shared50ModularControl.prime v offset (125000^j)) :=
-  slice_shape hp hrows (depth_le hj) offset
-
 /-- Offset of a piece in the consecutive most-significant-first partition. -/
 def offset (m n k i : ℕ) : ℕ :=
   (((depths m n k).take i).map (fun j => m^j)).sum
@@ -187,20 +174,6 @@ theorem offset_fit {m n k : ℕ} (hm : 2 ≤ m) (hn : n < m^(k+1))
   have hf := piece_fit hm hn (⟨i.val,by simpa only [widths,List.length_map] using i.isLt⟩ :
     Fin (widths m n k).length)
   simpa only [offset,widths,List.map_take,List.getElem_map,Fin.getElem_fin] using hf
-
-/-- The actual power-width Shape and logical volume for every arbitrary-width
-piece. The common padded row field is retained throughout the piece schedule. -/
-theorem piece_view {v : Descriptor} {k : ℕ} (hp : v.Positive)
-    (hrows : Shared50TapeGlobal.roleCount^k ∣ v.rows) (hwidth : v.width < 125000^(k+1))
-    (i : Fin (depths 125000 v.width k).length) :
-    Shared50RecursiveDepth.Shape ((depths 125000 v.width k)[i])
-        (slice Shared50ModularControl.prime v (offset 125000 v.width k i.val)
-          (125000^((depths 125000 v.width k)[i]))) ∧
-      volume Shared50ModularControl.prime
-        (slice Shared50ModularControl.prime v (offset 125000 v.width k i.val)
-          (125000^((depths 125000 v.width k)[i]))) = volume Shared50ModularControl.prime v := by
-  refine ⟨piece_shape hp hrows (List.getElem_mem i.isLt) _,?_⟩
-  exact slice_volume _ v _ _ (offset_fit (by decide) hwidth i)
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthPieces

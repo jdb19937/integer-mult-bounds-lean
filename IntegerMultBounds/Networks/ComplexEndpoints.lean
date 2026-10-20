@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Networks.ComplexFramedExecution
-public import IntegerMultBounds.Networks.TensorTerminalWeight
+public import IntegerMultBounds.Networks.TensorCoordinates
+public import IntegerMultBounds.Networks.BinaryPhase
+public import IntegerMultBounds.Networks.NeighborCounts
 public import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 
 /-! Concrete binary phase endpoint corrections for the actual complex network.

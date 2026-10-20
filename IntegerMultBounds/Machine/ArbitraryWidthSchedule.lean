@@ -1,7 +1,31 @@
 module
 
 public import IntegerMultBounds.Machine.ArbitraryWidthSliceTranspose
-public import IntegerMultBounds.Machine.Shared50RecursiveRootExecution
+public import IntegerMultBounds.Machine.Shared50RecursiveBank
+public import IntegerMultBounds.Machine.RecursiveMixedRoleBank
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
+public import IntegerMultBounds.Machine.RecursiveScalarSchedule
+public import IntegerMultBounds.Networks.AffineFieldBijective
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
+public import IntegerMultBounds.Machine.RecursiveWidthGuard
+public import IntegerMultBounds.Machine.FiniteFlow
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.RecursiveFrameControl
+public import Mathlib.Tactic.DeriveFintype
+public import IntegerMultBounds.Machine.SharedBankFamily
+public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
+public import IntegerMultBounds.Machine.RecursiveChildReturnRoleBank
+public import IntegerMultBounds.Machine.Shared50RecursiveBankReturn
+public import IntegerMultBounds.Machine.SharedBankFamilyExact
+public import IntegerMultBounds.Machine.RecursiveCallProtocol
+public import IntegerMultBounds.Machine.RecursiveRowsSerialization
+public import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
+public import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
+public import IntegerMultBounds.Machine.Shared50RecursiveBasePermutation
+public import IntegerMultBounds.Machine.RecursiveScalarIndex
+public import IntegerMultBounds.Machine.RecursiveStackAllocation
+public import IntegerMultBounds.Machine.Shared50RecursiveBudgetBound
 
 /-! The literal consecutive power-piece slice-array fold has exact full H/D
 transpose semantics. Every piece uses the proved fixed root machine; construction

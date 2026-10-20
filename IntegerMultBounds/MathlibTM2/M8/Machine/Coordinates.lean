@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
+public import IntegerMultBounds.Machine.FlatCoordinateScheduleCompile
+public import IntegerMultBounds.Networks.AffineFieldCoordinates
 public import IntegerMultBounds.MathlibTM2.M8.ExchangeBound
 
 /-!

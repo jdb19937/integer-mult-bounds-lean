@@ -3,7 +3,6 @@ module
 public import IntegerMultBounds.Networks.ComplexPhaseBudget
 public import IntegerMultBounds.Networks.BinaryColumnFrame
 public import IntegerMultBounds.Networks.GroupedModuleFrames
-public import IntegerMultBounds.Networks.FramedFactorExecution
 
 /-! Actual framed execution of the size-25 complex network on complex arrays.
 Rational gates retain their original graph and coefficients. The theorem
@@ -61,10 +60,5 @@ abbrev Directions := List (List (ZMod 4 × BinaryWalsh.Address (25 ^ 3)))
 noncomputable def factorMaps (k : ℕ) (directions : Directions) :
     List (List (BinaryColumns.Arrays (25 ^ 3) k →ₗ[ℚ] BinaryColumns.Arrays (25 ^ 3) k)) :=
   directions.map (fun gs => gs.map (fun g => (BinaryColumns.vectorFactor k g).restrictScalars ℚ))
-
-/-- Executable finite instructions place each factor on the original wire,
-retaining all scalar gates in their original order. These are array operations. -/
-noncomputable def lowered (k : ℕ) (directions : Directions) :=
-  FramedFactorExecution.lower (network k) (factorMaps k directions)
 
 end IntegerMultBounds.Networks.ComplexFramedExecution

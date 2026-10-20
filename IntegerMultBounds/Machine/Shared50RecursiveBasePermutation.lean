@@ -1,7 +1,15 @@
 module
 
 public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
-public import IntegerMultBounds.Machine.Shared50RecursiveCallReady
+public import IntegerMultBounds.Machine.RecursiveCallProtocol
+public import IntegerMultBounds.Machine.RecursiveMixedRoleBank
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
+public import IntegerMultBounds.Machine.RecursiveScalarSchedule
+public import IntegerMultBounds.Networks.AffineFieldBijective
+public import IntegerMultBounds.Machine.RecursiveRowsSerialization
+public import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
+public import IntegerMultBounds.Machine.Shared50RecursiveBank
+public import IntegerMultBounds.Machine.RecursiveStackAllocation
 
 /-! The actual width-one digit machine produces precisely the same full-field
 transpose as the recursive node contract, on arbitrary four-symbol payloads. -/
@@ -56,22 +64,6 @@ theorem array_transpose (hw : v.width = 1) (x : Fin (volume prime v) → Fin 4) 
   have hi : Shared50RecursiveNodeTranspose.swapAddress (Shared50RecursiveNodeTranspose.swapAddress a) = a := rfl
   rw [hi] at hd ht
   exact hd.trans ht.symm
-
-/-- The canonical recursive input has one physical input tape and blank World roles. -/
-theorem source_roles (x : Fin (volume prime v) → Fin 4) :
-    RecursiveRoleSerialization.roles (RecursiveRowsSerialization.sourceData Shared50RecursiveNodeLayout.wires x) =
-      Shared50RecursiveCallSemantics.childRoles (RecursiveShiftRoleBank.source x) :=
-  Shared50RecursiveCallReady.source_roles x
-
-/-- Updating the common I/O tape is exactly the canonical output serialization. -/
-theorem source_roles_updated (x out : Fin (volume prime v) → Fin 4) :
-    RecursiveShiftRoleBank.updated
-      (RecursiveRoleSerialization.roles (RecursiveRowsSerialization.sourceData Shared50RecursiveNodeLayout.wires x))
-      Shared50NodeSegments.io out =
-      RecursiveRoleSerialization.roles (RecursiveRowsSerialization.sourceData Shared50RecursiveNodeLayout.wires out) := by
-  rw [source_roles,source_roles]
-  simp only [RecursiveShiftRoleBank.updated,Shared50RecursiveCallSemantics.childRoles,
-    SharedPlacementAlphabet.setTape_setTape]
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveBasePermutation

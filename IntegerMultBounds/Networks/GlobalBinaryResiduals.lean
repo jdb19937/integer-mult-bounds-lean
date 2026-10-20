@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Networks.GlobalLabelsResiduals
+public import IntegerMultBounds.Networks.BinaryMotifResiduals
 public import IntegerMultBounds.Networks.GlobalProjectionRank
 
 /-! Residual witnesses for actual sparse physical binary histories. Equality

@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Networks.Shared50FixedControl
-public import IntegerMultBounds.Machine.Shared50CleanSegments
+public import IntegerMultBounds.Machine.FlatCoordinateScheduleCompile
+public import IntegerMultBounds.Networks.AffineFieldCoordinates
+public import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
+public import IntegerMultBounds.Machine.FlatCoordinateCleanSchedule
 public import IntegerMultBounds.Machine.Shared50TapeGlobal
 
 /-! Fixed physical implementations of pieces of the actual interleaved Shared50
@@ -36,9 +39,6 @@ theorem segment_spec (seg : Segment) :
     List.mem_filterMap.mpr ⟨.edge seg.wire seg.parent,seg.member,rfl⟩
   rw [Shared50FixedControl.programs_exact] at h
   exact ⟨h,AffineFieldSegments.split_run_spec _ _ seg.run_member⟩
-
-def stages (seg : Segment) := Shared50NonrecursiveSegments.description seg.parent
-  (segment_spec seg).1 seg.ops (segment_spec seg).2.1 (segment_spec seg).2.2
 
 /-- An actual scalar instruction at its retained interleaved position. -/
 structure Gate where

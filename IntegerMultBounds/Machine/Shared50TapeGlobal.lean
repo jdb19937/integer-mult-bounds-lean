@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.Shared50TapeInvocation
+public import IntegerMultBounds.Machine.Shared50XorLists
 
 /-! The actual Shared50 three-coordinate reused-world scalar list compiled to
 one fixed multitape program. This establishes exact stream-bank exchange and

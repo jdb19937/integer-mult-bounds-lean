@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.Shared50RecursiveNodePieces
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
+public import IntegerMultBounds.Machine.RecursiveMixedRoleBank
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
+public import IntegerMultBounds.Machine.RecursiveScalarSchedule
+public import IntegerMultBounds.Machine.RecursiveScalarIndex
+public import IntegerMultBounds.Networks.AffineFieldBijective
 
 /-! A recursive full H/D swap in the physically identical cross-field view is
 exactly the original selected scalar interchange. No data transposition is used
@@ -16,7 +21,6 @@ open ActualAffineScaling (modulus)
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveScalarCoordinates (Address index)
 open RecursiveCoordinateDigits (preDigits suffix)
-open Shared50NodePieceTransport (worldSlot)
 variable {m b : ℕ} {v : Descriptor}
 local instance : NeZero (modulus b) := ⟨ne_of_gt (ActualAffineScaling.modulus_pos b)⟩
 
@@ -117,44 +121,6 @@ theorem return_source (hw : v.width=m*b) (i j : Fin m) (x : Fin (volume prime v)
 theorem array_encoded (hw : v.width=m*b) (i j : Fin m) (x : Fin (volume prime v) → ZMod 2) :
     array hw i j (fun z => SparseRoleCircuit.encode (a := 0) (x z)) =
       fun z => SparseRoleCircuit.encode (a := 0) (array hw i j x z) := rfl
-
-def child (hw : v.width=125000*b) : Shared50NodePieceTransport.Child v :=
-  fun w i j data => Function.update data (worldSlot w) (array hw i j (data (worldSlot w)))
-
-theorem child_spec (hw : v.width=125000*b) : Shared50NodePieceTransport.ChildSpec hw (child hw) := by
-  constructor
-  · intro w i j data a
-    simp only [child,Function.update_self]
-    exact array_entry hw i j (data (worldSlot w)) a
-  · intro w i j data k hk
-    exact Function.update_of_ne hk _ _
-
-/-- Explicit binary World invariant, retaining even a nonbinary I/O spectator. -/
-theorem child_encoded (hw : v.width=125000*b) (w : Shared50GlobalBudget.World) (i j : Fin 125000)
-    (bits : Shared50GlobalBudget.World → Fin (volume prime v) → ZMod 2)
-    (extra : Fin (volume prime v) → Fin 4) :
-    child hw w i j (Shared50NodeGates.encoded bits extra) =
-      Shared50NodeGates.encoded (Function.update bits w (array hw i j (bits w))) extra := by
-  funext k z
-  induction k using Fin.addCases with
-  | left k =>
-    by_cases hk : Shared50TapeGlobal.roleEquiv k = w
-    · subst w
-      simp only [child,worldSlot,Equiv.symm_apply_apply,Function.update_self,
-        Shared50NodeGates.encoded,Shared50NodeGates.extend,Fin.addCases_left,
-        Shared50RecursiveGates.encoded]
-      exact congrFun (array_encoded hw i j (bits (Shared50TapeGlobal.roleEquiv k))) z
-    · have hn : Fin.castAdd 1 k ≠ worldSlot w := by
-        intro he
-        have h := Fin.castAdd_injective _ _ he
-        exact hk (by rw [h,Equiv.apply_symm_apply])
-      simp only [child,Function.update_of_ne hn,Shared50NodeGates.encoded,Shared50NodeGates.extend,
-        Fin.addCases_left,Shared50RecursiveGates.encoded,Function.update_of_ne hk]
-  | right k =>
-    fin_cases k
-    change child hw w i j (Shared50NodeGates.encoded bits extra) Shared50NodeSegments.io z = _
-    rw [(child_spec hw).other w i j _ _ (Shared50NodePieceTransport.io_ne_worldSlot w)]
-    rfl
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveChildPermutation

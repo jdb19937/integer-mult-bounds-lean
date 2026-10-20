@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.RecursiveRowsNode
-public import IntegerMultBounds.Machine.Shared50RecursiveSegments
+public import IntegerMultBounds.Machine.RecursiveScalarSchedule
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
 public import IntegerMultBounds.Networks.Shared50FixedControl
 
 /-! Actual World enumeration for recursive nodes. World wires retain their

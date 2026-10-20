@@ -418,11 +418,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryDescriptorCopy.lean`: Actual two-tape, five-state binary descriptor copier from a preserved source to a wholly blank destination. Installs the destination sentinel, copies every bit, restores both heads to one and proves exact whole-bank output in 2*length+5 steps; alphabet-lifted contract uses standard encodedBinary tapes.
 
-- `Machine/Shared50NonrecursiveCoordinates.lean`: Actual Shared50 nonrecursive field operations instantiate supported fixed coordinate schedules with proven coefficient occurrence and order. Negative-one scaling support is derived from an actual preFields transform. Proves exact H/D output and one dimension-independent physical machine with linear-volume cost; canonical dimensions supplied and recursive interchange excluded.
-
 - `Machine/BinaryDescriptorCopies.lean`: Fixed-many physical replication of one binary descriptor onto genuinely blank tapes, preserving the sole source and restoring every head. Uses n+1 tapes and 5*n+1 states, no workspace; exact whole-bank contract costs n*(2*length+6), including every join, with a canonical logarithmic bound.
-
-- `Machine/Shared50NonrecursiveSegments.lean`: Actual nonrecursive Shared50 schedule segments compile to one fixed physical machine. Every output symbol follows the exact AffineFieldProgram.run on the embedded H/D coordinates; complete intermediate arrays need not be supplied. Explicit linear-volume bound includes all stage joins; canonical dimension descriptors remain supplied and recursive calls excluded.
 
 - `Machine/BinaryDescriptorInstall.lean`: Places the actual five-state descriptor copier between arbitrary distinct tape slots. Exact whole-bank output replaces only the blank destination with the copied canonical descriptor at head one; source and every complementary tape/head are preserved. Runtime 2*length+5 and placement size derived from distinctness.
 
@@ -476,8 +472,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/FlatCoordinateInitializedSchedule.lean`: One fixed physical machine executes any supported finite mixed scaling/shift schedule from the array and sole canonical b/W inputs with blank private storage. Exact ordered-affine output, preserved headers and explicit linear-volume runtime include all dimension synthesis, descriptor installation and joins.
 
-- `Machine/Shared50InitializedSegments.lean`: Actual nonrecursive Shared50 field-program segments execute from sole b/W and payload with all private tapes blank. The fixed machine has exact field-program symbol transport and a setup-inclusive linear-volume bound; recursive interchanges and heterogeneous spectator layouts remain separate.
-
 - `Machine/StackPop.lean`: Fixed arbitrary-alphabet destructive stack transfer, controlled by a reusable binary clock. Heads move left together, preserving original data order and erasing exactly the popped region; all exterior cells, the immutable length descriptor and restored clock are retained. Exact whole-bank semantics and 7n+7 descriptor-length+16 time; initial head positioning and descriptor construction remain caller obligations.
 
 - `Machine/RecursiveInterchangeLayout.lean`: Seven-factor recursive child descriptors preserve literal spectator order, exact role volume and next-depth row divisibility; physical scheduling is separate.
@@ -524,8 +518,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/FlatCoordinateCleanSchedule.lean`: One fixed initialized mixed affine schedule starts and ends with literal common array/scratch/b/W plus wholly blank private tapes and trackers. Every symbol has exact ordered-affine semantics; all initialization, execution and cleanup are linear in volume, enabling workspace reuse.
 
-- `Machine/Shared50CleanSegments.lean`: Actual nonrecursive Shared50 field segments execute from sole canonical b/W and array, return the exact transformed canonical array and retained headers, and erase all private metadata/trackers with heads zero. Exact field-program semantics and linear-volume time; recursive heterogeneous execution remains separate.
-
 - `Machine/CyclicRowRewind.lean`: Actual counted rewind of common and role heads preserves every arbitrary symbol. A fixed role cycle reuses the existing row/group descriptors without constructing a product count, and restores exact original heads in linear-volume time. Closed state counts and proved state-index transport avoid unary kernel expansion at the actual fixed role count, retaining the execution contracts.
 
 - `Machine/CyclicRowNormalized.lean`: Actual cyclic split/merge followed by counted rewinds return every payload head to its original position, retain exact source and role words, and restore both binary controllers. Canonical positive dimensions give a 149-times-volume bound.
@@ -570,8 +562,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/Shared50XorLists.lean`: Symbolic certificates show the actual optimized DAG, sparse input/output/central lists, invocation/inverse/exchange and reused-world global program are distinct-source XOR lists without expanding enormous instruction sequences.
 
-- `Machine/Shared50TapeInvocation.lean`: Actual optimized local sparse invocation and exchange compile into fixed tape machines with exact data-bank transformations and arbitrary dirty-scratch restoration, preserved heads/backgrounds and charged linear stream runtime.
-
 - `Machine/Shared50TapeGlobal.lean`: Actual complete reused-world Shared50 XOR program exchanges its data banks and restores arbitrary scratch streams on one fixed machine, with explicit linear tape-transition bound from the certified gate count. Canonical stream-length descriptor supplied; framed address transforms and recursive scheduling remain separate.
 
 - `Machine/FiniteFlow.lean`: Actual fixed finite block controller permits terminal-state-dependent cycles, back-edges and self-edges. Each real block trace yields an exact machine run with one charged tape-preserving transition per jump; states equal the fixed sum of block states, independent of runtime depth.
@@ -607,8 +597,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/RecursiveInterchangeShiftClean.lean`: Clean reusable 68-tape heterogeneous controlled shift from six canonical layout headers and sole payload. Exact transformed array, retained original headers, all generated private metadata and trackers erased at head zero, with setup/execution/cleanup bound 221536 times volume plus 32370. Fixed machine independent of runtime layout.
 
 - `Machine/Shared50OrderedPieces.lean`: Actual fixed clean machines for certified nonrecursive segments and globally wired scalar XOR gates from the ordered control. Segment semantics use equal-width coordinates; heterogeneous header construction, whole-bank joining and recursive continuations remain separate.
-
-- `Machine/Shared50PieceSchedule.lean`: Fixed actual list of certified segments, explicit role-and-coordinate recursive calls, and scalar gates. Expansion equals the original control atom by atom, with exact improved recursive-call count. Whole-machine compilation remains separate.
 
 - `Machine/RecursiveHeaderBounds.lean`: Every actual six-field recursive header is bounded by its layout volume and the original root volume. Canonical active or saved-ancestor headers therefore satisfy the child-volume scan bound without a separate descriptor-size assumption; parked ancestor storage is excluded.
 
@@ -774,8 +762,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/SharedBankFamily.lean`: Pads a finite family of clean leading-bank machines to one fixed sum-bounded tape count, preserving each state count, every common slot, exact blank private endpoints and original runtime. No tape movement or runtime dimension enters the workspace bound.
 
-- `Machine/Shared50RecursiveControl.lean`: Fixed finite graph over the exact Shared50 piece list: physical width guard, split/body/merge nodes, shared header restoration and real PC pop, per-call entry/recovery nodes, and a root halt sentinel. Actual call-site codes decode to their recovery nodes; root header/PC initialization is physically charged. Different fixed private banks are padded to one finite-family tape count; block implementations and recursive execution remain explicit obligations.
-
 - `Machine/RecursiveCoordinateDigits.lean`: Exact one-field and ordered control/target decompositions of the existing MSB-first rank encoding, with literal coordinate-update identities.
 
 - `Machine/RecursiveScalarSelection.lean`: Static compiler maps actual ordered scalar descriptions to within-H, within-D or cross paid views and exact rational shift/scaling operations, preserving reflected subtraction order.
@@ -786,8 +772,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RecursiveScalarSchedule.lean`: Finite physical composition of paid varying-view scalar wrappers restores parent headers, dedicated stack and auxiliaries between stages, with exact ordered semantics and a fixed linear-volume coefficient.
 
-- `Machine/Shared50RecursiveSegments.lean`: Instantiates every actual Shared50OrderedPieces.Segment on its original wire. Clean permanent-bank output implements exactly original AffineFieldProgram.run on heterogeneous coordinates, preserves all other roles, and costs coefficient times volume. Applicable to row-reduced role descriptors without another row division.
-
 - `Machine/RecursiveRoleChildCallSetup.lean`: Correct recursive network call entry saves already-row-reduced parent headers and return PC, then physically installs a cross child view with divisor1. Rows remain unchanged, avoiding double division. Same permanent-bank placement; setup and matching occupied-header return have path-free linear role-volume bounds.
 
 - `Machine/RecursiveChildCallReturn.lean`: Accepts the exact bank and savedStacks generated by actual child entry, physically erases occupied child headers and restores parent headers while retaining the pending PC frame. Exact bank compatibility, with free descriptor stack supplied by its blank-suffix invariant.
@@ -796,8 +780,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/SharedBankFamilyExact.lean`: Uniform private workspace padding preserves exact execution lengths, terminal finite states and halted configurations; finite-family members retain both bank and control endpoints.
 
-- `Machine/Shared50RecursiveExecution.lean`: The actual uniformly padded cyclic width guard preserves the complete bank and selects the base or split block in at most three transitions, including its real finite-flow edge. Recursive body execution remains open.
-
 - `Machine/RecursiveRowsNodeLayout.lean`: Splitting once and then creating a divisor-one child equals the original child layout; reduced-row descriptors retain positivity under divisibility.
 
 - `Machine/RecursiveRowsNodeHeaders.lean`: Physically installs the quotient row header, erases its temporary source, and preserves the other five headers, with canonical reduced-row values and a linear-volume bound.
@@ -805,8 +787,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/RecursiveRowsNodeRoleBank.lean`: Places paid reduced-row header construction on the permanent role bank with exact payload and auxiliary preservation and blank private workspace.
 
 - `Machine/RecursiveRowsNode.lean`: Actual node entry saves six original headers, splits rows and installs reduced headers; exit restores occupied headers and performs permuted merge. Exact banks, linear-volume costs and nested descriptor-stack availability are proved; network execution remains separate.
-
-- `Machine/Shared50RecursiveReturnExecution.lean`: Actual placed and uniformly padded PC pop erases the encoded frame, restores the older stack and preserves every spectator tape. Its real finite-flow jump selects the encoded recovery or root halt node in exactly k+2 transitions, retaining decoded control states throughout.
 
 - `Machine/RecursiveCallCount.lean`: Physically generates the role volume from six canonical headers on fixed private workspace, retaining a blank loop clock and preserving all other common tapes; exact count erasure restores its slot.
 
@@ -820,12 +800,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RecursiveMixedRoleBank.lean`: Places complete initialized and cleaned mixed operations on permanent role/header banks, preserving arbitrary saved stacks and other auxiliaries without supplying any XOR controls.
 
-- `Machine/Shared50RecursiveGates.lean`: Every literal Shared50 scalar gate has an actual fixed tape machine with complete setup/cleanup and exact original module-gate semantics on arbitrary encoded bit streams, including dirty scratch. Cost is at most 51858 times logical volume.
-
-- `Machine/Shared50NodeSegments.lean`: Original paid nonrecursive segments run on unchanged World role indices plus a final common input/output tape. Exact field-coordinate semantics and IO preservation with fixed linear-volume costs.
-
-- `Machine/Shared50NodeGates.lean`: Literal gates on the complete node payload bank preserve common IO and arbitrary stacks; original binary module-gate semantics, exact whole-bank endpoints and fully charged linear-volume execution.
-
 - `Machine/Shared50RecursiveNodeLayout.lean`: Original World enumeration remains in its existing role slots, with common IO last; role count equals W and physical merge permutation is the conjugated involutive original route.
 
 - `Machine/Shared50RecursiveNodeRows.lean`: Cyclic split and permuted merge match the exact parent H/D transpose through row and suffix packing, including within-role address swapping.
@@ -834,67 +808,17 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/Shared50RecursiveNodeTranspose.lean`: Quotient/remainder decomposition covers every original row; transpose semantics hold at every seven-factor and complete scalar-coordinate address.
 
-- `Machine/Shared50RecursiveNodeBinary.lean`: Actual split and fixed-control output arrays equal the node gate binary encodings with blank common IO. Flat cyclic serialization agrees with scalar-coordinate routed transpose, providing the binary induction bridge.
-
 - `Machine/Shared50RecursiveBank.lean`: Fixed tape permutations align local common banks with the call bank without moving data or adding transitions. Distinct clock, count, payload, node-view, scalar-view, descriptor and PC slots; exact endpoint reconstruction and return-stack placement.
-
-- `Machine/Shared50RecursiveBankNodes.lean`: Actual split/merge, scalar-segment and gate skeletons execute on the single call-compatible permanent bank. Saved node frames and blank scalar-view stacks are distinct; exact bank endpoints and original runtime costs are retained.
 
 - `Machine/Shared50RecursiveBankReturn.lean`: Actual base interchange and ancestor-header restoration share the global bank. Exact payload/header/stack endpoints, linear role-volume return cost and literal pending-PC reset match the physical decoder.
 
-- `Machine/Shared50PieceSemantics.lean`: The actual segment/call/gate piece list expands exactly to the original fixed interleaved control; its full routed H/D transpose semantics follow in original execution order.
-
-- `Machine/Shared50NodePieceTransport.lean`: Actual segment/gate array folds match original scalar-coordinate fibers, preserve IO, and give routed transpose conditional on the exact selected-coordinate child interchange contract. No physical child execution is supplied by this theorem.
-
-- `Machine/Shared50RecursiveCallLayout.lean`: Fixed parking order includes exactly the original World roles except the active stream, excludes the separate IO tape and is duplicate-free. Used by actual controller call entry/recovery.
-
-- `Machine/Shared50RecursiveImplementation.lean`: Instantiates every Shared50 controller block with actual global-bank machines: base, node split/merge, return restoration, segments, gates and fixed-order child entry/recovery. One compile-time PC capacity, actual root header/sentinel setup and fixed cyclic graph; no runtime width/depth or supplied block implementation is a program parameter. Total recursive correctness and runtime recurrence remain unproved.
-
-- `Machine/Shared50RecursiveBlockExecution.lean`: Clean physical block contracts lift to exact runs of the padded cyclic machine and its real next-table edge, with full bank endpoints and at most one additional transition. These trace rules support assembly; recursive traces remain to prove.
-
 - `Machine/RecursiveScalarIndex.lean`: Every flat payload cell has an original heterogeneous scalar-coordinate address, for general field count and digit width; no fiber or row is omitted.
-
-- `Machine/Shared50RecursiveNodeBoundary.lean`: Binary node entry yields the exact encoded World split bank and saved-stack availability; binary exit consumes encoded routed output and restores the parent transpose with symbolic linear-volume bounds.
-
-- `Machine/Shared50RecursiveNodePieces.lean`: Actual segment/gate/child array fold equals the exact node networkData on every cell, assuming only the explicit selected-coordinate ChildSpec. Physical exit accepts this fold output and returns parent transpose. Establishing ChildSpec from actual recursive machine execution remains open.
-
-- `Machine/Shared50RecursiveRoot.lean`: Actual root header/sentinel initialization equals the existing savedStacks call frame on the global bank. Charged setup, preserved free suffixes and linear-volume setup bound; its root composition rule still requires the graph body.
-
-- `Machine/Shared50RecursiveBaseExecution.lean`: Complete width-one execution of the actual fixed root program: root frame setup, guard, digit interchange, occupied-header restoration, real PC decode/return edge and final halt. Exact transformed stream, all spectator banks/stacks restored and fixed-coefficient linear logical-volume runtime; recursive widths remain open.
-
-- `Machine/Shared50RecursiveCallSemantics.lean`: Actual parking/movement leaves all original World work tapes blank and the active word on common IO; header setup has the exact canonical child bank. Source replacement commutes with entry into IO replacement, array support is derived, and the payload stack preserves an unbounded blank suffix.
-
-- `Machine/Shared50RecursiveCallRecovery.lean`: Actual initialized count/move/reverse-parking/cleanup recovery consumes the returned IO word and restores precisely the parent array with one selected World stream updated. Source support and free intervals follow from canonical arrays and blank suffix; binary child outputs preserve all World bit encodings.
 
 - `Machine/Shared50RecursiveChildPermutation.lean`: Full transpose of the actual cross-child layout equals exactly the selected parent H_i/D_j swap. Literal serialized input/return words match, spectators are preserved, and binary selected-coordinate ChildSpec follows, independently of row-split divisor.
 
-- `Machine/Shared50RecursiveDepth.lean`: Positive power-width descriptors with W^depth dividing rows remain valid after exactly one split and divisor-one child preparation. Child width/depth decrease, exact parent volume/W and old/current header bounds are proved.
-
-- `Machine/Shared50RecursiveBinaryInvariant.lean`: Binary World arrays and blank common IO are preserved by every actual piece array operation and literal schedule, using the exact selected child contract and coverage of every flat coordinate. Dirty work roles may hold arbitrary bits.
-
-- `Machine/Shared50RecursiveCallReady.lean`: Actual call entry constructs child headers and canonical binary source bank, preserving available payload/node/descriptor/PC stack suffixes and blank scalar-view workspace. All child induction input invariants follow from parent readiness and physical entry.
-
-- `Machine/Shared50RecursivePieceExecution.lean`: Actual segment/gate graph transitions and call entry-child-return-recovery composition execute every remaining literal schedule piece. Binary invariant-aware suffix induction charges all graph edges, exact s child calls and fixed linear logical-volume overhead; each recursive child trace remains the induction premise.
-
 - `Machine/Shared50RecursiveBasePermutation.lean`: Width-one digit interchange equals full parent H/D transpose at every flat cell, and canonical source-bank IO updates match the exact recursive output serialization.
 
-- `Machine/Shared50RecursiveBudget.lean`: Natural-valued recursion budget charges fixed base/node work and exactly s child budgets at logical volume parent/W. Occupied-header cleanup/return costs are bounded from actual word lengths; proving execution meets the recursive budget remains separate.
-
-- `Machine/Shared50RecursiveInductionBase.lean`: The actual fixed graph executes canonical binary width-one input to the complete transpose and decoded caller address, preserving all stacks/spectators and meeting the same logical-volume budget used by the recursive induction.
-
-- `Machine/Shared50RecursiveNodeExecution.lean`: Actual graph guard, physical node split, literal binary schedule, permuted merge, ancestor-header restoration and decoded return compose with exact canonical transpose output and fully charged runtime. Only the actual recursive child traces remain premises for depth induction.
-
 - `Machine/Shared50RecursiveBudgetBound.lean`: The concrete natural-valued budget is bounded uniformly by logical volume times width to the certified exponent 1−296/10^11, including natural floor division and all fixed coefficients. This proves the analytic bound without assuming a runtime recurrence; actual recursive execution must still meet the budget.
-
-- `Machine/Shared50RecursiveBudgetAssembly.lean`: Symbolic arithmetic absorbs all actual node controller joins, header-return costs and literal-schedule overhead into the natural recursive budget, using only positive logical volume and reduced role volume bounded by parent volume. Raw fixed coefficients avoid expanding enormous closed constants during proof checking.
-
-- `Machine/Shared50RecursiveCallInductionBridge.lean`: Canonical binary child input and full-transpose return banks equal the actual parked call and recovery endpoints. Exact payload/node/descriptor/PC readiness bridges permit recursive induction without an assumed child trace.
-
-- `Machine/Shared50RecursiveInduction.lean`: Depth induction proves actual fixed cyclic graph termination, exact binary full-chunk transpose, physically decoded caller return, all restored bank/stack endpoints and the natural recursive runtime budget. Every literal child trace is derived from the induction hypothesis; no abstract execution oracle remains.
-
-- `Machine/Shared50RecursiveRootExecution.lean`: One concrete fixed root program physically sets up its sentinel and headers, executes the proved recursion, restores all stacks/spectators and genuinely halts with exact binary chunk transpose. Its actual steps obey one uniform positive constant times logical volume times width to exponent 1−296/10^11, for power widths and recursively divisible rows.
-
-- `Machine/ArbitraryWidthPieceBudget.lean`: The sum of the completed fixed root machine budgets over the literal base-125000 piece list obeys one uniform positive constant times logical volume times full width to the certified exponent. This proves the actual call-budget sum; physical wrapper preparation, padding and tape composition must still be charged.
 
 - `Machine/ArbitraryWidthPieces.lean`: The literal base-125000 power-piece list covers every chunk width, with certified depth/count/offset bounds. Consecutive piece swaps compose to the exact numerical full-address swap; each slice descriptor preserves total logical volume and satisfies the proved power-width Shape on common divisible rows. Its finite cost sum equals the manuscript digit-weighted sum. Physical padding and paid slice/list construction remain separate.
 
@@ -950,8 +874,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/SliceHeaderPlacement.lean`: Injective generic placement shares the six actual root header tapes and appends exactly twelve offset/width/work/frame tapes. Exact active-bank and complement preservation lemmas avoid enumerating the large compiled recursive tape bank.
 
-- `Machine/ArbitrarySliceCall.lean`: One fixed complete prepare/root/restore program executes any runtime selected power-width window. Actual slice dimensions and occupied headers are constructed, the fixed recursive root program executes, and original headers, frame stack, controls and spectators are restored. Exact window output and runtime rootBudget plus 1030 times parent volume; only canonical input, stack availability and the proved width/row shape are required.
-
 - `Machine/FixedBasePowerUntilBound.lean`: Least stopping exponent and repeated descriptor-scan bounds for a fixed-base growing-power loop. Canonical threshold widths and all repeated comparisons are absorbed into a fixed-base constant times the final power.
 
 - `Machine/FixedBasePowerUntilRange.lean`: The actual least-power selector has runtime linear in its positive input threshold, using strict less-than-one-base overshoot of the final power. Exact paired-digit exponent and range identities connect its output to the manuscript high-row selector.
@@ -974,10 +896,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/SliceOffsetAdvance.lean`: Fixed placement advances the runtime offset in the existing twelve-tape slice tail, using its blank arithmetic work tape as the paid clock. The complete recursive root bank, saved frame and all other controls are exact spectators.
 
-- `Machine/ArbitrarySliceStepBudget.lean`: The complete paid slice step is bounded by rootBudget plus 1087 times volume under explicit width bounds. This includes header preparation/restoration and physical offset updates; summing its literal power-piece budgets preserves the exact certified width exponent with a positive fixed constant.
-
-- `Machine/ArbitrarySliceStep.lean`: One fixed program composes paid slice-header preparation, actual recursive root execution, original-header restoration and physical runtime offset advancement. Exact selected-window output and next offset, with every join, scan, carry and cleanup included in the cost.
-
 - `Machine/ArbitraryWidthLevelAdvance.lean`: One fixed seven-tape program increments the canonical recursion-depth descriptor and multiplies the canonical selected width by the fixed base. Setup physically initializes the base, width one and depth zero; separate base or full cleanup is paid. Arbitrary framed data/offset controls are preserved; level advancement costs at most 120 times the new width.
 
 - `Machine/RangePaddingDimensions.lean`: One fixed seventeen-tape constructor retains canonical prefix/chunk/gap/suffix/enlarged-range inputs and generates PN, PNG, GM and GMB by four actual product calls. All arithmetic workspace is erased. Separate paid cleanup clears the four outputs while preserving arbitrary payloads; both costs are linear in a dominating padded volume.
@@ -985,8 +903,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/RowCropAny.lean`: The actual constructed row-cropping program works on arbitrary discarded rows, including nonzero tails. Exact arbitrary-array restriction, generated span-count cleanup, restored payload origins and linear padded-volume runtime extend the physical crop contract beyond zero-padded inputs.
 
 - `Machine/RadixRangePaddingExecution.lean`: Complete fixed seventeen-tape padding and cropping programs generate their own grouped dimensions, execute both coordinate scans and erase every derived descriptor. Exact two-chunk pad and arbitrary crop endpoints with clean payload/workspace; each costs at most 1200 times padded volume. After the padded transpose the actual crop returns the original transpose. Runtime binary/radix range synthesis and composition with the interchange remain separate.
-
-- `Machine/ArbitrarySliceRepeat.lean`: One fixed counted controller executes the actual paid slice-step program as many times as specified by a runtime base digit. Every slice trace is derived from the completed recursive root proof; offsets advance physically and exact repeated window swaps compose in order. Clock setup and cleanup are paid; optional consume also clears the digit descriptor. Certified digit-weighted budgets include all loop and erase costs. Whole outer dispatcher composition with level updates remains separate.
 
 - `Machine/BinaryRadixRangePrepare.lean`: One fixed nineteen-tape program constructs both numerical ranges and the least radix exponent from the sole binary width, then physically pads both chunk coordinates. It retains original prefix/gap/suffix/width headers and exact generated metadata, with all private workspace blank. The inverse arbitrary-content crop clears all generated metadata and returns the exact original transpose after a padded transpose. Both bounds are fixed-radix constants times original volume; the intervening interchange must still be composed.
 
@@ -1535,7 +1451,6 @@ Bit and complex networks.
   source/sink and interstage identities refer to the same physical addresses.
   Every attached label is nondegenerate after future lift and transport.
 
-- `Networks/GlobalLabelsResiduals.lean`: explicit binary norm-one witnesses
   cover the three extra comparisons created by missing sparse incidences,
   including their actual future-line lifts. Thus skipped intermediate labels
   do not require an assumed nonalternation property.
@@ -1598,7 +1513,6 @@ Bit and complex networks.
   circuit equalities, including signed routing, lift by proved coefficient
   rows to arbitrary module values without a freeness assumption.
 
-- `Networks/FramedFactorExecution.lean`: replaces each actual frame-change
   instruction by its certified linear factors on the original physical wire.
   Reversed list execution matches operator product order; whole state runs
   agree and every scalar gate retains its position relative to the others.
@@ -1614,7 +1528,6 @@ Bit and complex networks.
   Scratch has its prescribed output frame; `ComplexEndpoints` simplifies the
   endpoint corrections to the desired transform. Tape compilation remains open.
 
-- `Networks/TensorTerminalWeight.lean`: tensor coordinates of the actual
   terminal vector are the Cartesian-product indicator of its triple labels,
   so its binary Hamming weight is exactly twenty-seven.
 

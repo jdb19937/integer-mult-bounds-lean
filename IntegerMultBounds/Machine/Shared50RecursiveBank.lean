@@ -2,8 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.RecursiveCallProtocol
 public import IntegerMultBounds.Machine.RecursiveRowsNode
-public import IntegerMultBounds.Machine.Shared50NodeSegments
-public import IntegerMultBounds.Machine.Shared50NodeGates
+public import IntegerMultBounds.Machine.RecursiveScalarSchedule
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
+public import IntegerMultBounds.Machine.RecursiveMixedRoleBank
 
 /-! One permanent bank for calls, node frames and scalar views. Adapters rename
 fixed physical tape indices in transition tables; they do not move any data. -/
