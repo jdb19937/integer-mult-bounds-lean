@@ -23,15 +23,15 @@ def aluBank (N : ℕ) : Fin 𝕋 → WTape :=
     cN (reg (ones N))) cW (reg (ones (N + 1)))) cF (reg (fword N))) c1 (reg [true])
 
 /-- Place the unit word and the size. -/
-noncomputable def aluOnA : Cmd 0 𝕌 :=
+noncomputable def aluOnA : Cmd 𝕌 :=
   .seq (emit [[true]] (ι c1)) <| .seq (rewind (ι c1)) <| .seq (cpy kN (ι cU) (by decide)) <|
   .seq (rewind (ι cU)) (rewind kN)
 
 /-- Switch the unit on. -/
-noncomputable def aluOn : Cmd 0 𝕌 := .seq aluOnA <| .seq (up aluSet) (clear (ι cU))
+noncomputable def aluOn : Cmd 𝕌 := .seq aluOnA <| .seq (up aluSet) (clear (ι cU))
 
 /-- Switch the unit off. -/
-noncomputable def aluOff : Cmd 0 𝕌 :=
+noncomputable def aluOff : Cmd 𝕌 :=
   .seq (clear (ι cN)) <| .seq (clear (ι cW)) <| .seq (clear (ι cF)) (clear (ι c1))
 
 theorem ext_congr {τ τ' : Fin 𝕌 → WTape} (σ : Fin 𝕋 → WTape) (h : ∀ x, 64 ≤ x.val → τ x = τ' x) :
@@ -115,12 +115,12 @@ theorem runs_aluOff {N : ℕ} (τ : Fin 𝕌 → WTape) (hA : τ ∘ ι = aluBan
   · tsimp [hN, hW, hF, h1, reg, WTape.words, clen, fword]; omega
 
 /-- A two-operand operation of the unit on registers of the ring product's own. -/
-noncomputable def aluOp (op : Cmd 0 𝕋) (s₁ s₂ d : Fin 𝕌) (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d) :
-    Cmd 0 𝕌 :=
+noncomputable def aluOp (op : Cmd 𝕋) (s₁ s₂ d : Fin 𝕌) (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d) :
+    Cmd 𝕌 :=
   .seq (regDup s₁ (ι aX) (o₁.ne aX)) <| .seq (regDup s₂ (ι aY) (o₂.ne aY)) <|
   .seq (up op) (regMove (ι aO) d (od.ne' aO))
 
-theorem runs_aluOp (op : Cmd 0 𝕋) {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d)
+theorem runs_aluOp (op : Cmd 𝕋) {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d)
     (_h12 : s₁ ≠ s₂) (_hd1 : d ≠ s₁) (_hd2 : d ≠ s₂) {N B : ℕ} {x y z : List Bool}
     (hop : Runs op (Function.update (Function.update (aluBank N) aX (reg x)) aY (reg y))
       (· = Function.update (aluBank N) aO (reg z)) B)
@@ -132,8 +132,8 @@ theorem runs_aluOp (op : Cmd 0 𝕋) {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) 
   have hX : τ (ι aX) = emp := by rw [h]; tsimp [aluBank]
   have hY : τ (ι aY) = emp := by rw [h]; tsimp [aluBank]
   have hO : τ (ι aO) = emp := by rw [h]; tsimp [aluBank]
-  have s1 := runs_regDup (a := 0) (o₁.ne aX) τ hx hX
-  have s2 := runs_regDup (a := 0) (o₂.ne aY) (Function.update τ (ι aX) (reg x)) (w := y)
+  have s1 := runs_regDup (o₁.ne aX) τ hx hX
+  have s2 := runs_regDup (o₂.ne aY) (Function.update τ (ι aX) (reg x)) (w := y)
     (by rw [Function.update_of_ne (o₂.ne aX), hy]) (by tsimp [hY])
   set τ₂ := Function.update (Function.update τ (ι aX) (reg x)) (ι aY) (reg y)
   have e₂ : τ₂ ∘ ι = Function.update (Function.update (aluBank N) aX (reg x)) aY (reg y) := by
@@ -146,7 +146,7 @@ theorem runs_aluOp (op : Cmd 0 𝕋) {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) 
       have n : ∀ i : Fin 𝕋, x ≠ ι i := fun i q => by rw [q, ι_val] at hx; have := i.isLt; omega
       simp only [τ₂]; rw [Function.update_of_ne (n aY), Function.update_of_ne (n aX)]
     rw [e]
-  have s4 := runs_regMove (a := 0) (od.ne' aO) (Function.update τ (ι aO) (reg z)) (w := z) (by simp)
+  have s4 := runs_regMove (od.ne' aO) (Function.update τ (ι aO) (reg z)) (w := z) (by simp)
     (by rw [Function.update_of_ne (od.ne aO), hd])
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono (fun τ' e => ?_) (by omega)
   have e' : Function.update τ (ι aO) emp = τ := by rw [← hO]; exact Function.update_eq_self _ _

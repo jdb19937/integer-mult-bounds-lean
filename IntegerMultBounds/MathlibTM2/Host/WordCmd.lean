@@ -99,7 +99,7 @@ section Compile
 variable {a t T Q A : ℕ} {U P : Type}
 
 /-- The control states the primitives of a word program need. -/
-def cmdStates : Cmd a t → ℕ
+def cmdStates : Cmd t → ℕ
   | .prim M _ _ => M.nQ
   | .seq c d => max (cmdStates c) (cmdStates d)
   | .loop _ b => cmdStates b
@@ -110,7 +110,7 @@ def peekW (r : Fin T) : Act T Q A U :=
   .peek (.rt r) (fun v o => { v with flag := o.isSome, sym := o }) .done
 
 /-- The host program of a word program on the registers `ι`. -/
-def tcompile (ι : Fin t → Fin T) : Cmd a t → Pr P T Q A U
+def tcompile (ι : Fin t → Fin T) : Cmd t → Pr P T Q A U
   | .prim M slot _ => M.prog (ι ∘ slot)
   | .seq c d => .seq (tcompile ι c) (tcompile ι d)
   | .loop i b =>
@@ -120,7 +120,7 @@ def tcompile (ι : Fin t → Fin T) : Cmd a t → Pr P T Q A U
         (.cond (fun v => decide (v.sym = some (bitSymbol true))) (tcompile ι c) (tcompile ι d))
 
 theorem tcompile_noCalls (ι : Fin t → Fin T) :
-    ∀ c : Cmd a t, NoCalls (tcompile (P := P) (Q := Q) (A := A) (U := U) ι c)
+    ∀ c : Cmd t, NoCalls (tcompile (P := P) (Q := Q) (A := A) (U := U) ι c)
   | .prim M _ _ => M.hcalls _
   | .seq c d => ⟨tcompile_noCalls ι c, tcompile_noCalls ι d⟩
   | .loop _ b => ⟨trivial, tcompile_noCalls ι b, trivial⟩
@@ -133,7 +133,7 @@ theorem peekW_run (r : Fin T) (v : HS T Q A U) (S : Stacks T A) :
       mk { v with flag := (S.R r).head?.isSome, sym := (S.R r).head? } S := rfl
 
 /-- **Compilation is correct.** -/
-theorem tcompile_exec {ι : Fin t → Fin T} (hι : Function.Injective ι) {c : Cmd a t}
+theorem tcompile_exec {ι : Fin t → Fin T} (hι : Function.Injective ι) {c : Cmd t}
     {σ σ' : Fin t → WTape} {k : ℕ} (h : Schoenhage.Exec c σ σ' k) (hQ : cmdStates c ≤ Q)
     (v : HS T Q A U) (S : Stacks T A) :
     ∃ v' m, v'.user = v.user ∧ m ≤ 3 * (k + 1) ∧
@@ -191,7 +191,7 @@ theorem tcompile_exec {ι : Fin t → Fin T} (hι : Function.Injective ι) {c : 
     exact Exec.seq (Exec.act (peekW (ι i)) _) (Exec.cond_false (by simp [peekW_run, ht]) he)
 
 /-- `tcompile_exec` for a run into a postcondition. -/
-theorem tcompile_runs {ι : Fin t → Fin T} (hι : Function.Injective ι) {c : Cmd a t}
+theorem tcompile_runs {ι : Fin t → Fin T} (hι : Function.Injective ι) {c : Cmd t}
     {σ : Fin t → WTape} {Post : (Fin t → WTape) → Prop} {B : ℕ} (h : Schoenhage.Runs c σ Post B)
     (hQ : cmdStates c ≤ Q) (v : HS T Q A U) (S : Stacks T A) :
     ∃ σ', Post σ' ∧ ∃ v' m, v'.user = v.user ∧ m ≤ 3 * (B + 1) ∧

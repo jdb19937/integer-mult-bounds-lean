@@ -75,7 +75,7 @@ theorem replicate_nil_append (n : ℕ) (Tl : List (List Bool)) :
   rw [← List.singleton_append, ← List.append_assoc, ← List.replicate_succ', List.replicate_succ]; rfl
 
 /-- Append the block made from `src` once per tick of `qT`. -/
-noncomputable def repeatLoop (R : Rule 0) (src dst : Fin 𝕌) (h1 : src ≠ dst) (_h2 : src ≠ ι qT) : Cmd 0 𝕌 :=
+noncomputable def repeatLoop (R : Rule 0) (src dst : Fin 𝕌) (h1 : src ≠ dst) (_h2 : src ≠ ι qT) : Cmd 𝕌 :=
   .loop (ι qT) (.seq (op0 R true src dst h1) <| .seq (rewind src) (skp (ι qT) (ι tJ) (by decide)))
 
 theorem runs_repeatLoop (R : Rule 0) {src dst : Fin 𝕌} (h1 : src ≠ dst) (h2 : src ≠ ι qT) (h3 : dst ≠ ι qT)
@@ -91,12 +91,12 @@ theorem runs_repeatLoop (R : Rule 0) {src dst : Fin 𝕌} (h1 : src ≠ dst) (h2
     rw [← h]; funext y
     by_cases a1 : y = dst <;> by_cases a2 : y = ι qT <;> simp_all
   | n + 1, τ, Tl, acc, L, hs, hd, hT, hJ => by
-    have s1 := runs_op0 (a := 0) R true h1 τ (by simp [hs]) (by simp [hd]) [b] (by simpa [hs] using hb)
+    have s1 := runs_op0 R true h1 τ (by simp [hs]) (by simp [hd]) [b] (by simpa [hs] using hb)
       (fun _ => ⟨by simp [hd], by simp⟩)
     set τ₁ := Function.update (Function.update τ src (τ src).next) dst ((τ dst).put true [b])
-    have s2 := runs_rewind (a := 0) src τ₁
+    have s2 := runs_rewind src τ₁
     set τ₂ := Function.update τ₁ src ⟨[], (τ₁ src).left.reverse ++ (τ₁ src).right⟩
-    have s3 := runs_skp (a := 0) (show ι qT ≠ ι tJ by decide) τ₂
+    have s3 := runs_skp (show ι qT ≠ ι tJ by decide) τ₂
       (by simp [τ₂, τ₁, h3.symm, h2.symm, hT, List.replicate_succ])
       (by simp [τ₂, τ₁, h4.symm, h5.symm, hJ])
     have hc : (τ₂ (ι qT)).cur.length = 0 := by simp [τ₂, τ₁, h3.symm, h2.symm, hT, List.replicate_succ]
@@ -118,7 +118,7 @@ theorem runs_repeatLoop (R : Rule 0) {src dst : Fin 𝕌} (h1 : src ≠ dst) (h2
 /-! ### Unary sums -/
 
 /-- `kS = ones (p + ℓ)`, `kw = ones w`, `qR = ones M`, `qT` with `M` ticks, `qB = ones 0`, `c1 = [1]`. -/
-noncomputable def constA : Cmd 0 𝕌 :=
+noncomputable def constA : Cmd 𝕌 :=
   .seq (op0 Rules.copy false iP kS (by decide)) <| .seq (rewind iP) <|
   .seq (op0 Rules.copy true iL kS (by decide)) <| .seq (rewind iL) <| .seq (rewind kS) <|
   .seq (op0 Rules.copy false iW kw (by decide)) <| .seq (rewind iW) <| .seq (rewind kw) <|
@@ -168,7 +168,7 @@ theorem runs_constA {p l w : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hP 
 /-! ### Powers of two -/
 
 /-- Ticks from `qB` onto `qT`, `qB` cleared, `qR = ones 1`. -/
-noncomputable def constB2 : Cmd 0 𝕌 :=
+noncomputable def constB2 : Cmd 𝕌 :=
   .seq (op0 Rules.ticks false (ι qB) (ι qT) (by decide)) <| .seq (rewind (ι qB)) <| .seq (rewind (ι qT)) <|
   .seq (clear (ι qB)) <| .seq (emit [[true]] (ι qR)) (rewind (ι qR))
 
@@ -192,7 +192,7 @@ theorem runs_constB2 {b : ℕ} (τ : Fin 𝕌 → WTape) (hB : τ (ι qB) = reg 
     linarith
 
 /-- Ticks from a unary register `src` onto `qT`. -/
-noncomputable def ticksFrom (src : Fin 𝕌) (h : src ≠ ι qT) : Cmd 0 𝕌 :=
+noncomputable def ticksFrom (src : Fin 𝕌) (h : src ≠ ι qT) : Cmd 𝕌 :=
   .seq (op0 Rules.ticks false src (ι qT) h) <| .seq (rewind src) (rewind (ι qT))
 
 theorem runs_ticksFrom {src : Fin 𝕌} (h : src ≠ ι qT) {b : ℕ} (τ : Fin 𝕌 → WTape) (hs : τ src = reg (ones b))
@@ -222,7 +222,7 @@ theorem runs_ticksFrom {src : Fin 𝕌} (h : src ≠ ι qT) {b : ℕ} (τ : Fin 
     linarith
 
 /-- Multiply `qR` by two per tick of `qT`, then drop the ticks. -/
-noncomputable def doubleT : Cmd 0 𝕌 := .seq (up doubleLoop) (clear (ι qT))
+noncomputable def doubleT : Cmd 𝕌 := .seq (up doubleLoop) (clear (ι qT))
 
 theorem runs_doubleT {j r : ℕ} (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = reg (ones r)) (hS : τ (ι qS) = emp)
     (hJ : τ (ι tJ) = emp) (hT : τ (ι qT) = ⟨[], List.replicate j []⟩) :
@@ -244,7 +244,7 @@ theorem runs_upSize {n : ℕ} (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = reg (
   runs_up' (runs_sizeOf (τ ∘ ι) hR hB hT h1 hS hJ) (by rw [ext_update, ext_update, ext_update, ext_self])
 
 /-- The digit width, the size and the count `r = 2^ℓ` in unary. -/
-noncomputable def constB : Cmd 0 𝕌 :=
+noncomputable def constB : Cmd 𝕌 :=
   .seq (up (.seq sizeLoop (.seq (clear qR) (clear qT)))) <| .seq constB2 <| .seq doubleT <|
   .seq (regDup (ι qR) kW (by decide)) <| .seq (ticksFrom iL (by decide)) <| .seq doubleT <|
   .seq (regMove (ι qR) kN (by decide)) <| .seq (emit [[true]] (ι qR)) <| .seq (rewind (ι qR)) <|
@@ -272,19 +272,19 @@ theorem runs_constB {p l w : ℕ} (τ : Fin 𝕌 → WTape) (hL : τ iL = reg (o
     (by tsimp [τ₂, τ₁, hJ]) (by tsimp [τ₂])
   rw [one_mul] at s3
   set τ₃ := Function.update (Function.update τ₂ (ι qR) (reg (ones W))) (ι qT) emp
-  have s4 := runs_regDup (a := 0) (show ι qR ≠ kW by decide) τ₃ (w := ones W) (by tsimp [τ₃]) (by tsimp [τ₃, τ₂, τ₁, hW])
+  have s4 := runs_regDup (show ι qR ≠ kW by decide) τ₃ (w := ones W) (by tsimp [τ₃]) (by tsimp [τ₃, τ₂, τ₁, hW])
   set τ₄ := Function.update τ₃ kW (reg (ones W))
   have s5 := runs_ticksFrom (show iL ≠ ι qT by decide) τ₄ (b := l) (by tsimp [τ₄, τ₃, τ₂, τ₁, hL]) (by tsimp [τ₄, τ₃])
   set τ₅ := Function.update τ₄ (ι qT) ⟨[], List.replicate l []⟩
   have s6 := runs_doubleT (j := l) (r := W) τ₅ (by tsimp [τ₅, τ₄, τ₃]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, hS])
     (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, hJ]) (by tsimp [τ₅])
   set τ₆ := Function.update (Function.update τ₅ (ι qR) (reg (ones (W * 2 ^ l)))) (ι qT) emp
-  have s7 := runs_regMove (a := 0) (show ι qR ≠ kN by decide) τ₆ (w := ones (W * 2 ^ l)) (by tsimp [τ₆])
+  have s7 := runs_regMove (show ι qR ≠ kN by decide) τ₆ (w := ones (W * 2 ^ l)) (by tsimp [τ₆])
     (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hN])
   set τ₇ := Function.update (Function.update τ₆ (ι qR) emp) kN (reg (ones (W * 2 ^ l)))
-  have s8 := runs_emit (a := 0) [[true]] (ι qR) τ₇ (by tsimp [τ₇, emp])
+  have s8 := runs_emit [[true]] (ι qR) τ₇ (by tsimp [τ₇, emp])
   set τ₈ := Function.update τ₇ (ι qR) ⟨[[true]].reverse ++ (τ₇ (ι qR)).left, []⟩
-  have s9 := runs_rewind (a := 0) (ι qR) τ₈
+  have s9 := runs_rewind (ι qR) τ₈
   set τ₉ := Function.update τ₈ (ι qR) ⟨[], (τ₈ (ι qR)).left.reverse ++ (τ₈ (ι qR)).right⟩
   have s10 := runs_ticksFrom (show iL ≠ ι qT by decide) τ₉ (b := l) (by tsimp [τ₉, τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hL])
     (by tsimp [τ₉, τ₈, τ₇, τ₆])
@@ -310,7 +310,7 @@ theorem rep_tt (n : ℕ) : List.replicate n true ++ [true, true] = List.replicat
   rw [List.replicate_add]; rfl
 
 /-- The ruler builder's drivers from `qR = ones r` and `kW = ones W`. -/
-noncomputable def constC1 : Cmd 0 𝕌 :=
+noncomputable def constC1 : Cmd 𝕌 :=
   .seq (op1 Rules.drop false (ι qR) (ι c1) (ι sT2) (by decide) (by decide) (by decide)) <|
   .seq (rewind (ι qR)) <| .seq (rewind (ι c1)) <| .seq (rewind (ι sT2)) <|
   .seq (op0 Rules.ticks false (ι sT2) (ι qT) (by decide)) <| .seq (rewind (ι qT)) <| .seq (clear (ι sT2)) <|
@@ -360,12 +360,12 @@ theorem runs_constC1 {r W : ℕ} (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = re
     omega
 
 /-- Move the ruler to `kR` and clear the drivers. -/
-noncomputable def constC3 : Cmd 0 𝕌 :=
+noncomputable def constC3 : Cmd 𝕌 :=
   .seq (regMove (ι cR) kR (by decide)) <| .seq (clear (ι tU)) <| .seq (clear (ι tV)) <| .seq (clear (ι tO1)) <|
   .seq (clear (ι tO2)) <| .seq (clear (ι tC)) (clear (ι qT))
 
 /-- The ruler `kR`. -/
-noncomputable def constC : Cmd 0 𝕌 := .seq constC1 <| .seq (up rulerBuild) constC3
+noncomputable def constC : Cmd 𝕌 := .seq constC1 <| .seq (up rulerBuild) constC3
 
 set_option maxHeartbeats 4000000 in
 theorem runs_constC {r W : ℕ} (hr : 1 ≤ r) (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = reg (ones r))
@@ -411,7 +411,7 @@ theorem runs_constC {r W : ℕ} (hr : 1 ≤ r) (τ : Fin 𝕌 → WTape) (hR : �
 /-! ### The half and rounding words -/
 
 /-- `kH = 2^(W-1)` and `kC = 2^s - 1` in `W + 1` bits. -/
-noncomputable def constD : Cmd 0 𝕌 :=
+noncomputable def constD : Cmd 𝕌 :=
   .seq (op0 Rules.mark false kW kH (by decide)) <| .seq (rewind kW) <|
   .seq (op0 (Rules.fill false) true (ι c1) kH (by decide)) <| .seq (rewind (ι c1)) <| .seq (rewind kH) <|
   .seq (op0 Rules.copy false kS kC (by decide)) <| .seq (rewind kS) <|
@@ -466,7 +466,7 @@ theorem bval_unitBlock (k m : ℕ) : bval (List.replicate k false ++ [true] ++ L
   rw [bval_append, bval_append, bval_replicate_false, bval_replicate_false]; simp
 
 /-- `kO`: `r` blocks of `2^(W-1)` and a zero bit. -/
-noncomputable def constE1 : Cmd 0 𝕌 :=
+noncomputable def constE1 : Cmd 𝕌 :=
   .seq (ticksFrom (ι qR) (by decide)) <| .seq (emit [[]] kO) <|
   .seq (repeatLoop Rules.mark kW kO (by decide) (by decide)) <| .seq (clear (ι qT)) <|
   .seq (op0 (Rules.fill false) true (ι c1) kO (by decide)) <| .seq (rewind (ι c1)) (rewind kO)
@@ -491,22 +491,22 @@ theorem runs_constE1 {W r : ℕ} (hW : 1 ≤ W) (τ : Fin 𝕌 → WTape) (hR : 
     rw [length_ones, b1] at this; omega
   have s1 := runs_ticksFrom (show ι qR ≠ ι qT by decide) τ hR hT
   set τ₁ := Function.update τ (ι qT) ⟨[], List.replicate r []⟩
-  have s2 := runs_emit (a := 0) [[]] kO τ₁ (by tsimp [τ₁, hO, emp])
+  have s2 := runs_emit [[]] kO τ₁ (by tsimp [τ₁, hO, emp])
   set τ₂ := Function.update τ₁ kO ⟨[[]].reverse ++ (τ₁ kO).left, []⟩
   have s3 := runs_repeatLoop Rules.mark (src := kW) (dst := kO) (by decide) (by decide) (by decide) (by decide)
     (by decide) hb (W + 7) tB r τ₂ [] [] [] (by tsimp [τ₂, τ₁, hK]) (by tsimp [τ₂, τ₁, hO, emp])
     (by tsimp [τ₂, τ₁]) (by tsimp [τ₂, τ₁, hJ])
   set τ₃ := Function.update (Function.update τ₂ kO ⟨([] ++ (List.replicate r b).flatten) :: [], []⟩)
     (ι qT) ⟨List.replicate r [] ++ [], []⟩
-  have s4 := runs_clear (a := 0) (ι qT) τ₃
+  have s4 := runs_clear (ι qT) τ₃
   set τ₄ := Function.update τ₃ (ι qT) ⟨[], []⟩
-  have s5 := runs_op0 (a := 0) (Rules.fill false) true (show ι c1 ≠ kO by decide) τ₄ (by tsimp [τ₄, τ₃, τ₂, τ₁, h1])
+  have s5 := runs_op0 (Rules.fill false) true (show ι c1 ≠ kO by decide) τ₄ (by tsimp [τ₄, τ₃, τ₂, τ₁, h1])
     (by tsimp [τ₄, τ₃]) [[false]] (by tsimp [τ₄, τ₃, τ₂, τ₁, h1, Rules.output_fill])
     (fun _ => ⟨by tsimp [τ₄, τ₃], by simp⟩)
   set τ₅ := Function.update (Function.update τ₄ (ι c1) (τ₄ (ι c1)).next) kO ((τ₄ kO).put true [[false]])
-  have s6 := runs_rewind (a := 0) (ι c1) τ₅
+  have s6 := runs_rewind (ι c1) τ₅
   set τ₆ := Function.update τ₅ (ι c1) ⟨[], (τ₅ (ι c1)).left.reverse ++ (τ₅ (ι c1)).right⟩
-  have s7 := runs_rewind (a := 0) kO τ₆
+  have s7 := runs_rewind kO τ₆
   have ew : rwd (W * r) (wsum W (List.replicate r (2 ^ (W - 1)))) = (List.replicate r b).flatten ++ [false] := by
     rw [← offset_word b r, hbl, hbv]
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 s7)))))).mono
@@ -525,7 +525,7 @@ theorem runs_constE1 {W r : ℕ} (hW : 1 ≤ W) (τ : Fin 𝕌 → WTape) (hR : 
     nlinarith [tF]
 
 /-- The block of `2^(w-1)` in `W` bits, in `tU`. -/
-noncomputable def constE2a : Cmd 0 𝕌 :=
+noncomputable def constE2a : Cmd 𝕌 :=
   .seq (op0 Rules.mark false iW (ι tU) (by decide)) <| .seq (rewind iW) <|
   .seq (op1 Rules.drop false kW iW (ι sT2) (by decide) (by decide) (by decide)) <| .seq (rewind kW) <|
   .seq (rewind iW) <| .seq (rewind (ι sT2)) <|
@@ -561,7 +561,7 @@ theorem runs_constE2a {W w : ℕ} (hw : 1 ≤ w) (hwW : w ≤ W) (τ : Fin 𝕌 
     omega
 
 /-- `kI`: `r` copies of the block in `tU` and a zero bit; `tU` cleared. -/
-noncomputable def constE2b : Cmd 0 𝕌 :=
+noncomputable def constE2b : Cmd 𝕌 :=
   .seq (ticksFrom (ι qR) (by decide)) <| .seq (emit [[]] kI) <|
   .seq (repeatLoop Rules.copy (ι tU) kI (by decide) (by decide)) <| .seq (clear (ι qT)) <|
   .seq (op0 (Rules.fill false) true (ι c1) kI (by decide)) <| .seq (rewind (ι c1)) <| .seq (rewind kI) (clear (ι tU))
@@ -577,24 +577,24 @@ theorem runs_constE2b {W r : ℕ} {b : List Bool} (hbl : b.length = W) (τ : Fin
   have tB : time Rules.copy b (fun j => j.elim0) ≤ W + 7 := by rw [time_copy, hbl]; omega
   have s1 := runs_ticksFrom (show ι qR ≠ ι qT by decide) τ hR hT
   set τ₁ := Function.update τ (ι qT) ⟨[], List.replicate r []⟩
-  have s2 := runs_emit (a := 0) [[]] kI τ₁ (by tsimp [τ₁, hI, emp])
+  have s2 := runs_emit [[]] kI τ₁ (by tsimp [τ₁, hI, emp])
   set τ₂ := Function.update τ₁ kI ⟨[[]].reverse ++ (τ₁ kI).left, []⟩
   have s3 := runs_repeatLoop Rules.copy (src := ι tU) (dst := kI) (by decide) (by decide) (by decide) (by decide)
     (by decide) hb (W + 7) tB r τ₂ [] [] [] (by tsimp [τ₂, τ₁, hU]) (by tsimp [τ₂, τ₁, hI, emp])
     (by tsimp [τ₂, τ₁]) (by tsimp [τ₂, τ₁, hJ])
   set τ₃ := Function.update (Function.update τ₂ kI ⟨([] ++ (List.replicate r b).flatten) :: [], []⟩)
     (ι qT) ⟨List.replicate r [] ++ [], []⟩
-  have s4 := runs_clear (a := 0) (ι qT) τ₃
+  have s4 := runs_clear (ι qT) τ₃
   set τ₄ := Function.update τ₃ (ι qT) ⟨[], []⟩
-  have s5 := runs_op0 (a := 0) (Rules.fill false) true (show ι c1 ≠ kI by decide) τ₄ (by tsimp [τ₄, τ₃, τ₂, τ₁, h1])
+  have s5 := runs_op0 (Rules.fill false) true (show ι c1 ≠ kI by decide) τ₄ (by tsimp [τ₄, τ₃, τ₂, τ₁, h1])
     (by tsimp [τ₄, τ₃]) [[false]] (by tsimp [τ₄, τ₃, τ₂, τ₁, h1, Rules.output_fill])
     (fun _ => ⟨by tsimp [τ₄, τ₃], by simp⟩)
   set τ₅ := Function.update (Function.update τ₄ (ι c1) (τ₄ (ι c1)).next) kI ((τ₄ kI).put true [[false]])
-  have s6 := runs_rewind (a := 0) (ι c1) τ₅
+  have s6 := runs_rewind (ι c1) τ₅
   set τ₆ := Function.update τ₅ (ι c1) ⟨[], (τ₅ (ι c1)).left.reverse ++ (τ₅ (ι c1)).right⟩
-  have s7 := runs_rewind (a := 0) kI τ₆
+  have s7 := runs_rewind kI τ₆
   set τ₇ := Function.update τ₆ kI ⟨[], (τ₆ kI).left.reverse ++ (τ₆ kI).right⟩
-  have s8 := runs_clear (a := 0) (ι tU) τ₇
+  have s8 := runs_clear (ι tU) τ₇
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6
     (Runs.then s7 s8))))))).mono (fun τ' h => ?_) ?_
   · rw [h]; funext x
@@ -611,7 +611,7 @@ theorem runs_constE2b {W r : ℕ} {b : List Bool} (hbl : b.length = W) (τ : Fin
 /-! ### All constants -/
 
 /-- Every constant of the ring product from `p`, `ℓ`, `w` in unary. -/
-noncomputable def constAll : Cmd 0 𝕌 :=
+noncomputable def constAll : Cmd 𝕌 :=
   .seq constA <| .seq constB <| .seq constC <| .seq constD <| .seq constE1 <| .seq constE2a <|
   .seq constE2b <| .seq (clear (ι qR)) (clear (ι c1))
 
@@ -673,8 +673,8 @@ theorem runs_constAll {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc
     (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hI])
   set τ₇ := Function.update (Function.update τ₆ kI (reg ((List.replicate (2 ^ l) blk).flatten ++ [false])))
     (ι tU) emp
-  have s8 := runs_clear (a := 0) (ι qR) τ₇
-  have s9 := runs_clear (a := 0) (ι c1) (Function.update τ₇ (ι qR) ⟨[], []⟩)
+  have s8 := runs_clear (ι qR) τ₇
+  have s9 := runs_clear (ι c1) (Function.update τ₇ (ι qR) ⟨[], []⟩)
   have eI : (List.replicate (2 ^ l) blk).flatten ++ [false] =
       rwd (W * 2 ^ l) (wsum W (List.replicate (2 ^ l) (2 ^ (w - 1)))) := by
     rw [← hbl, ← show bval blk = 2 ^ (w - 1) from bval_unitBlock _ _, offset_word]

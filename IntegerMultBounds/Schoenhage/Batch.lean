@@ -32,7 +32,7 @@ def nextBatch (Np k M : ℕ) : List ℕ → List ℕ
 /-! ### The down-sweep of a batch -/
 
 /-- Every pair of `tIn`. -/
-noncomputable def downBatch : Cmd 0 𝕋 := .loop tIn downPair
+noncomputable def downBatch : Cmd 𝕋 := .loop tIn downPair
 
 theorem length_zipFlat : ∀ (X Y : List ℕ), X.length = Y.length → (zipFlat X Y).length = 2 * X.length
   | [], [], _ => rfl
@@ -86,7 +86,7 @@ noncomputable def upList (N K : ℕ) : ℕ → List ℕ → List ℕ
   | g + 1, Q => levelOut N (Q.take K) :: upList N K g (Q.drop K)
 
 /-- Move the next group to `tD` and run its up-sweep. -/
-noncomputable def upStep : Cmd 0 𝕋 :=
+noncomputable def upStep : Cmd 𝕋 :=
   .seq (moveN tK tIn tD tJ (by decide) (by decide)) <| .seq (rewind tK) <| .seq (rewind tD) upGroup
 
 theorem upb_arith (K Np A C X g : ℕ) (hX : 5000 * (K * (Np + 2)) ≤ X) :
@@ -95,7 +95,7 @@ theorem upb_arith (K Np A C X g : ℕ) (hX : 5000 * (K * (Np + 2)) ≤ X) :
   nlinarith [Nat.zero_le (K * Np)]
 
 /-- Every group of `tIn`. -/
-noncomputable def upBatch : Cmd 0 𝕋 := .loop tIn upStep
+noncomputable def upBatch : Cmd 𝕋 := .loop tIn upStep
 
 set_option maxHeartbeats 1000000 in
 theorem runs_upBatch {N : ℕ} (hN0 : N0 ≤ N) (hk : 2 ^ kOf N ∣ N) :
@@ -117,15 +117,15 @@ theorem runs_upBatch {N : ℕ} (hN0 : N0 ≤ N) (hk : 2 ^ kOf N ∣ N) :
     have hKQ : (2 ^ kOf N) ≤ Q.length := by rw [hl]; nlinarith
     have hq : Q = Q.take (2 ^ kOf N) ++ Q.drop (2 ^ kOf N) := (List.take_append_drop (2 ^ kOf N) Q).symm
     have hP : (Q.take (2 ^ kOf N)).length = (2 ^ kOf N) := by simp; omega
-    have s1 := runs_moveN (a := 0) (k := tK) (s := tIn) (d := tD) (j := tJ) (by decide) (by decide) (by decide)
+    have s1 := runs_moveN (k := tK) (s := tIn) (d := tD) (j := tJ) (by decide) (by decide) (by decide)
       (by decide) (by decide) (by decide) ((nextN N) + 1) (List.replicate (2 ^ kOf N) []) σ [] Il (rwds (nextN N) (Q.take (2 ^ kOf N)))
       (rwds (nextN N) (Q.drop (2 ^ kOf N))) [] hK (by rw [hIn, ← rwds_append, ← hq]) (by simp [length_rwds, hP])
       (by simpa [emp] using hD0) (by rw [hL.2.1 tJ (by decide)]; rfl) (rwds_length_le (nextN N) _) (by simp)
     set σ₁ := Function.update (Function.update (Function.update σ tK ⟨(List.replicate (2 ^ kOf N) []).reverse ++ [], []⟩)
       tIn ⟨(rwds (nextN N) (Q.take (2 ^ kOf N))).reverse ++ Il, rwds (nextN N) (Q.drop (2 ^ kOf N))⟩) tD ⟨(rwds (nextN N) (Q.take (2 ^ kOf N))).reverse ++ [], []⟩
-    have s2 := runs_rewind (a := 0) tK σ₁
+    have s2 := runs_rewind tK σ₁
     set σ₂ := Function.update σ₁ tK ⟨[], (σ₁ tK).left.reverse ++ (σ₁ tK).right⟩
-    have s3 := runs_rewind (a := 0) tD σ₂
+    have s3 := runs_rewind tD σ₂
     set σ₃ := Function.update σ₂ tD ⟨[], (σ₂ tD).left.reverse ++ (σ₂ tD).right⟩
     have hL₃ : LevelRegs N (nextN N) (kOf N) (pieceOf N) σ₃ :=
       (((((hL.update tK _ (by decide)).update tIn _ (by decide)).update tD _ (by decide)).update tK _

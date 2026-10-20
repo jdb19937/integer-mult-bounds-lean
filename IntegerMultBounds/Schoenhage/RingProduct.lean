@@ -51,7 +51,7 @@ theorem ext_own {x : Fin 𝕌} (o : Own x) (τ : Fin 𝕌 → WTape) (σ : Fin �
 /-! ### Interleaving the output words -/
 
 /-- Real word, imaginary word, for every coefficient. -/
-noncomputable def weave : Cmd 0 𝕌 := .loop lR (.seq (cpy lR rO (by decide)) (cpy lI rO (by decide)))
+noncomputable def weave : Cmd 𝕌 := .loop lR (.seq (cpy lR rO (by decide)) (cpy lI rO (by decide)))
 
 theorem runs_weave :
     ∀ (ps : List (List Bool × List Bool)) (τ : Fin 𝕌 → WTape) (Al Bl Ol : List (List Bool)) (W : ℕ),
@@ -66,9 +66,9 @@ theorem runs_weave :
       simp_all [Function.update_apply]
   | p :: ps, τ, Al, Bl, Ol, W, hA, hB, hO, hW => by
     have hp := hW p (by simp)
-    have s1 := runs_cpy (a := 0) (show lR ≠ rO by decide) τ (by simp [hA]) (by simp [hO])
+    have s1 := runs_cpy (show lR ≠ rO by decide) τ (by simp [hA]) (by simp [hO])
     set τ₁ := Function.update (Function.update τ lR (τ lR).next) rO ((τ rO).put false [(τ lR).cur])
-    have s2 := runs_cpy (a := 0) (show lI ≠ rO by decide) τ₁ (by tsimp [τ₁, hB]) (by tsimp [τ₁, hO, hA])
+    have s2 := runs_cpy (show lI ≠ rO by decide) τ₁ (by tsimp [τ₁, hB]) (by tsimp [τ₁, hO, hA])
     set τ₂ := Function.update (Function.update τ₁ lI (τ₁ lI).next) rO ((τ₁ rO).put false [(τ₁ lI).cur])
     have ih := runs_weave ps τ₂ (p.1 :: Al) (p.2 :: Bl) (p.2 :: p.1 :: Ol) W (by tsimp [τ₂, τ₁, hA])
       (by tsimp [τ₂, τ₁, hB]) (by tsimp [τ₂, τ₁, hO, hA, hB]) (fun q hq => hW q (by simp [hq]))
@@ -100,7 +100,7 @@ def resid (Wd r w N : ℕ) (odd : Bool) (ps : List (List Bool × List Bool)) : �
   (wsum Wd (digits odd ps) + Fm N - wsum Wd (List.replicate r (2 ^ (w - 1)))) % Fm N
 
 /-- Pack the real and imaginary parts of both inputs. -/
-noncomputable def phaseP : Cmd 0 𝕌 :=
+noncomputable def phaseP : Cmd 𝕌 :=
   .seq aluOn <| .seq (pack rF xA own_rF own_xA false) <| .seq (pack rF xB own_rF own_xB true) <|
   .seq (pack rG xC own_rG own_xC false) <| .seq (pack rG xE own_rG own_xE true) aluOff
 
@@ -221,10 +221,10 @@ theorem runs_phaseP {Wd r w s N fs gs τ} (h : RingSetup Wd r w s N fs gs τ) :
 /-! ### Combining two products -/
 
 /-- Combine `xP` and `xQ` into `d` with the unit, clearing both. -/
-noncomputable def phaseC (op : Cmd 0 𝕋) (d : Fin 𝕌) (od : Own d) : Cmd 0 𝕌 :=
+noncomputable def phaseC (op : Cmd 𝕋) (d : Fin 𝕌) (od : Own d) : Cmd 𝕌 :=
   .seq aluOn <| .seq (aluOp op xP xQ d own_xP own_xQ od) <| .seq (clear xP) <| .seq (clear xQ) aluOff
 
-theorem runs_phaseC (op : Cmd 0 𝕋) {d : Fin 𝕌} (od : Own d) (hdP : d ≠ xP) (hdQ : d ≠ xQ) {N B : ℕ}
+theorem runs_phaseC (op : Cmd 𝕋) {d : Fin 𝕌} (od : Own d) (hdP : d ≠ xP) (hdQ : d ≠ xQ) {N B : ℕ}
     (hN : 0 < N) {x y z : List Bool}
     (hop : Runs op (Function.update (Function.update (aluBank N) aX (reg x)) aY (reg y))
       (· = Function.update (aluBank N) aO (reg z)) B)
@@ -237,8 +237,8 @@ theorem runs_phaseC (op : Cmd 0 𝕋) {d : Fin 𝕌} (od : Own d) (hdP : d ≠ x
   have e : ∀ x, Own x → τ₀ x = τ x := fun x o => ext_own o τ _
   have s1 := runs_aluOp op own_xP own_xQ od (by decide) hdP hdQ hop τ₀ (ext_comp τ _) (by rw [e _ own_xP, hx])
     (by rw [e _ own_xQ, hy]) (by rw [e _ od, hd])
-  have s2 := runs_clear (a := 0) xP (Function.update τ₀ d (reg z))
-  have s3 := runs_clear (a := 0) xQ (Function.update (Function.update τ₀ d (reg z)) xP ⟨[], []⟩)
+  have s2 := runs_clear xP (Function.update τ₀ d (reg z))
+  have s3 := runs_clear xQ (Function.update (Function.update τ₀ d (reg z)) xP ⟨[], []⟩)
   have s4 := runs_aluOff (N := N) (Function.update (Function.update (Function.update τ₀ d (reg z)) xP ⟨[], []⟩)
     xQ ⟨[], []⟩) (by simp only [comp_ι_update_own od, comp_ι_update_own own_xP, comp_ι_update_own own_xQ,
       τ₀, ext_comp])
@@ -260,7 +260,7 @@ theorem own_kS : Own kS := by unfold Own; decide
 theorem own_kw : Own kw := by unfold Own; decide
 
 /-- Add the offset to both residues, unpack them, interleave the words on `rO`. -/
-noncomputable def phaseU : Cmd 0 𝕌 :=
+noncomputable def phaseU : Cmd 𝕌 :=
   .seq aluOn <| .seq (aluOp addMod lR kO xP own_lR own_kO own_xP) <|
   .seq (aluOp addMod lI kO xQ own_lI own_kO own_xQ) <| .seq (clear lR) <| .seq (clear lI) <|
   .seq (unpack xP lR own_xP own_lR (by decide)) <| .seq (unpack xQ lI own_xQ own_lI (by decide)) <|
@@ -317,8 +317,8 @@ theorem runs_phaseU {Wd r w s N : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hWd : w + 
     (by tsimp [τ₁, e _ own_kO, hKO]) (by tsimp [τ₁, e _ own_xQ, hQ])
   rw [eb] at s2
   set τ₂ := Function.update τ₁ xQ (reg (rwd N ((b + Oo) % Fm N)))
-  have s3 := runs_clear (a := 0) lR τ₂
-  have s4 := runs_clear (a := 0) lI (Function.update τ₂ lR ⟨[], []⟩)
+  have s3 := runs_clear lR τ₂
+  have s4 := runs_clear lI (Function.update τ₂ lR ⟨[], []⟩)
   set τ₄ := Function.update (Function.update τ₂ lR ⟨[], []⟩) lI ⟨[], []⟩
   have c₄ : τ₄ ∘ ι = aluBank N := by
     simp only [τ₄, τ₂, τ₁, comp_ι_update_own own_xP, comp_ι_update_own own_xQ, comp_ι_update_own own_lR,
@@ -339,8 +339,8 @@ theorem runs_phaseU {Wd r w s N : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hWd : w + 
     (by tsimp [τ₅, τ₄, τ₂, τ₁])
   set B := (pieces Wd r (bval (rwd N ((b + Oo) % Fm N)))).map (outWord Wd s w)
   set τ₆ := Function.update τ₅ lI ⟨B.reverse ++ [], []⟩
-  have s7 := runs_rewind (a := 0) lR τ₆
-  have s8 := runs_rewind (a := 0) lI (Function.update τ₆ lR ⟨[], (τ₆ lR).left.reverse ++ (τ₆ lR).right⟩)
+  have s7 := runs_rewind lR τ₆
+  have s8 := runs_rewind lI (Function.update τ₆ lR ⟨[], (τ₆ lR).left.reverse ++ (τ₆ lR).right⟩)
   set τ₈ := Function.update (Function.update τ₆ lR ⟨[], A⟩) lI ⟨[], B⟩
   have e₈ : Function.update (Function.update τ₆ lR ⟨[], (τ₆ lR).left.reverse ++ (τ₆ lR).right⟩) lI
       ⟨[], (Function.update τ₆ lR ⟨[], (τ₆ lR).left.reverse ++ (τ₆ lR).right⟩ lI).left.reverse ++
@@ -359,17 +359,17 @@ theorem runs_phaseU {Wd r w s N : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hWd : w + 
       · obtain ⟨x, -, hx⟩ := List.mem_map.mp this.2; rw [← hx]; simp [outWord])
   set τ₉ := Function.update (Function.update (Function.update τ₈ lR ⟨((List.zip A B).map Prod.fst).reverse ++ [], []⟩)
     lI ⟨((List.zip A B).map Prod.snd).reverse ++ [], []⟩) rO ⟨(flat (List.zip A B)).reverse ++ [], []⟩
-  have s10 := runs_clear (a := 0) lR τ₉
-  have s11 := runs_clear (a := 0) lI (Function.update τ₉ lR ⟨[], []⟩)
-  have s12 := runs_clear (a := 0) xP (Function.update (Function.update τ₉ lR ⟨[], []⟩) lI ⟨[], []⟩)
-  have s13 := runs_clear (a := 0) xQ (Function.update (Function.update (Function.update τ₉ lR ⟨[], []⟩) lI ⟨[], []⟩)
+  have s10 := runs_clear lR τ₉
+  have s11 := runs_clear lI (Function.update τ₉ lR ⟨[], []⟩)
+  have s12 := runs_clear xP (Function.update (Function.update τ₉ lR ⟨[], []⟩) lI ⟨[], []⟩)
+  have s13 := runs_clear xQ (Function.update (Function.update (Function.update τ₉ lR ⟨[], []⟩) lI ⟨[], []⟩)
     xP ⟨[], []⟩)
   set τ₁₃ := Function.update (Function.update (Function.update (Function.update τ₉ lR ⟨[], []⟩) lI ⟨[], []⟩)
     xP ⟨[], []⟩) xQ ⟨[], []⟩
   have s14 := runs_aluOff (N := N) τ₁₃ (by
     simp only [τ₁₃, τ₉, τ₈, τ₆, τ₅, comp_ι_update_own own_xP, comp_ι_update_own own_xQ, comp_ι_update_own own_lR,
       comp_ι_update_own own_lI, comp_ι_update_own own_rO, c₄])
-  have s15 := runs_rewind (a := 0) rO (ext τ₁₃ (fun _ => emp))
+  have s15 := runs_rewind rO (ext τ₁₃ (fun _ => emp))
   have hAo : A = outs Wd r s w N a := by
     simp only [A, outs]; rw [bval_rwd (N := N) (r := (a + Oo) % Fm N) (Nat.mod_lt _ (by simp [Fm]))]
   have hBo : B = outs Wd r s w N b := by
@@ -399,7 +399,7 @@ theorem runs_phaseU {Wd r w s N : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hWd : w + 
 /-! ### The whole ring product -/
 
 /-- The packed ring product. -/
-noncomputable def ringProd : Cmd 0 𝕌 :=
+noncomputable def ringProd : Cmd 𝕌 :=
   .seq phaseP <| .seq (mulStep xA xC xP own_xA own_xC own_xP) <| .seq (mulStep xB xE xQ own_xB own_xE own_xQ) <|
   .seq (phaseC subMod lR own_lR) <| .seq (mulStep xA xE xP own_xA own_xE own_xP) <|
   .seq (mulStep xB xC xQ own_xB own_xC own_xQ) <| .seq (phaseC addMod lI own_lI) <|
@@ -482,10 +482,10 @@ theorem runs_ringProd {Wd r w s N : ℕ} {fs gs : List (List Bool × List Bool)}
   rw [eIm] at s7
   set τ₇ := Function.update (Function.update (Function.update τ₆ lI (reg (rwd N (imRes Wd r w N fs gs)))) xP emp)
     xQ emp
-  have s8 := runs_clear (a := 0) xA τ₇
-  have s9 := runs_clear (a := 0) xB (Function.update τ₇ xA ⟨[], []⟩)
-  have s10 := runs_clear (a := 0) xC (Function.update (Function.update τ₇ xA ⟨[], []⟩) xB ⟨[], []⟩)
-  have s11 := runs_clear (a := 0) xE (Function.update (Function.update (Function.update τ₇ xA ⟨[], []⟩) xB ⟨[], []⟩)
+  have s8 := runs_clear xA τ₇
+  have s9 := runs_clear xB (Function.update τ₇ xA ⟨[], []⟩)
+  have s10 := runs_clear xC (Function.update (Function.update τ₇ xA ⟨[], []⟩) xB ⟨[], []⟩)
+  have s11 := runs_clear xE (Function.update (Function.update (Function.update τ₇ xA ⟨[], []⟩) xB ⟨[], []⟩)
     xC ⟨[], []⟩)
   set τ₁₁ := Function.update (Function.update (Function.update (Function.update τ₇ xA ⟨[], []⟩) xB ⟨[], []⟩)
     xC ⟨[], []⟩) xE ⟨[], []⟩

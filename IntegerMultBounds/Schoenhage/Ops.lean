@@ -41,43 +41,43 @@ def emp : WTape := ⟨[], []⟩
   cases L <;> rfl
 
 /-- `c` runs from `σ` into `Q` within `B` steps. -/
-def Runs (c : Cmd a t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → Prop) (B : ℕ) : Prop :=
+def Runs (c : Cmd t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → Prop) (B : ℕ) : Prop :=
   ∃ σ' k, Exec c σ σ' k ∧ Q σ' ∧ k ≤ B
 
-theorem Runs.mono {c : Cmd a t} {σ} {Q Q' : (Fin t → WTape) → Prop} {B B' : ℕ}
+theorem Runs.mono {c : Cmd t} {σ} {Q Q' : (Fin t → WTape) → Prop} {B B' : ℕ}
     (h : Runs c σ Q B) (hQ : ∀ σ', Q σ' → Q' σ') (hB : B ≤ B') : Runs c σ Q' B' := by
   obtain ⟨σ', k, he, hq, hk⟩ := h
   exact ⟨σ', k, he, hQ σ' hq, hk.trans hB⟩
 
-theorem Runs.seq {c d : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B₁ B₂ : ℕ}
+theorem Runs.seq {c d : Cmd t} {σ} {Q : (Fin t → WTape) → Prop} {B₁ B₂ : ℕ}
     (h : Runs c σ (fun σ₁ => Runs d σ₁ Q B₂) B₁) : Runs (.seq c d) σ Q (B₁ + 1 + B₂) := by
   obtain ⟨σ₁, k₁, h₁, ⟨σ₂, k₂, h₂, hq, hk₂⟩, hk₁⟩ := h
   exact ⟨σ₂, k₁ + 1 + k₂, .seq h₁ h₂, hq, by omega⟩
 
 /-- Chain an exact step into the rest of a program. -/
-theorem Runs.then {c d : Cmd a t} {σ σ₁ : Fin t → WTape} {Q : (Fin t → WTape) → Prop} {B₁ B₂ : ℕ}
+theorem Runs.then {c d : Cmd t} {σ σ₁ : Fin t → WTape} {Q : (Fin t → WTape) → Prop} {B₁ B₂ : ℕ}
     (h₁ : Runs c σ (· = σ₁) B₁) (h₂ : Runs d σ₁ Q B₂) : Runs (.seq c d) σ Q (B₁ + 1 + B₂) :=
   Runs.seq (h₁.mono (fun _ h => h ▸ h₂) le_rfl)
 
 /-- Weaken the bound. -/
-theorem Runs.le {c : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B B' : ℕ}
+theorem Runs.le {c : Cmd t} {σ} {Q : (Fin t → WTape) → Prop} {B B' : ℕ}
     (h : Runs c σ Q B) (hB : B ≤ B') : Runs c σ Q B' := h.mono (fun _ h => h) hB
 
-theorem Runs.cond_true {i : Fin t} {c d : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
+theorem Runs.cond_true {i : Fin t} {c d : Cmd t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
     (hc : StartsOne (σ i)) (h : Runs c σ Q B) : Runs (.cond i c d) σ Q (B + 1) := by
   obtain ⟨σ', k, he, hq, hk⟩ := h
   exact ⟨σ', k + 1, .cond_true hc he, hq, by omega⟩
 
-theorem Runs.cond_false {i : Fin t} {c d : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
+theorem Runs.cond_false {i : Fin t} {c d : Cmd t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
     (hc : ¬ StartsOne (σ i)) (h : Runs d σ Q B) : Runs (.cond i c d) σ Q (B + 1) := by
   obtain ⟨σ', k, he, hq, hk⟩ := h
   exact ⟨σ', k + 1, .cond_false hc he, hq, by omega⟩
 
-theorem Runs.loop_done {i : Fin t} {b : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop}
+theorem Runs.loop_done {i : Fin t} {b : Cmd t} {σ} {Q : (Fin t → WTape) → Prop}
     (hi : (σ i).right = []) (hq : Q σ) : Runs (.loop i b) σ Q 0 :=
   ⟨σ, 0, .loop_done hi, hq, le_rfl⟩
 
-theorem Runs.loop_step {i : Fin t} {b : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B₁ B₂ : ℕ}
+theorem Runs.loop_step {i : Fin t} {b : Cmd t} {σ} {Q : (Fin t → WTape) → Prop} {B₁ B₂ : ℕ}
     (hi : (σ i).right ≠ []) (h : Runs b σ (fun σ₁ => Runs (.loop i b) σ₁ Q B₂) B₁) :
     Runs (.loop i b) σ Q (B₁ + 2 + B₂) := by
   obtain ⟨σ₁, k₁, h₁, ⟨σ₂, k₂, h₂, hq, hk₂⟩, hk₁⟩ := h
@@ -120,18 +120,18 @@ theorem slotOne_inj (i : Fin t) : Function.Injective (slotOne i) := by
 /-! ### Commands -/
 
 /-- Stream with no extra input from `d` to `o`. -/
-noncomputable def op0 (R : Rule 0) (ext : Bool) (d o : Fin t) (h : d ≠ o) : Cmd a t :=
+noncomputable def op0 (R : Rule 0) (ext : Bool) (d o : Fin t) (h : d ≠ o) : Cmd t :=
   .prim (streamPrim R ext) (slot0 d o) (slot0_inj h)
 
 /-- Stream with one extra input. -/
 noncomputable def op1 (R : Rule 1) (ext : Bool) (d e o : Fin t) (h1 : d ≠ e) (h2 : d ≠ o)
-    (h3 : e ≠ o) : Cmd a t :=
+    (h3 : e ≠ o) : Cmd t :=
   .prim (streamPrim R ext) (slot1 d e o) (slot1_inj h1 h2 h3)
 
-noncomputable def rewind (i : Fin t) : Cmd a t := .prim Rewind.prim (slotOne i) (slotOne_inj i)
-noncomputable def back (i : Fin t) : Cmd a t := .prim Back.prim (slotOne i) (slotOne_inj i)
-noncomputable def clear (i : Fin t) : Cmd a t := .prim Clear.prim (slotOne i) (slotOne_inj i)
-noncomputable def emit (ws : List (List Bool)) (i : Fin t) : Cmd a t :=
+noncomputable def rewind (i : Fin t) : Cmd t := .prim Rewind.prim (slotOne i) (slotOne_inj i)
+noncomputable def back (i : Fin t) : Cmd t := .prim Back.prim (slotOne i) (slotOne_inj i)
+noncomputable def clear (i : Fin t) : Cmd t := .prim Clear.prim (slotOne i) (slotOne_inj i)
+noncomputable def emit (ws : List (List Bool)) (i : Fin t) : Cmd t :=
   .prim (Emit.prim ws) (slotOne i) (slotOne_inj i)
 
 /-! ### Effects -/
@@ -144,18 +144,18 @@ theorem upd_one (σ : Fin t → WTape) (i : Fin t) (τ : Fin 1 → WTape) :
   · rw [Function.update_of_ne hx, upd_other σ (slotOne i) τ x (fun _ h => hx h.symm)]
 
 theorem runs_rewind (i : Fin t) (σ : Fin t → WTape) :
-    Runs (a := a) (rewind i) σ (· = Function.update σ i ⟨[], (σ i).left.reverse ++ (σ i).right⟩)
+    Runs (rewind i) σ (· = Function.update σ i ⟨[], (σ i).left.reverse ++ (σ i).right⟩)
       (clen (σ i).left + 2) := by
   refine ⟨_, _, Exec.prim (P := Rewind.prim) trivial, ?_, le_rfl⟩
   rw [upd_one]; rfl
 
 theorem runs_clear (i : Fin t) (σ : Fin t → WTape) :
-    Runs (a := a) (clear i) σ (· = Function.update σ i ⟨[], []⟩) (2 * clen (σ i).words + 2) := by
+    Runs (clear i) σ (· = Function.update σ i ⟨[], []⟩) (2 * clen (σ i).words + 2) := by
   refine ⟨_, _, Exec.prim (P := Clear.prim) trivial, ?_, le_rfl⟩
   rw [upd_one]
 
 theorem runs_emit (ws : List (List Bool)) (i : Fin t) (σ : Fin t → WTape) (h : (σ i).right = []) :
-    Runs (a := a) (emit ws i) σ (· = Function.update σ i ⟨ws.reverse ++ (σ i).left, []⟩) (clen ws) := by
+    Runs (emit ws i) σ (· = Function.update σ i ⟨ws.reverse ++ (σ i).left, []⟩) (clen ws) := by
   refine ⟨_, _, Exec.prim (P := Emit.prim ws) h, ?_, le_rfl⟩
   rw [upd_one]; rfl
 
@@ -209,7 +209,7 @@ theorem runs_op0 (R : Rule 0) (ext : Bool) {d o : Fin t} (h : d ≠ o) (σ : Fin
     (hd : (σ d).right ≠ []) (ho : (σ o).right = []) (vs : List (List Bool))
     (hvs : output R (σ d).cur (fun j => j.elim0) = syms vs)
     (hext : ext = true → (σ o).left ≠ [] ∧ vs ≠ []) :
-    Runs (a := a) (op0 R ext d o h) σ
+    Runs (op0 R ext d o h) σ
       (· = Function.update (Function.update σ d (σ d).next) o ((σ o).put ext vs))
       (time R (σ d).cur (fun j => j.elim0)) := by
   have hpre : StreamPre R ext (σ ∘ slot0 d o) := by
@@ -219,10 +219,10 @@ theorem runs_op0 (R : Rule 0) (ext : Bool) {d o : Fin t} (h : d ≠ o) (σ : Fin
     simp [slot0, drv]
   refine ⟨_, _, Exec.prim (P := streamPrim R ext) hpre, ?_, ?_⟩
   · rw [upd_slot0 σ h]
-    have e1 : (streamPrim (a := a) R ext).sem (σ ∘ slot0 d o) drv = (σ d).next := by
+    have e1 : (streamPrim R ext).sem (σ ∘ slot0 d o) drv = (σ d).next := by
       show streamSem R ext _ drv = _
       rw [streamSem]; simp only [drv_ne_out, ↓reduceIte]; simp [slot0, drv]
-    have e2 : (streamPrim (a := a) R ext).sem (σ ∘ slot0 d o) out = (σ o).put ext vs := by
+    have e2 : (streamPrim R ext).sem (σ ∘ slot0 d o) out = (σ o).put ext vs := by
       show streamSem R ext _ out = _
       simp only [streamSem, ↓reduceIte, Function.comp_apply]
       have hs : slot0 d o out = o := by simp [slot0, out]

@@ -13,11 +13,11 @@ namespace IntegerMultBounds.Schoenhage
 open Machine Strm Tp Schedule
 
 /-- Drop the ruler's drivers. -/
-noncomputable def rulerClean : Cmd 0 𝕋 :=
+noncomputable def rulerClean : Cmd 𝕋 :=
   .seq (clear tU) <| .seq (clear tV) <| .seq (clear tO1) <| .seq (clear tO2) <| .seq (clear tC) (clear qT)
 
 /-- All of a level's registers from `pN`. -/
-noncomputable def mkLevel : Cmd 0 𝕋 :=
+noncomputable def mkLevel : Cmd 𝕋 :=
   .seq mkK <| .seq mkMK <| .seq mkTicks <| .seq mkSizes <| .seq mkHword <| .seq toInner <|
   .seq rulerPrepA <| .seq rulerPrepB <| .seq rulerBuild rulerClean
 
@@ -103,7 +103,7 @@ theorem runs_mkLevel {N N1 : ℕ} (hN : N0 ≤ N) (σ : Fin 𝕋 → WTape) (hr 
   rw [Nat.sub_add_cancel hK1] at s9
   set σ₉ := Function.update (Function.update σ₈ cR (reg (Rules.ruler (pieceOf N) (nextN N + 1) (2 ^ kOf N))))
         qT ⟨List.replicate (2 ^ kOf N - 1) [], []⟩
-  have s10 := runs_clear (a := 0) tU σ₉ |>.then (runs_clear tV _ |>.then (runs_clear tO1 _ |>.then
+  have s10 := runs_clear tU σ₉ |>.then (runs_clear tV _ |>.then (runs_clear tO1 _ |>.then
     (runs_clear tO2 _ |>.then (runs_clear tC _ |>.then (runs_clear qT _)))))
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 (Runs.then s7
     (Runs.then s8 (Runs.then s9 s10))))))))).mono (fun σ' h => ?_) ?_

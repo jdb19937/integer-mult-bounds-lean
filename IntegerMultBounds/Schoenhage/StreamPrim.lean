@@ -19,7 +19,7 @@ open Machine Strm
 variable {a r : ℕ}
 
 /-- The streaming primitive. -/
-noncomputable abbrev streamPrim (R : Rule r) (ext : Bool) : Prim a where
+noncomputable abbrev streamPrim (R : Rule r) (ext : Bool) : Prim where
   s := r + 2
   pre := StreamPre R ext
   sem := streamSem R ext

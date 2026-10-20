@@ -49,7 +49,7 @@ theorem AluReady.update {N : ℕ} {σ : Fin 𝕋 → WTape} (h : AluReady N σ) 
 /-! ### The forward pair loop -/
 
 /-- Butterflies over the half-block tapes. -/
-noncomputable def pairF : Cmd 0 𝕋 := .loop tU bflyF
+noncomputable def pairF : Cmd 𝕋 := .loop tU bflyF
 
 set_option maxHeartbeats 1000000 in
 theorem runs_pairF {N t : ℕ} (hN : 0 < N) (htN : t ≤ N) :
@@ -100,7 +100,7 @@ theorem ones_append (m n : ℕ) : ones m ++ ones n = ones (m + n) := by
   unfold ones; rw [List.replicate_add]
 
 /-- Split the current block of `tD` into the half-block tapes. -/
-noncomputable def splitBlock : Cmd 0 𝕋 :=
+noncomputable def splitBlock : Cmd 𝕋 :=
   .seq (moveN tH tD tU tJ (by decide) (by decide)) <| .seq (rewind tH) <|
   .seq (moveN tH tD tV tJ (by decide) (by decide)) <| .seq (rewind tH) <|
   .seq (rewind tU) (rewind tV)
@@ -138,7 +138,7 @@ theorem runs_splitBlock (σ : Fin 𝕋 → WTape) (W : ℕ) {Tk U V Dl Dr : List
     nlinarith
 
 /-- Append the sums and then the differences to `tD2`; empty the block tapes. -/
-noncomputable def collect : Cmd 0 𝕋 :=
+noncomputable def collect : Cmd 𝕋 :=
   .seq (rewind tO1) <| .seq (appendAll tO1 tD2 (by decide)) <|
   .seq (rewind tO2) <| .seq (appendAll tO2 tD2 (by decide)) <|
   .seq (clear tO1) <| .seq (clear tO2) <| .seq (clear tU) (clear tV)
@@ -176,7 +176,7 @@ theorem runs_collect (σ : Fin 𝕋 → WTape) (W : ℕ) {S Df M LU LV : List (L
     nlinarith
 
 /-- The children's shifts `t / 2` and `t / 2 + N / 2` from the register `cT`. -/
-noncomputable def kidsShift : Cmd 0 𝕋 :=
+noncomputable def kidsShift : Cmd 𝕋 :=
   .seq (op0 Rules.half false cT tE2 (by decide)) <| .seq (rewind cT) <|
   .seq (op0 Rules.half false cT tE2 (by decide)) <|
   .seq (op0 Rules.copy true cHN tE2 (by decide)) <|
@@ -196,7 +196,7 @@ theorem runs_kidsShift {N t : ℕ} (σ : Fin 𝕋 → WTape) {ME : List (List Bo
   · simp [clen, WTape.words] at t1 t2 ⊢; omega
 
 /-- One block of a forward layer. -/
-noncomputable def blockF : Cmd 0 𝕋 :=
+noncomputable def blockF : Cmd 𝕋 :=
   .seq splitBlock <| .seq (regIn tE cT (by decide)) <| .seq pairF <| .seq collect kidsShift
 
 theorem rwds_length_le (N : ℕ) (l : List ℕ) : ∀ w ∈ rwds N l, w.length ≤ N + 1 := by
@@ -251,7 +251,7 @@ theorem runs_blockF {N t : ℕ} (hN : 0 < N) (htN : t ≤ N) (σ : Fin 𝕋 → 
 /-! ### The block loop -/
 
 /-- All blocks of one forward layer. -/
-noncomputable def blocksF : Cmd 0 𝕋 := .loop tE blockF
+noncomputable def blocksF : Cmd 𝕋 := .loop tE blockF
 
 theorem rwds_append (N : ℕ) (l m : List ℕ) : rwds N (l ++ m) = rwds N l ++ rwds N m := by simp [rwds]
 
@@ -319,7 +319,7 @@ theorem runs_blocksF {N H : ℕ} (hN : 0 < N) (hH0 : 0 < H) :
 /-! ### Swapping layers -/
 
 /-- Make the new data and shifts current. -/
-noncomputable def swapData : Cmd 0 𝕋 :=
+noncomputable def swapData : Cmd 𝕋 :=
   .seq (clear tD) <| .seq (rewind tD2) <| .seq (appendAll tD2 tD (by decide)) <|
   .seq (clear tD2) <| .seq (rewind tD) <|
   .seq (clear tE) <| .seq (rewind tE2) <| .seq (appendAll tE2 tE (by decide)) <|
@@ -350,7 +350,7 @@ theorem runs_swapData (σ : Fin 𝕋 → WTape) (W : ℕ) {LD LE : List (List Bo
     nlinarith
 
 /-- Halve the half-block size and regenerate its ticks. -/
-noncomputable def swapH : Cmd 0 𝕋 :=
+noncomputable def swapH : Cmd 𝕋 :=
   .seq (op0 Rules.half false cH cH2 (by decide)) <| .seq (clear cH) <| .seq (rewind cH2) <|
   .seq (regMove cH2 cH (by decide)) <|
   .seq (clear tH) <| .seq (op0 Rules.ticks false cH tH (by decide)) <| .seq (rewind tH) (rewind cH)
@@ -389,10 +389,10 @@ theorem replicate_append_cons {α : Type*} (a : α) (L : List α) :
   | n + 1 => by simp [List.replicate_succ, replicate_append_cons a L n]
 
 /-- One forward layer. -/
-noncomputable def layerFwd : Cmd 0 𝕋 := .seq blocksF <| .seq swapData swapH
+noncomputable def layerFwd : Cmd 𝕋 := .seq blocksF <| .seq swapData swapH
 
 /-- Forward layers, one per tick of `tL`. -/
-noncomputable def fwdLoop : Cmd 0 𝕋 := .loop tL (.seq layerFwd (skp tL tJ (by decide)))
+noncomputable def fwdLoop : Cmd 𝕋 := .loop tL (.seq layerFwd (skp tL tJ (by decide)))
 
 theorem kids_le (N : ℕ) (E : List ℕ) (h : ∀ t ∈ E, t ≤ N) : ∀ t ∈ kids N E, t ≤ N := by
   intro t ht
@@ -457,7 +457,7 @@ theorem runs_fwdLoop {N : ℕ} (hN : 0 < N) :
     have hs2 := runs_swapH σ₂ H (by tsimp [σ₂, σ₁, hcH]) (by tsimp [σ₂, σ₁, hcH2])
     set σ₃ := Function.update (Function.update σ₂ cH (reg (ones (H / 2))))
         tH ⟨[], List.replicate (H / 2) []⟩ with hσ₃
-    have hs3 := runs_skp (a := 0) (s := tL) (j := tJ) (by decide) σ₃ (by tsimp [σ₃, σ₂, σ₁, htL])
+    have hs3 := runs_skp (s := tL) (j := tJ) (by decide) σ₃ (by tsimp [σ₃, σ₂, σ₁, htL])
       (by tsimp [σ₃, σ₂, σ₁, hJ, emp])
     set σ₄ := Function.update σ₃ tL (σ₃ tL).next with hσ₄
     have hr₄ : AluReady N σ₄ := by

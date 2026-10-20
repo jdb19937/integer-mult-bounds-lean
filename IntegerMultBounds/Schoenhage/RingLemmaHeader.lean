@@ -17,7 +17,7 @@ namespace IntegerMultBounds.Schoenhage
 open Machine Strm Tp Schedule Spec.SignedRingProduct
 
 /-- Decode `Γ(p)Γ(r)Γ(w)` from `zH` into `iP = ones p`, `iL = ones (log₂ r)`, `iW = ones w`. -/
-noncomputable def decodeHeader3 : Cmd 0 𝕌 :=
+noncomputable def decodeHeader3 : Cmd 𝕌 :=
   .seq hdrInit <|
   .seq decodeOne <| .seq (regMove (ι tL) iP (by decide)) <|
   .seq decodeOne <| .seq logOf <|
@@ -51,7 +51,7 @@ theorem runs_decodeHeader3 {p l w : ℕ} (hp : 1 ≤ p) (hw : 1 ≤ w)
     (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz])
     (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz])
   set τ₁ := Function.update (Function.update τ₀ (ι tX) (reg R2)) (ι tL) (reg (ones p))
-  have s2 := runs_regMove (a := 0) (show ι tL ≠ iP by decide) τ₁ (w := ones p) (by tsimp [τ₁])
+  have s2 := runs_regMove (show ι tL ≠ iP by decide) τ₁ (w := ones p) (by tsimp [τ₁])
     (by tsimp [τ₁, τ₀, hP])
   set τ₂ := Function.update (Function.update τ₁ (ι tL) emp) iP (reg (ones p))
   -- r
@@ -76,11 +76,11 @@ theorem runs_decodeHeader3 {p l w : ℕ} (hp : 1 ≤ p) (hw : 1 ≤ w)
     (by tsimp [τ₆, τ₅, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₂, τ₁, τ₀, hz])
     (by tsimp [τ₆, τ₅, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₂, τ₁, τ₀, hz])
   set τ₉ := Function.update (Function.update τ₆ (ι tX) (reg [])) (ι tL) (reg (ones w))
-  have s10 := runs_regMove (a := 0) (show ι tL ≠ iW by decide) τ₉ (w := ones w) (by tsimp [τ₉])
+  have s10 := runs_regMove (show ι tL ≠ iW by decide) τ₉ (w := ones w) (by tsimp [τ₉])
     (by tsimp [τ₉, τ₆, τ₅, τ₂, τ₁, τ₀, hW])
   set τ₁₀ := Function.update (Function.update τ₉ (ι tL) emp) iW (reg (ones w))
-  have s11 := runs_clear (a := 0) (ι tX) τ₁₀
-  have s12 := runs_clear (a := 0) (ι c1) (Function.update τ₁₀ (ι tX) ⟨[], []⟩)
+  have s11 := runs_clear (ι tX) τ₁₀
+  have s12 := runs_clear (ι c1) (Function.update τ₁₀ (ι tX) ⟨[], []⟩)
   refine (Runs.then s0 (Runs.then s1 (Runs.then s2 (Runs.then s5 (Runs.then s6
     (Runs.then s9 (Runs.then s10 (Runs.then s11 s12)))))))).mono
     (fun τ' h => ?_) ?_

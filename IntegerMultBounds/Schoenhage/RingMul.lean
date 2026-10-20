@@ -66,7 +66,7 @@ theorem ext_clean {τ : Fin 𝕌 → WTape} (h : Clean τ) : ext τ (fun _ => em
   rw [← h]; exact ext_self τ
 
 /-- Load the operands and the size. -/
-noncomputable def loadSS (s₁ s₂ : Fin 𝕌) (h₁ : s₁ ≠ ι tIn) (h₂ : s₂ ≠ ι tIn) : Cmd 0 𝕌 :=
+noncomputable def loadSS (s₁ s₂ : Fin 𝕌) (h₁ : s₁ ≠ ι tIn) (h₂ : s₂ ≠ ι tIn) : Cmd 𝕌 :=
   .seq (cpy s₁ (ι tIn) h₁) <| .seq (cpy s₂ (ι tIn) h₂) <| .seq (rewind (ι tIn)) <|
   .seq (rewind s₁) <| .seq (rewind s₂) <| .seq (cpy kN (ι pN) (by decide)) <|
   .seq (rewind (ι pN)) (rewind kN)
@@ -104,7 +104,7 @@ theorem runs_loadSS {s₁ s₂ : Fin 𝕌} (o₁ : Own s₁) (o₂ : Own s₂) (
   · simp at t1 t2 t3 ⊢; omega
 
 /-- One product: load, multiply, move the product to `d`. -/
-noncomputable def mulStep (s₁ s₂ d : Fin 𝕌) (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d) : Cmd 0 𝕌 :=
+noncomputable def mulStep (s₁ s₂ d : Fin 𝕌) (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d) : Cmd 𝕌 :=
   .seq (loadSS s₁ s₂ (o₁.ne tIn) (o₂.ne tIn)) <| .seq (up ssClean) (regMove (ι tIn) d (od.ne' tIn))
 
 theorem runs_mulStep {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d) (h12 : s₁ ≠ s₂)
@@ -130,7 +130,7 @@ theorem runs_mulStep {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) (o₂ : Own s₂
     rw [ext_update]
     simp only [τ₁, ext_update_ι, ext_clean hc]
     rfl
-  have s3 := runs_regMove (a := 0) (od.ne' tIn) (Function.update τ (ι tIn) (reg (rwd N v)))
+  have s3 := runs_regMove (od.ne' tIn) (Function.update τ (ι tIn) (reg (rwd N v)))
     (w := rwd N v) (by simp) (by rw [Function.update_of_ne (od.ne tIn), hd])
   refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ' h => ?_) ?_
   · have e : Function.update τ (ι tIn) emp = τ := by rw [← hz tIn]; exact Function.update_eq_self _ _

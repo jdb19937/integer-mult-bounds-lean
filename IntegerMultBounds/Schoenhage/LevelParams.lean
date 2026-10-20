@@ -41,13 +41,13 @@ theorem size_sq_le (n : ℕ) : Nat.size n * Nat.size n ≤ 4 * n := by
 /-! ### The exponent -/
 
 /-- `qR = ones N`, `N` ticks on `qT`, `qB = ones 0`, from `pN`. -/
-noncomputable def sizeSetupN : Cmd 0 𝕋 :=
+noncomputable def sizeSetupN : Cmd 𝕋 :=
   .seq (op0 Rules.copy false pN qR (by decide)) <| .seq (rewind pN) <| .seq (rewind qR) <|
   .seq (op0 Rules.ticks false pN qT (by decide)) <| .seq (rewind pN) <| .seq (rewind qT) <|
   .seq (emit [[]] qB) (rewind qB)
 
 /-- `qR = ones b`, `b` ticks on `qT`, `qB = ones 0`, from `tU`. -/
-noncomputable def sizeSetupU : Cmd 0 𝕋 :=
+noncomputable def sizeSetupU : Cmd 𝕋 :=
   .seq (op0 Rules.copy false tU qR (by decide)) <| .seq (rewind tU) <| .seq (rewind qR) <|
   .seq (op0 Rules.ticks false tU qT (by decide)) <| .seq (rewind tU) <| .seq (rewind qT) <|
   .seq (emit [[]] qB) (rewind qB)
@@ -94,7 +94,7 @@ theorem runs_sizeOf {n : ℕ} (σ : Fin 𝕋 → WTape) (hR : σ qR = reg (ones 
     nlinarith
 
 /-- `pK = ones ((b - bb) / 2)` from `tU = ones b`, `qB = ones bb`; both emptied. -/
-noncomputable def kFinish : Cmd 0 𝕋 :=
+noncomputable def kFinish : Cmd 𝕋 :=
   .seq (op1 Rules.drop false tU qB tV (by decide) (by decide) (by decide)) <| .seq (rewind tU) <|
   .seq (rewind qB) <| .seq (rewind tV) <| .seq (op0 Rules.half false tV pK (by decide)) <|
   .seq (rewind tV) <| .seq (rewind pK) <| .seq (clear tU) <| .seq (clear qB) (clear tV)
@@ -113,7 +113,7 @@ theorem runs_kFinish {b bb : ℕ} (σ : Fin 𝕋 → WTape) (hU : σ tU = reg (o
   · simp [clen, WTape.words] at t1 t2 ⊢; omega
 
 /-- The exponent `kOf N` onto `pK`. -/
-noncomputable def mkK : Cmd 0 𝕋 :=
+noncomputable def mkK : Cmd 𝕋 :=
   .seq sizeSetupN <| .seq (.seq sizeLoop (.seq (clear qR) (clear qT))) <| .seq (regMove qB tU (by decide)) <|
   .seq sizeSetupU <| .seq (.seq sizeLoop (.seq (clear qR) (clear qT))) kFinish
 
@@ -128,7 +128,7 @@ theorem runs_mkK {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N))
   have s2 := runs_sizeOf (n := N) σ₁ (by tsimp [σ₁]) (by tsimp [σ₁]) (by tsimp [σ₁]) (by tsimp [σ₁, h1])
     (by tsimp [σ₁, hS]) (by tsimp [σ₁, hJ])
   set σ₂ := Function.update (Function.update (Function.update σ₁ qR emp) qB (reg (ones (Nat.size N)))) qT emp
-  have s3 := runs_regMove (a := 0) (r := qB) (r' := tU) (by decide) σ₂ (w := ones (Nat.size N))
+  have s3 := runs_regMove (r := qB) (r' := tU) (by decide) σ₂ (w := ones (Nat.size N))
     (by tsimp [σ₂]) (by tsimp [σ₂, σ₁, hU])
   set σ₃ := Function.update (Function.update σ₂ qB emp) tU (reg (ones (Nat.size N)))
   have s4 := runs_sizeSetupU (n := Nat.size N) σ₃ (by tsimp [σ₃]) (by tsimp [σ₃, σ₂]) (by tsimp [σ₃, σ₂]) (by tsimp [σ₃])
@@ -153,7 +153,7 @@ theorem runs_mkK {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N))
 /-! ### Piece size, `K` and the next size -/
 
 /-- `k` ticks on `qT` from `pK`. -/
-noncomputable def tickK : Cmd 0 𝕋 :=
+noncomputable def tickK : Cmd 𝕋 :=
   .seq (op0 Rules.ticks false pK qT (by decide)) <| .seq (rewind pK) (rewind qT)
 
 theorem runs_tickK {k : ℕ} (σ : Fin 𝕋 → WTape) (hK : σ pK = reg (ones k)) (hT : σ qT = emp) :
@@ -167,7 +167,7 @@ theorem runs_tickK {k : ℕ} (σ : Fin 𝕋 → WTape) (hK : σ pK = reg (ones k
   · simp [clen] at t1 ⊢; omega
 
 /-- Copy a unary register into `qR`. -/
-noncomputable def loadR (src : Fin 𝕋) (h1 : src ≠ qR) : Cmd 0 𝕋 :=
+noncomputable def loadR (src : Fin 𝕋) (h1 : src ≠ qR) : Cmd 𝕋 :=
   .seq (op0 Rules.copy false src qR h1) <| .seq (rewind src) (rewind qR)
 
 theorem runs_loadR {src : Fin 𝕋} (h1 : src ≠ qR) {n : ℕ} (σ : Fin 𝕋 → WTape) (hs : σ src = reg (ones n))
@@ -189,7 +189,7 @@ theorem runs_loadR {src : Fin 𝕋} (h1 : src ≠ qR) {n : ℕ} (σ : Fin 𝕋 �
     simp [clen] at t1 ⊢; omega
 
 /-- `qR = ones (2M + k + K)` from `cM`, `pK`, `tU`. -/
-noncomputable def buildT : Cmd 0 𝕋 :=
+noncomputable def buildT : Cmd 𝕋 :=
   .seq (op0 Rules.copy false cM qR (by decide)) <| .seq (rewind cM) <|
   .seq (op0 Rules.copy true cM qR (by decide)) <| .seq (rewind cM) <|
   .seq (op0 Rules.copy true pK qR (by decide)) <| .seq (rewind pK) <|
@@ -209,7 +209,7 @@ theorem runs_buildT {M k K : ℕ} (σ : Fin 𝕋 → WTape) (hM : σ cM = reg (o
   · simp at t1 t2 t3 ⊢; omega
 
 /-- `cM = ones (pieceOf N)`, `tU = ones (2^k)` and `pNp = ones (nextN N)`. -/
-noncomputable def mkMK : Cmd 0 𝕋 :=
+noncomputable def mkMK : Cmd 𝕋 :=
   .seq (loadR pN (by decide)) <| .seq tickK <| .seq halveLoop <| .seq (clear qT) <|
   .seq (regMove qR cM (by decide)) <|
   .seq (loadR c1 (by decide)) <| .seq tickK <| .seq doubleLoop <| .seq (clear qT) <|
@@ -236,9 +236,9 @@ theorem runs_mkMK {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)
   have s3 := runs_halveLoop k N σ₂ [] (by tsimp [σ₂, σ₁]) (by tsimp [σ₂, σ₁, hS]) (by tsimp [σ₂, σ₁, hJ])
     (by tsimp [σ₂])
   set σ₃ := Function.update (Function.update σ₂ qR (reg (ones M))) qT ⟨List.replicate k [] ++ [], []⟩
-  have s4 := runs_clear (a := 0) qT σ₃
+  have s4 := runs_clear qT σ₃
   set σ₄ := Function.update σ₃ qT ⟨[], []⟩
-  have s5 := runs_regMove (a := 0) (r := qR) (r' := cM) (by decide) σ₄ (w := ones M) (by tsimp [σ₄, σ₃])
+  have s5 := runs_regMove (r := qR) (r' := cM) (by decide) σ₄ (w := ones M) (by tsimp [σ₄, σ₃])
     (by tsimp [σ₄, σ₃, σ₂, σ₁, hM])
   set σ₅ := Function.update (Function.update σ₄ qR emp) cM (reg (ones M))
   have s6 := runs_loadR (src := c1) (n := 1) (by decide) σ₅ (by tsimp [σ₅, σ₄, σ₃, σ₂, σ₁, hc1]) (by tsimp [σ₅])
@@ -249,9 +249,9 @@ theorem runs_mkMK {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)
     (by tsimp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hJ]) (by tsimp [σ₇])
   rw [one_mul] at s8
   set σ₈ := Function.update (Function.update σ₇ qR (reg (ones (2 ^ k)))) qT ⟨List.replicate k [] ++ [], []⟩
-  have s9 := runs_clear (a := 0) qT σ₈
+  have s9 := runs_clear qT σ₈
   set σ₉ := Function.update σ₈ qT ⟨[], []⟩
-  have s10 := runs_regMove (a := 0) (r := qR) (r' := tU) (by decide) σ₉ (w := ones (2 ^ k)) (by tsimp [σ₉, σ₈])
+  have s10 := runs_regMove (r := qR) (r' := tU) (by decide) σ₉ (w := ones (2 ^ k)) (by tsimp [σ₉, σ₈])
     (by tsimp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hU])
   set τ₁ := Function.update (Function.update σ₉ qR emp) tU (reg (ones (2 ^ k)))
   have s11 := runs_buildT (M := M) (k := k) (K := 2 ^ k) τ₁ (by tsimp [τ₁, σ₉, σ₈, σ₇, σ₆, σ₅])
@@ -264,7 +264,7 @@ theorem runs_mkMK {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)
   have s13 := runs_halveLoop k T τ₃ [] (by tsimp [τ₃, τ₂]) (by tsimp [τ₃, τ₂, τ₁, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃,
     σ₂, σ₁, hS]) (by tsimp [τ₃, τ₂, τ₁, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hJ]) (by tsimp [τ₃])
   set τ₄ := Function.update (Function.update τ₃ qR (reg (ones (T / 2 ^ k)))) qT ⟨List.replicate k [] ++ [], []⟩
-  have s14 := runs_clear (a := 0) qT τ₄
+  have s14 := runs_clear qT τ₄
   set τ₅ := Function.update τ₄ qT ⟨[], []⟩
   have s15 := runs_tickK (k := k) τ₅ (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hK])
     (by tsimp [τ₅, emp])
@@ -274,9 +274,9 @@ theorem runs_mkMK {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)
     (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hJ]) (by tsimp [τ₆])
   set τ₇ := Function.update (Function.update τ₆ qR (reg (ones (T / 2 ^ k * 2 ^ k))))
     qT ⟨List.replicate k [] ++ [], []⟩
-  have s17 := runs_clear (a := 0) qT τ₇
+  have s17 := runs_clear qT τ₇
   set τ₈ := Function.update τ₇ qT ⟨[], []⟩
-  have s18 := runs_regMove (a := 0) (r := qR) (r' := pNp) (by decide) τ₈ (w := ones (T / 2 ^ k * 2 ^ k))
+  have s18 := runs_regMove (r := qR) (r' := pNp) (by decide) τ₈ (w := ones (T / 2 ^ k * 2 ^ k))
     (by tsimp [τ₈, τ₇]) (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hNp])
   have hN' : T / 2 ^ k * 2 ^ k = nextN N := by
     have := Nat.one_le_two_pow (n := k)
@@ -317,7 +317,7 @@ theorem hword_eq {N : ℕ} (hN : 2 ≤ N) :
   simp
 
 /-- `tK` with `K` ticks and `pKh = ones (K / 2)` from `tU = ones K`; `tO1 = ones 2`. -/
-noncomputable def mkTicks : Cmd 0 𝕋 :=
+noncomputable def mkTicks : Cmd 𝕋 :=
   .seq (op0 Rules.ticks false tU tK (by decide)) <| .seq (rewind tU) <| .seq (rewind tK) <|
   .seq (op0 Rules.half false tU pKh (by decide)) <| .seq (rewind tU) <| .seq (rewind pKh) <|
   .seq (op0 Rules.copy false c1 tO1 (by decide)) <| .seq (rewind c1) <|
@@ -338,7 +338,7 @@ theorem runs_mkTicks {K : ℕ} (σ : Fin 𝕋 → WTape) (hU : σ tU = reg (ones
   · simp [clen] at t1 t2 t3 ⊢; omega
 
 /-- `pNK = ones (N' - k)`, `cHN = ones (N' / 2)`, `cWA = ones (N' + 2)` from `pNp`, `pK`. -/
-noncomputable def mkSizes : Cmd 0 𝕋 :=
+noncomputable def mkSizes : Cmd 𝕋 :=
   .seq (op1 Rules.drop false pNp pK pNK (by decide) (by decide) (by decide)) <| .seq (rewind pNp) <|
   .seq (rewind pK) <| .seq (rewind pNK) <|
   .seq (op0 Rules.half false pNp cHN (by decide)) <| .seq (rewind pNp) <| .seq (rewind cHN) <|
@@ -363,7 +363,7 @@ theorem runs_mkSizes {Np k : ℕ} (σ : Fin 𝕋 → WTape) (hNp : σ pNp = reg 
   · simp at t1 t2 t3 t4 ⊢; omega
 
 /-- `cH1 = hword N'` from `pNp` and `tO1 = ones 2`. -/
-noncomputable def mkHword : Cmd 0 𝕋 :=
+noncomputable def mkHword : Cmd 𝕋 :=
   .seq (op1 Rules.drop false pNp tO1 sT2 (by decide) (by decide) (by decide)) <| .seq (rewind pNp) <|
   .seq (rewind tO1) <| .seq (rewind sT2) <| .seq (emit [[true]] cH1) <|
   .seq (op0 (Rules.fill false) true sT2 cH1 (by decide)) <| .seq (clear sT2) <|
@@ -387,7 +387,7 @@ theorem runs_mkHword {Np : ℕ} (hNp2 : 2 ≤ Np) (σ : Fin 𝕋 → WTape) (hNp
 /-! ### The ruler's drivers -/
 
 /-- `K - 1` ticks on `qT`, `tU = ones (2M)`, `tO2 = ones (2(M+1))`; `tU = ones K` consumed. -/
-noncomputable def rulerPrepA : Cmd 0 𝕋 :=
+noncomputable def rulerPrepA : Cmd 𝕋 :=
   .seq (op1 Rules.drop false tU c1 sT2 (by decide) (by decide) (by decide)) <| .seq (rewind tU) <|
   .seq (rewind c1) <| .seq (rewind sT2) <| .seq (op0 Rules.ticks false sT2 qT (by decide)) <|
   .seq (clear sT2) <| .seq (rewind qT) <| .seq (clear tU) <|
@@ -419,7 +419,7 @@ theorem runs_rulerPrepA {K M : ℕ} (σ : Fin 𝕋 → WTape) (hU : σ tU = reg 
   · simp [clen, WTape.words] at t1 t2 t3 t4 t5 ⊢; omega
 
 /-- `tV = ones (2(N'+1-M))` and `tC = ones (2(N'-M))` from `cW = ones (N'+1)`, `pNp`, `cM`. -/
-noncomputable def rulerPrepB : Cmd 0 𝕋 :=
+noncomputable def rulerPrepB : Cmd 𝕋 :=
   .seq (op1 Rules.drop false cW cM sA (by decide) (by decide) (by decide)) <| .seq (rewind cW) <|
   .seq (rewind cM) <| .seq (rewind sA) <|
   .seq (op0 Rules.copy false sA tV (by decide)) <| .seq (rewind sA) <|

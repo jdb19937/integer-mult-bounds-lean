@@ -24,7 +24,7 @@ namespace Chunk
 
 /-- Chunk: the source's current word, cut into pieces of the register's width, as new words of
 the destination. -/
-noncomputable abbrev prim : Prim a where
+noncomputable abbrev prim : Prim where
   s := 3
   pre σ := (σ 0).right ≠ [] ∧ 1 ≤ (σ 1).cur.length ∧ σ 1 = reg (ones (σ 1).cur.length) ∧ (σ 2).right = []
   sem σ := fun i => if i.val = 0 then (σ 0).next else if i.val = 1 then σ 1
@@ -48,7 +48,7 @@ theorem slot3_inj {s r d : Fin t} (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d) :
   split_ifs at hij <;> omega
 
 /-- Cut the current word of `s` into pieces of the width in `r`, appended to `d`. -/
-noncomputable def chunkw (s r d : Fin t) (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d) : Cmd a t :=
+noncomputable def chunkw (s r d : Fin t) (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d) : Cmd t :=
   .prim Chunk.prim (slot3 s r d) (slot3_inj h1 h2 h3)
 
 theorem upd_slot3 (σ : Fin t → WTape) {s r d : Fin t} (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d)
@@ -80,11 +80,11 @@ theorem upd_slot3 (σ : Fin t → WTape) {s r d : Fin t} (h1 : s ≠ r) (h2 : s 
 theorem runs_chunkw {s r d : Fin t} (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d) (σ : Fin t → WTape)
     {L R : List (List Bool)} {x : List Bool} {w : ℕ}
     (hs : σ s = ⟨L, x :: R⟩) (hr : σ r = reg (ones w)) (hw : 1 ≤ w) (hd : (σ d).right = []) :
-    Runs (a := a) (chunkw s r d h1 h2 h3) σ
+    Runs (chunkw s r d h1 h2 h3) σ
       (· = Function.update (Function.update σ s ⟨x :: L, R⟩) d ⟨(cut w x).reverse ++ (σ d).left, []⟩)
       (4 * x.length + 3) := by
   have ew : (σ r).cur.length = w := by rw [hr]; simp [WTape.cur, reg]
-  have hpre : Chunk.prim.pre (a := a) (σ ∘ slot3 s r d) :=
+  have hpre : Chunk.prim.pre (σ ∘ slot3 s r d) :=
     ⟨by simp [slot3, hs], by simp [slot3, ew, hw], by simp [slot3, hr], by simpa [slot3, h2.symm, h3.symm] using hd⟩
   refine ⟨_, _, Exec.prim (P := Chunk.prim) hpre, ?_, ?_⟩
   · rw [upd_slot3 σ h1 h2 h3]

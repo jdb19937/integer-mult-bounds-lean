@@ -15,7 +15,7 @@ variable {a : ℕ}
 namespace Rewind
 
 /-- Rewind: all words to the right of the head. -/
-noncomputable abbrev prim : Prim a where
+noncomputable abbrev prim : Prim where
   s := 1
   pre _ := True
   sem σ := fun _ => ⟨[], (σ 0).left.reverse ++ (σ 0).right⟩
@@ -30,7 +30,7 @@ end Rewind
 namespace Back
 
 /-- Back: the previous word becomes current. -/
-noncomputable abbrev prim : Prim a where
+noncomputable abbrev prim : Prim where
   s := 1
   pre σ := (σ 0).left ≠ []
   sem σ := fun _ => ⟨(σ 0).left.tail, (σ 0).left.headD [] :: (σ 0).right⟩
@@ -45,7 +45,7 @@ end Back
 namespace Clear
 
 /-- Clear: erase the whole tape. -/
-noncomputable abbrev prim : Prim a where
+noncomputable abbrev prim : Prim where
   s := 1
   pre _ := True
   sem _ := fun _ => ⟨[], []⟩
@@ -60,7 +60,7 @@ end Clear
 namespace Emit
 
 /-- Emit: append fixed words at the end of the tape. -/
-noncomputable abbrev prim (ws : List (List Bool)) : Prim a where
+noncomputable abbrev prim (ws : List (List Bool)) : Prim where
   s := 1
   pre σ := (σ 0).right = []
   sem σ := fun _ => ⟨ws.reverse ++ (σ 0).left, []⟩

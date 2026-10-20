@@ -18,10 +18,10 @@ open Machine Strm
 variable {a t : ℕ}
 
 /-- Copy the current word of `s` to the end of `d`. -/
-noncomputable def cpy (s d : Fin t) (h : s ≠ d) : Cmd a t := op0 Rules.copy false s d h
+noncomputable def cpy (s d : Fin t) (h : s ≠ d) : Cmd t := op0 Rules.copy false s d h
 
 /-- Step past the current word of `s` (the junk tape `j` stays unchanged). -/
-noncomputable def skp (s j : Fin t) (h : s ≠ j) : Cmd a t := op0 Rules.skip false s j h
+noncomputable def skp (s j : Fin t) (h : s ≠ j) : Cmd t := op0 Rules.skip false s j h
 
 theorem time_copy (w : List Bool) (ws : Fin 0 → List Bool) : time Rules.copy w ws = w.length + 6 := by
   have h := (Rules.go_copy w ws).2
@@ -32,7 +32,7 @@ theorem time_skip (w : List Bool) (ws : Fin 0 → List Bool) : time Rules.skip w
 
 theorem runs_cpy {s d : Fin t} (h : s ≠ d) (σ : Fin t → WTape) (hs : (σ s).right ≠ [])
     (hd : (σ d).right = []) :
-    Runs (a := a) (cpy s d h) σ
+    Runs (cpy s d h) σ
       (· = Function.update (Function.update σ s (σ s).next) d ((σ d).put false [(σ s).cur]))
       ((σ s).cur.length + 6) := by
   apply Runs.of_wp
@@ -44,7 +44,7 @@ theorem put_nil (T : WTape) (h : T.right = []) : T.put false [] = T := by
 
 theorem runs_skp {s j : Fin t} (h : s ≠ j) (σ : Fin t → WTape) (hs : (σ s).right ≠ [])
     (hj : (σ j).right = []) :
-    Runs (a := a) (skp s j h) σ (· = Function.update σ s (σ s).next) ((σ s).cur.length + 5) := by
+    Runs (skp s j h) σ (· = Function.update σ s (σ s).next) ((σ s).cur.length + 5) := by
   apply Runs.of_wp
   simp only [skp, wp_op0, Rules.output_skip, parse_syms]
   refine ⟨⟨hs, hj, ?_, ?_⟩, ?_, ?_⟩
@@ -59,12 +59,12 @@ theorem runs_skp {s j : Fin t} (h : s ≠ j) (σ : Fin t → WTape) (hs : (σ s)
   · simp [Function.update_apply, hx]
 
 /-- Append every remaining word of `s` to `d`. -/
-noncomputable def appendAll (s d : Fin t) (h : s ≠ d) : Cmd a t := .loop s (cpy s d h)
+noncomputable def appendAll (s d : Fin t) (h : s ≠ d) : Cmd t := .loop s (cpy s d h)
 
 theorem runs_appendAll {s d : Fin t} (h : s ≠ d) (W : ℕ) :
     ∀ (R : List (List Bool)) (σ : Fin t → WTape) (L M : List (List Bool)),
       σ s = ⟨L, R⟩ → σ d = ⟨M, []⟩ → (∀ w ∈ R, w.length ≤ W) →
-      Runs (a := a) (appendAll s d h) σ
+      Runs (appendAll s d h) σ
         (· = Function.update (Function.update σ s ⟨R.reverse ++ L, []⟩) d ⟨R.reverse ++ M, []⟩)
         (R.length * (W + 8))
   | [], σ, L, M, hs, hd, _ => by
@@ -79,7 +79,7 @@ theorem runs_appendAll {s d : Fin t} (h : s ≠ d) (W : ℕ) :
       · simp [hxd, hxs]
   | w :: R, σ, L, M, hs, hd, hW => by
     show Runs (Cmd.loop s (cpy s d h)) _ _ _
-    have h1 := runs_cpy (a := a) h σ (by simp [hs]) (by simp [hd])
+    have h1 := runs_cpy h σ (by simp [hs]) (by simp [hd])
     have hw : w.length ≤ W := hW w (by simp)
     set σ₁ := Function.update (Function.update σ s (σ s).next) d ((σ d).put false [(σ s).cur])
     have hs₁ : σ₁ s = ⟨w :: L, R⟩ := by simp [σ₁, h, hs, WTape.next, WTape.cur]
@@ -99,7 +99,7 @@ theorem runs_appendAll {s d : Fin t} (h : s ≠ d) (W : ℕ) :
     · simp only [hs, WTape.cur, List.headD_cons, List.length_cons]; nlinarith
 
 /-- Copy one word of `s` to `d` per word of the tick tape `k` (junk tape `j`). -/
-noncomputable def moveN (k s d j : Fin t) (h1 : s ≠ d) (h2 : k ≠ j) : Cmd a t :=
+noncomputable def moveN (k s d j : Fin t) (h1 : s ≠ d) (h2 : k ≠ j) : Cmd t :=
   .loop k (.seq (cpy s d h1) (skp k j h2))
 
 theorem runs_moveN {k s d j : Fin t} (h1 : s ≠ d) (h2 : k ≠ j) (hks : k ≠ s) (hkd : k ≠ d)
@@ -107,7 +107,7 @@ theorem runs_moveN {k s d j : Fin t} (h1 : s ≠ d) (h2 : k ≠ j) (hks : k ≠ 
     ∀ (Tk : List (List Bool)) (σ : Fin t → WTape) (TL L R1 R2 M : List (List Bool)),
       σ k = ⟨TL, Tk⟩ → σ s = ⟨L, R1 ++ R2⟩ → R1.length = Tk.length → σ d = ⟨M, []⟩ →
       (σ j).right = [] → (∀ w ∈ R1, w.length ≤ W) → (∀ w ∈ Tk, w.length ≤ W) →
-      Runs (a := a) (moveN k s d j h1 h2) σ
+      Runs (moveN k s d j h1 h2) σ
         (· = Function.update (Function.update (Function.update σ k ⟨Tk.reverse ++ TL, []⟩) s
           ⟨R1.reverse ++ L, R2⟩) d ⟨R1.reverse ++ M, []⟩)
         (Tk.length * (2 * W + 15))
@@ -133,11 +133,11 @@ theorem runs_moveN {k s d j : Fin t} (h1 : s ≠ d) (h2 : k ≠ j) (hks : k ≠ 
       | cons w R1' => exact ⟨w, R1', rfl⟩
     have hw : w.length ≤ W := hW w (by simp)
     have htk : tk.length ≤ W := hT tk (by simp)
-    have c1 := runs_cpy (a := a) h1 σ (by simp [hs]) (by simp [hd])
+    have c1 := runs_cpy h1 σ (by simp [hs]) (by simp [hd])
     set σ₁ := Function.update (Function.update σ s (σ s).next) d ((σ d).put false [(σ s).cur])
     have hk₁ : σ₁ k = ⟨TL, tk :: Tk⟩ := by simp [σ₁, hks, hkd, hk]
     have hj₁ : (σ₁ j).right = [] := by simp [σ₁, hsj.symm, hdj.symm, hj]
-    have c2 := runs_skp (a := a) h2 σ₁ (by simp [hk₁]) hj₁
+    have c2 := runs_skp h2 σ₁ (by simp [hk₁]) hj₁
     set σ₂ := Function.update σ₁ k (σ₁ k).next
     have hk₂ : σ₂ k = ⟨tk :: TL, Tk⟩ := by simp [σ₂, hk₁, WTape.next, WTape.cur]
     have hs₂ : σ₂ s = ⟨w :: L, R1' ++ R2⟩ := by
@@ -173,11 +173,11 @@ variable {a t : ℕ}
 /-! ### Register moves -/
 
 /-- Load the current word of `s` into the empty register `r`. -/
-noncomputable def regIn (s r : Fin t) (h : s ≠ r) : Cmd a t := .seq (cpy s r h) (rewind r)
+noncomputable def regIn (s r : Fin t) (h : s ≠ r) : Cmd t := .seq (cpy s r h) (rewind r)
 
 theorem runs_regIn {s r : Fin t} (h : s ≠ r) (σ : Fin t → WTape) {L R : List (List Bool)} {w : List Bool}
     (hs : σ s = ⟨L, w :: R⟩) (hr : σ r = emp) :
-    Runs (a := a) (regIn s r h) σ (· = Function.update (Function.update σ s ⟨w :: L, R⟩) r (reg w))
+    Runs (regIn s r h) σ (· = Function.update (Function.update σ s ⟨w :: L, R⟩) r (reg w))
       (2 * w.length + 12) := by
   apply Runs.of_wp
   simp only [regIn, WP, cpy, wp_op0, wp_rewind, Rules.output_copy, parse_syms]
@@ -191,11 +191,11 @@ theorem runs_regIn {s r : Fin t} (h : s ≠ r) (σ : Fin t → WTape) {L R : Lis
   · simp [hs, hr, time_copy, emp, clen]; omega
 
 /-- Append the register `r` to `d` and empty `r`. -/
-noncomputable def regOut (r d : Fin t) (h : r ≠ d) : Cmd a t := .seq (cpy r d h) (clear r)
+noncomputable def regOut (r d : Fin t) (h : r ≠ d) : Cmd t := .seq (cpy r d h) (clear r)
 
 theorem runs_regOut {r d : Fin t} (h : r ≠ d) (σ : Fin t → WTape) {M : List (List Bool)} {w : List Bool}
     (hr : σ r = reg w) (hd : σ d = ⟨M, []⟩) :
-    Runs (a := a) (regOut r d h) σ (· = Function.update (Function.update σ r emp) d ⟨w :: M, []⟩)
+    Runs (regOut r d h) σ (· = Function.update (Function.update σ r emp) d ⟨w :: M, []⟩)
       (3 * w.length + 12) := by
   apply Runs.of_wp
   simp only [regOut, WP, cpy, wp_op0, wp_clear, Rules.output_copy, parse_syms]
@@ -209,11 +209,11 @@ theorem runs_regOut {r d : Fin t} (h : r ≠ d) (σ : Fin t → WTape) {M : List
   · simp [hr, hd, h, time_copy, reg, clen, WTape.words]; omega
 
 /-- Move register `r` into the empty register `r'`. -/
-noncomputable def regMove (r r' : Fin t) (h : r ≠ r') : Cmd a t := .seq (regIn r r' h) (clear r)
+noncomputable def regMove (r r' : Fin t) (h : r ≠ r') : Cmd t := .seq (regIn r r' h) (clear r)
 
 theorem runs_regMove {r r' : Fin t} (h : r ≠ r') (σ : Fin t → WTape) {w : List Bool}
     (hr : σ r = reg w) (hr' : σ r' = emp) :
-    Runs (a := a) (regMove r r' h) σ (· = Function.update (Function.update σ r emp) r' (reg w))
+    Runs (regMove r r' h) σ (· = Function.update (Function.update σ r emp) r' (reg w))
       (4 * w.length + 20) := by
   refine (Runs.then (runs_regIn h σ (L := []) (R := []) (w := w) (by simpa [reg] using hr) hr')
     (runs_clear r _)).mono (fun σ' h' => ?_) ?_
@@ -226,11 +226,11 @@ theorem runs_regMove {r r' : Fin t} (h : r ≠ r') (σ : Fin t → WTape) {w : L
   · simp [h, clen, WTape.words]; omega
 
 /-- Copy register `r` into the empty register `r'`, keeping `r`. -/
-noncomputable def regDup (r r' : Fin t) (h : r ≠ r') : Cmd a t := .seq (regIn r r' h) (rewind r)
+noncomputable def regDup (r r' : Fin t) (h : r ≠ r') : Cmd t := .seq (regIn r r' h) (rewind r)
 
 theorem runs_regDup {r r' : Fin t} (h : r ≠ r') (σ : Fin t → WTape) {w : List Bool}
     (hr : σ r = reg w) (hr' : σ r' = emp) :
-    Runs (a := a) (regDup r r' h) σ (· = Function.update σ r' (reg w)) (3 * w.length + 20) := by
+    Runs (regDup r r' h) σ (· = Function.update σ r' (reg w)) (3 * w.length + 20) := by
   refine (Runs.then (runs_regIn h σ (L := []) (R := []) (w := w) (by simpa [reg] using hr) hr')
     (runs_rewind r _)).mono (fun σ' h' => ?_) ?_
   · rw [h']; funext x

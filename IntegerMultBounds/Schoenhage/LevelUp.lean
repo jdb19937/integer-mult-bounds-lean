@@ -48,7 +48,7 @@ theorem Quiet.update {σ : Fin 𝕋 → WTape} (h : Quiet σ) (j : Fin 𝕋) (T 
 /-! ### The inverse transform and the coefficient split -/
 
 /-- Depth registers for the inverse transform: `cS = ones k`, `k` ticks on `tL`, `cH = ones 1`, one tick on `tH`. -/
-noncomputable def invSetup : Cmd 0 𝕋 :=
+noncomputable def invSetup : Cmd 𝕋 :=
   .seq (op0 Rules.copy false pK cS (by decide)) <| .seq (rewind pK) <| .seq (rewind cS) <|
   .seq (op0 Rules.ticks false pK tL (by decide)) <| .seq (rewind pK) <| .seq (rewind tL) <|
   .seq (op0 Rules.copy false c1 cH (by decide)) <| .seq (rewind c1) <| .seq (rewind cH) <|
@@ -71,16 +71,16 @@ theorem runs_invSetup {k : ℕ} (σ : Fin 𝕋 → WTape) (hK : σ pK = reg (one
   · simp [clen] at t1 t2 t3 t4 ⊢; omega
 
 /-- Drop the depth registers and load `cT = ones (N' - k)`. -/
-noncomputable def invClean : Cmd 0 𝕋 :=
+noncomputable def invClean : Cmd 𝕋 :=
   .seq (clear cS) <| .seq (clear cH) <| .seq (clear tH) <| .seq (clear tL) <|
   .seq (op0 Rules.copy false pNK cT (by decide)) <| .seq (rewind pNK) (rewind cT)
 
 /-- Drop the consumed data and the shift; rewind both coefficient streams. -/
-noncomputable def coefClean : Cmd 0 𝕋 :=
+noncomputable def coefClean : Cmd 𝕋 :=
   .seq (clear tD) <| .seq (clear cT) <| .seq (rewind tC) (rewind tC2)
 
 /-- Inverse transform of the group on `tD`, then the coefficient split onto `tC` and `tC2`. -/
-noncomputable def upA : Cmd 0 𝕋 := .seq invSetup <| .seq invLoop <| .seq invClean <| .seq coefLoop coefClean
+noncomputable def upA : Cmd 𝕋 := .seq invSetup <| .seq invLoop <| .seq invClean <| .seq coefLoop coefClean
 
 /-- The descaled coefficients of a group. -/
 def coefs (N k : ℕ) (P : List ℕ) : List ℕ := (invIter N k k P).map (descale N k)
@@ -159,10 +159,10 @@ theorem runs_upA {N k : ℕ} (hN : 0 < N) (hk : k ≤ N) (P : List ℕ) (hP : P.
 /-! ### Sum and reduce -/
 
 /-- Load `cU` from `pN`. -/
-noncomputable def loadN : Cmd 0 𝕋 := .seq (op0 Rules.copy false pN cU (by decide)) <| .seq (rewind pN) (rewind cU)
+noncomputable def loadN : Cmd 𝕋 := .seq (op0 Rules.copy false pN cU (by decide)) <| .seq (rewind pN) (rewind cU)
 
 /-- Load `cU` from `pNp`. -/
-noncomputable def loadNp : Cmd 0 𝕋 := .seq (op0 Rules.copy false pNp cU (by decide)) <| .seq (rewind pNp) (rewind cU)
+noncomputable def loadNp : Cmd 𝕋 := .seq (op0 Rules.copy false pNp cU (by decide)) <| .seq (rewind pNp) (rewind cU)
 
 theorem runs_loadN {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)) (hU : σ cU = emp) :
     Runs loadN σ (· = Function.update σ cU (reg (ones N))) (3 * N + 20) := by
@@ -185,10 +185,10 @@ theorem runs_loadNp {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pNp = reg (ones
   · simp at t1 ⊢; omega
 
 /-- The unit's constants for the outer modulus `pN`. -/
-noncomputable def toOuter : Cmd 0 𝕋 := .seq loadN <| .seq aluSet (clear cU)
+noncomputable def toOuter : Cmd 𝕋 := .seq loadN <| .seq aluSet (clear cU)
 
 /-- The unit's constants for the inner modulus `pNp`. -/
-noncomputable def toInner : Cmd 0 𝕋 := .seq loadNp <| .seq aluSet (clear cU)
+noncomputable def toInner : Cmd 𝕋 := .seq loadNp <| .seq aluSet (clear cU)
 
 theorem AluReady.reset {N N1 : ℕ} {σ : Fin 𝕋 → WTape} (h : AluReady N1 σ) :
     AluReady N (Function.update (Function.update (Function.update σ
@@ -224,7 +224,7 @@ theorem runs_toInner {N N1 : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hr : A
     omega
 
 /-- The shifted sum of the words on `tC`, reduced modulo the outer `2^N + 1`, into `aO`. -/
-noncomputable def sumRed : Cmd 0 𝕋 := .seq winSum <| .seq (clear tC) <| .seq toOuter redOp
+noncomputable def sumRed : Cmd 𝕋 := .seq winSum <| .seq (clear tC) <| .seq toOuter redOp
 
 theorem runs_sumRed {N N1 Np M : ℕ} (hN : 0 < N) (hM : 1 ≤ M) (hMW : M ≤ Np + 2) (cs : List ℕ)
     (hcs : ∀ c ∈ cs, c < 2 ^ (Np + 1)) (hA : wsum M cs < 2 ^ (2 * N)) (σ : Fin 𝕋 → WTape)
@@ -239,7 +239,7 @@ theorem runs_sumRed {N N1 Np M : ℕ} (hN : 0 < N) (hM : 1 ≤ M) (hMW : M ≤ N
   obtain ⟨z, hz, hzl, s1⟩ := runs_winSum (Wc := Np + 1) hM le_rfl hMW cs hcs σ hsA (by rw [hC]; rfl)
     hsO h1 h2 hMr hW
   set σ₁ := Function.update (Function.update σ tC ⟨(cs.map (bits (Np + 1))).reverse ++ [], []⟩) sO ⟨[z], []⟩
-  have s2 := runs_clear (a := 0) tC σ₁
+  have s2 := runs_clear tC σ₁
   set σ₂ := Function.update σ₁ tC ⟨[], []⟩
   have hr₂ : AluReady N1 σ₂ := (hr.update tC _ (by decide) |>.update sO _ (by decide)).update tC _ (by decide)
   have s3 := runs_toOuter hN σ₂ hr₂ (by tsimp [σ₂, σ₁, hp]) (by tsimp [σ₂, σ₁, hU]) (by tsimp [σ₂, σ₁, h1])
@@ -259,16 +259,16 @@ theorem runs_sumRed {N N1 Np M : ℕ} (hN : 0 < N) (hM : 1 ≤ M) (hMW : M ≤ N
 /-! ### One group -/
 
 /-- Park the first reduction and make the negative stream current. -/
-noncomputable def upMid : Cmd 0 𝕋 :=
+noncomputable def upMid : Cmd 𝕋 :=
   .seq (regMove aO sRA (by decide)) <| .seq (appendAll tC2 tC (by decide)) <| .seq (rewind tC) (clear tC2)
 
 /-- The difference of the two reductions, appended to `tOut`; the unit back to the inner modulus. -/
-noncomputable def upEnd : Cmd 0 𝕋 :=
+noncomputable def upEnd : Cmd 𝕋 :=
   .seq (regMove aO aY (by decide)) <| .seq (regMove sRA aX (by decide)) <| .seq subMod <|
   .seq (regOut aO tOut (by decide)) toInner
 
 /-- The up-sweep of one group. -/
-noncomputable def upGroup : Cmd 0 𝕋 := .seq upA <| .seq sumRed <| .seq upMid <| .seq sumRed upEnd
+noncomputable def upGroup : Cmd 𝕋 := .seq upA <| .seq sumRed <| .seq upMid <| .seq sumRed upEnd
 
 /-- The registers of a level with outer size `N`, inner size `Np`, `2^k` pieces of `M` bits. -/
 def LevelRegs (N Np k M : ℕ) (σ : Fin 𝕋 → WTape) : Prop :=
@@ -318,9 +318,9 @@ theorem runs_upGroup {N Np k M : ℕ} (hN : 0 < N) (hNp : 0 < Np) (hk : k ≤ Np
         cW (reg (ones (N + 1)))) cF (reg (fword N))) sRA (reg (rwd N (red N (wsum M cP)))))
         tC ⟨[], rwds Np cN'⟩) (2 ^ k * (4 * Np + 20) + 4 * N + 40) := by
     unfold upMid
-    have m1 := runs_regMove (a := 0) (r := aO) (r' := sRA) (by decide) σ₂ (w := rwd N (red N (wsum M cP)))
+    have m1 := runs_regMove (r := aO) (r' := sRA) (by decide) σ₂ (w := rwd N (red N (wsum M cP)))
       (by tsimp [σ₂]) (by tsimp [σ₂, σ₁, qRA])
-    have m2 := runs_appendAll (a := 0) (s := tC2) (d := tC) (by decide) (Np + 1) (rwds Np cN')
+    have m2 := runs_appendAll (s := tC2) (d := tC) (by decide) (Np + 1) (rwds Np cN')
       (Function.update (Function.update σ₂ aO emp) sRA (reg (rwd N (red N (wsum M cP))))) [] []
       (by tsimp [σ₂, σ₁]) (by tsimp [σ₂, σ₁, emp]) (rwds_length_le Np cN')
     refine (Runs.then m1 (Runs.then m2 (Runs.then (runs_rewind tC _) (runs_clear tC2 _)))).mono
@@ -347,10 +347,10 @@ theorem runs_upGroup {N Np k M : ℕ} (hN : 0 < N) (hNp : 0 < Np) (hk : k ≤ Np
         ⟨rwd N ((red N (wsum M cP) + (2 ^ N + 1) - red N (wsum M cN')) % (2 ^ N + 1)) :: O, []⟩)
       (300 * N + 50 * Np + 1000) := by
     unfold upEnd
-    have e1 := runs_regMove (a := 0) (r := aO) (r' := aY) (by decide) σ₄ (w := rwd N (red N (wsum M cN')))
+    have e1 := runs_regMove (r := aO) (r' := aY) (by decide) σ₄ (w := rwd N (red N (wsum M cN')))
       (by tsimp [σ₄]) (by tsimp [σ₄, σ₃, hY])
     set τ₁ := Function.update (Function.update σ₄ aO emp) aY (reg (rwd N (red N (wsum M cN'))))
-    have e2 := runs_regMove (a := 0) (r := sRA) (r' := aX) (by decide) τ₁ (w := rwd N (red N (wsum M cP)))
+    have e2 := runs_regMove (r := sRA) (r' := aX) (by decide) τ₁ (w := rwd N (red N (wsum M cP)))
       (by tsimp [τ₁, σ₄, σ₃]) (by tsimp [τ₁, σ₄, σ₃, hX])
     set τ₂ := Function.update (Function.update τ₁ sRA emp) aX (reg (rwd N (red N (wsum M cP))))
     have e3 := runs_subMod hN τ₂ ⟨by tsimp [τ₂, τ₁, σ₄], by tsimp [τ₂, τ₁, σ₄]⟩
@@ -360,7 +360,7 @@ theorem runs_upGroup {N Np k M : ℕ} (hN : 0 < N) (hNp : 0 < Np) (hk : k ≤ Np
       (by tsimp [τ₂, τ₁, σ₄, σ₃, hS2])
     set τ₃ := Function.update (Function.update (Function.update τ₂ aX emp) aY emp) aO
       (reg (subRes N (rwd N (red N (wsum M cP))) (rwd N (red N (wsum M cN')))))
-    have e4 := runs_regOut (a := 0) (r := aO) (d := tOut) (by decide) τ₃ (M := O)
+    have e4 := runs_regOut (r := aO) (d := tOut) (by decide) τ₃ (M := O)
       (w := subRes N (rwd N (red N (wsum M cP))) (rwd N (red N (wsum M cN')))) (by tsimp [τ₃])
       (by tsimp [τ₃, τ₂, τ₁, σ₄, σ₃, σ₂, σ₁, hO])
     set τ₄ := Function.update (Function.update τ₃ aO emp) tOut

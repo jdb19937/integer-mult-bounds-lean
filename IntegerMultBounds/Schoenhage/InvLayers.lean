@@ -26,7 +26,7 @@ end Tp
 /-! ### The inverse pair loop -/
 
 /-- Inverse butterflies over the half-block tapes. -/
-noncomputable def pairI : Cmd 0 𝕋 := .loop tU bflyI
+noncomputable def pairI : Cmd 𝕋 := .loop tU bflyI
 
 set_option maxHeartbeats 1000000 in
 theorem runs_pairI {N s : ℕ} (hN : 0 < N) (hsN : s ≤ N) :
@@ -77,7 +77,7 @@ theorem runs_pairI {N s : ℕ} (hN : 0 < N) (hsN : s ≤ N) :
 /-! ### Inverse blocks -/
 
 /-- Load `ones (N - t)` into `cT` from the current shift `ones t` of `tE`. -/
-noncomputable def compShift : Cmd 0 𝕋 :=
+noncomputable def compShift : Cmd 𝕋 :=
   .seq (regIn tE tT (by decide)) <| .seq (op1 Rules.drop false cN tT cT (by decide) (by decide) (by decide)) <|
   .seq (rewind cT) <| .seq (rewind cN) (clear tT)
 
@@ -86,7 +86,7 @@ theorem runs_compShift {N t : ℕ} (σ : Fin 𝕋 → WTape) {El Er : List (List
     Runs compShift σ (· = Function.update (Function.update σ tE ⟨ones t :: El, Er⟩) cT
         (reg (ones (N - t)))) (5 * t + 3 * N + 50) := by
   unfold compShift
-  have tail : Runs (a := 0) (.seq (op1 Rules.drop false cN tT cT (by decide) (by decide) (by decide)) <|
+  have tail : Runs (.seq (op1 Rules.drop false cN tT cT (by decide) (by decide) (by decide)) <|
       .seq (rewind cT) <| .seq (rewind cN) (clear tT))
       (Function.update (Function.update σ tE ⟨ones t :: El, Er⟩) tT (reg (ones t)))
       (· = Function.update (Function.update σ tE ⟨ones t :: El, Er⟩) cT (reg (ones (N - t))))
@@ -102,7 +102,7 @@ theorem runs_compShift {N t : ℕ} (σ : Fin 𝕋 → WTape) {El Er : List (List
     (by simp; omega)
 
 /-- One block of an inverse layer. -/
-noncomputable def blockI : Cmd 0 𝕋 :=
+noncomputable def blockI : Cmd 𝕋 :=
   .seq splitBlock <| .seq compShift <| .seq pairI <| .seq collect (clear cT)
 
 theorem ibS_length (N : ℕ) (U V : List ℕ) (h : U.length = V.length) : (ibS N U V).length = U.length := by
@@ -154,7 +154,7 @@ theorem runs_blockI {N t : ℕ} (hN : 0 < N) (htN : t ≤ N) (σ : Fin 𝕋 → 
     nlinarith [c1, htN, Nat.zero_le Tk.length, Nat.zero_le N]
 
 /-- All blocks of one inverse layer. -/
-noncomputable def blocksI : Cmd 0 𝕋 := .loop tE blockI
+noncomputable def blocksI : Cmd 𝕋 := .loop tE blockI
 
 theorem runs_blocksI {N H : ℕ} (hN : 0 < N) (hH0 : 0 < H) :
     ∀ (E D : List ℕ) (σ : Fin 𝕋 → WTape) (Dl Dr El M : List (List Bool)),
@@ -215,7 +215,7 @@ theorem runs_blocksI {N H : ℕ} (hN : 0 < N) (hH0 : 0 < H) :
 /-! ### Recomputing the shifts -/
 
 /-- The children's shifts of every shift on `tE`, appended to `tE2`. -/
-noncomputable def kidsLoop : Cmd 0 𝕋 := .loop tE (.seq (regIn tE cT (by decide)) kidsShift)
+noncomputable def kidsLoop : Cmd 𝕋 := .loop tE (.seq (regIn tE cT (by decide)) kidsShift)
 
 theorem runs_kidsLoop {N : ℕ} :
     ∀ (E : List ℕ) (σ : Fin 𝕋 → WTape) (El ME : List (List Bool)),
@@ -230,7 +230,7 @@ theorem runs_kidsLoop {N : ℕ} :
     funext i; fin_cases i <;> tsimp [hE, hE2, kids]
   | t :: E, σ, El, ME, hEt, hcT, hHN, hE, hE2 => by
     have ht := hEt t (by simp)
-    have h1 := runs_regIn (a := 0) (s := tE) (r := cT) (by decide) σ (L := El) (R := E.map ones)
+    have h1 := runs_regIn (s := tE) (r := cT) (by decide) σ (L := El) (R := E.map ones)
       (w := ones t) (by simpa using hE) hcT
     have h2 := runs_kidsShift (N := N) (t := t) (ME := ME) (Function.update (Function.update σ
       tE ⟨ones t :: El, E.map ones⟩) cT (reg (ones t))) (by tsimp) (by tsimp [hHN]) (by tsimp [hE2])
@@ -247,7 +247,7 @@ theorem runs_kidsLoop {N : ℕ} :
     · simp only [List.length_cons, length_ones]; nlinarith
 
 /-- Make the children's shifts current. -/
-noncomputable def swapE : Cmd 0 𝕋 :=
+noncomputable def swapE : Cmd 𝕋 :=
   .seq (clear tE) <| .seq (rewind tE2) <| .seq (appendAll tE2 tE (by decide)) <|
   .seq (clear tE2) (rewind tE)
 
@@ -268,10 +268,10 @@ theorem runs_swapE (σ : Fin 𝕋 → WTape) (W : ℕ) {LE : List (List Bool)}
     nlinarith
 
 /-- One round of children: the shifts one level deeper. -/
-noncomputable def kidsRound : Cmd 0 𝕋 := .seq kidsLoop <| .seq swapE (skp tS tJ (by decide))
+noncomputable def kidsRound : Cmd 𝕋 := .seq kidsLoop <| .seq swapE (skp tS tJ (by decide))
 
 /-- One round per tick of `tS`. -/
-noncomputable def kidsRounds : Cmd 0 𝕋 := .loop tS kidsRound
+noncomputable def kidsRounds : Cmd 𝕋 := .loop tS kidsRound
 
 theorem runs_kidsRounds {N : ℕ} :
     ∀ (s : ℕ) (E : List ℕ) (σ : Fin 𝕋 → WTape) (TSl : List (List Bool)),
@@ -297,7 +297,7 @@ theorem runs_kidsRounds {N : ℕ} :
     have h2 := runs_swapE σ₁ N hK (by tsimp [σ₁])
     set σ₂ := Function.update (Function.update σ₁ tE ⟨[], (((kids N E).map ones).reverse ++ []).reverse⟩)
       tE2 emp with hσ₂
-    have h3 := runs_skp (a := 0) (s := tS) (j := tJ) (by decide) σ₂ (by tsimp [σ₂, σ₁, hS])
+    have h3 := runs_skp (s := tS) (j := tJ) (by decide) σ₂ (by tsimp [σ₂, σ₁, hS])
       (by tsimp [σ₂, σ₁, hJ, emp])
     set σ₃ := Function.update σ₂ tS (σ₂ tS).next with hσ₃
     have hk0 : kids N E ≠ [] := by
@@ -323,12 +323,12 @@ theorem runs_kidsRounds {N : ℕ} :
       nlinarith [Nat.zero_le N, Nat.zero_le Q, cE, hE1]
 
 /-- The root shift on `tE` and one tick per level on `tS`. -/
-noncomputable def shiftRoot : Cmd 0 𝕋 :=
+noncomputable def shiftRoot : Cmd 𝕋 :=
   .seq (op0 Rules.copy false cHN tE (by decide)) <| .seq (rewind tE) <| .seq (rewind cHN) <|
   .seq (op0 Rules.ticks false cS tS (by decide)) <| .seq (rewind tS) (rewind cS)
 
 /-- The shifts at depth `s` (held in unary in `cS`) on `tE`. -/
-noncomputable def mkShifts : Cmd 0 𝕋 := .seq shiftRoot <| .seq kidsRounds (clear tS)
+noncomputable def mkShifts : Cmd 𝕋 := .seq shiftRoot <| .seq kidsRounds (clear tS)
 
 theorem shiftsAt_eq (N : ℕ) : ∀ s, shiftsAt N s = (kids N)^[s] [N / 2]
   | 0 => rfl
@@ -367,7 +367,7 @@ theorem runs_mkShifts {N s : ℕ} (σ : Fin 𝕋 → WTape) (hcT : σ cT = emp) 
 /-! ### Layer bookkeeping -/
 
 /-- Decrement the depth register `cS`. -/
-noncomputable def decS : Cmd 0 𝕋 :=
+noncomputable def decS : Cmd 𝕋 :=
   .seq (op1 Rules.drop false cS c1 cH2 (by decide) (by decide) (by decide)) <| .seq (rewind c1) <|
   .seq (clear cS) <| .seq (rewind cH2) (regMove cH2 cS (by decide))
 
@@ -385,7 +385,7 @@ theorem runs_decS {s : ℕ} (σ : Fin 𝕋 → WTape) (hcS : σ cS = reg (ones s
   · simp [clen, WTape.words] at t1 t2 ⊢; omega
 
 /-- Make the new data current and empty the shift tape. -/
-noncomputable def swapDI : Cmd 0 𝕋 :=
+noncomputable def swapDI : Cmd 𝕋 :=
   .seq (clear tD) <| .seq (rewind tD2) <| .seq (appendAll tD2 tD (by decide)) <|
   .seq (clear tD2) <| .seq (rewind tD) (clear tE)
 
@@ -407,7 +407,7 @@ theorem runs_swapDI (σ : Fin 𝕋 → WTape) (W : ℕ) {LD : List (List Bool)}
     nlinarith
 
 /-- Double the half-block size and regenerate its ticks. -/
-noncomputable def doubleH : Cmd 0 𝕋 :=
+noncomputable def doubleH : Cmd 𝕋 :=
   .seq (op0 Rules.copy false cH cH2 (by decide)) <| .seq (rewind cH) <|
   .seq (op0 Rules.copy true cH cH2 (by decide)) <| .seq (clear cH) <| .seq (rewind cH2) <|
   .seq (regMove cH2 cH (by decide)) <|
@@ -429,11 +429,11 @@ theorem runs_doubleH (σ : Fin 𝕋 → WTape) (H : ℕ) (hcH : σ cH = reg (one
 /-! ### The inverse transform -/
 
 /-- One inverse layer. -/
-noncomputable def layerInv : Cmd 0 𝕋 :=
+noncomputable def layerInv : Cmd 𝕋 :=
   .seq decS <| .seq mkShifts <| .seq blocksI <| .seq swapDI doubleH
 
 /-- Inverse layers, one per tick of `tL`, deepest first. -/
-noncomputable def invLoop : Cmd 0 𝕋 := .loop tL (.seq layerInv (skp tL tJ (by decide)))
+noncomputable def invLoop : Cmd 𝕋 := .loop tL (.seq layerInv (skp tL tJ (by decide)))
 
 theorem invLayer_arith {n N H P P1 K c : ℕ} (hPH : P * (H + 1) ≤ K) (hPK : P ≤ K) (hP1 : P1 ≤ K)
     (hc : c ≤ P * (N + 1)) (hnK : n + 1 ≤ K) (hHK : H ≤ K) :
@@ -502,7 +502,7 @@ theorem runs_invLoop {N k : ℕ} (hN : 0 < N) :
     have s5 := runs_doubleH σ₄ H (by tsimp [σ₄, σ₃, σ₂, σ₁, hcH]) (by tsimp [σ₄, σ₃, σ₂, σ₁, hcH2])
     set σ₅ := Function.update (Function.update σ₄ cH (reg (ones (2 * H))))
         tH ⟨[], List.replicate (2 * H) []⟩ with hσ₅
-    have s6 := runs_skp (a := 0) (s := tL) (j := tJ) (by decide) σ₅ (by tsimp [σ₅, σ₄, σ₃, σ₂, σ₁, htL])
+    have s6 := runs_skp (s := tL) (j := tJ) (by decide) σ₅ (by tsimp [σ₅, σ₄, σ₃, σ₂, σ₁, htL])
       (by tsimp [σ₅, σ₄, σ₃, σ₂, σ₁, hJ, emp])
     set σ₆ := Function.update σ₅ tL (σ₅ tL).next with hσ₆
     have hr₆ : AluReady N σ₆ := by

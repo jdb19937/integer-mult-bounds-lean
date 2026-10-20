@@ -64,19 +64,19 @@ theorem startsOne_reg_ones {r : ℕ} (hr : 0 < r) : StartsOne (reg (ones r)) := 
   exact ⟨ones r', [], by simp [reg, ones, List.replicate_succ]⟩
 
 /-- One more one on the counter `qB`. -/
-noncomputable def incB : Cmd 0 𝕋 :=
+noncomputable def incB : Cmd 𝕋 :=
   .seq (skp qB tJ (by decide)) <| .seq (op0 Rules.copy true c1 qB (by decide)) <| .seq (rewind c1) (rewind qB)
 
 /-- Halve `qR` and count. -/
-noncomputable def halveIt : Cmd 0 𝕋 :=
+noncomputable def halveIt : Cmd 𝕋 :=
   .seq (op0 Rules.half false qR qS (by decide)) <| .seq (clear qR) <| .seq (rewind qS) <|
   .seq (regMove qS qR (by decide)) incB
 
 /-- Halve while nonzero, once per tick of `qT`. -/
-noncomputable def halveStep : Cmd 0 𝕋 := .seq (.cond qR halveIt (rewind qR)) (skp qT tJ (by decide))
+noncomputable def halveStep : Cmd 𝕋 := .seq (.cond qR halveIt (rewind qR)) (skp qT tJ (by decide))
 
 /-- The bit length loop. -/
-noncomputable def sizeLoop : Cmd 0 𝕋 := .loop qT halveStep
+noncomputable def sizeLoop : Cmd 𝕋 := .loop qT halveStep
 
 theorem runs_halveIt {r b : ℕ} (σ : Fin 𝕋 → WTape) (hR : σ qR = reg (ones r)) (hB : σ qB = reg (ones b))
     (h1 : σ c1 = reg [true]) (hS : σ qS = emp) (hJ : σ tJ = emp) :
@@ -124,10 +124,10 @@ theorem runs_sizeLoop :
   | j + 1, r, b, σ, Tl, hR, hB, h1, hS, hJ, hT => by
     by_cases hr : r = 0
     · subst hr
-      have s1 : Runs (a := 0) halveStep σ (· = Function.update σ qT ⟨[] :: Tl, List.replicate j []⟩) 12 := by
+      have s1 : Runs halveStep σ (· = Function.update σ qT ⟨[] :: Tl, List.replicate j []⟩) 12 := by
         unfold halveStep
         refine (Runs.then (Runs.cond_false (by rw [hR]; exact not_startsOne_reg_nil) (runs_rewind qR σ))
-          (runs_skp (a := 0) (s := qT) (j := tJ) (by decide) _ (by tsimp [hT, List.replicate_succ])
+          (runs_skp (s := qT) (j := tJ) (by decide) _ (by tsimp [hT, List.replicate_succ])
             (by tsimp [hJ, emp]))).mono (fun σ' h => ?_) ?_
         · rw [h]; funext i; fin_cases i <;> tsimp [hR, hT, reg, List.replicate_succ]
         · tsimp [hR, hT, reg, ones, List.replicate_succ, clen]
@@ -138,13 +138,13 @@ theorem runs_sizeLoop :
         (fun σ' h' => ?_) ?_
       · rw [h']; funext i; fin_cases i <;> tsimp [σ₁, hv, List.replicate_succ, replicate_append_cons]
       · simp; omega
-    · have s1 : Runs (a := 0) halveStep σ (· = Function.update (Function.update (Function.update σ
+    · have s1 : Runs halveStep σ (· = Function.update (Function.update (Function.update σ
             qR (reg (ones (r / 2)))) qB (reg (ones (b + 1)))) qT ⟨[] :: Tl, List.replicate j []⟩)
           (8 * r + 3 * b + 67) := by
         unfold halveStep
         refine (Runs.then (Runs.cond_true (by rw [hR]; exact startsOne_reg_ones (by omega))
             (runs_halveIt σ hR hB h1 hS hJ))
-          (runs_skp (a := 0) (s := qT) (j := tJ) (by decide) _ (by tsimp [hT, List.replicate_succ])
+          (runs_skp (s := qT) (j := tJ) (by decide) _ (by tsimp [hT, List.replicate_succ])
             (by tsimp [hJ, emp]))).mono (fun σ' h => ?_) ?_
         · rw [h]; funext i; fin_cases i <;> tsimp [hT, List.replicate_succ]
         · tsimp [hT, List.replicate_succ]
@@ -162,7 +162,7 @@ theorem runs_sizeLoop :
 /-! ### Repeated halving and doubling -/
 
 /-- Halve `qR` once per tick of `qT`. -/
-noncomputable def halveLoop : Cmd 0 𝕋 :=
+noncomputable def halveLoop : Cmd 𝕋 :=
   .loop qT (.seq (op0 Rules.half false qR qS (by decide)) <| .seq (clear qR) <| .seq (rewind qS) <|
     .seq (regMove qS qR (by decide)) (skp qT tJ (by decide)))
 
@@ -176,7 +176,7 @@ theorem runs_halveLoop :
     subst h'
     funext i; fin_cases i <;> tsimp [hR, hT]
   | j + 1, r, σ, Tl, hR, hS, hJ, hT => by
-    have s1 : Runs (a := 0) (.seq (op0 Rules.half false qR qS (by decide)) <| .seq (clear qR) <| .seq (rewind qS) <|
+    have s1 : Runs (.seq (op0 Rules.half false qR qS (by decide)) <| .seq (clear qR) <| .seq (rewind qS) <|
         .seq (regMove qS qR (by decide)) (skp qT tJ (by decide))) σ
         (· = Function.update (Function.update σ qR (reg (ones (r / 2)))) qT ⟨[] :: Tl, List.replicate j []⟩)
         (8 * r + 38) := by
@@ -202,7 +202,7 @@ theorem runs_halveLoop :
       omega
 
 /-- Double `qR` once per tick of `qT`. -/
-noncomputable def doubleLoop : Cmd 0 𝕋 :=
+noncomputable def doubleLoop : Cmd 𝕋 :=
   .loop qT (.seq (op0 Rules.copy false qR qS (by decide)) <| .seq (rewind qR) <|
     .seq (op0 Rules.copy true qR qS (by decide)) <| .seq (clear qR) <| .seq (rewind qS) <|
     .seq (regMove qS qR (by decide)) (skp qT tJ (by decide)))
@@ -217,7 +217,7 @@ theorem runs_doubleLoop :
     subst h'
     funext i; fin_cases i <;> tsimp [hR, hT]
   | j + 1, r, σ, Tl, hR, hS, hJ, hT => by
-    have s1 : Runs (a := 0) (.seq (op0 Rules.copy false qR qS (by decide)) <| .seq (rewind qR) <|
+    have s1 : Runs (.seq (op0 Rules.copy false qR qS (by decide)) <| .seq (rewind qR) <|
         .seq (op0 Rules.copy true qR qS (by decide)) <| .seq (clear qR) <| .seq (rewind qS) <|
         .seq (regMove qS qR (by decide)) (skp qT tJ (by decide))) σ
         (· = Function.update (Function.update σ qR (reg (ones (r * 2)))) qT ⟨[] :: Tl, List.replicate j []⟩)
@@ -319,7 +319,7 @@ theorem ruler_eq (M W : ℕ) : ∀ K, Rules.ruler M W (K + 1) =
     simp [rpiece, Rules.Act.enc]
 
 /-- Append one non-top piece to the ruler `cR`, once per tick of `qT`. -/
-noncomputable def pieceLoop : Cmd 0 𝕋 :=
+noncomputable def pieceLoop : Cmd 𝕋 :=
   .loop qT (.seq (op0 (Rules.fill false) true tU cR (by decide)) <| .seq (rewind tU) <|
     .seq (op0 Rules.alt true tV cR (by decide)) <| .seq (rewind tV) <|
     .seq (op0 (Rules.fill true) true tO1 cR (by decide)) <| .seq (rewind tO1) (skp qT tJ (by decide)))
@@ -335,7 +335,7 @@ theorem runs_pieceLoop {M W : ℕ} :
     subst h'
     funext i; fin_cases i <;> tsimp [hR, hT]
   | j + 1, u, σ, Tl, hR, hU, hV, hO, hJ, hT => by
-    have s1 : Runs (a := 0) (.seq (op0 (Rules.fill false) true tU cR (by decide)) <| .seq (rewind tU) <|
+    have s1 : Runs (.seq (op0 (Rules.fill false) true tU cR (by decide)) <| .seq (rewind tU) <|
         .seq (op0 Rules.alt true tV cR (by decide)) <| .seq (rewind tV) <|
         .seq (op0 (Rules.fill true) true tO1 cR (by decide)) <| .seq (rewind tO1) (skp qT tJ (by decide))) σ
         (· = Function.update (Function.update σ cR ⟨[u ++ rpiece M W], []⟩) qT ⟨[] :: Tl, List.replicate j []⟩)
@@ -361,12 +361,12 @@ theorem runs_pieceLoop {M W : ℕ} :
     · nlinarith
 
 /-- The top piece, then rewind the ruler. -/
-noncomputable def lastPiece : Cmd 0 𝕋 :=
+noncomputable def lastPiece : Cmd 𝕋 :=
   .seq (op0 (Rules.fill false) true tO2 cR (by decide)) <| .seq (rewind tO2) <|
   .seq (op0 Rules.alt true tC cR (by decide)) <| .seq (rewind tC) (rewind cR)
 
 /-- The ruler of `K + 1` pieces on `cR`. -/
-noncomputable def rulerBuild : Cmd 0 𝕋 := .seq (emit [[]] cR) <| .seq pieceLoop lastPiece
+noncomputable def rulerBuild : Cmd 𝕋 := .seq (emit [[]] cR) <| .seq pieceLoop lastPiece
 
 theorem runs_rulerBuild {M W K : ℕ} (σ : Fin 𝕋 → WTape) (hR : σ cR = emp) (hU : σ tU = reg (ones (2 * M)))
     (hV : σ tV = reg (ones (2 * (W - M)))) (hO : σ tO1 = reg (ones 2))
@@ -375,7 +375,7 @@ theorem runs_rulerBuild {M W K : ℕ} (σ : Fin 𝕋 → WTape) (hR : σ cR = em
     Runs rulerBuild σ (· = Function.update (Function.update σ cR (reg (Rules.ruler M W (K + 1))))
         qT ⟨List.replicate K [], []⟩) ((K + 2) * (12 * (M + W) + 100)) := by
   unfold rulerBuild
-  have s1 := runs_emit (a := 0) [[]] cR σ (by rw [hR]; rfl)
+  have s1 := runs_emit [[]] cR σ (by rw [hR]; rfl)
   set σ₁ := Function.update σ cR ⟨[[]].reverse ++ (σ cR).left, []⟩
   have s2 := runs_pieceLoop (M := M) (W := W) K [] σ₁ [] (by tsimp [σ₁, hR, emp]) (by tsimp [σ₁, hU])
     (by tsimp [σ₁, hV]) (by tsimp [σ₁, hO]) (by tsimp [σ₁, hJ]) (by tsimp [σ₁, hT])

@@ -18,14 +18,14 @@ open Machine Strm
 variable {a t : ℕ}
 
 /-- The weakest precondition of `c` for the postcondition `Q` on state and cost. -/
-def WP : Cmd a t → (Fin t → WTape) → ((Fin t → WTape) → ℕ → Prop) → Prop
+def WP : Cmd t → (Fin t → WTape) → ((Fin t → WTape) → ℕ → Prop) → Prop
   | .prim P slot _, σ, Q => P.pre (σ ∘ slot) ∧ Q (upd σ slot (P.sem (σ ∘ slot))) (P.cost (σ ∘ slot))
   | .seq c d, σ, Q => WP c σ (fun σ₁ k₁ => WP d σ₁ (fun σ₂ k₂ => Q σ₂ (k₁ + 1 + k₂)))
   | .cond i c d, σ, Q => (StartsOne (σ i) → WP c σ (fun σ' k => Q σ' (k + 1))) ∧
       (¬ StartsOne (σ i) → WP d σ (fun σ' k => Q σ' (k + 1)))
   | .loop i b, σ, Q => ∃ σ' k, Exec (.loop i b) σ σ' k ∧ Q σ' k
 
-theorem wp_sound : ∀ (c : Cmd a t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → ℕ → Prop),
+theorem wp_sound : ∀ (c : Cmd t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → ℕ → Prop),
     WP c σ Q → ∃ σ' k, Exec c σ σ' k ∧ Q σ' k
   | .prim P slot hinj, σ, Q, ⟨hp, hq⟩ => ⟨_, _, .prim hp, hq⟩
   | .seq c d, σ, Q, h => by
@@ -41,14 +41,14 @@ theorem wp_sound : ∀ (c : Cmd a t) (σ : Fin t → WTape) (Q : (Fin t → WTap
   | .loop i b, σ, Q, h => h
 
 /-- A weakest precondition with a bounded cost gives `Runs`. -/
-theorem Runs.of_wp {c : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
+theorem Runs.of_wp {c : Cmd t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
     (h : WP c σ (fun σ' k => Q σ' ∧ k ≤ B)) : Runs c σ Q B := by
   obtain ⟨σ', k, he, hq, hk⟩ := wp_sound c σ _ h
   exact ⟨σ', k, he, hq, hk⟩
 
 /-- Executions are deterministic enough for weakest preconditions: an
 execution reaching a state satisfying `Q` establishes the weakest precondition. -/
-theorem wp_of_exec {c : Cmd a t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Exec c σ σ' k) :
+theorem wp_of_exec {c : Cmd t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Exec c σ σ' k) :
     ∀ {Q : (Fin t → WTape) → ℕ → Prop}, Q σ' k → WP c σ Q := by
   induction h with
   | prim hp => intro Q hq; exact ⟨hp, hq⟩
@@ -59,7 +59,7 @@ theorem wp_of_exec {c : Cmd a t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Exec 
   | cond_false hc h₁ ih => intro Q hq; exact ⟨fun hn => absurd hn hc, fun _ => ih hq⟩
 
 /-- A proved fragment inside a weakest precondition. -/
-theorem wp_of_runs {c : Cmd a t} {σ : Fin t → WTape} {P : (Fin t → WTape) → Prop} {B : ℕ}
+theorem wp_of_runs {c : Cmd t} {σ : Fin t → WTape} {P : (Fin t → WTape) → Prop} {B : ℕ}
     {Q : (Fin t → WTape) → ℕ → Prop} (h : Runs c σ P B) (hQ : ∀ σ' k, P σ' → k ≤ B → Q σ' k) :
     WP c σ Q := by
   obtain ⟨σ', k, he, hp, hk⟩ := h
@@ -68,33 +68,33 @@ theorem wp_of_runs {c : Cmd a t} {σ : Fin t → WTape} {P : (Fin t → WTape) �
 /-! ### Primitive rules -/
 
 theorem wp_rewind (i : Fin t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → ℕ → Prop) :
-    WP (a := a) (rewind i) σ Q ↔
+    WP (rewind i) σ Q ↔
       Q (Function.update σ i ⟨[], (σ i).left.reverse ++ (σ i).right⟩) (clen (σ i).left + 2) := by
   simp only [rewind, WP, upd_one]
   exact ⟨fun h => h.2, fun h => ⟨trivial, h⟩⟩
 
 theorem wp_back (i : Fin t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → ℕ → Prop) :
-    WP (a := a) (back i) σ Q ↔ (σ i).left ≠ [] ∧
+    WP (back i) σ Q ↔ (σ i).left ≠ [] ∧
       Q (Function.update σ i ⟨(σ i).left.tail, (σ i).left.headD [] :: (σ i).right⟩)
         (((σ i).left.headD []).length + 3) := by
   simp only [back, WP, upd_one]
   rfl
 
 theorem wp_clear (i : Fin t) (σ : Fin t → WTape) (Q : (Fin t → WTape) → ℕ → Prop) :
-    WP (a := a) (clear i) σ Q ↔ Q (Function.update σ i ⟨[], []⟩) (2 * clen (σ i).words + 2) := by
+    WP (clear i) σ Q ↔ Q (Function.update σ i ⟨[], []⟩) (2 * clen (σ i).words + 2) := by
   simp only [clear, WP, upd_one]
   exact ⟨fun h => h.2, fun h => ⟨trivial, h⟩⟩
 
 theorem wp_emit (ws : List (List Bool)) (i : Fin t) (σ : Fin t → WTape)
     (Q : (Fin t → WTape) → ℕ → Prop) :
-    WP (a := a) (emit ws i) σ Q ↔ (σ i).right = [] ∧
+    WP (emit ws i) σ Q ↔ (σ i).right = [] ∧
       Q (Function.update σ i ⟨ws.reverse ++ (σ i).left, []⟩) (clen ws) := by
   simp only [emit, WP, upd_one]
   rfl
 
 theorem wp_op0 (R : Rule 0) (ext : Bool) {d o : Fin t} (h : d ≠ o) (σ : Fin t → WTape)
     (Q : (Fin t → WTape) → ℕ → Prop) :
-    WP (a := a) (op0 R ext d o h) σ Q ↔
+    WP (op0 R ext d o h) σ Q ↔
       ((σ d).right ≠ [] ∧ (σ o).right = [] ∧
         syms (parse (output R (σ d).cur (fun j => j.elim0))) = output R (σ d).cur (fun j => j.elim0) ∧
         (ext = true → (σ o).left ≠ [] ∧ parse (output R (σ d).cur (fun j => j.elim0)) ≠ [])) ∧
@@ -126,7 +126,7 @@ theorem wp_op0 (R : Rule 0) (ext : Bool) {d o : Fin t} (h : d ≠ o) (σ : Fin t
 
 theorem wp_op1 (R : Rule 1) (ext : Bool) {d e o : Fin t} (h1 : d ≠ e) (h2 : d ≠ o) (h3 : e ≠ o)
     (σ : Fin t → WTape) (Q : (Fin t → WTape) → ℕ → Prop) :
-    WP (a := a) (op1 R ext d e o h1 h2 h3) σ Q ↔
+    WP (op1 R ext d e o h1 h2 h3) σ Q ↔
       ((σ d).right ≠ [] ∧ (σ e).right ≠ [] ∧ (σ o).right = [] ∧
         syms (parse (output R (σ d).cur (fun _ => (σ e).cur))) = output R (σ d).cur (fun _ => (σ e).cur) ∧
         (ext = true → (σ o).left ≠ [] ∧ parse (output R (σ d).cur (fun _ => (σ e).cur)) ≠ [])) ∧
