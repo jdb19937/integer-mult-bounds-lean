@@ -153,13 +153,12 @@ empty words.
 python3 scripts/generate_lean_sequence.py scripts/proofgen/recovery_cleanup.json IntegerMultBounds/Schoenhage/RecoveryCleanupGenerated.lean
 python3 scripts/check-lean-safe.py --wait-for-lock IntegerMultBounds/Schoenhage/RecoveryCleanupGenerated.lean -o .lake/build/lib/lean/IntegerMultBounds/Schoenhage/RecoveryCleanupGenerated.olean
 python3 scripts/check-lean-safe.py --wait-for-lock IntegerMultBounds/Machine/RecoverOutputInstall.lean -o .lake/build/lib/lean/IntegerMultBounds/Machine/RecoverOutputInstall.olean
-python3 scripts/check-lean-safe.py --wait-for-lock scripts/proofgen/RecoveryInstallAudit.lean
 ```
 
 `CertifiedSequence.olean` must already exist (the original pilot verifier builds
 it). The production library root imports the installer and therefore also its
 generated cleanup and certificate helper; these declarations are covered by the
-normal full axiom audit as well as the targeted audit above. The other pilot
+normal full axiom audit. The other pilot
 modules remain standalone.
 
 `runs_install` proves the whole-bank endpoint with cost three times word length
@@ -199,8 +198,7 @@ compiler framework.
 
 The existing programs, theorem statements and cost bounds are unchanged by these
 refactors. Build/check the new helper modules before their changed callers using
-the guarded runner, then check `scripts/proofgen/ProofReuseAudit.lean` for the
-shared lemmas and nine named caller dependencies. The changed production callers
+the guarded runner. The changed production callers
 are `Schoenhage/ScriptMain`, `Schoenhage/LayoutGenWrap`,
 `Machine/ElementaryMultiply`, and `Machine/RecoverOutputInstall`; the adapter
 verifier additionally checks generated cleanup and the certified placement helper.

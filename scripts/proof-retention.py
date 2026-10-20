@@ -14,9 +14,7 @@ import re
 ROOT = Path(__file__).resolve().parent.parent
 THEOREM = 'IntegerMultBounds.MathlibTM2.Theorem'
 PUBLIC_ROOTS = ('CompletedProofCheck',)
-DEVELOPMENT_ROOTS = ('CompactControlCheck', 'CRTControlCheck', 'CRTGapCheck',
-                     'IntegerMultBounds.Schoenhage.LayoutSequencePilot',
-                     'IntegerMultBounds.Schoenhage.LayoutAdapterPilot')
+DEVELOPMENT_ROOTS = ('CompactControlCheck', 'CRTControlCheck', 'CRTGapCheck')
 DEVELOPMENT_PREFIXES = tuple(f'IntegerMultBounds.MathlibTM2.{directory}.Compact'
                              for directory in ('Node', 'Fast', 'Cost'))
 
@@ -138,7 +136,8 @@ def inventory(root=ROOT):
     legacy_checks = {}
     legacy_roots = set()
     for path in sorted((root / 'scripts' / 'proofgen').glob('*Audit.lean')):
-        direct = imports(path.read_text())
+        # Imports of modules already removed need neither retiring nor retaining.
+        direct = imports(path.read_text()) & graph.keys()
         legacy_roots.update(direct)
         used = direct & candidates
         if used:
