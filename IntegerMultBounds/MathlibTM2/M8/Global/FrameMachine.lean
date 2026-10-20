@@ -87,10 +87,10 @@ theorem admissible_of_bounded {U : Mat d} {h p : ℕ} (hU : Height.Bounded U h) 
 
 theorem frameBound_lt {p : ℕ} (hp : coefficientBound < p) : 10 ^ 4000 < p := by
   refine lt_of_le_of_lt ?_ hp
-  calc (10 : ℕ) ^ 4000 ≤ 16 ^ 4000 := Nat.pow_le_pow_left (by norm_num) _
+  calc (10 : ℕ) ^ 4000 ≤ 16 ^ 4000 := pow_le_pow_left₀ (by norm_num) (by norm_num) _
     _ = 2 ^ 16000 := by rw [show (16 : ℕ) = 2 ^ 4 by norm_num, ← pow_mul]
     _ ≤ coefficientBound := Exchange.le_coefficientBound
-        (le_trans (by norm_num : (16000 : ℕ) ≤ 2 ^ 14) (Nat.pow_le_pow_right (by norm_num) (by norm_num)))
+        (le_trans (by norm_num : (16000 : ℕ) ≤ 2 ^ 14) (pow_le_pow_right₀ (by norm_num) (by norm_num)))
 
 /-- The partial swap of a frame at modulus `q`, on addresses. -/
 def swapAt (q : ℕ) (U : Mat d) : Address d q → Address d q := Exchange.exchange (reduce q U)
@@ -154,8 +154,8 @@ theorem edgeMat_sub {A B : Mat d} (hA : IsFrame A) (hB : IsFrame B) (hAB : A * B
             Nat.mul_le_mul (Nat.mul_le_mul_left 2 (hB.bound i j)) (hA.bound i j)
         _ = 2 * 10 ^ 8000 := by rw [Nat.mul_assoc, ← pow_add]
         _ ≤ 10 * 10 ^ 8000 := Nat.mul_le_mul_right _ (by norm_num)
-        _ = 10 ^ 8001 := (pow_succ' 10 8000).symm
-        _ ≤ 10 ^ 10000 := Nat.pow_le_pow_right (by norm_num) (by norm_num)
+        _ = 10 ^ (8000 + 1) := (pow_succ' 10 8000).symm
+        _ ≤ 10 ^ 10000 := pow_le_pow_right₀ (by norm_num) (by norm_num)
     exact ⟨(Height.num_le_ht _).trans h, (Height.den_le_ht _).trans h⟩
 
 /-- The stream map of an exchange program is precomposition with its partial swap. -/
@@ -170,11 +170,11 @@ theorem edgeAction_program {p : ℕ} (hp : p.Prime) (hpb : coefficientBound < p)
     apply Nat.Coprime.pow_right
     have hden : (U i j).den < p :=
       lt_of_le_of_lt ((hU.bound i j).2.trans (by
-        calc (10 : ℕ) ^ 10000 ≤ 16 ^ 10000 := Nat.pow_le_pow_left (by norm_num) _
+        calc (10 : ℕ) ^ 10000 ≤ 16 ^ 10000 := pow_le_pow_left₀ (by norm_num) (by norm_num) _
           _ = 2 ^ 40000 := by rw [show (16 : ℕ) = 2 ^ 4 by norm_num, ← pow_mul]
           _ ≤ coefficientBound := Exchange.le_coefficientBound
               (le_trans (by norm_num : (40000 : ℕ) ≤ 2 ^ 16)
-                (Nat.pow_le_pow_right (by norm_num) (by norm_num))))) hpb
+                (pow_le_pow_right₀ (by norm_num) (by norm_num))))) hpb
     exact Nat.Coprime.symm ((Nat.Prime.coprime_iff_not_dvd hp).mpr
       (Nat.not_dvd_of_pos_of_lt (U i j).den_pos hden))
   have hinv : Function.Involutive (Exchange.exchange (reduce (p ^ b) U)) :=

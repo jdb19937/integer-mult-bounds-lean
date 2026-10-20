@@ -458,7 +458,7 @@ theorem chainOk_node : ChainOk gInit allGates := by
 theorem isFrame_one {d : ℕ} : IsFrame (1 : Mat d) :=
   ⟨by simp, fun i j => by
     rw [Matrix.one_apply]; split_ifs <;> simp [-Nat.reducePow] <;>
-      exact Nat.one_le_pow 4000 10 (by norm_num)⟩
+      exact one_le_pow₀ (by norm_num)⟩
 
 theorem isFrame_corr (S T : V) : IsFrame (1 - uFrame S T) := by
   rw [uFrame, ← lift2_compl]
@@ -494,15 +494,15 @@ theorem isFrame_gInit : ∀ k, IsFrame (gInit k) := by
   rcases k with ((⟨S, T⟩ | ⟨S, T⟩ | ⟨b, k, s⟩) | (⟨b, k, c⟩ | ⟨S, T⟩ | ⟨⟩))
   · exact lframe_lift1 T (lframe_lineOf S)
   · show IsFrame 0
-    exact ⟨by simp, fun i j => by simp [-Nat.reducePow]; exact Nat.one_le_pow 4000 10 (by norm_num)⟩
+    exact ⟨by simp, fun i j => by simp [-Nat.reducePow]; exact one_le_pow₀ (by norm_num)⟩
   · show IsFrame 0
-    exact ⟨by simp, fun i j => by simp [-Nat.reducePow]; exact Nat.one_le_pow 4000 10 (by norm_num)⟩
+    exact ⟨by simp, fun i j => by simp [-Nat.reducePow]; exact one_le_pow₀ (by norm_num)⟩
   · cases b
     · exact lframe_lift1 k (smallFrame_star c.2).lframe
     · exact lframe_lift2 k (smallFrame_star c.2).compl
   · exact isFrame_one
   · show IsFrame 0
-    exact ⟨by simp, fun i j => by simp [-Nat.reducePow]; exact Nat.one_le_pow 4000 10 (by norm_num)⟩
+    exact ⟨by simp, fun i j => by simp [-Nat.reducePow]; exact one_le_pow₀ (by norm_num)⟩
 
 end
 

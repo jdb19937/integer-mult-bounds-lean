@@ -92,10 +92,10 @@ theorem bounded_one_sub {K : LMat} {b : ℕ} (hb : Height.Bounded K b) :
   exact Nat.mul_le_mul_left 2 (hb i j)
 
 theorem lframe_zero : LFrame (0 : LMat) :=
-  ⟨by simp, fun i j => by simp only [Matrix.zero_apply, Height.ht_zero]; exact Nat.one_le_pow _ _ (by norm_num)⟩
+  ⟨by simp, fun i j => by simp only [Matrix.zero_apply, Height.ht_zero]; exact one_le_pow₀ (by norm_num)⟩
 
 theorem lframe_one : LFrame (1 : LMat) :=
-  ⟨by simp, fun i j => by rw [ht_one_apply]; exact Nat.one_le_pow _ _ (by norm_num)⟩
+  ⟨by simp, fun i j => by rw [ht_one_apply]; exact one_le_pow₀ (by norm_num)⟩
 
 theorem lframe_compl {K : LMat} (hK : K * K = K) (hb : Height.Bounded K (10 ^ 200)) :
     LFrame (1 - K) := by
@@ -137,9 +137,10 @@ theorem isFrame_lift2 {P K : LMat} (hP : LFrame P) (hK : LFrame K) : IsFrame (li
     calc 2 * Height.ht (kron (1 - P) 1 i j) * Height.ht (kron P K i j)
         ≤ 2 * (2 * 10 ^ 300 * 10 ^ 300) * (10 ^ 300 * 10 ^ 300) :=
           Nat.mul_le_mul (Nat.mul_le_mul_left 2 h1) h2
-      _ = 4 * 10 ^ 1200 := by rw [← pow_add, Nat.mul_assoc 2 (10 ^ 300), ← pow_add]; ring
+      _ = 4 * 10 ^ 1200 := by
+        rw [show (1200 : ℕ) = 300 * 4 from rfl, pow_mul]; generalize (10 : ℕ) ^ 300 = t; ring
       _ ≤ 10 * 10 ^ 1200 := Nat.mul_le_mul_right _ (by norm_num)
-      _ = 10 ^ 1201 := (pow_succ' 10 1200).symm
+      _ = 10 ^ (1200 + 1) := (pow_succ' 10 1200).symm
       _ ≤ 10 ^ 4000 := ten_pow_mono (by norm_num)
 
 theorem le_lift1 {Q : LMat} (hQ : Q * Q = Q) {A B : LMat} (h : Le A B) :

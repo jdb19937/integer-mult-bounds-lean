@@ -224,7 +224,7 @@ theorem testBit_allPairs (i : ℕ) : allPairs.testBit i = true ↔ ∃ u w, u < 
   by_cases hi : i < 529
   · rw [allPairs_bits i hi, decide_eq_true_eq]
     exact ⟨fun h => ⟨hi, h⟩, fun h => h.2⟩
-  · rw [Nat.testBit_eq_false_of_lt (lt_of_lt_of_le allPairs_lt (Nat.pow_le_pow_right (by norm_num)
+  · rw [Nat.testBit_eq_false_of_lt (lt_of_lt_of_le allPairs_lt (pow_le_pow_right₀ (by norm_num)
       (by omega)))]
     simp only [Bool.false_eq_true, false_iff, not_and]
     intro h; omega
