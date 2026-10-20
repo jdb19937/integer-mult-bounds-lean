@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Emit the symbolic register snapshots used by the T16 local-word action certificate.
 
-Reads the committed native event modules (Trace/Forward*.lean, Trace/Backward*.lean), erases
-them to their rational scalar gates exactly as `Trace.erase` does, runs them symbolically over
-sparse rational rows, and writes the rows that differ from the identity at the chosen gate
-counts. Lean's kernel checks every emitted snapshot; nothing here is trusted.
+Reads the committed native event modules (Trace/Forward*.lean), derives the backward events
+exactly as `Trace.backwardEvents` does, erases both to their rational scalar gates exactly as
+`Trace.erase` does, runs them symbolically over sparse rational rows, and writes the rows that
+differ from the identity at the chosen gate counts. Lean's kernel checks every emitted snapshot;
+nothing here is trusted.
 """
 import re
 from fractions import Fraction
@@ -27,15 +28,62 @@ def events(prefix):
     return out
 
 
+def parse(e):
+    """A scalar event as `(op, args)`; any other event as `(None, e)`."""
+    m = re.match(r'\.scalar \(\.(\w+) (.*)\)$', e)
+    if not m:
+        return (None, e)
+    return (m.group(1), [int(x) for x in re.findall(r'-?\d+', m.group(2))])
+
+
+def dual(e):
+    """`Scalar.dual`: an add exchanges target and source and negates, a scale inverts."""
+    op, a = e
+    if op == 'add':
+        return ('add', [a[1], a[0], -a[2], a[3], a[4]])
+    if op == 'scale':
+        return ('scale', [a[0], a[2], a[1], a[3]])
+    return e
+
+
+def transpose(e):
+    """`Event.transpose`: a center transfer `t += c x` becomes `c += t x`."""
+    op, a = e
+    if op == 'add':
+        return ('add', [a[1], a[0], a[2], a[3], a[4]])
+    return dual(e)
+
+
+CENTER_START = 12551
+CENTER_LENGTH = 26
+
+
+def center_dual(es):
+    """`Trace.centerDual` on one center block."""
+    if len(es) >= 3 and es[0][0] == 'clear' and es[1][0] == 'copy':
+        (_, (c, f)), (_, (_, s, _)), center, rest = es[0], es[1], es[2], es[3:]
+        return ([dual(rest[-1])] if rest else []) + [transpose(e) for e in rest[:-1]] + \
+            [dual(center), ('add', [s, c, -1, 1, f]), ('clear', [c, f])]
+    return [dual(e) for e in es]
+
+
+def program(prefix):
+    """The events of `forwardEvents` or `backwardEvents`."""
+    fwd = [parse(e) for e in events('Forward')]
+    if prefix == 'Forward':
+        return fwd
+    end = CENTER_START + 8 * CENTER_LENGTH
+    blocks = [center_dual(fwd[CENTER_START + CENTER_LENGTH * k:CENTER_START + CENTER_LENGTH * (k + 1)])
+              for k in range(8)]
+    return [dual(e) for e in fwd[:CENTER_START]] + sum(blocks, []) + [dual(e) for e in fwd[end:]]
+
+
 def gates(prefix):
     """The erased gates `(target, [(source, coefficient)])`, as `Scalar.gate`."""
     out = []
-    for e in events(prefix):
-        m = re.match(r'\.scalar \(\.(\w+) (.*)\)$', e)
-        if not m:
+    for op, args in program(prefix):
+        if op is None:
             continue
-        args = [int(x) for x in re.findall(r'-?\d+', m.group(2))]
-        op = m.group(1)
         if op == 'add':
             t, s, n, d, _ = args
             out.append((t, [(s, Fraction(n, d))]))
@@ -49,7 +97,7 @@ def gates(prefix):
             t, s, _ = args
             out.append((t, [(t, Fraction(-1)), (s, Fraction(1))]))
         else:
-            raise ValueError(e)
+            raise ValueError(op)
     return out
 
 
@@ -71,7 +119,8 @@ PIECE_TERMS = 600
 
 
 def entry(i, row):
-    flat = ', '.join(f'{j}, {c.numerator}, {c.denominator}' for j, c in sorted(row.items()))
+    flat = ', '.join(f'{j}, {int(c < 0)}, {abs(c.numerator)}, {c.denominator}'
+                     for j, c in sorted(row.items()))
     return f'  .row {i} [{flat}]'
 
 
@@ -82,11 +131,14 @@ HEADER = ('module\n\npublic import {imp}\n\n'
 
 def main():
     text = HEADER.format(imp=NS + '.Symbolic', doc='Storage format for symbolic register rows.')
-    text += ('/-- One stored row: its register and flat `(source, numerator, denominator)` triples. -/\n'
-             'inductive StoredRow where\n  | row (register : ℕ) (terms : List ℤ)\n\n'
-             '/-- Decode flat triples. -/\n'
-             'def decodeTerms : List ℤ → Row\n'
-             '  | j :: n :: d :: rest => (j.toNat, (n : ℚ) / (d : ℚ)) :: decodeTerms rest\n'
+    # Natural literals: each integer literal in the rows costs the elaborator a typeclass search.
+    text += ('/-- One stored row: its register and flat `(source, sign, magnitude, denominator)`\n'
+             'quadruples, sign `1` for a negative coefficient. -/\n'
+             'inductive StoredRow where\n  | row (register : ℕ) (terms : List ℕ)\n\n'
+             '/-- Decode flat quadruples. -/\n'
+             'def decodeTerms : List ℕ → Row\n'
+             '  | j :: s :: n :: d :: rest =>\n'
+             '    (j, (if s = 0 then (n : ℚ) else -(n : ℚ)) / (d : ℚ)) :: decodeTerms rest\n'
              '  | _ => []\n\n'
              'def StoredRow.decode : StoredRow → ℕ × Row\n'
              '  | .row i terms => (i, decodeTerms terms)\n\n'
@@ -100,10 +152,11 @@ def main():
     (TRACE / 'ActionFormat.lean').write_text(text)
     for prefix, name in [('Forward', 'forward'), ('Backward', 'backward')]:
         for k, snap in enumerate(snapshots(prefix), 1):
-            prev = NS + (f'.Action{prefix}{k - 1}' if k > 1 else '.ActionFormat')
-            body = HEADER.format(imp=prev + '\npublic import ' + NS + '.' + prefix,
+            # Rows and reach checks are separate modules: check `k` imports only the rows of
+            # `k - 1` and `k`, so the checks of one orientation build in parallel.
+            body = HEADER.format(imp=NS + '.ActionFormat',
                                  doc=f'{prefix} symbolic rows after {CUTS[k - 1]} gates, as overrides of the\n'
-                                 'identity trie, and the kernel check that the preceding gates reach them.')
+                                 'identity trie.')
             pieces, cur, size = [], [], 0
             for i in sorted(snap):
                 if cur and size + len(snap[i]) > PIECE_TERMS:
@@ -118,8 +171,14 @@ def main():
                          + ',\n'.join(entry(i, snap[i]) for i in ks) + ']\n\n')
             body += (f'def {name}Snapshot{k} : List StoredRow :=\n  '
                      + ' ++ '.join(f'{name}Snapshot{k}Piece{p}' for p in range(len(pieces))) + '\n\n')
-            start = f'snapshotTrie {name}Snapshot{k - 1}' if k > 1 else 'Trie.init 10 0 1'
+            body += 'end ' + NS + '\n'
+            (TRACE / f'Action{prefix}Rows{k}.lean').write_text(body)
             lo = CUTS[k - 2] if k > 1 else 0
+            imps = [NS + f'.Action{prefix}Rows{j}' for j in ([k - 1] if k > 1 else []) + [k]]
+            body = HEADER.format(imp='\npublic import '.join(imps + [NS + '.' + prefix]),
+                                 doc=f'The kernel check that {name} gates {lo} to {CUTS[k - 1]} reach the rows\n'
+                                 f'`{name}Snapshot{k}`.')
+            start = f'snapshotTrie {name}Snapshot{k - 1}' if k > 1 else 'Trie.init 10 0 1'
             body += (f'theorem {name}_reach{k} :\n'
                      f'    symRun ({start}) (slice {name}Program {lo} {CUTS[k - 1]}) =\n'
                      f'      some (snapshotTrie {name}Snapshot{k}) := by\n  decide +kernel\n\n')

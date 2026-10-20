@@ -8,13 +8,15 @@ namespace IntegerMultBounds.Networks.Certificates.T16.Trace
 
 open Symbolic
 
-/-- One stored row: its register and flat `(source, numerator, denominator)` triples. -/
+/-- One stored row: its register and flat `(source, sign, magnitude, denominator)`
+quadruples, sign `1` for a negative coefficient. -/
 inductive StoredRow where
-  | row (register : ℕ) (terms : List ℤ)
+  | row (register : ℕ) (terms : List ℕ)
 
-/-- Decode flat triples. -/
-def decodeTerms : List ℤ → Row
-  | j :: n :: d :: rest => (j.toNat, (n : ℚ) / (d : ℚ)) :: decodeTerms rest
+/-- Decode flat quadruples. -/
+def decodeTerms : List ℕ → Row
+  | j :: s :: n :: d :: rest =>
+    (j, (if s = 0 then (n : ℚ) else -(n : ℚ)) / (d : ℚ)) :: decodeTerms rest
   | _ => []
 
 def StoredRow.decode : StoredRow → ℕ × Row

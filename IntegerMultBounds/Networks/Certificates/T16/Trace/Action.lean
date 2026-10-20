@@ -1,7 +1,17 @@
 module
 
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.Framed
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward1
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward2
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward3
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward4
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward5
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward6
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward1
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward2
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward3
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward4
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward5
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward6
 
 /-! The exact rational action of both native local words, by kernel-checked symbolic
