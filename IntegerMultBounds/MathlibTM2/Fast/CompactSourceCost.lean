@@ -75,9 +75,9 @@ theorem compactSource_box_le (Tm cw : ℕ) :
       have := gr_ringConst_ge (A := 6 + 4 * cw) (by omega)
       have : (0 : ℝ) ≤ 12 * ((6 + 4 * cw : ℕ) : ℝ) := by positivity
       linarith
-    have hK : (0 : ℝ) ≤ mtCvK Tm cw := Nat.cast_nonneg _
+    have hK : (0 : ℝ) ≤ mtCvK cw := Nat.cast_nonneg _
     have hc : (0 : ℝ) ≤ 4 * (Schoenhage.Schedule.costC Schoenhage.cA Schoenhage.cB Schoenhage.cC0 : ℝ) + 261000 := by positivity
-    have hTm : (0 : ℝ) ≤ (Tm : ℝ) + 1097 := by positivity
+    have hTm : (0 : ℝ) ≤ (3 : ℝ) := by positivity
     have := mul_nonneg hTm (mul_nonneg hc hR)
     linarith
 

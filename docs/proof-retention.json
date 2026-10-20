@@ -363,7 +363,7 @@
   "scope": "Import closure only; unprotected candidates are retained unless separately reviewed as obsolete.",
   "primary_proof": {
     "modules": 2024,
-    "lines": 504521,
+    "lines": 504516,
     "by_directory": {
       "IntegerMultBounds": 7,
       "IntegerMultBounds/Compact": 12,

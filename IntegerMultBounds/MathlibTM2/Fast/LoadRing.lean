@@ -37,7 +37,7 @@ ring-product layout as work registers (`a = rg .ta`, `h = rg .tb`, `par = rg .ac
 `cnt = rg .sv`, `t = rg .tmp`), then `rpProg`. `ldRpStage_exec`: from the register
 file of `rpProg_exec` with `d0` empty and `p`, `l`, `w` on the unary inputs, `out` gains the
 stream of the pointwise products, `d0` ends holding the header, every other register ends as it
-started, within `ldrHeaderCost p l w + rpCost T p l w M` steps.
+started, within `ldrHeaderCost p l w + rpCost p l w M` steps.
 -/
 
 @[expose] public section
@@ -559,7 +559,7 @@ data register `d0` empty in place of the header, and the registers `pR`, `lR`, `
 `rg .acc`, `rg .sv`, `rg .tmp`). Then `ldRpStage` leaves the header
 `(header p (2 ^ l) w).map bitSymbol` on `d0`, pushes the stream of the numerators
 `rpOut p X Y` of the pointwise products onto `rg .out`, and keeps every other register, within
-`ldrHeaderCost p l w + rpCost T p l w M` steps. -/
+`ldrHeaderCost p l w + rpCost p l w M` steps. -/
 theorem ldRpStage_exec (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (hA : 4 ≤ A)
     {p l w M : ℕ} (hp : 1 ≤ p) (hw : p + 2 ≤ w) (X Y : ℕ → Fin (2 ^ l) → GaussianInt)
     (hX : ∀ n < M, DiskGrid p (rpRec X n).1 (rpRec X n).2)
@@ -572,7 +572,7 @@ theorem ldRpStage_exec (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q
     (hacc : S.R (rg .acc) = []) (htmp : S.R (rg .tmp) = []) (hd0 : S.R (rg .d0) = [])
     (hd1 : S.R (rg .d1) = []) (hd2 : S.R (rg .d2) = []) (hd3 : S.R (rg .d3) = [])
     (hpR : (S.R pR).length = p) (hlR : (S.R lR).length = l) (hwR : (S.R wR).length = w) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ ldrHeaderCost p l w + rpCost T p l w M ∧
+    ∃ v' n, v'.user = v.user ∧ n ≤ ldrHeaderCost p l w + rpCost p l w M ∧
       Exec body (ldRpStage rg ι h.ι_inj hT hQ pR lR wR) (mk v S) n
         (mk v' { S with
           R := (Function.update (Function.update S.R (rg .d0) ((header p (2 ^ l) w).map bitSymbol))

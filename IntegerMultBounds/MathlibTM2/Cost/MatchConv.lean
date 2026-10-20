@@ -17,14 +17,14 @@ import Mathlib.Algebra.Order.Ring.Star
 are matched elsewhere; here `cF = cO = 0`.
 
 * `mt_cv_fix_le`: the record-count-free part `rpFixCost` of the ring products (header decoding,
-  constants, sealing) is at most `mtCvKf Tm cw · X p` for `2^l, p ≤ X`.
+  constants, sealing) is at most `mtCvKf cw · X p` for `2^l, p ≤ X`.
 * `mt_cv_arith`: in `ℕ`, `cvBoxCost Tm p l w S M 0 0 ≤ 3 X cmulCost Tm w +
-  (Tm + 1097) M rpRingBound (wOf p l w 2^l) + mtCvK Tm cw · X p` for `M 2^l = X`.
+  3 M rpRingBound (wOf p l w 2^l) + mtCvK cw · X p` for `M 2^l = X`.
 * `mt_cv_ring_le`: the packed product on `N = wOf p l w · 2^l ≤ (6 + 4 cw) r p` bits costs at
   most `(4 costC + 261000) grRingConst (6 + 4 cw) · r p grLogLog (r p)` (`gr_ringBound_le`).
 * `mt_cv_box_le`: eventually
   `cvBoxCost ≤ mtCvC Tm cw (T M(p) + T p grLogLog (r p))`, with the explicit constant
-  `mtCvC Tm cw = 3 mtCM Tm cw + mtCvK Tm cw + (Tm + 1097)(4 costC + 261000) grRingConst (6 + 4 cw)`:
+  `mtCvC Tm cw = 3 mtCM Tm cw + mtCvK cw + 3(4 costC + 261000) grRingConst (6 + 4 cw)`:
   the twists are `3 T M(p)` (the term `3 T M(p)` of `totBound`), the ring products
   `T p grLogLog (r p)` (the `grLogLog (r p)` part of `totConv`), the rest `O(T p)`.
 * `mt_cv_box_le_conv`: the same against `totConv + T M(p)`.
@@ -48,16 +48,15 @@ theorem mt_cv_wOf_le (p l w : ℕ) (hp : 1 ≤ p) : wOf p l w ≤ 2 * (2 * p + l
   omega
 
 /-- The constant of `rpFixCost` against `X p`. -/
-noncomputable def mtCvKf (Tm cw : ℕ) : ℕ :=
-  (Tm + 1097) * (260 * (4 + 2 * cw) + 5000 + 42 * (38 + 12 * cw ^ 2) + 210 + 10 * cw +
+noncomputable def mtCvKf (cw : ℕ) : ℕ :=
+  3 * (260 * (4 + 2 * cw) + 5000 + 42 * (38 + 12 * cw ^ 2) + 210 + 10 * cw +
     2000 * (6 + 4 * cw) + 1000 * (6 + 4 * cw) + 6000 + 100 + 80 + 10 * cw +
-    6 * (6 + 4 * cw) + 4 * (6 + 4 * cw) + 8 + 10 * (6 + 4 * cw) + 4 * (4 + 2 * cw) + 1060) +
-    6 * (4 + 2 * cw) + 2 * Tm + 600
+    6 * (6 + 4 * cw) + 4 * (6 + 4 * cw) + 8 + 10 * (6 + 4 * cw) + 4 * (4 + 2 * cw) + 1060) + 600
 
-/-- **The fixed part of the ring products**: `rpFixCost Tm p l w ≤ mtCvKf Tm cw · X p` for
+/-- **The fixed part of the ring products**: `rpFixCost p l w ≤ mtCvKf cw · X p` for
 `l ≤ p`, `w ≤ cw p`, `2^l ≤ X`, `p ≤ X`. -/
 theorem mt_cv_fix_le {Tm cw p l w X : ℕ} (hp : 1 ≤ p) (hl : l ≤ p) (hw : w ≤ cw * p)
-    (hrX : 2 ^ l ≤ X) (hpX : p ≤ X) : rpFixCost Tm p l w ≤ mtCvKf Tm cw * (X * p) := by
+    (hrX : 2 ^ l ≤ X) (hpX : p ≤ X) : rpFixCost p l w ≤ mtCvKf cw * (X * p) := by
   set Q := X * p with hQ
   set r := 2 ^ l with hr
   have hX1 : 1 ≤ X := le_trans hp hpX
@@ -132,23 +131,23 @@ theorem mt_cv_fix_le {Tm cw p l w X : ℕ} (hp : 1 ≤ p) (hl : l ≤ p) (hw : w
   have hT : 2 * Tm ≤ 2 * Tm * Q := Nat.le_mul_of_pos_right _ (hX1.trans hXQ)
   unfold rpFixCost mtCvKf
   rw [← hr, ← hV, ← hH]
-  have hm := Nat.mul_le_mul_left (Tm + 1097) hinner
+  have hm := Nat.mul_le_mul_left 3 hinner
   have hQ1 : 1 ≤ Q := hX1.trans hXQ
   linarith
 
 /-- The constant of the `O(X p)` part of `cvBoxCost`. -/
-noncomputable def mtCvK (Tm cw : ℕ) : ℕ :=
-  (Tm + 1097) * (180 * cw + 604) + 100 * cw + mtCvKf Tm cw + 18 * cw + 42 + 16 * cw + 16 +
+noncomputable def mtCvK (cw : ℕ) : ℕ :=
+  3 * (180 * cw + 604) + 100 * cw + mtCvKf cw + 18 * cw + 42 + 16 * cw + 16 +
     6 * cw + 4 + 14 + 4 + 2 * cw + 2
 
 /-- **The convolution box in `ℕ`** (transforms excluded): for `M 2^l = X`, `l, S ≤ p ≤ X`,
 `w ≤ cw p`, `cvBoxCost Tm p l w S M 0 0 ≤ 3 X cmulCost Tm w +
-(Tm + 1097) M rpRingBound (wOf p l w · 2^l) + mtCvK Tm cw · X p`. -/
+3 M rpRingBound (wOf p l w · 2^l) + mtCvK cw · X p`. -/
 theorem mt_cv_arith {Tm cw p l w S M X : ℕ} (hMX : M * 2 ^ l = X) (hp : 1 ≤ p) (hl : l ≤ p)
     (hS : S ≤ p) (hw : w ≤ cw * p) (hpX : p ≤ X) :
     cvBoxCost Tm p l w S M 0 0 ≤
-      3 * (X * cmulCost Tm w) + (Tm + 1097) * (M * rpRingBound (wOf p l w * 2 ^ l)) +
-        mtCvK Tm cw * (X * p) := by
+      3 * (X * cmulCost Tm w) + 3 * (M * rpRingBound (wOf p l w * 2 ^ l)) +
+        mtCvK cw * (X * p) := by
   have hX1 : 1 ≤ X := le_trans hp hpX
   have hM1 : 1 ≤ M := by
     rcases Nat.eq_zero_or_pos M with h0 | h0
@@ -165,23 +164,23 @@ theorem mt_cv_arith {Tm cw p l w S M X : ℕ} (hMX : M * 2 ^ l = X) (hp : 1 ≤ 
       _ = cw * Q := by rw [hQ]; ring
   have hfix := mt_cv_fix_le (Tm := Tm) hp hl hw hrX hpX
   rw [← hQ] at hfix
-  have hrp := rpCost_le Tm p l w M
+  have hrp := rpCost_le p l w M
   -- the per-record part of `rpRecBound`
-  have hrec : M * rpRecBound Tm p l w ≤ (Tm + 1097) * (M * rpRingBound (wOf p l w * 2 ^ l)) +
-      ((Tm + 1097) * (180 * cw + 604) + 100 * cw) * Q := by
+  have hrec : M * rpRecBound p l w ≤ 3 * (M * rpRingBound (wOf p l w * 2 ^ l)) +
+      (3 * (180 * cw + 604) + 100 * cw) * Q := by
     unfold rpRecBound
-    have e : M * ((Tm + 1097) * (rpRingBound (wOf p l w * 2 ^ l) + 2 ^ l * (180 * w + 400) + 204) +
-        100 * (2 ^ l * w)) = (Tm + 1097) * (M * rpRingBound (wOf p l w * 2 ^ l)) +
-          ((Tm + 1097) * ((M * 2 ^ l) * (180 * w + 400) + 204 * M) + 100 * ((M * 2 ^ l) * w)) := by
+    have e : M * (3 * (rpRingBound (wOf p l w * 2 ^ l) + 2 ^ l * (180 * w + 400) + 204) +
+        100 * (2 ^ l * w)) = 3 * (M * rpRingBound (wOf p l w * 2 ^ l)) +
+          (3 * ((M * 2 ^ l) * (180 * w + 400) + 204 * M) + 100 * ((M * 2 ^ l) * w)) := by
       ring
     rw [e, hMX]
     have h1 : X * (180 * w + 400) + 204 * M ≤ (180 * cw + 604) * Q := by
       have : X * (180 * w + 400) = 180 * (X * w) + 400 * X := by ring
       linarith
-    have h2 := Nat.mul_le_mul_left (Tm + 1097) h1
+    have h2 := Nat.mul_le_mul_left 3 h1
     have h3 : 100 * (X * w) ≤ 100 * cw * Q := by linarith
-    have e2 : ((Tm + 1097) * (180 * cw + 604) + 100 * cw) * Q =
-        (Tm + 1097) * ((180 * cw + 604) * Q) + 100 * cw * Q := by ring
+    have e2 : (3 * (180 * cw + 604) + 100 * cw) * Q =
+        3 * ((180 * cw + 604) * Q) + 100 * cw * Q := by ring
     rw [e2]
     omega
   unfold cvBoxCost cvSynthCost
@@ -194,8 +193,8 @@ theorem mt_cv_arith {Tm cw p l w S M X : ℕ} (hMX : M * 2 ^ l = X) (hp : 1 ≤ 
       (18 * cw + 42) * Q := by
     have : X * (cmulCost Tm w + 6 * w + 8) = X * cmulCost Tm w + 6 * (X * w) + 8 * X := by ring
     linarith
-  have e3 : mtCvK Tm cw * Q = ((Tm + 1097) * (180 * cw + 604) + 100 * cw) * Q +
-      mtCvKf Tm cw * Q + (18 * cw + 42) * Q + 16 * cw * Q + 16 * Q + (6 * cw + 4 + 14) * Q +
+  have e3 : mtCvK cw * Q = (3 * (180 * cw + 604) + 100 * cw) * Q +
+      mtCvKf cw * Q + (18 * cw + 42) * Q + 16 * cw * Q + 16 * Q + (6 * cw + 4 + 14) * Q +
         4 * Q + 2 * cw * Q + 2 * Q := by unfold mtCvK; ring
   rw [e3]
   have h16 : 16 * (X * w) ≤ 16 * cw * Q := by linarith
@@ -235,8 +234,8 @@ theorem mt_cv_ring_le {cw p l w : ℕ} (hp : 1 ≤ p) (hl : l ≤ p) (hw : w ≤
 
 /-- The constant of `mt_cv_box_le`. -/
 noncomputable def mtCvC (Tm cw : ℕ) : ℝ :=
-  3 * mtCM Tm cw + mtCvK Tm cw +
-    ((Tm : ℝ) + 1097) * ((4 * (costC cA cB cC0 : ℝ) + 261000) * grRingConst (6 + 4 * cw))
+  3 * mtCM Tm cw + mtCvK cw +
+    (3 : ℝ) * ((4 * (costC cA cB cC0 : ℝ) + 261000) * grRingConst (6 + 4 * cw))
 
 /-- `S = Σ_{i < d-1} log₂ t_i ≤ logT`, from `2^S r = T`. -/
 theorem mt_cv_S_le {n : ℕ} (h : Big n) : (List.ofFn (cvAx (t n))).sum ≤ logT n := by
@@ -276,8 +275,8 @@ theorem mt_cv_box_le (Tm cw : ℕ) :
   set M := ((cvM (cvAx (t n)) : ℕ) : ℝ) with hMdef
   have hcast : (cvBoxCost Tm (p n) (ℓ n) w (List.ofFn (cvAx (t n))).sum (cvM (cvAx (t n))) 0 0 : ℝ) ≤
       3 * ((T n : ℝ) * (cmulCost Tm w : ℝ)) +
-        ((Tm : ℝ) + 1097) * (M * (rpRingBound (wOf (p n) (ℓ n) w * 2 ^ ℓ n) : ℝ)) +
-        (mtCvK Tm cw : ℝ) * ((T n : ℝ) * p n) := by
+        (3 : ℝ) * (M * (rpRingBound (wOf (p n) (ℓ n) w * 2 ^ ℓ n) : ℝ)) +
+        (mtCvK cw : ℝ) * ((T n : ℝ) * p n) := by
     rw [hMdef]; exact_mod_cast hA
   set G := grLogLog ((r n : ℝ) * p n) with hG
   set c := (4 * (costC cA cB cC0 : ℝ) + 261000) with hc
@@ -289,7 +288,7 @@ theorem mt_cv_box_le (Tm cw : ℕ) :
           mul_le_mul_of_nonneg_left hring hM0
       _ = c * Rc * ((M * ((r n : ℝ) * p n)) * G) := by ring
       _ = c * Rc * ((T n : ℝ) * p n * G) := by rw [hMr]
-  have hTm0 : (0 : ℝ) ≤ (Tm : ℝ) + 1097 := by positivity
+  have hTm0 : (0 : ℝ) ≤ (3 : ℝ) := by positivity
   have hring'' := mul_le_mul_of_nonneg_left hring' hTm0
   have hT0 : (0 : ℝ) ≤ T n := Nat.cast_nonneg _
   have hcm' : (T n : ℝ) * (cmulCost Tm w : ℝ) ≤ mtCM Tm cw * ((T n : ℝ) * totMp n) := by
@@ -297,8 +296,8 @@ theorem mt_cv_box_le (Tm cw : ℕ) :
           mul_le_mul_of_nonneg_left hcm hT0
       _ = mtCM Tm cw * ((T n : ℝ) * totMp n) := by ring
   have hTp := mt_Tp_le_Tmp h
-  have hK0 : (0 : ℝ) ≤ mtCvK Tm cw := Nat.cast_nonneg _
-  have hTpK : (mtCvK Tm cw : ℝ) * ((T n : ℝ) * p n) ≤ (mtCvK Tm cw : ℝ) * ((T n : ℝ) * totMp n) :=
+  have hK0 : (0 : ℝ) ≤ mtCvK cw := Nat.cast_nonneg _
+  have hTpK : (mtCvK cw : ℝ) * ((T n : ℝ) * p n) ≤ (mtCvK cw : ℝ) * ((T n : ℝ) * totMp n) :=
     mul_le_mul_of_nonneg_left hTp hK0
   have hG1 : 1 ≤ G := by
     apply gr_one_le_logLog
@@ -306,7 +305,8 @@ theorem mt_cv_box_le (Tm cw : ℕ) :
   have hTpG : 0 ≤ (T n : ℝ) * p n * G := mul_nonneg (mt_Tp_nonneg n) (by linarith)
   have hTmp := mt_Tmp_nonneg n
   have hcR : 0 ≤ c * Rc := by
-    have h1 : (0 : ℝ) ≤ c := by rw [hc]; positivity
+    have h1 : (0 : ℝ) ≤ c := by
+      rw [hc]; exact add_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg _)) (by norm_num)
     have h2 : 0 ≤ Rc := by
       rw [hRc]
       have := gr_ringConst_ge (A := 6 + 4 * cw) (by omega)
@@ -315,14 +315,14 @@ theorem mt_cv_box_le (Tm cw : ℕ) :
     exact mul_nonneg h1 h2
   have hCM := mt_CM_nonneg Tm cw
   have e : mtCvC Tm cw * ((T n : ℝ) * totMp n + (T n : ℝ) * p n * G) =
-      3 * mtCM Tm cw * ((T n : ℝ) * totMp n) + (mtCvK Tm cw : ℝ) * ((T n : ℝ) * totMp n) +
-        ((Tm : ℝ) + 1097) * (c * Rc * ((T n : ℝ) * p n * G)) +
-        (3 * mtCM Tm cw * ((T n : ℝ) * p n * G) + (mtCvK Tm cw : ℝ) * ((T n : ℝ) * p n * G) +
-          ((Tm : ℝ) + 1097) * (c * Rc) * ((T n : ℝ) * totMp n)) := by
+      3 * mtCM Tm cw * ((T n : ℝ) * totMp n) + (mtCvK cw : ℝ) * ((T n : ℝ) * totMp n) +
+        (3 : ℝ) * (c * Rc * ((T n : ℝ) * p n * G)) +
+        (3 * mtCM Tm cw * ((T n : ℝ) * p n * G) + (mtCvK cw : ℝ) * ((T n : ℝ) * p n * G) +
+          (3 : ℝ) * (c * Rc) * ((T n : ℝ) * totMp n)) := by
     unfold mtCvC; ring
   have k1 : 0 ≤ 3 * mtCM Tm cw * ((T n : ℝ) * p n * G) := by positivity
-  have k2 : 0 ≤ (mtCvK Tm cw : ℝ) * ((T n : ℝ) * p n * G) := mul_nonneg hK0 hTpG
-  have k3 : 0 ≤ ((Tm : ℝ) + 1097) * (c * Rc) * ((T n : ℝ) * totMp n) :=
+  have k2 : 0 ≤ (mtCvK cw : ℝ) * ((T n : ℝ) * p n * G) := mul_nonneg hK0 hTpG
+  have k3 : 0 ≤ (3 : ℝ) * (c * Rc) * ((T n : ℝ) * totMp n) :=
     mul_nonneg (mul_nonneg hTm0 hcR) hTmp
   rw [e]
   linarith
@@ -356,9 +356,9 @@ theorem mt_cv_box_le_conv (Tm cw : ℕ) :
       have := gr_ringConst_ge (A := 6 + 4 * cw) (by omega)
       have : (0 : ℝ) ≤ 12 * ((6 + 4 * cw : ℕ) : ℝ) := by positivity
       linarith
-    have hK : (0 : ℝ) ≤ mtCvK Tm cw := Nat.cast_nonneg _
+    have hK : (0 : ℝ) ≤ mtCvK cw := Nat.cast_nonneg _
     have hc : (0 : ℝ) ≤ 4 * (costC cA cB cC0 : ℝ) + 261000 := by positivity
-    have hTm : (0 : ℝ) ≤ (Tm : ℝ) + 1097 := by positivity
+    have hTm : (0 : ℝ) ≤ (3 : ℝ) := by positivity
     have := mul_nonneg hTm (mul_nonneg hc hR)
     linarith
 

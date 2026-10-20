@@ -68,12 +68,10 @@ top; every other stack and the `user` component are unchanged (`rpProg_exec`). H
 record: `re² + im² ≤ 2^(2p)` per coefficient (`DiskGrid`; `rp_diskGrid_of_norm` from
 `‖rpGrid p X n c‖ ≤ 1`).
 
-**Cost.** `rpCost T p l w M = (T + 1097) · rpTime p l w M + 100 M 2^l w + 6 H + 2 T + 600`,
-`H` the header length: the vendored time `rpTime` (`pwCost` and sealing) and the format
-conversions. The host run takes only `3 · rpTime` steps (`rp_placed_runs`); the factor
-`T + 1097` is kept from the earlier simulation of the compiled machine so that the budgets
-downstream are unchanged. `rpCost_eq`: `rpCost = M · rpRecCost + rpFixCost`, with
-`rpRecCost T p l w = (T + 1097) (ringCost W r w (p + l) (W r) + r (180 w + 400) + 204) + 100 r w`
+**Cost.** `rpCost p l w M = 3 · rpTime p l w M + 100 M 2^l w + 600`: three host steps per step
+of the word program's time `rpTime` (`pwCost` and sealing, `rp_placed_runs`) and the format
+conversions; it does not depend on the host. `rpCost_eq`: `rpCost = M · rpRecCost + rpFixCost`,
+with `rpRecCost p l w = 3 (ringCost W r w (p + l) (W r) + r (180 w + 400) + 204) + 100 r w`
 (`W = wOf p l w`) and `rpFixCost` independent of `M`. `rpCost_le`: the same with
 `rpRecBound`, where `ringCost` is replaced by the vendored bound `rpRingBound N`
 (`4 costC (N + 1)(bitlen N + 1)(bitlen (bitlen N ^ 3) + 1) + 11000 N + 250000`, `N = W r`,
@@ -546,11 +544,10 @@ variable {T Q A : ℕ} {U : Type} {P : Type} {body : P → Pr P T Q A U} {rg : R
   {ι : Fin 91 → Fin T}
 
 open IntegerMultBounds.Schoenhage IntegerMultBounds.Schoenhage.Schedule in
-/-- The step bound of the stage: the vendored time `rpTime` scaled by the host's simulation
-factor `T + 1097`, and linear format conversions. -/
-def rpCost (T p l w M : ℕ) : ℕ :=
-  (T + 1097) * rpTime p l w M + 100 * (M * 2 ^ l * w) + 6 * (header p (2 ^ l) w).length +
-    2 * T + 600
+/-- The step bound of the stage: three host steps per step of the word program's time
+`rpTime` (`rpHost_exec`), and linear format conversions. -/
+def rpCost (p l w M : ℕ) : ℕ :=
+  3 * rpTime p l w M + 100 * (M * 2 ^ l * w) + 600
 
 /-- The ring-product stage on register files. -/
 theorem rpProg_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (hA : 4 ≤ A)
@@ -564,7 +561,7 @@ theorem rpProg_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (
     (hd1 : ρ .d1 = []) (hd2 : ρ .d2 = []) (hd3 : ρ .d3 = []) :
     RpRuns body rg ι (rpProg rg ι h.ι_inj hT hQ) ρ
       (Function.update ρ .out (cstream A w (rpStream M (rpOut p X Y)) ++ ρ .out))
-      (rpCost T p l w M) := by
+      (rpCost p l w M) := by
   set fs := (List.range M).map (rpRec X) with hfs
   set gs := (List.range M).map (rpRec Y) with hgs
   have hw1 : 1 ≤ w := by omega
@@ -606,7 +603,6 @@ theorem rpProg_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (
   refine ((s1.seq h (s2.seq h (s3.seq h (s4.seq h (s5.seq h s6))))).mono ?_).congr ?_
   · simp only [length_rpStream, hfl]
     unfold rpCost
-    have hrp : 3 * rpTime p l w M ≤ (T + 1097) * rpTime p l w M := Nat.mul_le_mul_right _ (by omega)
     have hw3 : 3 ≤ w := by omega
     have hK : M * 2 ^ l * 44 ≤ M * 2 ^ l * (21 * w) := Nat.mul_le_mul_left _ (by omega)
     nlinarith
@@ -620,7 +616,7 @@ coefficient on top), `rg .wn` holds `w` symbols, `rg .d0 = ι 0` the header `Γ(
 scratch registers, the other data registers and the private registers `ι j`, `j ≥ 4`, are empty,
 and every left stack of `ι` is empty. Then `rpProg` pushes the stream of the numerators
 `rpOut p X Y` of the pointwise products `Q_p(u_n v_n / 2^l)` (`rp_pwC_grid`) onto `rg .out`;
-every other stack and the `user` component are unchanged; at most `rpCost T p l w M` steps. -/
+every other stack and the `user` component are unchanged; at most `rpCost p l w M` steps. -/
 theorem rpProg_exec (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (hA : 4 ≤ A)
     {p l w M : ℕ} (hp : 1 ≤ p) (hw : p + 2 ≤ w) (X Y : ℕ → Fin (2 ^ l) → GaussianInt)
     (hX : ∀ n < M, DiskGrid p (rpRec X n).1 (rpRec X n).2)
@@ -632,7 +628,7 @@ theorem rpProg_exec (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (
     (hacc : S.R (rg .acc) = []) (htmp : S.R (rg .tmp) = [])
     (hd0 : S.R (rg .d0) = (header p (2 ^ l) w).map bitSymbol) (hd1 : S.R (rg .d1) = [])
     (hd2 : S.R (rg .d2) = []) (hd3 : S.R (rg .d3) = []) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ rpCost T p l w M ∧
+    ∃ v' n, v'.user = v.user ∧ n ≤ rpCost p l w M ∧
       Exec body (rpProg rg ι h.ι_inj hT hQ) (mk v S) n
         (mk v' { S with
           R := Function.update S.R (rg RpReg.out)
@@ -663,22 +659,21 @@ section Cost
 
 open IntegerMultBounds.Schoenhage IntegerMultBounds.Schoenhage.Schedule
 
-/-- The per-record part of `rpCost`: the host's simulation factor `T + 1097` times the vendored
-per-record time (the packed product's bound `ringCost` at `W = wOf p l w` with truncation by
-`p + l` bits, and the record's packing and unpacking), and the record's format conversions. -/
-def rpRecCost (T p l w : ℕ) : ℕ :=
-  (T + 1097) * (ringCost (wOf p l w) (2 ^ l) w (p + l) (wOf p l w * 2 ^ l) +
+/-- The per-record part of `rpCost`: three host steps per step of the per-record time (the packed
+product's bound `ringCost` at `W = wOf p l w` with truncation by `p + l` bits, and the record's
+packing and unpacking), and the record's format conversions. -/
+def rpRecCost (p l w : ℕ) : ℕ :=
+  3 * (ringCost (wOf p l w) (2 ^ l) w (p + l) (wOf p l w * 2 ^ l) +
     2 ^ l * (180 * w + 400) + 204) + 100 * (2 ^ l * w)
 
 /-- The part of `rpCost` independent of the record count: header decoding, constants, sealing. -/
-def rpFixCost (T p l w : ℕ) : ℕ :=
-  (T + 1097) * (headerCost p (2 ^ l) w (header p (2 ^ l) w).length + constCost p l w +
+def rpFixCost (p l w : ℕ) : ℕ :=
+  3 * (headerCost p (2 ^ l) w (header p (2 ^ l) w).length + constCost p l w +
     100 * 2 ^ l + 60 * l + 10 * (p + l + w) + 6 * (wOf p l w * 2 ^ l) +
-    4 * 2 ^ l * (wOf p l w + 2) + 10 * wOf p l w + 4 * (header p (2 ^ l) w).length + 1060) +
-    6 * (header p (2 ^ l) w).length + 2 * T + 600
+    4 * 2 ^ l * (wOf p l w + 2) + 10 * wOf p l w + 4 * (header p (2 ^ l) w).length + 1060) + 600
 
-theorem rpCost_eq (T p l w M : ℕ) :
-    rpCost T p l w M = M * rpRecCost T p l w + rpFixCost T p l w := by
+theorem rpCost_eq (p l w M : ℕ) :
+    rpCost p l w M = M * rpRecCost p l w + rpFixCost p l w := by
   unfold rpCost rpRecCost rpFixCost rpTime pwCost
   ring
 
@@ -688,11 +683,11 @@ def rpRingBound (N : ℕ) : ℕ :=
     250000
 
 /-- `rpRecCost` with the packed product's bound in the packed size `N = wOf p l w · 2^l`. -/
-def rpRecBound (T p l w : ℕ) : ℕ :=
-  (T + 1097) * (rpRingBound (wOf p l w * 2 ^ l) + 2 ^ l * (180 * w + 400) + 204) +
+def rpRecBound (p l w : ℕ) : ℕ :=
+  3 * (rpRingBound (wOf p l w * 2 ^ l) + 2 ^ l * (180 * w + 400) + 204) +
     100 * (2 ^ l * w)
 
-theorem rpRecCost_le (T p l w : ℕ) : rpRecCost T p l w ≤ rpRecBound T p l w := by
+theorem rpRecCost_le (p l w : ℕ) : rpRecCost p l w ≤ rpRecBound p l w := by
   unfold rpRecCost rpRecBound rpRingBound
   have hW := mW_lt_wOf p l w
   unfold mW at hW
@@ -701,11 +696,11 @@ theorem rpRecCost_le (T p l w : ℕ) : rpRecCost T p l w ≤ rpRecBound T p l w 
   gcongr
 
 /-- The stage's bound: `M` records at `rpRecBound` each, plus `rpFixCost`. -/
-theorem rpCost_le (T p l w M : ℕ) :
-    rpCost T p l w M ≤ M * rpRecBound T p l w + rpFixCost T p l w := by
+theorem rpCost_le (p l w M : ℕ) :
+    rpCost p l w M ≤ M * rpRecBound p l w + rpFixCost p l w := by
   rw [rpCost_eq]
   gcongr
-  exact rpRecCost_le T p l w
+  exact rpRecCost_le p l w
 
 end Cost
 

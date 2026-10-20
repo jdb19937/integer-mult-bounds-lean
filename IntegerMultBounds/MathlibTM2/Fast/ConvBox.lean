@@ -52,7 +52,7 @@ margin `hEs` of `Pipeline.convBox_spec` (`cv_eSynth_lt`); there `M r = T` (`cv_M
   `totBound`;
 * the forward transforms `2 cF` and the opposite transform `cO`: the layer and twiddle part
   `T p (d K + p K^{τ-1} + ℓ d^{λ'})` of `totConv`;
-* the ring products `rpCost T p l w M = M rpRecCost + rpFixCost` (`rpCost_le`: at most
+* the ring products `rpCost p l w M = M rpRecCost + rpFixCost` (`rpCost_le`: at most
   `M rpRecBound + rpFixCost`): `M = T/r` packed products of `N = O(r p)` bits, the part
   `T p log₂ (r p)` of `totConv`; the vendored bound `rpRingBound N` is
   `O(N log N log log N)`, one factor `log log (r p)` above that term;

@@ -48,7 +48,7 @@ through `t1`.
 **Result** (`cvSynth_runs`). From `io`, `sy` holding the streams of `Zu`, `Zv` (disk records),
 `so` gains the stream of `cvConvNum p a Zu Zv`; `io`, `sy` end empty, every other register as
 before; within
-`cvSynthCost = 2 cF + cO + rpCost T p l w M + 16 M r w + 16 + M r (6 w + 4 Σaᵢ + 14) + 4`.
+`cvSynthCost = 2 cF + cO + rpCost p l w M + 16 M r w + 16 + M r (6 w + 4 Σaᵢ + 14) + 4`.
 Hypotheses: `1 ≤ p`, `p + 2 ≤ w` (the ring product), `Σ aᵢ ≤ w` (the shift), `4 ≤ A`,
 `91 ≤ T`, `rpStates ≤ Q`, `π` maps the first `M` addresses into themselves. The shift is
 exact modulo `2^w`, so the output stream is the stream of the true numerators with no further
@@ -304,7 +304,7 @@ theorem cv_rp_runs (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (hA : 4 ≤ A) {p l w M
     CvRuns body rg ι Pre
       (rpProg (fun x => rg (cvRp x)) (fun j => rg (CvR.rpi j)) (cv_rpi_inj hrg) hT hQ) ρ
       (Function.update ρ (.rr .out) (cstream A w (rpStream M (rpOut p X Y)) ++ ρ (.rr .out)))
-      (rpCost T p l w M) := by
+      (rpCost p l w M) := by
   refine cv_runs_of_update hrg _ _ fun v S hc _ hS => ?_
   have hL := cv_rpLayout hrg
   have hcl : RpClean (fun j => rg (CvR.rpi j)) S :=
@@ -365,7 +365,7 @@ end Program
 products, three stream transfers and two clears of `M r` coefficients of `w` symbols, and the
 shift. -/
 def cvSynthCost (T p l w S M cF cO : ℕ) : ℕ :=
-  2 * cF + cO + rpCost T p l w M + 16 * (M * 2 ^ l * w) + 16 +
+  2 * cF + cO + rpCost p l w M + 16 * (M * 2 ^ l * w) + 16 +
     (M * 2 ^ l) * (6 * w + 4 * S + 14) + 4
 
 /-! ### The contract of `cvSynth` -/
