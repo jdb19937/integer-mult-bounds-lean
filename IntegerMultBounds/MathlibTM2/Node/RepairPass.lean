@@ -1093,7 +1093,7 @@ end RepairMachine
 
 section RepairLists
 
-open IntegerMultBounds.Compact IntegerMultBounds.Machine.Partition
+open IntegerMultBounds.Compact
 
 lemma getD_moveRecs {α : Type} {M : ℕ} (π : Equiv.Perm (Fin M)) (l : List (List α)) (j : Fin M) :
     (moveRecs π l).getD j [] = l.getD (π.symm j) [] := by

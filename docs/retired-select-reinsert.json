@@ -1,0 +1,13 @@
+{
+  "baseline": "5e86d444b6cde50a0384152656a041c4b1669b04",
+  "reason": "Retired the native ordered selection, partition and reinsertion machines after the resampling row selection and the compact repair pipeline kept only their list and index arithmetic.",
+  "total_files": 5,
+  "total_lines": 1917,
+  "files": [
+    "IntegerMultBounds/Machine/BinaryAccumulate.lean",
+    "IntegerMultBounds/Machine/OrderedSelect.lean",
+    "IntegerMultBounds/Machine/Partition.lean",
+    "IntegerMultBounds/Machine/Reinsert.lean",
+    "IntegerMultBounds/Machine/WordMoves.lean"
+  ]
+}

@@ -3,6 +3,12 @@ module
 public import IntegerMultBounds.Compact.RepairPipeline
 import Mathlib.Data.Fintype.Perm
 import Mathlib.Data.Nat.Bitwise
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Positivity.Finset
 import IntegerMultBounds.Compact.Repair
 

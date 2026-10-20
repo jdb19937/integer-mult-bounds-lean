@@ -2,7 +2,6 @@ module
 
 public import IntegerMultBounds.Compact.ExactRepair
 public import IntegerMultBounds.Compact.Density
-public import IntegerMultBounds.Machine.Reinsert
 public import IntegerMultBounds.Machine.RadixSort
 
 /-! The assembled exceptional-address repair pipeline (§5, the correction in the
@@ -22,13 +21,27 @@ are instantiated. Tape execution of the scan is not part of this file. -/
 
 namespace IntegerMultBounds.Compact
 
-open Machine.Partition (Record)
-open Machine.Reinsert (fill)
 open Machine.RadixSort
 
 /-! ### Reinsertion along a filter -/
 
 section Fill
+
+/-- A record: a key bit and a bit payload. -/
+structure Record where
+  key : Bool
+  payload : List Bool
+
+/-- Fill the flagged positions from left to right. When replacements are
+insufficient the remaining flagged originals are retained. -/
+def fill : List Record → List Record → List Record
+  | [], _ => []
+  | rec :: rest, replacements =>
+      if rec.key then
+        match replacements with
+        | [] => rec :: fill rest []
+        | replacement :: tail => replacement :: fill rest tail
+      else rec :: fill rest replacements
 
 /-- Filling the holes of a flagged list with records indexed by the flagged positions. -/
 theorem fill_map_filter {ι : Type*} (l : List ι) (P : ι → Bool) (g h : ι → Record)
