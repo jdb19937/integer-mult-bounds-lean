@@ -20,7 +20,7 @@ public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
 public import IntegerMultBounds.MathlibTM2.Host.StateLift
-public import IntegerMultBounds.MathlibTM2.Host.WordCmd
+public import IntegerMultBounds.MathlibTM2.Host.WordCopy
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame

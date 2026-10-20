@@ -16,18 +16,20 @@ nearest on top (`lcells left`: each word as its separator and then its bits from
 `place S ι σ` puts the bank `σ` on the injective family of registers `ι`; every other stack keeps
 its contents.
 
-**Primitives.** `TImpl C M` is a host implementation of the primitive `M` with constant `C`: a
-host program on any injective family of registers, in any host, that takes the placed tapes of
-`M` to those of its effect within `C (cost + 1)` steps, with every other stack and the `user`
-component unchanged. `AllTM C c`: every primitive of `c` has one.
+**Primitives.** `TImpl C n M` is a host implementation of the primitive `M` with constant `C`: a
+host program on any injective family of registers, in any host with at least `n` control states,
+that takes the placed tapes of `M` to those of its effect within `C (cost + 1)` steps, with every
+other stack and the `user` component unchanged. A primitive with a finite control of its own keeps
+it in the host state `st`, hence `n`. `AllTM C n c`: every primitive of `c` has one.
 
 **Compilation** (`tcompile`): primitives by their implementations, sequencing by sequencing, and
 the loop and branch tests by a peek at the tested register (`peekW`). `tcompile_exec`: for
-`2 ≤ C`, an execution of `c` within `k` steps gives a host execution of `tcompile C ι c` between
-the placed banks within `C (k + 1)` steps.
+`2 ≤ C` and `n ≤ Q`, an execution of `c` within `k` steps gives a host execution of
+`tcompile C n ι c` between the placed banks within `C (k + 1)` steps.
 
 **Implemented here:** rewind, back, clear and emit (`rewindImpl`, `backImpl`, `clearImpl`,
-`emitImpl`, any `C ≥ 2`).
+`emitImpl`, any `C ≥ 2` and `n`). The streaming primitive is in `Host/WordStream`, reverse and
+chunk in `Host/WordCopy`.
 -/
 
 @[expose] public section
@@ -191,23 +193,25 @@ section Compile
 
 variable {A : ℕ}
 
-/-- A host implementation of the primitive `M` with constant `C`. -/
-structure TImpl (C : ℕ) (M : Prim A) : Type 1 where
+/-- A host implementation of the primitive `M` with constant `C` on hosts with at least `n`
+control states. -/
+structure TImpl (C n : ℕ) (M : Prim A) : Type 1 where
   prog : {P : Type} → {T Q : ℕ} → {U : Type} → (Fin M.s → Fin T) → Pr P T Q A U
   spec : ∀ {P : Type} {T Q : ℕ} {U : Type} (body : P → Pr P T Q A U) (j : Fin M.s → Fin T),
-    Function.Injective j → ∀ τ, M.pre τ → ∀ (v : HS T Q A U) (S : Stacks T A),
+    Function.Injective j → n ≤ Q → ∀ τ, M.pre τ → ∀ (v : HS T Q A U) (S : Stacks T A),
       ∃ v' n, v'.user = v.user ∧ n ≤ C * (M.cost τ + 1) ∧
         Exec body (prog j) (mk v (place S j τ)) n (mk v' (place S j (M.sem τ)))
 
 variable {t : ℕ}
 
-/-- Every primitive of a word program has a host implementation with constant `C`. -/
-inductive AllTM (C : ℕ) : Cmd A t → Prop
+/-- Every primitive of a word program has a host implementation with constant `C` on hosts with
+at least `n` control states. -/
+inductive AllTM (C n : ℕ) : Cmd A t → Prop
   | prim {M : Prim A} {slot : Fin M.s → Fin t} {hinj : Function.Injective slot} :
-      Nonempty (TImpl C M) → AllTM C (.prim M slot hinj)
-  | seq {c d : Cmd A t} : AllTM C c → AllTM C d → AllTM C (.seq c d)
-  | loop {i : Fin t} {b : Cmd A t} : AllTM C b → AllTM C (.loop i b)
-  | cond {i : Fin t} {c d : Cmd A t} : AllTM C c → AllTM C d → AllTM C (.cond i c d)
+      Nonempty (TImpl C n M) → AllTM C n (.prim M slot hinj)
+  | seq {c d : Cmd A t} : AllTM C n c → AllTM C n d → AllTM C n (.seq c d)
+  | loop {i : Fin t} {b : Cmd A t} : AllTM C n b → AllTM C n (.loop i b)
+  | cond {i : Fin t} {c d : Cmd A t} : AllTM C n c → AllTM C n d → AllTM C n (.cond i c d)
 
 variable {T Q : ℕ} {U P : Type}
 
@@ -217,15 +221,16 @@ def peekW (r : Fin T) : Act T Q A U :=
 
 open Classical in
 /-- The host program of a word program on the registers `ι`. -/
-noncomputable def tcompile (C : ℕ) (ι : Fin t → Fin T) : Cmd A t → Pr P T Q A U
+noncomputable def tcompile (C n : ℕ) (ι : Fin t → Fin T) : Cmd A t → Pr P T Q A U
   | .prim M slot _ =>
-      if h : Nonempty (TImpl C M) then (Classical.choice h).prog (ι ∘ slot) else .act .done
-  | .seq c d => .seq (tcompile C ι c) (tcompile C ι d)
+      if h : Nonempty (TImpl C n M) then (Classical.choice h).prog (ι ∘ slot) else .act .done
+  | .seq c d => .seq (tcompile C n ι c) (tcompile C n ι d)
   | .loop i b =>
-      .seq (.act (peekW (ι i))) (.loop (·.flag) (.seq (tcompile C ι b) (.act (peekW (ι i)))))
+      .seq (.act (peekW (ι i))) (.loop (·.flag) (.seq (tcompile C n ι b) (.act (peekW (ι i)))))
   | .cond i c d =>
       .seq (.act (peekW (ι i)))
-        (.cond (fun v => decide (v.sym = some (bitSymbol true))) (tcompile C ι c) (tcompile C ι d))
+        (.cond (fun v => decide (v.sym = some (bitSymbol true))) (tcompile C n ι c)
+          (tcompile C n ι d))
 
 variable (body : P → Pr P T Q A U)
 
@@ -234,17 +239,17 @@ theorem peekW_run (r : Fin T) (v : HS T Q A U) (S : Stacks T A) :
       mk { v with flag := (S.R r).head?.isSome, sym := (S.R r).head? } S := rfl
 
 /-- **Compilation is correct.** -/
-theorem tcompile_exec {C : ℕ} (hC : 2 ≤ C) {ι : Fin t → Fin T} (hι : Function.Injective ι)
-    {c : Cmd A t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Schoenhage.Exec c σ σ' k) (hc : AllTM C c)
-    (v : HS T Q A U) (S : Stacks T A) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ C * (k + 1) ∧
-      Exec body (tcompile C ι c) (mk v (place S ι σ)) n (mk v' (place S ι σ')) := by
+theorem tcompile_exec {C n : ℕ} (hC : 2 ≤ C) (hQ : n ≤ Q) {ι : Fin t → Fin T}
+    (hι : Function.Injective ι) {c : Cmd A t} {σ σ' : Fin t → WTape} {k : ℕ}
+    (h : Schoenhage.Exec c σ σ' k) (hc : AllTM C n c) (v : HS T Q A U) (S : Stacks T A) :
+    ∃ v' m, v'.user = v.user ∧ m ≤ C * (k + 1) ∧
+      Exec body (tcompile C n ι c) (mk v (place S ι σ)) m (mk v' (place S ι σ')) := by
   induction h generalizing v with
   | @prim M slot hinj σ hpre =>
     cases hc with
     | prim hM =>
       obtain ⟨v', n, hu, hn, he⟩ :=
-        (Classical.choice hM).spec body (ι ∘ slot) (hι.comp hinj) (σ ∘ slot) hpre v (place S ι σ)
+        (Classical.choice hM).spec body (ι ∘ slot) (hι.comp hinj) hQ (σ ∘ slot) hpre v (place S ι σ)
       rw [place_place hι hinj, place_place hι hinj, upd_comp_self hinj] at he
       refine ⟨v', n, hu, hn, ?_⟩
       simpa only [tcompile, hM, ↓reduceDIte] using he
@@ -307,13 +312,14 @@ theorem tcompile_exec {C : ℕ} (hC : 2 ≤ C) {ι : Fin t → Fin T} (hι : Fun
       exact Exec.seq (Exec.act (peekW (ι i)) _) (Exec.cond_false (by simp [peekW_run, ht]) he)
 
 /-- `tcompile_exec` for a run into a postcondition. -/
-theorem tcompile_runs {C : ℕ} (hC : 2 ≤ C) {ι : Fin t → Fin T} (hι : Function.Injective ι)
-    {c : Cmd A t} {σ : Fin t → WTape} {Post : (Fin t → WTape) → Prop} {B : ℕ}
-    (h : Schoenhage.Runs c σ Post B) (hc : AllTM C c) (v : HS T Q A U) (S : Stacks T A) :
-    ∃ σ', Post σ' ∧ ∃ v' n, v'.user = v.user ∧ n ≤ C * (B + 1) ∧
-      Exec body (tcompile C ι c) (mk v (place S ι σ)) n (mk v' (place S ι σ')) := by
+theorem tcompile_runs {C n : ℕ} (hC : 2 ≤ C) (hQ : n ≤ Q) {ι : Fin t → Fin T}
+    (hι : Function.Injective ι) {c : Cmd A t} {σ : Fin t → WTape}
+    {Post : (Fin t → WTape) → Prop} {B : ℕ} (h : Schoenhage.Runs c σ Post B) (hc : AllTM C n c)
+    (v : HS T Q A U) (S : Stacks T A) :
+    ∃ σ', Post σ' ∧ ∃ v' m, v'.user = v.user ∧ m ≤ C * (B + 1) ∧
+      Exec body (tcompile C n ι c) (mk v (place S ι σ)) m (mk v' (place S ι σ')) := by
   obtain ⟨σ', k, he, hq, hk⟩ := h
-  obtain ⟨v', n, hu, hn, he'⟩ := tcompile_exec body hC hι he hc v S
+  obtain ⟨v', n, hu, hn, he'⟩ := tcompile_exec body hC hQ hι he hc v S
   exact ⟨σ', hq, v', n, hu, hn.trans (Nat.mul_le_mul_left _ (by omega)), he'⟩
 
 end Compile
@@ -459,9 +465,9 @@ theorem bitSymbol_ne_sep (b : Bool) : bitSymbol (a := A) b ≠ separator := by
 theorem two_le_mul {C x : ℕ} (hC : 2 ≤ C) : 2 * x ≤ C * x := Nat.mul_le_mul_right x hC
 
 /-- Rewind on host stacks: the left stack onto the right stack. -/
-noncomputable def rewindImpl (C : ℕ) (hC : 2 ≤ C) : TImpl C (Schoenhage.Rewind.prim (a := A)) where
+noncomputable def rewindImpl (C n : ℕ) (hC : 2 ≤ C) : TImpl C n (Schoenhage.Rewind.prim (a := A)) where
   prog j := moveLR (j 0) (fun _ => true)
-  spec body j _ τ _ v S := by
+  spec body j _ _ τ _ v S := by
     obtain ⟨v', hu, he⟩ := moveLR_exec body (j 0) (fun _ => true) (lcells (τ 0).left) [] v
       (place S j τ) (by simp) rfl (by rw [place_one]; simp)
     refine ⟨v', _, hu, ?_, he.cast rfl ?_⟩
@@ -476,9 +482,9 @@ noncomputable def rewindImpl (C : ℕ) (hC : 2 ≤ C) : TImpl C (Schoenhage.Rewi
 
 /-- Back on host stacks: the separator and then the bits of the previous word onto the right
 stack. -/
-noncomputable def backImpl (C : ℕ) (hC : 2 ≤ C) : TImpl C (Schoenhage.Back.prim (a := A)) where
+noncomputable def backImpl (C n : ℕ) (hC : 2 ≤ C) : TImpl C n (Schoenhage.Back.prim (a := A)) where
   prog j := .seq (.act (popLR (j 0))) (moveLR (j 0) (fun x => decide (x ≠ separator)))
-  spec body j _ τ hpre v S := by
+  spec body j _ _ τ hpre v S := by
     obtain ⟨u, L, hL⟩ : ∃ u L, (τ 0).left = u :: L := by
       rcases h : (τ 0).left with _ | ⟨u, L⟩
       · exact absurd h hpre
@@ -510,9 +516,9 @@ noncomputable def backImpl (C : ℕ) (hC : 2 ≤ C) : TImpl C (Schoenhage.Back.p
       · simp [hL, cells_cons', List.map_reverse]
 
 /-- Clear on host stacks: rewind, then empty the right stack. -/
-noncomputable def clearImpl (C : ℕ) (hC : 2 ≤ C) : TImpl C (Schoenhage.Clear.prim (a := A)) where
+noncomputable def clearImpl (C n : ℕ) (hC : 2 ≤ C) : TImpl C n (Schoenhage.Clear.prim (a := A)) where
   prog j := .seq (moveLR (j 0) (fun _ => true)) (dropR (j 0))
-  spec body j _ τ _ v S := by
+  spec body j _ _ τ _ v S := by
     obtain ⟨v₁, hu₁, he₁⟩ := moveLR_exec body (j 0) (fun _ => true) (lcells (τ 0).left) [] v
       (place S j τ) (by simp) rfl (by rw [place_one]; simp)
     obtain ⟨v₂, hu₂, he₂⟩ := dropR_exec body (j 0) v₁
@@ -533,10 +539,10 @@ noncomputable def clearImpl (C : ℕ) (hC : 2 ≤ C) : TImpl C (Schoenhage.Clear
       · simp [cells]
 
 /-- Emit on host stacks: the cells of the words onto the left stack, in one step. -/
-noncomputable def emitImpl (C : ℕ) (hC : 2 ≤ C) (ws : List (List Bool)) :
-    TImpl C (Schoenhage.Emit.prim (a := A) ws) where
+noncomputable def emitImpl (C n : ℕ) (hC : 2 ≤ C) (ws : List (List Bool)) :
+    TImpl C n (Schoenhage.Emit.prim (a := A) ws) where
   prog j := .act (pushL (j 0) (cells ws))
-  spec body j _ τ hpre v S := by
+  spec body j _ _ τ hpre v S := by
     refine ⟨v, 1, rfl, Nat.mul_pos (by omega) (by omega), ?_⟩
     refine (Exec.act (body := body) _ _).cast rfl ?_
     rw [pushL_run]
@@ -549,18 +555,20 @@ noncomputable def emitImpl (C : ℕ) (hC : 2 ≤ C) (ws : List (List Bool)) :
 
 variable {t : ℕ}
 
-theorem allTM_rewind {C : ℕ} (hC : 2 ≤ C) (i : Fin t) : AllTM C (Schoenhage.rewind (a := A) i) :=
-  .prim ⟨rewindImpl C hC⟩
+theorem allTM_rewind {C : ℕ} (n : ℕ) (hC : 2 ≤ C) (i : Fin t) :
+    AllTM C n (Schoenhage.rewind (a := A) i) :=
+  .prim ⟨rewindImpl C n hC⟩
 
-theorem allTM_back {C : ℕ} (hC : 2 ≤ C) (i : Fin t) : AllTM C (Schoenhage.back (a := A) i) :=
-  .prim ⟨backImpl C hC⟩
+theorem allTM_back {C : ℕ} (n : ℕ) (hC : 2 ≤ C) (i : Fin t) : AllTM C n (Schoenhage.back (a := A) i) :=
+  .prim ⟨backImpl C n hC⟩
 
-theorem allTM_clear {C : ℕ} (hC : 2 ≤ C) (i : Fin t) : AllTM C (Schoenhage.clear (a := A) i) :=
-  .prim ⟨clearImpl C hC⟩
+theorem allTM_clear {C : ℕ} (n : ℕ) (hC : 2 ≤ C) (i : Fin t) :
+    AllTM C n (Schoenhage.clear (a := A) i) :=
+  .prim ⟨clearImpl C n hC⟩
 
-theorem allTM_emit {C : ℕ} (hC : 2 ≤ C) (ws : List (List Bool)) (i : Fin t) :
-    AllTM C (Schoenhage.emit (a := A) ws i) :=
-  .prim ⟨emitImpl C hC ws⟩
+theorem allTM_emit {C : ℕ} (n : ℕ) (hC : 2 ≤ C) (ws : List (List Bool)) (i : Fin t) :
+    AllTM C n (Schoenhage.emit (a := A) ws i) :=
+  .prim ⟨emitImpl C n hC ws⟩
 
 end Prims
 
