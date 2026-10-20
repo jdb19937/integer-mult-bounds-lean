@@ -18,10 +18,11 @@ Consumers (Host, Cost, Fast, Node and the compact gadgets) are not edited. The s
 idempotent: rerun it after an upstream merge. Files that use `Parameters.tau` outside the supplier
 list and outside the known consumers are reported for a decision.
 
-usage: apply_seam.py [--dry-run] [--supplier=shared50|m8]
+usage: apply_seam.py [--dry-run] [--supplier=m8|pr97]
 
 The chosen supplier is kept in `supplier.txt`; `m8` points the seams at the M8 machine on
-Shared50 as a bit network (`M8/Machine/Shared50Network`).
+Shared50 as a bit network (`M8/Machine/Shared50Network`). The `shared50` choice, Kenny's own
+machine, was retired with its modules (`docs/retired-shared50-machine.md`).
 """
 import re
 import sys
@@ -134,60 +135,45 @@ M8 = 'IntegerMultBounds.MathlibTM2.M8.Machine'
 SUPPLIER_FILE = Path(__file__).parent / 'supplier.txt'
 supplier_arg = [a.split('=', 1)[1] for a in sys.argv if a.startswith('--supplier=')]
 supplier_choice = supplier_arg[0] if supplier_arg else (
-    SUPPLIER_FILE.read_text().strip() if SUPPLIER_FILE.exists() else 'shared50')
-assert supplier_choice in ('shared50', 'm8', 'pr97'), supplier_choice
+    SUPPLIER_FILE.read_text().strip() if SUPPLIER_FILE.exists() else 'pr97')
+assert supplier_choice in ('m8', 'pr97'), supplier_choice
 
-if supplier_choice == 'shared50':
-    impl = {'radix': 'Shared50BinaryRadixEqualShared', 'run': 'Shared50BinaryInterchangeRun',
-            'budget': 'Shared50BinaryInterchangeBudget'}
-    impl_mod = {k: 'IntegerMultBounds.Machine.' + v for k, v in impl.items()}
-    impl_ns = {'radix': 'Shared50BinaryRadixEqualShared', 'run': 'Shared50BinaryInterchangeRun'}
-    tau_text = 'Shared50Parameters.tau'
-    radix_doc = ('is Shared50 (`Shared50BinaryRadixEqualShared`); its exponent `Shared50Parameters.tau` is the\n'
-                 'exponent `Parameters.tau` of the cost chain (`supplier_tau`), at which `uniform_bound` is stated.')
-    run_doc = 'The supplier is Shared50 (`Shared50BinaryInterchangeRun`).'
-    extra_import = ''
-    instance_decl = ''
-    tau_proof = '  norm_num [Shared50Parameters.tau, Parameters.tau]'
-    tau_lhs = 'Shared50Parameters.tau'
-    texts = {k: read(MACHINE / (v + '.lean')) for k, v in impl.items()}
+if supplier_choice == 'm8':
+    net_doc = 'the M8 machine on Shared50 as a bit network (`M8.Machine.Shared50Network.net`)'
+    net_term = M8 + '.Shared50Network.net'
+    net_import = 'public import ' + M8 + '.Shared50Network\n'
+    tau_proof = ('  change ' + M8 + '.Shared50Network.network.tau = Parameters.tau\n'
+                 '  rw [' + M8 + '.Shared50Network.network_tau]\n'
+                 '  norm_num [Shared50Parameters.tau, Parameters.tau]')
+    tau_word = 'the network exponent `Shared50Parameters.tau`'
 else:
-    if supplier_choice == 'm8':
-        net_doc = 'the M8 machine on Shared50 as a bit network (`M8.Machine.Shared50Network.net`)'
-        net_term = M8 + '.Shared50Network.net'
-        net_import = 'public import ' + M8 + '.Shared50Network\n'
-        tau_proof = ('  change ' + M8 + '.Shared50Network.network.tau = Parameters.tau\n'
-                     '  rw [' + M8 + '.Shared50Network.network_tau]\n'
-                     '  norm_num [Shared50Parameters.tau, Parameters.tau]')
-        tau_word = 'the network exponent `Shared50Parameters.tau`'
-    else:
-        G = 'IntegerMultBounds.MathlibTM2.M8.Global'
-        net_doc = 'the M8 machine on the PR97 node (`M8.Global.pr97`)'
-        net_term = '⟨' + G + '.pr97, ' + G + '.runs_pr97.supports⟩'
-        net_import = 'public import ' + G + '.Instance\n'
-        tau_proof = ('  change ' + G + '.pr97.tau = Parameters.tau\n'
-                     '  rw [' + G + '.pr97_tau]\n'
-                     '  norm_num [' + G + '.Branching97.tau, ' + G + '.Branching97.saving, Parameters.tau]')
-        tau_word = 'the PR97 exponent `Global.Branching97.tau`'
-    impl_mod = {'radix': M8 + '.BinaryRadixEqualShared', 'run': M8 + '.BinaryInterchangeRun',
-                'budget': M8 + '.BinaryInterchangeBudget'}
-    impl_ns = {'radix': M8 + '.BinaryRadixEqualShared', 'run': M8 + '.BinaryInterchangeRun'}
-    tau_text = 'BudgetBound.tau'
-    if supplier_choice == 'm8':
-        radix_doc = ('is the M8 machine on Shared50 as a bit network (`M8.Machine.Shared50Network.net`); its\n'
-                     'exponent, the network exponent `Shared50Parameters.tau`, is the exponent `Parameters.tau` of\n'
-                     'the cost chain (`supplier_tau`), at which `uniform_bound` is stated.')
-        run_doc = ('The supplier is the M8 machine on Shared50 as a bit network\n'
-                   '(`M8.Machine.BinaryInterchangeRun`).')
-    else:
-        radix_doc = ('is ' + net_doc + '; its exponent, ' + tau_word + ', is the exponent\n'
-                     '`Parameters.tau` of the cost chain (`supplier_tau`), at which `uniform_bound` is stated.')
-        run_doc = 'The supplier is ' + net_doc + '.'
-    extra_import = net_import
-    instance_decl = ('/-- The network of the supplier machine. -/\n'
-                     'noncomputable instance supplierNet : ' + M8 + '.Net := ' + net_term + '\n\n')
-    tau_lhs = M8 + '.BudgetBound.tau'
-    texts = {k: (ROOT / (v.replace('.', '/') + '.lean')).read_text() for k, v in impl_mod.items()}
+    G = 'IntegerMultBounds.MathlibTM2.M8.Global'
+    net_doc = 'the M8 machine on the PR97 node (`M8.Global.pr97`)'
+    net_term = '⟨' + G + '.pr97, ' + G + '.runs_pr97.supports⟩'
+    net_import = 'public import ' + G + '.Instance\n'
+    tau_proof = ('  change ' + G + '.pr97.tau = Parameters.tau\n'
+                 '  rw [' + G + '.pr97_tau]\n'
+                 '  norm_num [' + G + '.Branching97.tau, ' + G + '.Branching97.saving, Parameters.tau]')
+    tau_word = 'the PR97 exponent `Global.Branching97.tau`'
+impl_mod = {'radix': M8 + '.BinaryRadixEqualShared', 'run': M8 + '.BinaryInterchangeRun',
+            'budget': M8 + '.BinaryInterchangeBudget'}
+impl_ns = {'radix': M8 + '.BinaryRadixEqualShared', 'run': M8 + '.BinaryInterchangeRun'}
+tau_text = 'BudgetBound.tau'
+if supplier_choice == 'm8':
+    radix_doc = ('is the M8 machine on Shared50 as a bit network (`M8.Machine.Shared50Network.net`); its\n'
+                 'exponent, the network exponent `Shared50Parameters.tau`, is the exponent `Parameters.tau` of\n'
+                 'the cost chain (`supplier_tau`), at which `uniform_bound` is stated.')
+    run_doc = ('The supplier is the M8 machine on Shared50 as a bit network\n'
+               '(`M8.Machine.BinaryInterchangeRun`).')
+else:
+    radix_doc = ('is ' + net_doc + '; its exponent, ' + tau_word + ', is the exponent\n'
+                 '`Parameters.tau` of the cost chain (`supplier_tau`), at which `uniform_bound` is stated.')
+    run_doc = 'The supplier is ' + net_doc + '.'
+extra_import = net_import
+instance_decl = ('/-- The network of the supplier machine. -/\n'
+                 'noncomputable instance supplierNet : ' + M8 + '.Net := ' + net_term + '\n\n')
+tau_lhs = M8 + '.BudgetBound.tau'
+texts = {k: (ROOT / (v.replace('.', '/') + '.lean')).read_text() for k, v in impl_mod.items()}
 
 radix, run, budget = texts['radix'], texts['run'], texts['budget']
 
@@ -269,17 +255,7 @@ write(MACHINE / 'BinaryRadixEqualShared.lean', seam_radix)
 write(MACHINE / 'BinaryInterchangeRun.lean', seam_run)
 write(MACHINE / 'BinaryInterchangeBudget.lean', seam_budget)
 
-# 5. The root imports the Shared50 implementations next to the seams.
-p = ROOT / 'IntegerMultBounds.lean'
-t = read(p)
-for old, new in MOVES.items():
-    line = f'public import IntegerMultBounds.Machine.{new}\n'
-    if line not in t:
-        t = t.replace(f'public import IntegerMultBounds.Machine.{old}\n',
-                      f'public import IntegerMultBounds.Machine.{old}\n' + line, 1)
-write(p, t)
-
-# 6. Report unclassified uses of `Parameters.tau`.
+# 5. Report unclassified uses of `Parameters.tau`.
 consumers_ok = ('IntegerMultBounds/MathlibTM2/', 'IntegerMultBounds/Parameters.lean')
 supplier_paths = {module_path(m) for m in supplier}
 unclassified = []

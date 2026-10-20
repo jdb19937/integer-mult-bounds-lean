@@ -45,9 +45,9 @@ A module was removed only if:
   audits; and
 - it had been reachable on `master` at `3e7d90a4`.
 
-Modules already outside those closures on `master` remain. So do the Shared50
-interchange supplier modules that `scripts/s6/apply_seam.py` can switch back
-to.
+Modules already outside those closures on `master` remain. The Shared50
+interchange supplier modules were kept here and retired later
+([record](retired-shared50-machine.md)).
 
 The compact control check no longer audits the 19 removed native contracts.
 No retained theorem statement or proof limit was weakened.

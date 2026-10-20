@@ -538,7 +538,6 @@ makes those names a seam, and it is idempotent, so it can be rerun after an upst
 
 `Parameters.tau` is now the exponent of the cost chain, and no consumer was edited. The choice of
 supplier is kept in `scripts/s6/supplier.txt`:
-- `shared50` re-exports Kenny's machine;
 - `m8` re-exports the M8 machine at Shared50 as a bit network (`Machine/Shared50Network`),
   under a sealed instance;
 - `pr97`, the current choice, re-exports the M8 machine at the PR97 node (`Global/Instance`),
@@ -548,7 +547,8 @@ At `pr97` the default build, the `Theorem` target and the seven checks (`Complet
 `CompactControlCheck`, `AxiomAudit`, `MathlibTM2Check`, `FastPathCheck`, `CRTControlCheck`,
 `CRTGapCheck`) are green, with κ = 111364923/2⁴⁶. `mulInTime` and `DFT.dftInTime` use only
 `propext`, `Classical.choice` and `Quot.sound`. `Host.swapMachine` and the gadget programs unfold
-to M8's programs. Kenny's Shared50 tail and root are outside the theorem's cone.
+to M8's programs. Kenny's Shared50 tail and root, and with them the `shared50` choice, were
+retired ([record](../../../docs/retired-shared50-machine.md)).
 
 **The PR97 choice** (`apply_seam.py --supplier=pr97`, then `scripts/s6/retune.py`) sets:
 - the seam instance and `supplier_tau`, from `Global/Branching97`;

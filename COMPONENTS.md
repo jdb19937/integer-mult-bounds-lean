@@ -1195,13 +1195,9 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/FixedBaseDescriptorQuotient.lean`: One fixed fourteen-tape program replaces its sole canonical runtime descriptor by the canonical quotient by a compiled fixed base and physically erases the remainder. All thirteen private tapes are blank again. Exact divisible suffix shrinking and a fixed-base linear-input-value bound support the repeated high-digit movement controller.
 
-- `Machine/ArbitraryWidthConsumePlacement.lean`: Injective placement of the actual runtime-counted slice consume program into the fourteen-tape digit dispatcher prefix and shared slice bank. The emitted digit and clock are shared physically while all other dispatcher controls and auxiliary tapes are preserved.
 
-- `Machine/ArbitraryWidthLevelPlacement.lean`: Actual depth and power-width advance shares the slice-width descriptor while preserving the recursive bank, offset, original parent headers and remaining-width controls. Fixed placements have exact clean framed endpoints.
 
-- `Machine/ArbitraryWidthPieceConsume.lean`: The actual continuation first executes the digit-counted paid slice calls, then physically advances recursion depth and power width. Exact repeated-window output, digit erasure, offset increment and clean level update are derived without a callback execution assumption. Certified cost includes both programs and their composition; whole dispatcher initialization, invariant and final cleanup remain separate.
 
-- `Machine/ArbitraryWidthPiecePrefix.lean`: The runtime outer dispatcher has an exact base-digit prefix schedule. Cumulative offset plus the remaining quotient contribution equals original width, proving every step fits. Literal repeated-slice images compose at successive levels and the final image is the full transpose, including zero width. Selected levels satisfy the common padded-row divisor bound.
 
 - `Machine/ArbitraryWidthHighBudget.lean`: The actual high-digit selector satisfies an explicit constant times every positive width exponent, for all positive widths. The logarithmic construction cost and every fixed-coefficient per-digit movement therefore preserve the certified exponent rather than weakening it to a linear-width bound.
 
@@ -1209,25 +1205,17 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ArbitraryWidthHighExchangePlacement.lean`: Injective tape placement shares high-exchange controls with the complete recursive slice bank. Exact framed initialization and cleanup preserve every original parent descriptor, stack and payload spectator.
 
-- `Machine/ArbitraryWidthHighExchangeSemantics.lean`: Exact numeric high-prefix swap agrees with the literal width-rho slice permutation on every serialized address, including unchanged low digits and gap fields.
 
-- `Machine/ArbitraryWidthHighExchange.lean`: One actual fixed program initializes controls, executes rho real depth-zero slice calls and clears every created descriptor. Sole original canonical headers and retained rho suffice; exact high-field interchange and constant times (rho+1) times parent volume include all root calls, offset advances and cleanup. Joining and separation loops remain distinct.
 
 - `Machine/ArbitraryWidthHighGuard.lean`: The concrete integer depth and high-row selectors equal the manuscript real ceilings. High depth is positive beyond unit width and eventually below the original width, proving a fixed bounded set suffices for the elementary fallback. This proves the branch arithmetic, not the fallback machine.
 
 - `Machine/ArbitraryWidthHighMetadataBudget.lean`: The actual rounded high-row count is uniformly bounded by a fixed multiple of the original array volume, for every width. The large-width branch uses the selected high-depth guard; the bounded fallback uses monotonicity of the runtime divisor. Thus constructing row metadata before branch selection has a paid linear-volume bound on both branches.
 
-- `Machine/ArbitraryWidthElementary.lean`: One actual fixed program takes sole original canonical parent headers and a completely blank sixteen-tape private bank. It copies the width header, executes all corresponding unit-digit swaps with the proved recursive base machine, and erases the copy. Exact full transpose, restored headers/stacks and complete private cleanup hold even at zero width. Every fixed bounded set of positive widths has linear-volume runtime and therefore satisfies the unchanged positive width exponent.
 
-- `Machine/ArbitraryWidthLevelLifecycle.lean`: Physical setup initializes base, unit power width and zero depth on the shared slice-control bank. Final cleanup clears all six level controls while preserving arbitrary parent payload, original shape descriptors and caller tapes.
 
-- `Machine/ArbitraryWidthPieceExecution.lean`: One concrete fixed outer program repeatedly extracts actual runtime base digits, consumes them with real repeated slices, advances depth and power width, and follows the proved prefix invariant. Its complete dispatcher endpoint is the full transpose, with physically advanced controls. No callback execution oracle is supplied; exact accumulated costs are paid.
 
-- `Machine/ArbitraryWidthPieceSetup.lean`: From sole original parent headers and blank private controls, physically copy the original width into the remaining counter, construct the zero offset, and initialize the fixed base/depth/power controls. Every copied or constructed descriptor is charged.
 
-- `Machine/ArbitraryWidthPieceCleanup.lean`: Complete physical final erasure of remaining width, final offset and all depth/power/base controls. Original parent headers, array, stacks and framed caller storage survive exactly.
 
-- `Machine/ArbitraryWidthPieceRun.lean`: The actual fixed dispatcher composes sole-header initialization, every real extracted-digit slice call, exact full transpose and final control cleanup. All fourteen dispatcher, eleven slice-work and six level private controls return blank, while original metadata and caller banks are restored. A complete paid natural cost expression is proved; converting its accumulated cost to the certified exponent remains separate.
 
 - `Machine/PlacedDescriptorConstruction.lean`: Exact single-output framing places power and product constructors into an arbitrary larger bank. Every tape and head outside the generated output is retained literally; no supplied runtime result is assumed.
 
@@ -1245,11 +1233,9 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryDescriptorDifference.lean`: One fixed three-tape finite-alphabet program subtracts arbitrary-width immutable marked operands and physically normalizes the result. Both original words and heads are preserved, the output is canonical at head one, and no padded operands or derived result are supplied. Exact runtime is bounded by six times the larger descriptor length plus21, or six times the original minuend value plus27 for canonical inputs.
 
-- `Machine/ArbitraryWidthPieceCost.lean`: The complete actual piece dispatcher runtime is bounded by the fully paid digit-weighted slice budgets plus explicit physical control overhead. Its sole-header setup, all runtime digit steps and complete cleanup satisfy a fixed positive coefficient times volume times positive width to the unchanged certified exponent; a width-plus-one version includes zero. No callback execution or cost oracle is assumed.
 
 - `Machine/RadixHighBlockJoinSemantics.lean`: Successive single-radix movements join an entire runtime high block in its original digit order. Exact indexed cells and equality to the whole block transpose are proved for arbitrary payload symbols and all spectators.
 
-- `Machine/ArbitraryWidthHighMovementSemantics.lean`: The actual high-prefix exchange followed by ordered joining has exactly the manuscript joined-row layout, with literal prefix/spectator/suffix dimensions and explicit finite-index casts. Separation agrees with the return layout, and exchange, join, low transpose and separation compose to the exact original full transpose.
 
 - `Machine/ArbitraryWidthHighBranch.lean`: One fixed fifteen-state finite controller physically compares retained high depth with width, tests positive canonical high depth, selects the exact manuscript high or fallback branch and erases its comparison flag. Both operands and every head are preserved, with exact selected terminal state and length/value/volume runtime bounds.
 
@@ -1263,13 +1249,11 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RadixHighBlockJoinLoop.lean`: A concrete runtime-counted loop executes every high digit in order from a canonical retained exponent. Its computed trace is proved step by step from the actual body; the final payload is exactly the whole-block ordered join, with paid clocks and preserved inputs.
 
-- `Machine/RadixHighBlockJoinRun.lean`: The complete actual forward high-block join starts from sole original shape/count descriptors and blank private storage. It constructs movement controls, executes the real counted loop and erases every private descriptor. Exact ordered payload output and fixed-coefficient volume-times-count bound are proved; the actual high-depth selector retains every positive target width exponent.
 
 - `Machine/RadixHighBlockSeparateSemantics.lean`: Repeated trailing-digit movement separates the joined high block in exact original digit order. Its recursive array is proved equal to the literal whole-block separation, preserving every spectator and arbitrary payload symbol.
 
 - `Machine/RadixHighBlockSeparateLoop.lean`: The actual retained-exponent counted loop executes every inverse high-digit movement, with a computed step trace and exact whole-block separated endpoint. All clocks and shared arithmetic work are paid and restored; no callback execution oracle is supplied.
 
-- `Machine/RadixHighBlockSeparateRun.lean`: The complete inverse high-block separator constructs its movement controls from sole original shape/count headers, executes the actual counted loop and erases every private descriptor. The exact whole-block move and fixed-coefficient volume-times-count bound are proved, preserving every positive target width exponent for the actual runtime high-depth selector.
 
 - `Machine/ArbitraryWidthHighDimensions.lean`: An actual seventeen-tape constructor takes only retained canonical P/G/B/width/high-depth headers and blank private storage. It physically computes low width by normalized immutable subtraction, both radix powers and all three high-block movement dimensions, preserving original inputs and restoring all six arithmetic tapes. Exact generated values and a fixed-radix linear original-volume runtime bound are proved.
 
@@ -1285,39 +1269,25 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ArbitraryWidthHighPrefix.lean`: The three original prefix factors are physically folded into one canonical descriptor by two real products followed by intermediate erasure on eight tapes. All originals and scratch are retained/restored; construction costs at most174 times a dominating volume and final cleanup8 times it. Exact folded volume and address identities cover arbitrary original row/prefix factorizations.
 
-- `Machine/ArbitraryWidthHighExchangeShared.lean`: The actual complete high-prefix exchange is placed on an arbitrary caller source through the true recursive I/O slot. It preserves every other caller tape and the private recursive root/header/stack/control bank, with the exact high-exchanged binary word and its fully paid original-volume runtime. No callback execution trace is supplied.
 
-- `Machine/ArbitraryWidthHighMovementPlacement.lean`: Actual complete high-block joining and separation run through one physically shared source tape in an arbitrary caller bank. All other caller tapes and heads are preserved, the exact ordered payload is returned and the private movement bank is fully restored; runtime uses the actual sole-header Run programs.
 
-- `Machine/ArbitraryWidthHighPaddedBudget.lean`: The exact runtime high-row rounding increases original payload volume by at most two. The selected depth automatically supplies the actual low dispatcher width/divisibility conditions, so its physical execution requires no supplied depth or row-divisor oracle. Its complete runtime, including initialization and cleanup, satisfies twice its certified coefficient times original volume times original width to the unchanged exponent.
 
 - `Machine/ArbitraryWidthHighFoldSemantics.lean`: Literal finite-index folding combines all original prefix and row factors without changing any serialized cell. The full transpose of any valid original row-divisor view equals the folded row-one transpose, with exact source-word and binary-encoding identities.
 
-- `Machine/ArbitraryWidthHighExchangeJoinEncoding.lean`: The recursive I/O source encoding is exactly the literal larger-alphabet word consumed by ordered movement. High exchange commutes with bit encoding, and the actual ordered join word is exactly the manuscript exchangeJoin view.
 
-- `Machine/ArbitraryWidthHighSeparateShared.lean`: The actual inverse separator operates on the joined binary I/O source through one physically shared caller tape. Its output is exactly the manuscript separateExchange word, all other caller and private-bank cells/heads are restored, and its complete runtime is paid against original volume and retained high-digit count.
 
-- `Machine/ArbitraryWidthHighExchangeJoin.lean`: One actual fixed stage physically exchanges the high prefixes and joins their ordered block on the same caller source tape. Both complete private banks are restored, every other caller tape/head is retained and the output is exactly the encoded manuscript joined view. The paid coefficient-times-volume-times-count bound includes the real sequential edge; no callback execution is supplied.
 
-- `Machine/ArbitraryWidthHighPrepareShared.lean`: Actual high-row preparation reads the original canonical caller width through one physically shared descriptor tape. It computes depth, divisor, high-digit count, rows and rounded rows into nineteen blank private tapes, retains every caller tape/head and subsequently erases the complete metadata bank. No derived metadata or execution trace is supplied.
 
 - `Machine/ArbitraryWidthHighFoldHeaders.lean`: An actual sixteen-tape program folds the three retained original prefix factors, writes the two unit headers and copies width/spectators into six blank target root headers. All original six headers and arithmetic scratch are retained/restored. Exact folded Headers correctness and a224-times-dominating-volume setup bound are proved.
 
 - `Machine/ArbitraryWidthHighFoldHeadersCleanup.lean`: The actual six-target root-header erasure restores the complete folded-header input bank while retaining every original descriptor and blank arithmetic tape. Exact lifecycle restoration and a54-times-dominating-volume cleanup bound are proved.
 
-- `Machine/ArbitraryWidthPaddedPiecePlacement.lean`: The complete actual runtime piece dispatcher shares its true recursive I/O source with an arbitrary caller payload tape. Every caller tape outside the source and the entire private recursive/dispatcher/frame bank are preserved exactly.
 
-- `Machine/ArbitraryWidthPaddedPieceArrays.lean`: Literal bit-array serialization identifies the recursive I/O source with grouped row padding and cropping at descriptor-level volumes. All finite-index casts, zero fills, row views and exact consumed-word erasure are proved.
 
-- `Machine/ArbitraryWidthPaddedPiecePadding.lean`: Actual larger-alphabet constructed padding and swapped cropping have literal original/padded descriptor endpoints and canonical header contracts. Both data tape heads and private counters are restored, with the complete413-times-padded-volume bound in each direction.
 
-- `Machine/ArbitraryWidthPaddedPieceRun.lean`: One actual fixed program physically pads the rows, runs the complete piece dispatcher on the shared padded data, and crops back onto the original source. Its exact unpadded full transpose, restored work/private banks and natural runtime826-times-padded-volume plus the actual dispatcher cost plus two transitions are proved.
 
-- `Machine/ArbitraryWidthPaddedPieceShared.lean`: The actual complete pad-dispatch-crop program operates through an arbitrary caller source. It returns the exact unpadded transpose, preserves every other caller tape/head and restores its entire private padding/root/dispatcher bank without an execution callback.
 
-- `Machine/ArbitraryWidthHighCost.lean`: The sum of fully paid exchange-join, padding, actual low dispatcher, cropping, separation, five sequential edges and any fixed linear metadata coefficient has a positive coefficient times original volume times original width to the unchanged certified exponent. Numerical assembly is separate from physical execution, which is supplied by HighRun for the body.
 
-- `Machine/ArbitraryWidthHighRun.lean`: One actual fixed high-width body composes high-prefix exchange, ordered joining, physical row padding, the complete low-width dispatcher, physical cropping and inverse separation on the same caller source. The result is exactly the original full transpose and every private execution bank is restored. Runtime-selected depth/divisibility premises are derived internally, all five sequential edges are charged, and the actual natural runtime retains the certified exponent. Canonical derived headers are still explicit inputs; their constructors and branch/outer-wrapper assembly remain separate.
 
 - `Machine/FixedHeaderBankCopy.lean`: One actual finite program copies a fixed family of retained canonical caller descriptors into appended blank target tapes, preserving every caller tape/head even when sources repeat. Exact target bank and fixed-family linear-volume construction and erasure costs are proved.
 
@@ -1325,9 +1295,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ArbitraryWidthHighDimensionsShared.lean`: The actual shared dimension lifecycle first copies five original caller headers into a blank seventeen-tape bank, computes low width/radix powers/movement dimensions and later erases both generated and copied descriptors. Every caller tape/head is preserved; complete setup and cleanup have fixed-radix linear original-volume bounds. No preconstructed generated bank is supplied.
 
-- `Machine/ArbitraryWidthElementaryShared.lean`: The actual elementary multiplier-width transpose fallback shares its recursive I/O source with an arbitrary caller. It physically copies the original width, performs every digit swap and erases the count, while retaining all other caller and private-bank fields. Exact full transpose, bounded-width linear cost and the certified positive-exponent budget are proved.
 
-- `Machine/ArbitraryWidthHighBranchComposition.lean`: One actual finite-flow composition runs the physical high-width selector and jumps into the selected high or elementary branch program with its flag erased and bank restored. Exact conditional outputs, genuine halting and all selector/jump/branch costs follow from branch contracts. The actual high-depth fallback set has a fixed cutoff. Instantiating the complete original-header wrapper remains separate.
 
 - `Machine/ArbitraryWidthHighFoldHeadersShared.lean`: Copies the six original caller descriptors into blank private storage, constructs the folded prefix and root headers, and erases the complete private bank after use. Literal caller and generated-header views and paid linear construction/cleanup bounds are proved.
 
@@ -1335,83 +1303,53 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ArbitraryWidthHighDimensionsAndSuffixShared.lean`: Constructs the high movement dimensions and joined-row suffix from original caller headers in a blank seventeen-tape bank, then erases every copied and generated descriptor. Literal header values, canonicality, source slots, and linear-volume lifecycle costs are proved.
 
-- `Machine/ArbitraryWidthExecutionPrivateHeadersCore.lean`: Defines literal blank control and stack banks and structural sparse-header identities without runtime initialization assumptions.
 
 - `Machine/ArbitraryWidthExecutionPrivateHeadersAppend.lean`: Proves exact sparse header banks across appended private storage, with named slots and preserved blank complements.
 
-- `Machine/ArbitraryWidthExecutionPrivateHeadersRoot.lean`: Identifies the exact seven exchange and six elementary private header slots and their sparse banks, including the retained high count.
 
-- `Machine/ArbitraryWidthExecutionPrivateHeadersPadding.lean`: Identifies all ten actual padding and low-dispatch root header slots and proves their sparse private-bank equality.
 
-- `Machine/ArbitraryWidthExecutionPrivateHeadersMovement.lean`: Identifies all five actual movement header slots and their literal private-bank equality. The clock contains a canonical zero marker and must be physically initialized.
 
-- `Machine/ArbitraryWidthElementaryInitialize.lean`: Physically copies six retained caller headers into the actual elementary private bank and erases them afterward, starting and ending with wholly blank storage. Setup and cleanup cost at most sixty and fifty-four times a dominating volume.
 
-- `Machine/ArbitraryWidthElementaryInitializedRun.lean`: Composes actual header initialization, the complete elementary transpose and private cleanup. All private storage starts and ends blank; no ready-bank or generated-header premise is supplied. Exact transpose and bounded-width linear and certified-exponent budgets include every sequential edge.
 
-- `Machine/ArbitraryWidthHighExecutionInitialize.lean`: Physically copies seven exchange, five movement and ten padding/root descriptors from retained caller sources into three wholly blank execution banks. Repeated source slots are allowed; exact literal private banks and a two-hundred-twenty-two-times-volume setup bound are proved, including the movement clock marker.
 
-- `Machine/ArbitraryWidthHighExecutionInitializeCleanup.lean`: Actually erases all high execution headers in reverse padding, movement and exchange order, restoring three blank private banks and retaining the arbitrary caller. The two-hundred-times-volume cleanup includes physical erasure of the canonical-zero clock marker.
 
 - `Machine/ArbitraryWidthZeroHeaderShared.lean`: An actual fixed writer constructs the canonical-zero descriptor marker from a blank appended tape, and an actual eraser restores blank storage. Every caller tape is preserved; exact six-transition setup and four-transition cleanup are proved.
 
-- `Machine/ArbitraryWidthHighHeaderBounds.lean`: Derives canonicality and twice-original-volume bounds for every exchange, movement and padding/root header from the semantic descriptor and runtime high-layout contracts. No separate header-size oracle is supplied.
 
-- `Machine/ArbitraryWidthHighInitializedRun.lean`: One actual program initializes all twenty-two execution headers in blank private banks, runs the complete high-width body and physically erases every header afterward. Exact transpose and blank-bank restoration are proved without Ready or Free premises. All copying, execution, cleanup and sequential edges retain the certified exponent.
 
-- `Machine/ArbitraryWidthHighOriginalEncoding.lean`: Proves that folding the original prefix/row factors changes no literal serialized source cell, and that the high branch output is exactly the original full transpose for any valid positive row divisor.
 
-- `Machine/ArbitraryWidthHighCommonPrepare.lean`: Physically folds the six original caller headers and constructs runtime depth, divisor, high count, rows and rounded rows from the sole original width, starting in blank sixteen- and nineteen-tape banks. Reverse cleanup restores both blank banks, retains the original caller, and has paid linear-volume bounds.
 
-- `Machine/ArbitraryWidthHighBranchPrepare.lean`: Physically constructs high movement dimensions and row suffix, joined padded-root headers, and the canonical-zero clock in three wholly blank banks. The reverse lifecycle erases all storage; exact banks, all sequential edges, and dominating original-volume setup and cleanup bounds are proved.
 
-- `Machine/ArbitraryWidthHighRuntimeHeaderWiring.lean`: Defines the actual exchange, movement and padding copy-source slots across the constructed dimension, joined-root and zero-clock banks. Literal tape/head source contracts, canonical generated movement words, row-padding headers and the low-root Headers interface are proved from the real metadata constructors.
 
-- `Machine/ArbitraryWidthHighPreparedRun.lean`: One actual high program constructs all arithmetic/joined/zero metadata from retained sources, initializes the blank execution banks, runs the complete interchange and erases both execution and metadata banks. Literal transpose, entirely blank private endpoints, and the unchanged certified exponent are proved.
 
-- `Machine/ArbitraryWidthHighCommonHeaderWiring.lean`: Maps the actual common folded/root and row-preparation banks to exchange, movement-original and joined-original source families. All literal source tapes, canonicality, values and prefix positivity follow from the original six descriptor headers.
 
-- `Machine/ArbitraryWidthHighCommonHighBody.lean`: Instantiates the prepared high execution using only the actual common preparation output and original descriptor headers. It returns the exact original full transpose and restores every high-private bank to blank. No supplied derived headers or execution contracts enter its correctness or certified runtime bound.
 
-- `Machine/ArbitraryWidthHighCommonFallback.lean`: Composes actual common preparation, initialized elementary transpose and common cleanup from original headers, paying every transition and restoring all private banks. A separate zero-width execution avoids positive-width metadata preparation.
 
-- `Machine/ArbitraryWidthHighCommonFallbackBody.lean`: Runs the actual elementary transpose after common preparation without repeating metadata setup. It preserves every common generated field and restores elementary private storage, with exact original transpose and bounded-width cost.
 
-- `Machine/ArbitraryWidthHighFramedFallback.lean`: Places the actual original-header elementary fallback on the same complete private-bank layout as the high branch. Every unused high bank and common metadata field is preserved; the payload becomes the original full transpose and elementary storage is restored blank.
 
-- `Machine/ArbitraryWidthHighCommonSelector.lean`: Runs the actual high/fallback comparison on constructed high-count and original-width descriptors, using a proven blank common slot for its flag. The complete bank is restored, slot separation is proved, and comparison time has a uniform linear original-volume bound even on fallback widths.
 
-- `Machine/ArbitraryWidthHighCommonDispatch.lean`: Instantiates the actual physical selector with the complete prepared high and framed elementary programs on one bank. Only original descriptor headers and payload are assumed; the selected real branch yields the same exact original transpose and restores all branch-private storage.
 
-- `Machine/ArbitraryWidthHighCommonDispatchCost.lean`: Proves one positive uniform coefficient for the actual selector and selected high/fallback execution at the certified width exponent. The finite fallback cutoff follows from the actual high-count selector; comparison, real branch work and the jump are all charged.
 
-- `Machine/ArbitraryWidthOriginalZeroBranch.lean`: A real one-transition branch reads the retained canonical width header, whose scanned symbol is blank exactly at zero width. The zero branch runs the actual elementary machine on the full blank global workspace and restores every private bank. The positive body still requires concrete outer-run instantiation.
 
 - `Machine/BinaryRadixRangePrepareAlphabet.lean`: Executes binary-to-radix range preparation and inverse cropping on the recursive alphabet through the actual alphabet lift. Literal encoded bit and descriptor banks, exact pad/transpose/crop endpoints and unchanged paid runtime are proved.
 
 - `Machine/BinaryRadixRootHeadersShared.lean`: Physically writes a temporary canonical one, copies six recursive root headers from the prepared binary bank, and erases the temporary one. All caller storage is retained; exact root Headers, literal copy slots, and original-binary-volume setup/cleanup bounds are proved.
 
-- `Machine/BinaryRadixRootEncoding.lean`: Identifies the numerical padded-range array with the recursive root descriptor at every serialized cell and full-transpose output. Literal bit encoding and padding zero-fill bridges eliminate any assumed payload conversion between the two actual machines.
 
 - `Machine/BinaryAdjacentWidthInterchange.lean`: Proves exact rectangular transposition for binary widths differing by one as an equal-width transpose and one actual fixed-radix-two movement, with the inverse orientation using real unmovement first. Literal serialized endpoints and paid movement proofs cover arbitrary spectators and zero shorter width. Header construction and full composition with the equal-width wrapper remain separate.
 
-- `Machine/ArbitraryWidthOriginalRun.lean`: One actual positive-width program constructs common metadata from the original six descriptor fields, executes the physical selector and selected complete high/fallback branch, and erases all common and branch-private storage. Exact original transpose and a positive uniform coefficient at the certified width exponent are proved without derived metadata or execution callbacks.
 
-- `Machine/ArbitraryWidthOriginalTotalRun.lean`: Instantiates the actual zero-width read with the complete positive-width original run. The fixed program handles every width from only original canonical headers and payload, produces the exact full transpose and restores all private banks to blank. Its paid runtime has one positive uniform coefficient times original volume times max-one-width to the certified exponent.
 
 - `Machine/BinaryAdjacentWidthHeadersShared.lean`: Actually writes the zero high-count control and constructs P, binary-range times G, and binary-range times B from the four original P/G/B/width headers. Named movement source slots, literal canonical values, caller preservation and reverse erasure of every generated field have linear rectangular-volume bounds.
 
 - `Machine/BinaryAdjacentWidthMovementShared.lean`: One actual shared-source lifecycle constructs binary movement dimensions from only the original four P/G/B/width headers, physically copies the three execution headers, executes radix-two movement or inverse movement, and erases every generated and copied descriptor. All forty private tapes start and finish blank; exact movement words, arbitrary caller preservation and linear rectangular-volume runtime are proved without generated-header or preimage assumptions.
 
-- `Machine/BinaryRadixRangeRuntimeBudget.lean`: Bounds the actual total radix-run cost after numerical binary range padding, and absorbs preparation, physical root-header setup/cleanup, cropping and four real joins. The complete stage cost preserves the certified exponent against original binary volume and max-one binary width.
 
-- `Machine/BinaryRadixEqualRun.lean`: One actual fixed five-stage machine prepares binary-to-radix data, physically constructs six root headers, runs the complete total radix interchange, erases the root headers, and crops while erasing numerical range metadata. Exact original binary transpose, wholly blank private endpoints, zero-width coverage and one positive uniform coefficient at the certified exponent are proved.
 
 - `Machine/BinaryRadixEqualShared.lean`: Physically copies the four original caller shape/width headers into blank private storage, shares the literal payload with the complete binary interchange, and erases the copied headers afterward. Exact transpose and preservation of all other caller fields and private blank storage are proved, with the unchanged certified exponent.
 
 - `Machine/BinaryAdjacentWidthPrefixShared.lean`: Physically writes the canonical one and constructs the doubled spectator prefix from original headers using the radix-two dimension engine. Literal doubled-prefix sources, canonical values, caller preservation, paid rectangular-volume budgets and complete eighteen-tape erasure are proved.
 
-- `Machine/BinaryAdjacentWidthRun.lean`: One actual long-H program performs prefix construction, the complete caller-shared equal-width binary transpose, constructed binary movement and all cleanup. The long-D program performs actual inverse movement before the equal-width call. Both return the exact original rectangular transpose from sole original headers with every private bank blank, including zero shorter width, and a positive uniform coefficient at the certified exponent.
 
 - `Machine/BinaryAdjacentWidthSelector.lean`: Actually compares both canonical original widths, reuses and erases a blank flag, and halts in one of three finite states: equal, longer H, or longer D. All original cells and heads are restored. Exact state/value equivalences, adjacent-width consequences and a linear original-volume comparison budget cover zero-width cases.
 
