@@ -4,35 +4,48 @@ public import IntegerMultBounds.Networks.FramedCircuit
 import Mathlib.Tactic.Ring
 
 /-! A kernel-evaluable symbolic interpreter for rational register programs. Each register holds
-a sparse rational row over the input registers, stored in a complete binary trie. Soundness
-says that a successful symbolic run computes `moduleRun` exactly, on every module. -/
+a sparse row over the input registers, stored in a complete binary trie. Every coefficient of
+these programs is a multiple of `2⁻¹⁷`, so rows hold integers scaled by `2¹⁷`: the kernel's
+integer arithmetic needs a fraction of the memory of its rational arithmetic. Soundness says that
+a successful symbolic run computes `moduleRun` exactly, on every module. -/
 @[expose] public section
 namespace IntegerMultBounds.Networks.Certificates.T16.Trace.Symbolic
 
 open FramedCircuit
 
-/-- A sparse rational row, sorted by register with no zero coefficients. -/
-abbrev Row := List (ℕ × ℚ)
+/-- The fixed denominator of every row coefficient. -/
+def scale : ℕ := 2 ^ 17
+
+@[simp] theorem scale_div_scale : (scale : ℚ) / scale = 1 := by norm_num [scale]
+
+@[simp] theorem neg_scale_div_scale : -(scale : ℚ) / scale = -1 := by norm_num [scale]
+
+/-- A sparse row of coefficients scaled by `scale`, sorted by register with no zeros. -/
+abbrev Row := List (ℕ × ℤ)
 
 variable {E : Type*} [AddCommGroup E] [Module ℚ E]
 
-def Row.eval (r : Row) (x : ℕ → E) : E := (r.map fun p => p.2 • x p.1).sum
+def Row.eval (r : Row) (x : ℕ → E) : E := (r.map fun p => ((p.2 : ℚ) / scale) • x p.1).sum
 
 @[simp] theorem Row.eval_nil (x : ℕ → E) : Row.eval [] x = 0 := rfl
 
-@[simp] theorem Row.eval_cons (p : ℕ × ℚ) (r : Row) (x : ℕ → E) :
-    Row.eval (p :: r) x = p.2 • x p.1 + Row.eval r x := rfl
+@[simp] theorem Row.eval_cons (p : ℕ × ℤ) (r : Row) (x : ℕ → E) :
+    Row.eval (p :: r) x = ((p.2 : ℚ) / scale) • x p.1 + Row.eval r x := rfl
+
+theorem smul_add_eq_zero {a c : ℤ} (h : a + c = 0) (y : E) :
+    ((c : ℚ) / scale) • y + ((a : ℚ) / scale) • y = 0 := by
+  rw [← add_smul, ← add_div, ← Int.cast_add, add_comm, h, Int.cast_zero, zero_div, zero_smul]
 
 /-- Add `c` times register `j` to a sorted row. -/
-def Row.insert (j : ℕ) (c : ℚ) : Row → Row
+def Row.insert (j : ℕ) (c : ℤ) : Row → Row
   | [] => if c = 0 then [] else [(j, c)]
   | (k, a) :: r =>
     if j < k then (if c = 0 then (k, a) :: r else (j, c) :: (k, a) :: r)
     else if j = k then (if a + c = 0 then r else (k, a + c) :: r)
     else (k, a) :: Row.insert j c r
 
-theorem Row.eval_insert (j : ℕ) (c : ℚ) (r : Row) (x : ℕ → E) :
-    (Row.insert j c r).eval x = c • x j + r.eval x := by
+theorem Row.eval_insert (j : ℕ) (c : ℤ) (r : Row) (x : ℕ → E) :
+    (Row.insert j c r).eval x = ((c : ℚ) / scale) • x j + r.eval x := by
   induction r with
   | nil =>
     unfold Row.insert
@@ -46,79 +59,103 @@ theorem Row.eval_insert (j : ℕ) (c : ℚ) (r : Row) (x : ℕ → E) :
     · simp [h2]
     · simp
     · subst h3
-      rw [Row.eval_cons]
-      have e : c • x j + a • x j = 0 := by rw [← add_smul, add_comm, h4, zero_smul]
-      rw [← add_assoc, e, zero_add]
+      rw [Row.eval_cons, ← add_assoc, smul_add_eq_zero h4, zero_add]
     · subst h3
-      rw [Row.eval_cons, Row.eval_cons, add_smul]
+      rw [Row.eval_cons, Row.eval_cons, Int.cast_add, add_div, add_smul]
       abel
     · rw [Row.eval_cons, Row.eval_cons, ih]
       abel
 
-/-- Add `c` times a row to a row. -/
-def Row.addScaled (c : ℚ) (s t : Row) : Row :=
-  s.foldl (fun acc p => acc.insert p.1 (c * p.2)) t
+/-- `q` times a scaled coefficient, by integer division. -/
+def mulq (q : ℚ) (a : ℤ) : ℤ := q.num * a / q.den
 
-theorem Row.eval_addScaled (c : ℚ) (s t : Row) (x : ℕ → E) :
-    (Row.addScaled c s t).eval x = t.eval x + c • s.eval x := by
+/-- The division in `mulq q a` is exact. -/
+def Exact (q : ℚ) (a : ℤ) : Prop := q.num * a % q.den = 0
+
+instance (q : ℚ) (a : ℤ) : Decidable (Exact q a) := inferInstanceAs (Decidable (_ = _))
+
+theorem mulq_cast {q : ℚ} {a : ℤ} (h : Exact q a) : ((mulq q a : ℤ) : ℚ) = q * a := by
+  have hd : (q.den : ℚ) ≠ 0 := by exact_mod_cast q.den_nz
+  have e := Int.ediv_mul_cancel (Int.dvd_of_emod_eq_zero h)
+  have e' : ((mulq q a : ℤ) : ℚ) * q.den = q.num * a := by exact_mod_cast e
+  rw [eq_div_iff hd |>.mpr e']
+  conv_rhs => rw [← Rat.num_div_den q]
+  rw [div_mul_eq_mul_div]
+
+theorem mulq_smul {q : ℚ} {a : ℤ} (h : Exact q a) (y : E) :
+    ((mulq q a : ℚ) / scale) • y = q • (((a : ℚ) / scale) • y) := by
+  rw [mulq_cast h, smul_smul, mul_div_assoc]
+
+/-- Add `q` times a row to a row. -/
+def Row.addScaled (q : ℚ) (s t : Row) : Row :=
+  s.foldl (fun acc p => acc.insert p.1 (mulq q p.2)) t
+
+theorem Row.eval_addScaled (q : ℚ) (s t : Row) (x : ℕ → E) (h : ∀ p ∈ s, Exact q p.2) :
+    (Row.addScaled q s t).eval x = t.eval x + q • s.eval x := by
   induction s generalizing t with
   | nil => simp [Row.addScaled]
   | cons p s ih =>
     simp only [Row.addScaled, List.foldl_cons] at ih ⊢
-    rw [ih, Row.eval_insert, Row.eval_cons, smul_add, mul_smul]
+    rw [ih _ fun p hp => h p (List.mem_cons_of_mem _ hp), Row.eval_insert, Row.eval_cons, smul_add,
+      mulq_smul (h p List.mem_cons_self)]
     abel
 
-/-- Linear-time `t + c • s` for sorted rows, with fuel; without fuel it falls back to
+/-- Linear-time `t + q • s` for sorted rows, with fuel; without fuel it falls back to
 `addScaled`, so it is correct for all inputs. -/
 def Row.merge : ℕ → ℚ → Row → Row → Row
-  | 0, c, s, t => Row.addScaled c s t
+  | 0, q, s, t => Row.addScaled q s t
   | _ + 1, _, [], t => t
-  | n + 1, c, (j, a) :: s, [] =>
-    if c * a = 0 then Row.merge n c s [] else (j, c * a) :: Row.merge n c s []
-  | n + 1, c, (j, a) :: s, (k, b) :: t =>
+  | n + 1, q, (j, a) :: s, [] =>
+    if mulq q a = 0 then Row.merge n q s [] else (j, mulq q a) :: Row.merge n q s []
+  | n + 1, q, (j, a) :: s, (k, b) :: t =>
     if j < k then
-      (if c * a = 0 then Row.merge n c s ((k, b) :: t)
-       else (j, c * a) :: Row.merge n c s ((k, b) :: t))
-    else if k < j then (k, b) :: Row.merge n c ((j, a) :: s) t
-    else if b + c * a = 0 then Row.merge n c s t else (k, b + c * a) :: Row.merge n c s t
+      (if mulq q a = 0 then Row.merge n q s ((k, b) :: t)
+       else (j, mulq q a) :: Row.merge n q s ((k, b) :: t))
+    else if k < j then (k, b) :: Row.merge n q ((j, a) :: s) t
+    else if b + mulq q a = 0 then Row.merge n q s t else (k, b + mulq q a) :: Row.merge n q s t
 
-theorem Row.eval_merge (n : ℕ) (c : ℚ) (s t : Row) (x : ℕ → E) :
-    (Row.merge n c s t).eval x = t.eval x + c • s.eval x := by
+theorem Row.eval_merge (n : ℕ) (q : ℚ) (s t : Row) (x : ℕ → E) (h : ∀ p ∈ s, Exact q p.2) :
+    (Row.merge n q s t).eval x = t.eval x + q • s.eval x := by
   induction n generalizing s t with
-  | zero => exact Row.eval_addScaled c s t x
+  | zero => exact Row.eval_addScaled q s t x h
   | succ n ih =>
     match s, t with
     | [], t => simp [Row.merge]
     | (j, a) :: s, [] =>
+      have ha := mulq_smul (h (j, a) List.mem_cons_self) (x j)
+      have hs : ∀ p ∈ s, Exact q p.2 := fun p hp => h p (List.mem_cons_of_mem _ hp)
       unfold Row.merge
-      split_ifs with h
-      · rw [ih]
-        simp only [Row.eval_cons, Row.eval_nil, smul_add, smul_smul, h, zero_smul]
+      split_ifs with h1
+      · rw [ih _ _ hs]
+        simp only [Row.eval_cons, Row.eval_nil, smul_add, ← ha, h1, Int.cast_zero, zero_div,
+          zero_smul]
         abel
-      · rw [Row.eval_cons, ih]
-        simp only [Row.eval_cons, Row.eval_nil, smul_add, smul_smul]
+      · rw [Row.eval_cons, ih _ _ hs]
+        simp only [Row.eval_cons, Row.eval_nil, smul_add, ← ha]
         abel
     | (j, a) :: s, (k, b) :: t =>
+      have ha := mulq_smul (h (j, a) List.mem_cons_self) (x j)
+      have hs : ∀ p ∈ s, Exact q p.2 := fun p hp => h p (List.mem_cons_of_mem _ hp)
       unfold Row.merge
       split_ifs with h1 h2 h3 h4
-      · rw [ih]
-        simp only [Row.eval_cons, smul_add, smul_smul, h2, zero_smul]
+      · rw [ih _ _ hs]
+        simp only [Row.eval_cons, smul_add, ← ha, h2, Int.cast_zero, zero_div, zero_smul]
         abel
-      · rw [Row.eval_cons, ih]
-        simp only [Row.eval_cons, smul_add, smul_smul]
+      · rw [Row.eval_cons, ih _ _ hs]
+        simp only [Row.eval_cons, smul_add, ← ha]
         abel
-      · rw [Row.eval_cons, ih]
-        simp only [Row.eval_cons, smul_add, smul_smul]
+      · rw [Row.eval_cons, ih _ _ h]
+        simp only [Row.eval_cons, smul_add]
         abel
       · obtain rfl : j = k := by omega
-        rw [ih]
-        simp only [Row.eval_cons, smul_add, smul_smul]
-        have e : b • x j + (c * a) • x j = 0 := by rw [← add_smul, h4, zero_smul]
-        rw [show b • x j + Row.eval t x + ((c * a) • x j + c • Row.eval s x) =
-          (b • x j + (c * a) • x j) + (Row.eval t x + c • Row.eval s x) by abel, e, zero_add]
+        rw [ih _ _ hs]
+        simp only [Row.eval_cons, smul_add, ← ha]
+        rw [show ((b : ℚ) / scale) • x j + Row.eval t x + (((mulq q a : ℚ) / scale) • x j +
+            q • Row.eval s x) = (((mulq q a : ℚ) / scale) • x j + ((b : ℚ) / scale) • x j) +
+            (Row.eval t x + q • Row.eval s x) by abel, smul_add_eq_zero h4, zero_add]
       · obtain rfl : j = k := by omega
-        rw [Row.eval_cons, ih]
-        simp only [Row.eval_cons, smul_add, smul_smul, add_smul]
+        rw [Row.eval_cons, ih _ _ hs]
+        simp only [Row.eval_cons, smul_add, ← ha, Int.cast_add, add_div, add_smul]
         abel
 
 /-! ### Register tries -/
@@ -182,7 +219,7 @@ theorem Trie.get_put_other : ∀ (T : Trie) (i j : ℕ) (r : Row), i ≠ j → (
 
 /-- The identity trie: register `base + stride * j` at position `j`. -/
 def Trie.init : ℕ → ℕ → ℕ → Trie
-  | 0, base, _ => .leaf [(base, 1)]
+  | 0, base, _ => .leaf [(base, (scale : ℤ))]
   | n + 1, base, stride => .fork (Trie.init n base (2 * stride)) (Trie.init n (base + stride) (2 * stride))
 
 theorem Trie.full_init : ∀ n base stride, (Trie.init n base stride).Full n
@@ -190,7 +227,7 @@ theorem Trie.full_init : ∀ n base stride, (Trie.init n base stride).Full n
   | n + 1, _, _ => ⟨Trie.full_init n _ _, Trie.full_init n _ _⟩
 
 theorem Trie.get_init : ∀ (n base stride j : ℕ), j < 2 ^ n →
-    (Trie.init n base stride).get j = [(base + stride * j, 1)]
+    (Trie.init n base stride).get j = [(base + stride * j, (scale : ℤ))]
   | 0, base, stride, j, hj => by
     have : j = 0 := by simpa using hj
     subst this
@@ -222,11 +259,16 @@ def gateRow (T : Trie) (g : Circuit.Gate ℕ ℚ) : Row :=
   g.terms.foldl (fun acc p =>
     Row.merge ((T.get p.1).length + acc.length + 1) p.2 (T.get p.1) acc) (T.get g.target)
 
+/-- Every source coefficient times its gate coefficient divides exactly. -/
+def exactTerms (T : Trie) (g : Circuit.Gate ℕ ℚ) : Bool :=
+  g.terms.all fun p => (T.get p.1).all fun r => decide (Exact p.2 r.2)
+
 /-- The length test is always true for normalized rows; it forces the new row during kernel
 evaluation, so long programs do not accumulate deferred work. -/
 def symStep (T : Trie) (g : Circuit.Gate ℕ ℚ) : Option Trie :=
   let row := gateRow T g
-  if g.target < bound ∧ g.terms.all (fun p => decide (p.1 < bound)) ∧ row.length ≤ 4096 then
+  if g.target < bound ∧ g.terms.all (fun p => decide (p.1 < bound)) ∧ exactTerms T g ∧
+      row.length ≤ 4096 then
     some (T.put g.target row)
   else none
 
@@ -242,26 +284,31 @@ def Represents (T : Trie) (y x : ℕ → E) : Prop :=
 theorem represents_init (x : ℕ → E) : Represents (Trie.init 10 0 1) x x := by
   refine ⟨Trie.full_init _ _ _, fun i hi => ?_, fun _ _ => rfl⟩
   rw [Trie.get_init 10 0 1 i (by unfold bound at hi; norm_num; omega)]
-  simp
+  simp [scale]
 
 theorem eval_gateRow (T : Trie) (g : Circuit.Gate ℕ ℚ) (y x : ℕ → E)
     (hT : ∀ i < bound, y i = (T.get i).eval x) (hs : ∀ p ∈ g.terms, p.1 < bound)
-    (ht : g.target < bound) :
+    (hx : exactTerms T g = true) (ht : g.target < bound) :
     (gateRow T g).eval x = y g.target + (g.terms.map fun p => p.2 • y p.1).sum := by
   unfold gateRow
+  have hx' : ∀ p ∈ g.terms, ∀ r ∈ T.get p.1, Exact p.2 r.2 := fun p hp r hr => by
+    have := List.all_eq_true.mp (List.all_eq_true.mp hx p hp) r hr
+    simpa using this
   suffices h : ∀ (ts : List (ℕ × ℚ)) (acc : Row), (∀ p ∈ ts, p.1 < bound) →
+      (∀ p ∈ ts, ∀ r ∈ T.get p.1, Exact p.2 r.2) →
       (ts.foldl (fun acc p =>
         Row.merge ((T.get p.1).length + acc.length + 1) p.2 (T.get p.1) acc) acc).eval x =
         acc.eval x + (ts.map fun p => p.2 • y p.1).sum by
-    rw [h g.terms _ hs, ← hT _ ht]
+    rw [h g.terms _ hs hx', ← hT _ ht]
   intro ts
   induction ts with
-  | nil => intro acc _; simp
+  | nil => intro acc _ _; simp
   | cons p ts ih =>
-    intro acc hp
+    intro acc hp hq
     simp only [List.foldl_cons, List.map_cons, List.sum_cons]
-    rw [ih _ (fun q hq => hp q (List.mem_cons_of_mem _ hq)), Row.eval_merge,
-      hT _ (hp p List.mem_cons_self)]
+    rw [ih _ (fun q hq => hp q (List.mem_cons_of_mem _ hq))
+      (fun q hq' => hq q (List.mem_cons_of_mem _ hq')),
+      Row.eval_merge _ _ _ _ _ (hq p List.mem_cons_self), hT _ (hp p List.mem_cons_self)]
     abel
 
 theorem symStep_sound {T T' : Trie} {g : Circuit.Gate ℕ ℚ} {y x : ℕ → E}
@@ -272,7 +319,7 @@ theorem symStep_sound {T T' : Trie} {g : Circuit.Gate ℕ ℚ} {y x : ℕ → E}
   split_ifs at h with hg
   simp only [Option.some.injEq] at h
   subst h
-  obtain ⟨ht, hs, -⟩ := hg
+  obtain ⟨ht, hs, hx, -⟩ := hg
   have hs' : ∀ p ∈ g.terms, p.1 < bound := fun p hp => by
     have := List.all_eq_true.mp hs p hp
     simpa using this
@@ -281,7 +328,7 @@ theorem symStep_sound {T T' : Trie} {g : Circuit.Gate ℕ ℚ} {y x : ℕ → E}
   · by_cases hit : i = g.target
     · subst hit
       rw [Trie.get_put_self 10 _ _ _ hfull (by unfold bound at hi; norm_num; omega)]
-      rw [eval_gateRow T g y x hlow hs' ht]
+      rw [eval_gateRow T g y x hlow hs' hx ht]
       simp [moduleGate]
     · rw [Trie.get_put_other _ _ _ _ hit]
       simp [moduleGate, Function.update_of_ne hit, hlow i hi]

@@ -4,8 +4,8 @@
 Reads the committed native event modules (Trace/Forward*.lean), derives the backward events
 exactly as `Trace.backwardEvents` does, erases both to their rational scalar gates exactly as
 `Trace.erase` does, runs them symbolically over sparse rational rows, and writes the rows that
-differ from the identity at the chosen gate counts. Lean's kernel checks every emitted snapshot;
-nothing here is trusted.
+differ from the identity after each piece of the 25 event chunks. Lean's kernel checks every
+emitted snapshot; nothing here is trusted.
 """
 import re
 from fractions import Fraction
@@ -14,8 +14,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TRACE = ROOT / 'IntegerMultBounds/Networks/Certificates/T16/Trace'
 NS = 'IntegerMultBounds.Networks.Certificates.T16.Trace'
-CUTS = [3000, 6000, 9000, 12000, 15000, 18000]
 GROUPS = 25
+CHUNK = 1024
+# Peak memory of one piece check in GB, fitted on single-piece checks (within 0.15 GB on all 25):
+# per 10^4 terms of written rows, of source rows read and of the two snapshots, and per 10^3
+# events. Pieces are cut where the prediction would pass TARGET.
+BASE, ROW_GB, SOURCE_GB, EVENT_GB, SNAP_GB = -0.542, 0.518e-4, 1.027e-4, 0.271e-3, 0.378e-4
+TARGET = 3.8
+PER_MODULE = 5
 
 
 def events(prefix):
@@ -78,10 +84,10 @@ def program(prefix):
     return [dual(e) for e in fwd[:CENTER_START]] + sum(blocks, []) + [dual(e) for e in fwd[end:]]
 
 
-def gates(prefix):
+def gates(es):
     """The erased gates `(target, [(source, coefficient)])`, as `Scalar.gate`."""
     out = []
-    for op, args in program(prefix):
+    for op, args in es:
         if op is None:
             continue
         if op == 'add':
@@ -102,25 +108,57 @@ def gates(prefix):
 
 
 def snapshots(prefix):
+    """Split the events into pieces whose checks are predicted to stay under TARGET GB. Returns
+    the cut lengths inside each chunk, the number of cuts in each piece but the last, and the
+    changed rows after each piece."""
+    es = program(prefix)
     rows = {i: {i: Fraction(1)} for i in range(712)}
-    result = []
-    for count, (t, terms) in enumerate(gates(prefix), 1):
-        new = dict(rows[t])
-        for s, c in terms:
-            for j, a in rows[s].items():
-                new[j] = new.get(j, 0) + c * a
-        rows[t] = {j: a for j, a in new.items() if a != 0}
-        if count in CUTS:
-            result.append({i: dict(r) for i, r in rows.items() if r != {i: Fraction(1)}})
-    return result
+    changed = lambda: {r: dict(v) for r, v in rows.items() if v != {r: Fraction(1)}}
+    size = 0  # terms of the changed rows
+    starts, result = [], []
+    start, work, snap_in = 0, 0.0, 0
+    for i, e in enumerate(es):
+        step = EVENT_GB
+        new = None
+        for t, terms in gates([e]):
+            step += SOURCE_GB * sum(len(rows[s]) for s, _ in terms)
+            new = dict(rows[t])
+            for s, c in terms:
+                for j, a in rows[s].items():
+                    new[j] = new.get(j, 0) + c * a
+            new = (t, {j: a for j, a in new.items() if a != 0})
+            step += ROW_GB * len(new[1])
+        if i > start and BASE + work + step + SNAP_GB * (snap_in + size) > TARGET:
+            starts.append(i)
+            result.append(changed())
+            start, work, snap_in = i, 0.0, size
+        if new:
+            t, row = new
+            old = 0 if rows[t] == {t: Fraction(1)} else len(rows[t])
+            rows[t] = row
+            size += (0 if row == {t: Fraction(1)} else len(row)) - old
+        work += step
+    result.append(changed())
+    cuts, sizes, count = [], [], 0
+    for k in range(GROUPS):
+        inner = [i - CHUNK * k for i in starts if CHUNK * k < i < CHUNK * (k + 1)]
+        cuts.append([b - a for a, b in zip([0] + inner, inner)])
+        # Cuts of this chunk: one before the first inner start, one after each.
+        for j in range(len(inner) + 1):
+            first = CHUNK * k + ([0] + inner)[j]
+            if first in starts:
+                sizes.append(count)
+                count = 0
+            count += 1
+    return cuts, sizes, result
 
 
 PIECE_TERMS = 600
+SCALE = 2 ** 17  # `Symbolic.scale`
 
 
 def entry(i, row):
-    flat = ', '.join(f'{j}, {int(c < 0)}, {abs(c.numerator)}, {c.denominator}'
-                     for j, c in sorted(row.items()))
+    flat = ', '.join(f'{j}, {int(c < 0)}, {int(abs(c) * SCALE)}' for j, c in sorted(row.items()))
     return f'  .row {i} [{flat}]'
 
 
@@ -132,30 +170,49 @@ HEADER = ('module\n\npublic import {imp}\n\n'
 def main():
     text = HEADER.format(imp=NS + '.Symbolic', doc='Storage format for symbolic register rows.')
     # Natural literals: each integer literal in the rows costs the elaborator a typeclass search.
-    text += ('/-- One stored row: its register and flat `(source, sign, magnitude, denominator)`\n'
-             'quadruples, sign `1` for a negative coefficient. -/\n'
+    text += ('/-- One stored row: its register and flat `(source, sign, magnitude)` triples of scaled\n'
+             'coefficients, sign `1` for a negative coefficient. -/\n'
              'inductive StoredRow where\n  | row (register : ℕ) (terms : List ℕ)\n\n'
-             '/-- Decode flat quadruples. -/\n'
+             '/-- Decode flat triples. -/\n'
              'def decodeTerms : List ℕ → Row\n'
-             '  | j :: s :: n :: d :: rest =>\n'
-             '    (j, (if s = 0 then (n : ℚ) else -(n : ℚ)) / (d : ℚ)) :: decodeTerms rest\n'
+             '  | j :: s :: n :: rest => (j, if s = 0 then (n : ℤ) else -(n : ℤ)) :: decodeTerms rest\n'
              '  | _ => []\n\n'
              'def StoredRow.decode : StoredRow → ℕ × Row\n'
              '  | .row i terms => (i, decodeTerms terms)\n\n'
              '/-- The identity trie with the listed rows replaced. -/\n'
              'def snapshotTrie (rows : List StoredRow) : Trie :=\n'
-             '  (rows.map StoredRow.decode).foldl (fun T p => T.put p.1 p.2) (Trie.init 10 0 1)\n\n'
-             '/-- The gates of `P` from position `a` to position `b`. -/\n'
-             'def slice (P : List (Circuit.Gate ℕ ℚ)) (a b : ℕ) : List (Circuit.Gate ℕ ℚ) :=\n'
-             '  (P.drop a).take (b - a)\n\n')
+             '  (rows.map StoredRow.decode).foldl (fun T p => T.put p.1 p.2) (Trie.init 10 0 1)\n\n')
     text += 'end ' + NS + '\n'
     (TRACE / 'ActionFormat.lean').write_text(text)
+    written = {'ActionFormat.lean'}
+
+    def write(file, text):
+        (TRACE / file).write_text(text)
+        written.add(file)
+
     for prefix, name in [('Forward', 'forward'), ('Backward', 'backward')]:
-        for k, snap in enumerate(snapshots(prefix), 1):
-            # Rows are separate modules and build in parallel. Each reach check takes 8-10 GB, so
-            # check `k` imports check `k - 1` to keep the checks of one orientation in series.
+        chunks = 'forwardChunks' if prefix == 'Forward' else 'backwardChunks'
+        source = NS + ('.Forward' if prefix == 'Forward' else '.BackwardChunks')
+        cuts, sizes, snaps = snapshots(prefix)
+        write(f'Action{prefix}Pieces.lean',
+              HEADER.format(imp=NS + '.Pieces\npublic import ' + source,
+                            doc=f'The {name} chunks regrouped into pieces of bounded kernel memory.')
+              .replace('open Symbolic\n\n', '')
+              + f'def {name}Cuts : List (List ℕ) :=\n  [' + ', '.join(
+                  '[' + ', '.join(map(str, c)) + ']' for c in cuts) + ']\n\n'
+              + f'def {name}Sizes : List ℕ := [' + ', '.join(map(str, sizes)) + ']\n\n'
+              + f'def {name}Pieces : List (List Event) := pieces {name}Cuts {name}Sizes {chunks}\n\n'
+              + f'theorem {name}Pieces_length : {name}Pieces.length = {len(snaps)} := by\n  decide +kernel\n\n'
+              + 'end ' + NS + '\n')
+        # `names[k]` is the snapshot before piece `k`; a piece without gates reuses the last one.
+        names, modules = ['[]'], [[]]
+        for k, snap in enumerate(snaps, 1):
+            if snap is None:
+                names.append(names[-1])
+                modules.append(modules[-1])
+                continue
             body = HEADER.format(imp=NS + '.ActionFormat',
-                                 doc=f'{prefix} symbolic rows after {CUTS[k - 1]} gates, as overrides of the\n'
+                                 doc=f'{prefix} symbolic rows after piece {k - 1}, as overrides of the\n'
                                  'identity trie.')
             pieces, cur, size = [], [], 0
             for i in sorted(snap):
@@ -172,21 +229,40 @@ def main():
             body += (f'def {name}Snapshot{k} : List StoredRow :=\n  '
                      + ' ++ '.join(f'{name}Snapshot{k}Piece{p}' for p in range(len(pieces))) + '\n\n')
             body += 'end ' + NS + '\n'
-            (TRACE / f'Action{prefix}Rows{k}.lean').write_text(body)
-            lo = CUTS[k - 2] if k > 1 else 0
-            imps = ([NS + f'.Action{prefix}{k - 1}'] if k > 1 else []) + [NS + f'.Action{prefix}Rows{k}']
-            body = HEADER.format(imp='\npublic import '.join(imps + [NS + '.' + prefix]),
-                                 doc=f'The kernel check that {name} gates {lo} to {CUTS[k - 1]} reach the rows\n'
-                                 f'`{name}Snapshot{k}`.')
-            start = f'snapshotTrie {name}Snapshot{k - 1}' if k > 1 else 'Trie.init 10 0 1'
-            body += (f'theorem {name}_reach{k} :\n'
-                     f'    symRun ({start}) (slice {name}Program {lo} {CUTS[k - 1]}) =\n'
-                     f'      some (snapshotTrie {name}Snapshot{k}) := by\n  decide +kernel\n\n')
+            write(f'Action{prefix}Rows{k}.lean', body)
+            names.append(f'{name}Snapshot{k}')
+            modules.append([f'Action{prefix}Rows{k}'])
+        # Reach checks: each module imports the rows it names and the previous module of its
+        # orientation, so at most one check per orientation runs at a time (each about 4 GB).
+        n = len(snaps)
+        groups = [range(j, min(j + PER_MODULE, n)) for j in range(0, n, PER_MODULE)]
+        for g, ks in enumerate(groups):
+            imps = sorted({m for k in ks for m in modules[k] + modules[k + 1]},
+                          key=lambda m: int(m.split('Rows')[1]))
+            imps = ([f'Action{prefix}{g - 1}'] if g else []) + imps
+            body = HEADER.format(imp='\npublic import '.join([NS + '.' + m for m in imps]
+                                                             + [NS + f'.Action{prefix}Pieces']),
+                                 doc=f'The kernel checks that {name} pieces {ks[0]} to {ks[-1]} reach their rows.')
+            for k in ks:
+                body += (f'theorem {name}_reach{k} :\n'
+                         f'    symRun (snapshotTrie {names[k]}) (erase ({name}Pieces.getD {k} [])) =\n'
+                         f'      some (snapshotTrie {names[k + 1]}) := by\n  decide +kernel\n\n')
             body += 'end ' + NS + '\n'
-            (TRACE / f'Action{prefix}{k}.lean').write_text(body)
-    old = TRACE / 'ActionSnapshots.lean'
-    if old.exists():
-        old.unlink()
+            write(f'Action{prefix}{g}.lean', body)
+        body = HEADER.format(imp='\npublic import '.join(NS + f'.Action{prefix}{g}' for g in range(len(groups))),
+                             doc=f'The {name} rows before each piece, and every piece check.')
+        body += (f'def {name}Snapshots : List (List StoredRow) :=\n  [' + ', '.join(names) + ']\n\n'
+                 f'theorem {name}_reach : ∀ k < {n},\n'
+                 f'    symRun (snapshotTrie ({name}Snapshots.getD k [])) (erase ({name}Pieces.getD k [])) =\n'
+                 f'      some (snapshotTrie ({name}Snapshots.getD (k + 1) [])) := by\n'
+                 '  intro k hk\n  match k, hk with\n'
+                 + ''.join(f'  | {k}, _ => exact {name}_reach{k}\n' for k in range(n))
+                 + f'  | _ + {n}, h => exact absurd h (by omega)\n\n')
+        body += 'end ' + NS + '\n'
+        write(f'Action{prefix}.lean', body)
+    for f in TRACE.glob('Action*.lean'):
+        if f.name not in written and f.name != 'Action.lean':
+            f.unlink()
 
 
 if __name__ == '__main__':

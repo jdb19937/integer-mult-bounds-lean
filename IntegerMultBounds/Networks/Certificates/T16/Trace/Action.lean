@@ -1,23 +1,12 @@
 module
 
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.Framed
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward1
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward2
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward3
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward4
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward5
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward6
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward1
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward2
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward3
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward4
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward5
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward6
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionForward
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward
 
 /-! The exact rational action of both native local words, by kernel-checked symbolic
-execution in seven chunks per orientation. Forward: `(X, Y, H, P) ↦ (X, Y + X, H, 0)` on
-sources `0..111`, targets `112..223`, helpers `224..703` and private centres `704..711`.
-Backward: `(X, Y, H, P) ↦ (X - Y, Y, H, 0)`. Helpers are restored for arbitrary dirty inputs;
+execution piece by piece. Forward: `(X, Y, H, P) ↦ (X, Y + X, H, 0)` on sources `0..111`,
+targets `112..223`, helpers `224..703` and private centres `704..711`. Backward: `(X, Y, H, P) ↦ (X - Y, Y, H, 0)`. Helpers are restored for arbitrary dirty inputs;
 private centres are cleared. -/
 @[expose] public section
 namespace IntegerMultBounds.Networks.Certificates.T16.Trace
@@ -35,11 +24,11 @@ theorem symRun_append (T : Trie) (a b : List (Circuit.Gate ℕ ℚ)) :
     | some U => exact ih U
 
 def forwardRow (i : ℕ) : Row :=
-  if i < 112 then [(i, 1)] else if i < 224 then [(i - 112, 1), (i, 1)]
-  else if i < 704 then [(i, 1)] else []
+  if i < 112 then [(i, scale)] else if i < 224 then [(i - 112, scale), (i, scale)]
+  else if i < 704 then [(i, scale)] else []
 
 def backwardRow (i : ℕ) : Row :=
-  if i < 112 then [(i, 1), (i + 112, -1)] else if i < 704 then [(i, 1)] else []
+  if i < 112 then [(i, scale), (i + 112, -scale)] else if i < 704 then [(i, scale)] else []
 
 def rowsCheck (expected : ℕ → Row) : Option Trie → Bool
   | some T => checkRegisters 712 (fun i => decide (T.get i = expected i))
@@ -53,45 +42,51 @@ theorem rowsCheck_sound {expected : ℕ → Row} {o : Option Trie} (h : rowsChec
     exact ⟨T, rfl, fun i hi => of_decide_eq_true
       (checkRegisters_sound (p := fun i => decide (T.get i = expected i)) h i hi)⟩
 
-theorem symRun_drop (T : Trie) (P : List (Circuit.Gate ℕ ℚ)) {a b : ℕ} (hab : a ≤ b) :
-    symRun T (P.drop a) = (symRun T (slice P a b)).bind fun T' => symRun T' (P.drop b) := by
-  conv_lhs => rw [← List.take_append_drop (b - a) (P.drop a)]
-  rw [symRun_append, List.drop_drop, show a + (b - a) = b by omega]
-  rfl
+theorem erase_append (a b : List Event) : erase (a ++ b) = erase a ++ erase b := by
+  induction a with
+  | nil => rfl
+  | cons e a ih => cases e <;> simp [erase, ih]
+
+/-- Piece checks compose: if each piece takes trie `S k` to `S (k + 1)`, all of them take `S 0`
+to the trie after the last piece. -/
+theorem symRun_chunks (S : ℕ → Trie) :
+    ∀ cs : List (List Event), (∀ k < cs.length, symRun (S k) (erase (cs.getD k [])) = some (S (k + 1))) →
+      symRun (S 0) (erase cs.flatten) = some (S cs.length)
+  | [], _ => rfl
+  | c :: cs, h => by
+    rw [List.flatten_cons, erase_append, symRun_append, show c = (c :: cs).getD 0 [] from rfl,
+      h 0 (by simp), Option.bind_some]
+    exact symRun_chunks (fun k => S (k + 1)) cs fun k hk => h (k + 1) (by simp; omega)
 
 theorem forward_final :
-    rowsCheck forwardRow (symRun (snapshotTrie forwardSnapshot6) (forwardProgram.drop 18000)) =
+    rowsCheck forwardRow (some (snapshotTrie (forwardSnapshots.getD forwardPieces.length []))) =
       true := by
+  rw [forwardPieces_length]
   decide +kernel
 
 theorem backward_final :
-    rowsCheck backwardRow (symRun (snapshotTrie backwardSnapshot6) (backwardProgram.drop 18000)) =
+    rowsCheck backwardRow (some (snapshotTrie (backwardSnapshots.getD backwardPieces.length []))) =
       true := by
+  rw [backwardPieces_length]
   decide +kernel
 
 theorem forward_symRun :
     ∃ T, symRun (Trie.init 10 0 1) forwardProgram = some T ∧ ∀ i < 712, T.get i = forwardRow i := by
   obtain ⟨T, hT, hrows⟩ := rowsCheck_sound forward_final
   refine ⟨T, ?_, hrows⟩
-  rw [← List.drop_zero (l := forwardProgram), symRun_drop _ _ (b := 3000) (by omega), forward_reach1,
-    Option.bind_some, symRun_drop _ _ (a := 3000) (b := 6000) (by omega), forward_reach2,
-    Option.bind_some, symRun_drop _ _ (a := 6000) (b := 9000) (by omega), forward_reach3,
-    Option.bind_some, symRun_drop _ _ (a := 9000) (b := 12000) (by omega), forward_reach4,
-    Option.bind_some, symRun_drop _ _ (a := 12000) (b := 15000) (by omega), forward_reach5,
-    Option.bind_some, symRun_drop _ _ (a := 15000) (b := 18000) (by omega), forward_reach6,
-    Option.bind_some, hT]
+  rw [forwardProgram, forwardEvents, ← pieces_flatten (sizes := forwardSizes) (cuts := forwardCuts) rfl,
+    ← hT]
+  exact symRun_chunks (fun k => snapshotTrie (forwardSnapshots.getD k [])) forwardPieces
+    fun k hk => forward_reach k (forwardPieces_length ▸ hk)
 
 theorem backward_symRun :
     ∃ T, symRun (Trie.init 10 0 1) backwardProgram = some T ∧ ∀ i < 712, T.get i = backwardRow i := by
   obtain ⟨T, hT, hrows⟩ := rowsCheck_sound backward_final
   refine ⟨T, ?_, hrows⟩
-  rw [← List.drop_zero (l := backwardProgram), symRun_drop _ _ (b := 3000) (by omega), backward_reach1,
-    Option.bind_some, symRun_drop _ _ (a := 3000) (b := 6000) (by omega), backward_reach2,
-    Option.bind_some, symRun_drop _ _ (a := 6000) (b := 9000) (by omega), backward_reach3,
-    Option.bind_some, symRun_drop _ _ (a := 9000) (b := 12000) (by omega), backward_reach4,
-    Option.bind_some, symRun_drop _ _ (a := 12000) (b := 15000) (by omega), backward_reach5,
-    Option.bind_some, symRun_drop _ _ (a := 15000) (b := 18000) (by omega), backward_reach6,
-    Option.bind_some, hT]
+  rw [backwardProgram, backwardEvents_eq,
+    ← pieces_flatten (sizes := backwardSizes) (cuts := backwardCuts) rfl, ← hT]
+  exact symRun_chunks (fun k => snapshotTrie (backwardSnapshots.getD k [])) backwardPieces
+    fun k hk => backward_reach k (backwardPieces_length ▸ hk)
 
 variable {E : Type*} [AddCommGroup E] [Module ℚ E]
 

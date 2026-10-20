@@ -8,15 +8,14 @@ namespace IntegerMultBounds.Networks.Certificates.T16.Trace
 
 open Symbolic
 
-/-- One stored row: its register and flat `(source, sign, magnitude, denominator)`
-quadruples, sign `1` for a negative coefficient. -/
+/-- One stored row: its register and flat `(source, sign, magnitude)` triples of scaled
+coefficients, sign `1` for a negative coefficient. -/
 inductive StoredRow where
   | row (register : ℕ) (terms : List ℕ)
 
-/-- Decode flat quadruples. -/
+/-- Decode flat triples. -/
 def decodeTerms : List ℕ → Row
-  | j :: s :: n :: d :: rest =>
-    (j, (if s = 0 then (n : ℚ) else -(n : ℚ)) / (d : ℚ)) :: decodeTerms rest
+  | j :: s :: n :: rest => (j, if s = 0 then (n : ℤ) else -(n : ℤ)) :: decodeTerms rest
   | _ => []
 
 def StoredRow.decode : StoredRow → ℕ × Row
@@ -25,9 +24,5 @@ def StoredRow.decode : StoredRow → ℕ × Row
 /-- The identity trie with the listed rows replaced. -/
 def snapshotTrie (rows : List StoredRow) : Trie :=
   (rows.map StoredRow.decode).foldl (fun T p => T.put p.1 p.2) (Trie.init 10 0 1)
-
-/-- The gates of `P` from position `a` to position `b`. -/
-def slice (P : List (Circuit.Gate ℕ ℚ)) (a b : ℕ) : List (Circuit.Gate ℕ ℚ) :=
-  (P.drop a).take (b - a)
 
 end IntegerMultBounds.Networks.Certificates.T16.Trace
