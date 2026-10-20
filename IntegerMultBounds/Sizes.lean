@@ -16,7 +16,7 @@ The exponent `c` is the witness parameter `spacing`. -/
 
 namespace IntegerMultBounds.Sizes
 
-open Filter Parameters Machine TimeBound
+open Filter Parameters TimeBound
 
 /-- `b = lg n`. -/
 def b (n : ℕ) : ℕ := lg n

@@ -362,10 +362,10 @@
   ],
   "scope": "Import closure only; unprotected candidates are retained unless separately reviewed as obsolete.",
   "primary_proof": {
-    "modules": 1957,
-    "lines": 496179,
+    "modules": 1958,
+    "lines": 496268,
     "by_directory": {
-      "IntegerMultBounds": 7,
+      "IntegerMultBounds": 8,
       "IntegerMultBounds/Compact": 12,
       "IntegerMultBounds/Machine": 460,
       "IntegerMultBounds/MathlibTM2": 5,
@@ -419,7 +419,7 @@
   },
   "candidates": {
     "modules": 883,
-    "lines": 82859,
+    "lines": 82877,
     "by_directory": {
       "IntegerMultBounds/MathlibTM2/DFT": 39,
       "IntegerMultBounds/MathlibTM2/Layer": 3,
@@ -444,7 +444,7 @@
   },
   "conservative_candidates": {
     "modules": 883,
-    "lines": 82859,
+    "lines": 82877,
     "by_directory": {
       "IntegerMultBounds/MathlibTM2/DFT": 39,
       "IntegerMultBounds/MathlibTM2/Layer": 3,
@@ -464,6 +464,7 @@
   },
   "retain_for_proof": [
     "IntegerMultBounds/Asymptotics.lean",
+    "IntegerMultBounds/BinaryWords.lean",
     "IntegerMultBounds/Compact/Counting.lean",
     "IntegerMultBounds/Compact/Density.lean",
     "IntegerMultBounds/Compact/DirtyControl.lean",

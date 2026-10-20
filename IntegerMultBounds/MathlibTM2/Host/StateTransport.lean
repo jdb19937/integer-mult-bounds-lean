@@ -2,7 +2,9 @@ module
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import IntegerMultBounds.MathlibTM2.Stack
 public import IntegerMultBounds.MathlibTM2.Binary
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 
 /-! Exact stack-program transport along a local-state injection with a retraction. -/

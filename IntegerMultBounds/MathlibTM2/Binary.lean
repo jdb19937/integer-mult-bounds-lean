@@ -1,13 +1,14 @@
 module
 
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import IntegerMultBounds.BinaryWords
 public import Mathlib.Computability.Encoding
 import Mathlib.Data.List.TakeWhile
 
 /-!
 # Most-significant-first words and Mathlib's binary encoding
 
-`IntegerMultBounds.Machine.binaryValue` reads a word most significant bit first, with leading
+`IntegerMultBounds.binaryValue` reads a word most significant bit first, with leading
 zeroes allowed. Mathlib's `Computability.encodeNat` writes a natural least significant bit
 first, with no trailing zeroes. Reversing a word after dropping its leading zeroes gives the
 Mathlib encoding of its value.
@@ -17,7 +18,7 @@ Mathlib encoding of its value.
 
 namespace IntegerMultBounds.MathlibTM2
 
-open IntegerMultBounds.Machine Computability
+open Computability
 
 lemma encodeNum_bit0 (x : Num) : encodeNum (Num.bit0 x) = if x = 0 then [] else false :: encodeNum x := by
   cases x <;> rfl

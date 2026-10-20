@@ -1,7 +1,8 @@
 module
 
 import IntegerMultBounds.Asymptotics
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import IntegerMultBounds.BinaryWords
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 public import IntegerMultBounds.Parameters
 
@@ -18,7 +19,7 @@ algorithm's components. -/
 
 namespace IntegerMultBounds.TimeBound
 
-open Filter Asymptotics Parameters Machine
+open Filter Asymptotics Parameters
 
 /-- The working precision, as a real number. -/
 noncomputable def precision (n : ℕ) : ℝ := 6 * (lg n : ℝ)

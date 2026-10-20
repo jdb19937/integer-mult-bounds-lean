@@ -3,7 +3,9 @@ module
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-!
 # Stream format of layer arrays

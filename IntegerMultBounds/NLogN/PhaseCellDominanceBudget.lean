@@ -8,7 +8,9 @@ import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Selected logarithmic Gaussian width gives a polynomial inverse gap even
 when alpha squared times the axis gap tends to zero. -/

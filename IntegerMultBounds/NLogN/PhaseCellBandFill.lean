@@ -6,7 +6,9 @@ public import IntegerMultBounds.NLogN.PhaseCellMatrix
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Fill of the banded factorization of the actual rounded matrix. In
 physical order, every entry of the elimination factors lies within the band

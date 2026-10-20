@@ -23,7 +23,9 @@ import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.IsCoprime
 import Mathlib.Tactic.NormNum.Irrational
 import Mathlib.Tactic.Echelon.Zsqrtd
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Polynomial exact and rounded inverse bounds in the community small-gap
 regime. No assumption alpha squared times theta >= 1 is used. These are

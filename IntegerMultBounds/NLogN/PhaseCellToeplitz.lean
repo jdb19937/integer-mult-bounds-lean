@@ -8,7 +8,9 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.Real.Pi.Bounds
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! The shared within-cell kernel of the actual rounded Gaussian matrix is a
 symmetric Toeplitz block with unit diagonal and off-diagonal row mass at most

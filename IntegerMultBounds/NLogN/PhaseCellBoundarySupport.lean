@@ -7,7 +7,9 @@ public import IntegerMultBounds.NLogN.SchurElimination
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Boundary sparsity for the actual rounded periodic Gaussian matrix. Its
 entries lie in the cyclic band of the selected width. A vertex whose whole

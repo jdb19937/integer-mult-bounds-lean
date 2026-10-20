@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 import Lean.Elab.Tactic.Omega
 
 /-!
@@ -57,9 +58,6 @@ def run (M : Program t q a) : ℕ → Config t q a → Option (Config t q a)
   | 0, c => some c
   | k + 1, c => (step M c).bind (run M k)
 
-def blank : Fin (a + 4) := ⟨0, by omega⟩
-def bitSymbol (b : Bool) : Fin (a + 4) := ⟨if b then 2 else 1, by split <;> omega⟩
-def separator : Fin (a + 4) := ⟨3, by omega⟩
 
 def wordTape (word : List (Fin (a + 4))) (j : ℤ) : Fin (a + 4) :=
   if 0 ≤ j then (word[j.toNat]?).getD blank else blank
@@ -71,36 +69,11 @@ def input (M : Program t q a) (x y : List Bool) : Config t q a where
     wordTape (x.map bitSymbol ++ [separator] ++ y.map bitSymbol)
     else fun _ => blank
 
-/-- Most-significant bit first, including any leading zeroes. -/
-def binaryValue : List Bool → ℕ
-  | [] => 0
-  | b :: bs => (if b then 1 else 0) * 2 ^ bs.length + binaryValue bs
-
-theorem binaryValue_lt (bs : List Bool) : binaryValue bs < 2 ^ bs.length := by
-  induction bs with
-  | nil => decide
-  | cons b bs ih =>
-    cases b <;> simp only [binaryValue, List.length_cons, pow_succ,
-      Bool.false_eq_true, ↓reduceIte, zero_mul, one_mul, zero_add] <;> omega
-
-theorem product_fits {x y : List Bool} {n : ℕ}
-    (hx : x.length = n) (hy : y.length = n) :
-    binaryValue x * binaryValue y < 2 ^ (2 * n) := by
-  have hx' := binaryValue_lt x
-  have hy' := binaryValue_lt y
-  rw [hx] at hx'
-  rw [hy] at hy'
-  calc
-    _ < 2 ^ n * 2 ^ n := Nat.mul_lt_mul_of_lt_of_lt hx' hy'
-    _ = _ := by rw [← pow_add, two_mul]
-
 def outputCorrect (M : Program t q a) (n : ℕ) (x y : List Bool)
     (c : Config t q a) : Prop :=
   ∃ out : List Bool, out.length = 2 * n ∧
     binaryValue out = binaryValue x * binaryValue y ∧
     c.tape ⟨0, M.tapes_pos⟩ = wordTape (out.map bitSymbol)
-
-def lg (n : ℕ) : ℕ := max (Nat.clog 2 n) 1
 
 noncomputable def targetTime (κ : ℝ) (n : ℕ) : ℝ :=
   (n : ℝ) * (lg n : ℝ) ^ (1 - κ)

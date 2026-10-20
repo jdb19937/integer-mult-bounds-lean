@@ -25,7 +25,9 @@ import Mathlib.Tactic.NormNum.IsCoprime
 import Mathlib.Tactic.NormNum.Irrational
 import Mathlib.Tactic.Echelon.Zsqrtd
 import Mathlib.Tactic.ENatToNat
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Integer weight tables for the numerical maps, computed from the certified
 approximations of `π` and `exp`: with `q = 5p` guard bits, `P ≈ 2^q π`,

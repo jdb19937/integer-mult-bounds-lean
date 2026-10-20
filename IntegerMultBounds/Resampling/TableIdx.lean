@@ -16,7 +16,9 @@ import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.NormNum.IsCoprime
 import Mathlib.Tactic.NormNum.Irrational
 import Mathlib.Tactic.Echelon.Zsqrtd
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 
 /-! Natural-number formulas for the exponent numerators of the weight tables,

@@ -6,7 +6,9 @@ import IntegerMultBounds.NLogN.PhaseCellIntervals
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Interior rows of the actual rounded periodic Gaussian matrix. A row whose
 band stays in the array and in one phase cell has no aliasing, and every

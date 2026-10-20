@@ -256,7 +256,7 @@ theorem exact_product (hk : 0 < k) {x y : List Bool}
     evalBase (2 ^ k) (List.ofFn fun i : Fin S =>
       (round (((2 : ℂ) ^ (2 * k) * S) *
         computedConv (p := p) (k := k) F' G' x y (i.val : ZMod S)).re).toNat) =
-      Machine.binaryValue x * Machine.binaryValue y := by
+      binaryValue x * binaryValue y := by
   have hp : (0 : ℝ) < 2 ^ p := by positivity
   refine product_from_approx hk hS
     (computedConv_approx F F' G G' hk hF hF' hG hG' hEs hconv) ?_

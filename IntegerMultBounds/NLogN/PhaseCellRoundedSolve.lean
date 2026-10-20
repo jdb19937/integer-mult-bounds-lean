@@ -9,7 +9,9 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Algebra.Order.Ring.Star
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Error composition of the rounded four-step solve on the actual rounded
 periodic Gaussian matrix. Off-diagonal row mass is at most one, so stage

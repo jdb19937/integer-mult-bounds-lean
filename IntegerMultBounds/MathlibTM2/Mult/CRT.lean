@@ -391,7 +391,7 @@ theorem exact_product_crt (hcop : ∀ i, Nat.Coprime (s i) (t i)) {k p : ℕ} {E
       (round (((2 : ℂ) ^ (2 * k) * ((∏ i, s i : ℕ) : ℂ)) *
         ExactRecovery.computedConv (p := p) (k := k) F' G' x y
           (i.val : ZMod (∏ i, s i))).re).toNat) =
-      IntegerMultBounds.Machine.binaryValue x * IntegerMultBounds.Machine.binaryValue y :=
+      IntegerMultBounds.binaryValue x * IntegerMultBounds.binaryValue y :=
   ExactRecovery.exact_product (crtSourceCLM s t hs) F' (crtOppositeCLM s t hs) G' hk hS
     (opNorm_crtSourceCLM_le s t hs) hF' (opNorm_crtOppositeCLM_le s t hs) hG' hEs
     (crt_hconv s t hs hcop) hfinal

@@ -477,7 +477,7 @@ theorem exact_product_of_components (hcop : ∀ i, Nat.Coprime (s i) (t i))
           (crtSourceApprox hs p (d * (2 * ⌈α ^ 2⌉₊ + 2)) A' B' a' M')
           (crtOppApprox hs p (d * (2 * ⌈α ^ 2⌉₊ + 2)) A' B' a' M') x y
           (i.val : ZMod (∏ i, s i))).re).toNat) =
-      IntegerMultBounds.Machine.binaryValue x * IntegerMultBounds.Machine.binaryValue y := by
+      IntegerMultBounds.binaryValue x * IntegerMultBounds.binaryValue y := by
   obtain ⟨hF, hG⟩ := sourceErr_of_components heven J hJ hAn hBn hA' hA'1 hB' hB'1 ha' hM'
     hd hp hsmall hEs
   exact exact_product_crt s t hs hcop _ _ hk hS (crtSource_err hs hF) (crtOpp_err hs hG) hEs

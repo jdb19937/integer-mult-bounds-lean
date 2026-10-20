@@ -6,7 +6,9 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Algebra.Order.Ring.Star
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! The permutation-left factorization in the small-gap regime. Without the
 old condition `α²θ ≥ 1`, the exact inverse of `N` can have norm up to `4p`;

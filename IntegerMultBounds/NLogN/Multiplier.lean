@@ -43,7 +43,7 @@ theorem digitsOf_lt {k : ℕ} (hk : 0 < k) (x : List Bool) :
   exact bitDigit_lt b
 
 theorem evalBase_digitsOf {k : ℕ} (hk : 0 < k) (x : List Bool) :
-    evalBase (2 ^ k) (digitsOf k x) = Machine.binaryValue x := by
+    evalBase (2 ^ k) (digitsOf k x) = binaryValue x := by
   rw [binaryValue_eq_evalBase, digitsOf, ← evalBase_chunks 2 hk]
   rfl
 
@@ -127,18 +127,18 @@ theorem mulFixed_correct {k L m p n : ℕ} (hk : 0 < k) {ω : ℂ}
     (hp : 2 * m + 4 + k ≤ p) {x y : List Bool} (hx : x.length = n) (hy : y.length = n)
     (hL : k * L = 2 * n)
     (hm : (digitsOf k x).length + (digitsOf k y).length ≤ 2 ^ m + 1) :
-    Machine.binaryValue (mulFixed k L m ω e₁ e₂ e₃ r x y) =
-        Machine.binaryValue x * Machine.binaryValue y ∧
+    binaryValue (mulFixed k L m ω e₁ e₂ e₃ r x y) =
+        binaryValue x * binaryValue y ∧
       (mulFixed k L m ω e₁ e₂ e₃ r x y).length = 2 * n := by
   unfold mulFixed
   rw [mulFixed_list hk hω hε₁ hε₂ hε₃ hr hp x y]
   have hval : evalBase (2 ^ k) (cconvList (2 ^ m) (digitsOf k x) (digitsOf k y)) =
-      Machine.binaryValue x * Machine.binaryValue y := by
+      binaryValue x * binaryValue y := by
     rw [evalBase_cconvList _ hm, evalBase_digitsOf hk, evalBase_digitsOf hk]
   have hfit : evalBase (2 ^ k) (cconvList (2 ^ m) (digitsOf k x) (digitsOf k y)) <
       (2 ^ k) ^ L := by
     rw [hval, ← pow_mul, hL]
-    exact Machine.product_fits hx hy
+    exact product_fits hx hy
   obtain ⟨h1, h2⟩ := binaryValue_toBits hk hfit
   exact ⟨h1.trans hval, h2.trans hL⟩
 

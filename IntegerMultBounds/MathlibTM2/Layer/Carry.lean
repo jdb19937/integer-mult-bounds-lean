@@ -1,7 +1,9 @@
 module
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.ZMod.Basic
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 
 /-!

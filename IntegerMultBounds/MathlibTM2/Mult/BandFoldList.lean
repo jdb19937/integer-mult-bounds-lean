@@ -19,7 +19,9 @@ import Mathlib.Tactic.NormNum.Irrational
 import Mathlib.Tactic.Echelon.Zsqrtd
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Data.List.GetD
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 
 /-! Folding a line into the elimination order and back, as list operations a tape

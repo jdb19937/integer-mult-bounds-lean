@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Tactic
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import IntegerMultBounds.BinaryWords
 
 /-! Kronecker substitution: integer multiplication as convolution of bounded
 digit vectors, least-significant digit first. Proved: the acyclic convolution
@@ -315,11 +316,11 @@ theorem chunk_value_lt {B k : ℕ} (hB : 1 ≤ B) (hk : 0 < k) {ds : List ℕ}
 
 /-- Most-significant-first bits are the reversed base-2 digit string. -/
 theorem binaryValue_eq_evalBase (bs : List Bool) :
-    Machine.binaryValue bs = evalBase 2 (bs.reverse.map fun b => if b then 1 else 0) := by
+    binaryValue bs = evalBase 2 (bs.reverse.map fun b => if b then 1 else 0) := by
   induction bs with
   | nil => rfl
   | cons b bs ih =>
-    rw [Machine.binaryValue, ih, List.reverse_cons, List.map_append, evalBase_append]
+    rw [binaryValue, ih, List.reverse_cons, List.map_append, evalBase_append]
     simp [evalBase]; rw [add_comm]
 
 end IntegerMultBounds.NLogN

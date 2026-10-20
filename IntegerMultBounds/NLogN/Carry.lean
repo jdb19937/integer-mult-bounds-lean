@@ -145,7 +145,7 @@ theorem toBits_length (k L : ℕ) (ds : List ℕ) : (toBits k L ds).length = k *
 
 theorem binaryValue_toBits {k L : ℕ} (hk : 0 < k) {ds : List ℕ}
     (h : evalBase (2 ^ k) ds < (2 ^ k) ^ L) :
-    Machine.binaryValue (toBits k L ds) = evalBase (2 ^ k) ds ∧
+    binaryValue (toBits k L ds) = evalBase (2 ^ k) ds ∧
       (toBits k L ds).length = k * L := by
   refine ⟨?_, toBits_length k L ds⟩
   have hB : 2 ≤ 2 ^ k := by

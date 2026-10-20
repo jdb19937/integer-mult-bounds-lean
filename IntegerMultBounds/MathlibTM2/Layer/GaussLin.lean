@@ -3,7 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Layer.Carry
 public import IntegerMultBounds.MathlibTM2.Layer.Format
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-!
 # Gaussian linear combinations, one bit position per step

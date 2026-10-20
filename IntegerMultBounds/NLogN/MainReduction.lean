@@ -48,7 +48,7 @@ theorem aconv_digits_lt {k : ℕ} (hk : 0 < k) {x y : List Bool}
 theorem reduce_to_cconv {k S : ℕ} (hk : 0 < k) {x y : List Bool}
     (hS : (digitsOf k x).length + (digitsOf k y).length ≤ S + 1) :
     evalBase (2 ^ k) (cconvList S (digitsOf k x) (digitsOf k y)) =
-      Machine.binaryValue x * Machine.binaryValue y := by
+      binaryValue x * binaryValue y := by
   rw [evalBase_cconvList _ hS, evalBase_digitsOf hk, evalBase_digitsOf hk]
 
 /-! ### The `ZMod S` vector form -/
@@ -151,7 +151,7 @@ theorem product_from_approx {k S : ℕ} [NeZero S] (hk : 0 < k) {x y : List Bool
     (hδ : (2 : ℝ) ^ (2 * k) * S * δ < 1 / 2) :
     evalBase (2 ^ k) (List.ofFn fun i : Fin S =>
       (round (((2 : ℂ) ^ (2 * k) * S) * w' (i.val : ZMod S)).re).toNat) =
-      Machine.binaryValue x * Machine.binaryValue y := by
+      binaryValue x * binaryValue y := by
   have hr := recover_cconv (digitsOf k x) (digitsOf k y) hw hδ
   have hlist : (List.ofFn fun i : Fin S =>
       (round (((2 : ℂ) ^ (2 * k) * S) * w' (i.val : ZMod S)).re).toNat) =

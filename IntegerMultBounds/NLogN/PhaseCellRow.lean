@@ -6,7 +6,9 @@ import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
-public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.BinaryWords
 
 /-! Finite periodic Gaussian rows, formed by wrapping every retained lattice
 index into ZMod s. Repeated residue classes are accumulated, never discarded.

@@ -78,17 +78,17 @@ theorem length_bitsMSB (n x : ℕ) : (bitsMSB n x).length = n := by
   | zero => rfl
   | succ n ih => simp [bitsMSB, ih]
 
-theorem binaryValue_bitsMSB (n x : ℕ) : Machine.binaryValue (bitsMSB n x) = x % 2 ^ n := by
+theorem binaryValue_bitsMSB (n x : ℕ) : binaryValue (bitsMSB n x) = x % 2 ^ n := by
   induction n with
-  | zero => simp [bitsMSB, Machine.binaryValue, Nat.mod_one]
+  | zero => simp [bitsMSB, binaryValue, Nat.mod_one]
   | succ n ih =>
-    simp only [bitsMSB, Machine.binaryValue, length_bitsMSB, ih, Nat.mod_pow_succ,
+    simp only [bitsMSB, binaryValue, length_bitsMSB, ih, Nat.mod_pow_succ,
       Nat.testBit_eq_decide_div_mod_eq]
     have h := Nat.mod_two_eq_zero_or_one (x / 2 ^ n)
     rcases h with h | h <;> simp [h, Nat.add_comm]
 
 theorem binaryValue_bitsMSB_of_size {n x : ℕ} (hx : Nat.size x ≤ n) :
-    Machine.binaryValue (bitsMSB n x) = x := by
+    binaryValue (bitsMSB n x) = x := by
   rw [binaryValue_bitsMSB, Nat.mod_eq_of_lt (Nat.size_le.1 hx)]
 
 /-! ### Twist angles -/
