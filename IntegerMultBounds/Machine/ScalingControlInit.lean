@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.OneHotCount
+public import IntegerMultBounds.Machine.OneHot
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Initialize both finite residue banks used by scaling from the supplied
 binary modulus. Control cells need no prepared symbols. The modulus-sized loop

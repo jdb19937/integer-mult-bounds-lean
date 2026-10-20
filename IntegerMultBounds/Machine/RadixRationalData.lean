@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.RadixDivisionData
+public import IntegerMultBounds.Machine.RadixDigits
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Algebra.Field.ZMod
 
 /-! A finite signed-carry transducer for any fixed rational coefficient. Its
 state interval depends only on the integer numerator and natural denominator,

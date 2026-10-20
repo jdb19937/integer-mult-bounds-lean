@@ -1,0 +1,29 @@
+{
+  "baseline": "c773bd68d616852f8b224545d93ce181f70be606",
+  "reason": "Removed Machine plumbing that no constant of the completed theorem, the compact and CRT checks, or the open M6, M8, DFT and PR589 work uses, and that no retained module refers to by name.",
+  "total_files": 21,
+  "total_lines": 2676,
+  "files": [
+    "IntegerMultBounds/Machine/ActualAffineScalingDimensions.lean",
+    "IntegerMultBounds/Machine/ArbitraryWidthHighBudget.lean",
+    "IntegerMultBounds/Machine/ArbitraryWidthHighGuard.lean",
+    "IntegerMultBounds/Machine/ArbitraryWidthHighMetadataBudget.lean",
+    "IntegerMultBounds/Machine/ArbitraryWidthHighPrepare.lean",
+    "IntegerMultBounds/Machine/ArbitraryWidthSchedule.lean",
+    "IntegerMultBounds/Machine/CompactGuardGrowth.lean",
+    "IntegerMultBounds/Machine/MarkedRadixRefresh.lean",
+    "IntegerMultBounds/Machine/OneHotCount.lean",
+    "IntegerMultBounds/Machine/RadixAdd.lean",
+    "IntegerMultBounds/Machine/RadixAddReusable.lean",
+    "IntegerMultBounds/Machine/RadixDivisionData.lean",
+    "IntegerMultBounds/Machine/RadixLinearCombination.lean",
+    "IntegerMultBounds/Machine/RadixLinearCombinationBinary.lean",
+    "IntegerMultBounds/Machine/RadixLinearCombinationRefresh.lean",
+    "IntegerMultBounds/Machine/RadixLinearCombinationShared.lean",
+    "IntegerMultBounds/Machine/RecursiveCleanReturn.lean",
+    "IntegerMultBounds/Machine/RecursiveMixedClean.lean",
+    "IntegerMultBounds/Machine/RecursiveMixedInitialized.lean",
+    "IntegerMultBounds/Machine/RecursiveMixedRoleBank.lean",
+    "IntegerMultBounds/Machine/RecursiveRowDivisor.lean"
+  ]
+}

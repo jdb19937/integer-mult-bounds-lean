@@ -1,6 +1,6 @@
 module
 
-import IntegerMultBounds.Machine.CompactGuardGrowth
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import IntegerMultBounds.Machine.CompactGlobalReservation
 public import IntegerMultBounds.Machine.CompactScalarAllowances
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal

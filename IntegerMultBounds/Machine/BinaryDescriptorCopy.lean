@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.MarkedRadixRefresh
+public import IntegerMultBounds.Machine.RadixRationalBinary
 public import IntegerMultBounds.Machine.RadixZeroFill
 
 /-! Copy a binary descriptor from a preserved source to a wholly blank tape,

@@ -2,7 +2,11 @@ module
 
 public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
 public import IntegerMultBounds.Machine.RecursiveCallProtocol
-public import IntegerMultBounds.Machine.RecursiveMixedRoleBank
+public import IntegerMultBounds.Machine.RecursiveVolumeRoleBank
+public import IntegerMultBounds.Machine.RecursiveMixedSchedule
+public import IntegerMultBounds.Machine.SharedBankRawCompose
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
 public import IntegerMultBounds.Machine.Shared50OrderedPieces
 public import IntegerMultBounds.Machine.RecursiveScalarSchedule
 public import IntegerMultBounds.Networks.AffineFieldBijective

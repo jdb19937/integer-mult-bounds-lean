@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Machine.ActualAffineScalingDimensions
+public import IntegerMultBounds.Machine.ActualAffineScaling
+public import IntegerMultBounds.Machine.SignedScalingDimensions
 public import IntegerMultBounds.Machine.SignedScalingDimensionsStream
 
 /-! Actual Shared50 rational scales on a physically consecutive family of equal

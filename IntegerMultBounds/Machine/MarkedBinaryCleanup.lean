@@ -1,6 +1,12 @@
 module
 
-public import IntegerMultBounds.Machine.RadixLinearCombinationShared
+public import IntegerMultBounds.Machine.RadixRationalBinary
+public import IntegerMultBounds.Machine.RadixDigits
+public import IntegerMultBounds.Machine.Hoare
+public import IntegerMultBounds.Machine.MarkedWordCleanup
+public import IntegerMultBounds.Machine.ReturnOrigin
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Erase an actual encoded binary descriptor and its sentinel, restoring a

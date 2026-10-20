@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.RecursiveChildCallSetup
 public import IntegerMultBounds.Machine.RecursiveStackAllocation
-public import IntegerMultBounds.Machine.RecursiveCleanReturn
+public import IntegerMultBounds.Machine.RecursiveFrameControl
+public import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
 
 /-! Physical return on the exact forty-tape child-preparation bank. Retained
 child headers are erased before saved parent headers are popped; the PC frame

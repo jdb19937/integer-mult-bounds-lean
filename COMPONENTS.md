@@ -161,11 +161,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   `k + 14`.
 
 - `Machine/RadixDigits.lean`: Fixed-radix digit alphabet, decoder and least-significant-first word value, with exact encoding/decoding and word-width bounds.
-- `Machine/RadixAdd.lean`: Literal three-tape, two-state fixed-radix modular addition. Exactly one transition per padded digit, actual halting, exact output remainder and final carry, with arbitrary tape backgrounds and complete source preservation.
-
 - `Machine/RadixUnary.lean`: Generic literal two-tape finite-table digit transducer. Exact-width execution and halting, arbitrary finite control, full source preservation and output-local writes; the finite table is fixed independently of word length.
-- `Machine/RadixDivisionData.lean`: Bounded-carry prime-radix division by a fixed positive denominator below the radix. The d-state local congruence telescopes to exact integer and word-modulus division identities.
-
 - `Machine/RadixRationalData.lean`: Arbitrary signed rational-numerator scaling in prime radix with a fixed finite signed-carry interval. The exact local congruence, interval invariant and full-word integer identity are proved; no state bound depends on width.
 - `Machine/RadixRational.lean`: Literal two-tape rational-coefficient multiplication, including negative coefficients, with one transition per digit. The exact finite carry table implements the actual Swap.Modular.ratMod coefficient at every word modulus; exact runtime, halting and complete source preservation are proved.
 
@@ -218,7 +214,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ScalingSplitRewind.lean`: Literal fixed-coefficient buffer rewinds after splitting. Each buffer physically returns to its original head using its preserved piece-length descriptor, with no data changes and full clock cleanup. The combined split-and-rewind machine writes exact contiguous pieces at merge-ready heads; canonical descriptors give actual cost at most twenty-four times volume plus forty-eight times fixed piece count plus one.
 
-- `Machine/OneHotCount.lean`: Actual fixed-modulus residue construction from an immutable binary count. Writes zero into arbitrary control cells and performs counted literal residue advances; heads and background cells survive and the mutable clock resets. Twenty fixed states, cost seven times count plus seven times descriptor width plus eighteen, or fourteen times count plus twenty-five for canonical descriptors.
 - `Machine/ScalingControlInit.lean`: Initializes both scaling residue banks from arbitrary control-cell contents: modulus becomes Q modulo fixed c, current becomes zero. One real initialization transition and reusable counted advances preserve descriptor, clock, all heads and background cells. The complete cost is linear in Q and fits the positive-width payload-volume budget.
 
 - `Machine/ScalingExecution.lean`: Complete literal positive-unit scaling through fixed-coefficient split, physical buffer rewinds and FIFO merge. A static placement shares actual buffers; source and descriptors survive and destination block c*y modulo Q is original block y. Tape count ten plus four times fixed coefficient and state count forty-eight times coefficient plus twenty-one are independent of Q and B. Prepared canonical descriptors and residue banks give cost at most seventy-five times volume plus forty-eight times coefficient plus twenty-five.
@@ -276,8 +271,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RadixToBinaryData.lean`: Pure radix countdown and canonical binary output semantics with borrow/carry amortization. Zero-digit potential bounds total modeled conversion work by 10*value+2*width+2, hence 12*q^width+2 for q at least two; binary output has exactly the source value. This is the data/cost lemma, not yet the literal conversion-machine correctness theorem.
 
-- `Machine/ActualAffineScalingDimensions.lean`: Specializes dimension-based signed scaling to every rational coefficient occurring in the actual Shared50 schedules. Membership proves coefficient positivity/unit legality at every prime-power width. One fixed program per coefficient, exact full-bank and ordered-affine output contracts, restored negation scratch, and bound (1950+120*(abs numerator+denominator))*q^b*B. No derived numeric descriptors supplied; inherited fixed sentinels and scratch layouts remain explicit. This proves one fiber, not the full network scheduler.
-
 - `Machine/BinaryReplace.lean`: Seven-state two-tape binary descriptor replacement: erases the old word, copies a physically supplied replacement and restores both heads, preserving the source exactly. Full-bank bound 2*oldWidth+2*newWidth+8 includes removal of stale longer suffixes.
 
 - `Machine/RadixToBinary.lean`: Literal radix-to-canonical-binary converter for fixed q at least two, using three tapes, eighteen states and a q+4-symbol alphabet. Physically initializes markers, copies and rewinds source, runs amortized radix countdown with binary growth, erases work and removes the temporary source marker. Exact full-bank output, original source/head preserved, scratch blank/head restored. Bound 10*value+6*width+14, hence 16*q^width+14 and 30 times nonempty fiber volume. Handles empty words, zero and leading radix zeroes; alphabet-lifted connection to translation is separate.
@@ -316,15 +309,9 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/FamilyPlacementAlphabet.lean`: Alphabet-polymorphic pairing, framing and charged sequential composition of tape banks. Uses static placement equivalences while preserving every symbol of arbitrary-alphabet frames; no physical transfer is assumed.
 
-- `Machine/RadixAddReusable.lean`: Literal equal-width radix addition from blank-backed operands and blank output, all heads at zero. Writes/removes markers, preserves both operands and restores every head; three tapes/six states, cost2*width+5. Modular sum semantics and width preservation proved. Eighteen-state consume variant erases both temporary operands, leaving only the sum, in6*width+19. Supports reusable arithmetic for multi-control offsets.
-
 - `Machine/RadixZeroFill.lean`: Physical zero-radix-field construction from a supplied binary width descriptor. Writes markers and placeholders by actual counted iteration, recodes backward to radix zero, and returns the field head. Three tapes, twenty-three states; bound8*n+7*descriptorWidth+21, or15*n+28 for canonical widths. Field/work tapes start blank; dimension descriptor is preserved and control scratch returns to its explicit reusable marked state.
 
 - `Machine/PrefixCounterInit.lean`: Fixed-field-count physical initialization from canonical binary width descriptors, with all output and clock tapes initially blank. Sequential radix zero-fill constructs every field; exact full-bank endpoint and injective field projection identify the zero PrefixCounter bank. Cost15*sum(widths)+29*fieldCount; 3*fieldCount+1 tapes and23*fieldCount+1 states, including the empty family via an untouched spare. Width descriptors and explicit reusable clocks are retained; whole translation-bank assembly remains separate.
-
-- `Machine/RadixLinearCombination.lean`: Fixed expression/list compiler executes rational leaves and modular addition nodes, physically erasing temporary operands and restoring source/scratch heads. Exact radix output equals the rational modular sum when denominators are below prime q. Coefficient-list bound(34*termCount+7)*q^b with3*termCount+2 tapes. Every leaf, including the zero seed, has a supplied marked source copy; repeated logical controls are not copied or refreshed for free. Binary endpoint and scheduler-source linkage remain separate.
-
-- `Machine/RadixLinearCombinationBinary.lean`: Fixed rational-expression arithmetic followed by one canonical binary conversion and physical erasure of the final radix result. Exact output descriptor/head, both converter work tapes blank/head zero, and original leaf-source workspace preserved. Coefficient-list bound(34*termCount+47)*q^b with3*termCount+4 tapes; binary value is the exact modular rational sum for denominators below prime q. Supplied per-leaf copies remain explicit; source duplication/refresh and recurring binary-output replacement are separate.
 
 - `Machine/RationalPrefixTranslationExecution.lean`: Concrete rational-controlled fiber translation followed by physical multi-field prefix increment. Selected field zero supplies the offset; a fixed nonempty duplicate-free carry order may place it anywhere, with independent spectator widths. Exact full-bank endpoint preserves spectator tapes during translation and charges actual carry/rewind transitions:516*Q*B+1+prefixStepCost. Fixed16+c tapes for c+1 prefix fields. Prepared marked inputs and equal target/selected-control radix width explicit; repeated-family and layout assembly separate.
 
@@ -334,15 +321,9 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/FiberLayoutData.lean`: Constructs prefix/target/suffix fibers directly from a flat Fin(P*(Q*B)) array and proves flattening returns exactly its original List.ofFn. Per-prefix rotations transport each target entry while preserving every suffix symbol and total volume. scheduled_entry connects selected-counter extraction to these concrete flat-array addresses. Pure layout/address lemmas; physical runtime integration remains separate.
 
-- `Machine/MarkedRadixRefresh.lean`: Physical replacement of a stale marked radix word from a shared source tape. Erases the old copy, copies actual source digits and restores both heads to one, preserving the source cell-for-cell and removing stale longer suffixes. Two tapes, seven states; exact whole-bank bound2*oldWidth+2*sourceWidth+8. Wiring this primitive across all expression leaves and scheduler controls is separate.
-
 - `Machine/SharedPlacementAlphabet.lean`: Alphabet-polymorphic placement sharing one physical tape between an active program and a retained bank. Exact complete-tape/head replacement and framed Hoare contracts use static finite wiring, without a physical copy assumption. Complete-tape replacement commutes with appending either caller bank, including exact heads.
 
-- `Machine/RadixLinearCombinationRefresh.lean`: Concrete refresh of every expression leaf from one shared physical control bank. Fin-bounded references determine fixed tape placements; recursive erase/copy programs preserve the shared bank and synchronize all stale leaf copies, including repeated references. Exact complete-bank theorem and runtime+1 at most leafCount*(4*width+9) when source/stale widths are bounded. Actual binary arithmetic composition and recurring output reset remain separate.
-
 - `Machine/FlatControlledShift.lean`: Complete physical controlled shift on a flat Fin(P*(Q*B)) array, with fibers constructed from the input itself. Actual prefix enumeration supplies the selected rational control; exact source List.ofFn and every destination symbol proved, preserving prefix and suffix coordinates. Full-bank Hoare theorem costs(536+4*c)*volume+23. Requires canonical B/Q/P descriptors and a prepared marked zero prefix/work bank; no assumed address family or offset oracle. Target and selected control share radix width, spectator widths arbitrary, denominator below prime radix. Physical initialization handoff remains separate.
-
-- `Machine/RadixLinearCombinationShared.lean`: One physical program refreshes stale expression leaves from a shared bounded control bank, computes the rational expression, converts to canonical binary and restores arithmetic/converter scratch. Exact shared-control preservation and output descriptor; finite-bank wrapper needs no unbounded extra source tapes. Cost(13*leafCount+expressionConstant+40)*q^b for common new width b and stale widths at most b. Leaf sentinels/head-one remain prepared inputs and binary output starts blank; first-use bootstrap and recurring output reset separate.
 
 - `Machine/PrefixCounterInitPlacement.lean`: Explicit static permutation hands physically initialized prefix-field tapes to a consumer while retaining all width descriptors, clocks and spare tapes as frames. initialize_then composes real initialization with a proved consumer execution and charges their join; no field copying is assumed.
 
@@ -626,8 +607,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RecursiveShiftRoleBank.lean`: One layout-independent machine shifts a selected permanent role in any positive seven-factor layout. Shared six canonical headers, all other roles and arbitrary auxiliary tapes are preserved, private work is blank again, and exact symbol transport costs 221536 times volume plus 32370. Header updates are separate.
 
-- `Machine/RecursiveCleanReturn.lean`: Actual header cleanup, saved-descriptor restoration and binary PC pop/dispatch composed into one return routine, with exact selected continuation terminal state. Conditional body interface allows nonblank child headers and charges all erasure and joins; recursive body implementation remains open.
-
 - `Machine/DigitInterchangeRows.lean`: Literal serialization for width-one interchange: the first cyclic split role word equals the second split input, and transposing fixed radix-role indices gives exactly the transposed leaf words while preserving arbitrary outer, middle and suffix fields.
 
 - `Machine/DigitInterchangePasses.lean`: Actual normalized tape contracts for both split and both merge levels of single-digit interchange. Input/output words match literally, heads and descriptors are restored, and the total pass cost including joins is at most (597+2*q) times volume. Whole-bank joining, counter synthesis and private cleanup remain separate.
@@ -681,8 +660,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/RecursiveVolumeRoleBank.lean`: Physical volume/clock initialization on the permanent recursive role bank, starting with both control tapes blank. Every role and arbitrary auxiliary tape is preserved; exact prepared endpoint and private cleanup.
 
 - `Machine/SharedBankRawCompose.lean`: Actual fixed-skeleton composition with changing leading common banks and blank private endpoints. Proves exact input/output bank and sum of runtimes plus one joining transition, independent of semantic-stage packaging.
-
-- `Machine/RecursiveMixedInitialized.lean`: One fixed machine initializes its own XOR clock and volume word from six canonical headers, then executes the actual mixed shift/scaling/XOR list. Exact role-array semantics and clean private endpoint, bound(51783+sum operation coefficients+operation count) times volume. Generated controls remain explicit at output; per-operation coordinate-view changes and recursive calls remain separate.
 
 - `Machine/RecursiveChildCallSetup.lean`: Actual fixed 40-tape call entry saves six parent headers and compile-time return PC, then physically computes/installs child headers. Both saved stacks survive complete arithmetic. Exact child bank and coefficient RecursiveChildPrepare.constant+24*(log2 roles+2)+50+PCwidth times child volume; array parking and recursive body remain separate.
 
@@ -796,10 +773,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RecursiveCallProtocol.lean`: Actual child entry composes initialized payload parking/movement with same-row header and PC setup. Recovery regenerates the restored parent volume, retrieves payloads and clears controls. Exact banks and linear role-volume costs are proved; matching child execution to the recovery input and global auxiliary placement remain separate.
 
-- `Machine/RecursiveMixedClean.lean`: Physically erases the generated mixed-operation clock and volume descriptor after execution, retaining exact original headers, payloads and auxiliaries with all private work blank; linear-volume bound includes cleanup.
-
-- `Machine/RecursiveMixedRoleBank.lean`: Places complete initialized and cleaned mixed operations on permanent role/header banks, preserving arbitrary saved stacks and other auxiliaries without supplying any XOR controls.
-
 - `Machine/Shared50RecursiveNodeLayout.lean`: Original World enumeration remains in its existing role slots, with common IO last; role count equals W and physical merge permutation is the conjugated involutive original route.
 
 - `Machine/Shared50RecursiveNodeRows.lean`: Cyclic split and permuted merge match the exact parent H/D transpose through row and suffix packing, including within-role address swapping.
@@ -850,8 +823,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/FixedBasePowerDescriptor.lean`: One fixed eight-tape program computes B^k from a retained canonical runtime exponent for a fixed base B≥2. It physically writes the base and initial one, executes all k multiplication steps, and erases the base and countdown workspace. Exact canonical output and uniform fixed-base constant times B^k runtime.
 
-- `Machine/RecursiveRowDivisor.lean`: Specializes the actual fixed-base power program to the fixed Shared50 World count W. The runtime depth produces canonical W^k on the unchanged finite alphabet, with preserved exponent and blank workspace; a dominating row range absorbs the complete construction cost linearly.
-
 - `Machine/RoundedRowDescriptor.lean`: One fixed fifteen-tape program physically computes the least multiple of a positive canonical divisor that encloses a positive canonical row count. Original inputs are retained, the output is canonical and all temporary tapes are erased. Exact ceiling formula, divisibility, minimality and less-than-twice-row bound when D≤R; runtime is at most 4096 times the rounded row count.
 
 - `Machine/RowPaddingConstructed.lean`: One fixed twelve-tape padding or cropping program generates both span descriptors from retained canonical prefix, row, rounded-row and suffix dimensions, executes the physical grouped scan and erases every generated counter. Exact serialized array endpoints, restored payload origins and entirely blank workspace; complete runtime at most 413 times padded volume.
@@ -861,8 +832,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/ArbitrarySliceDimensions.lean`: One fixed seventeen-tape machine constructs all three canonical arbitrary-window slice dimensions from six original headers and runtime offset/width controls. Original inputs are retained, every power/difference/intermediate product is erased, and the exact slice dimensions cost at most 700 times parent volume. Physical header installation is separate.
 
 - `Machine/ArbitrarySliceHeaders.lean`: One fixed eighteen-tape wrapper physically saves six parent headers, constructs runtime slice dimensions, replaces occupied fields, and erases generated descriptors. Paid restoration returns the exact original headers and older frame stack. Entry costs at most 900 times volume and return at most 128 times volume; offset/width controls and all scratch endpoints are exact.
-
-- `Machine/ArbitraryWidthSchedule.lean`: The literal power-piece schedule has computed offsets and depths and composes to the exact full chunk transpose. Each slice has an actual fixed recursive root execution contract with certified budget and exact serialized endpoints. Installed slice headers are an explicit premise; runtime schedule construction and whole driver remain open.
 
 - `Machine/ArbitraryWidthHighRows.lean`: Computable least high-digit count Nat.clog(q*q)D exactly equals the manuscript ceiling when D=W^k. Integer-power domination, first-stop uniqueness, previous-power minimality and less-than-q-squared overshoot are proved, including the zero-exponent edge case. The physical selection loop is separate.
 
@@ -924,25 +893,17 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/RadixDigitMoveBlockExecution.lean`: One fixed machine and its inverse exchange a radix digit across arbitrary spectator and suffix blocks, from sole prefix/spectator/suffix controls. Every derived count, clock, tracker and role tape is erased; payload is rewound. Tape count is 2Q+18 and runtime is at most (1516Q+11403) times volume. The repeated high-field joining/separation loop remains separate.
 
-- `Machine/ArbitraryWidthHighPrepare.lean`: One fixed nineteen-tape program constructs k=clog_m(e), D=W^k, rho=clog_(q²)(D), R=q^(2rho) and the rounded multiple Rprime from the sole positive canonical runtime width. All intermediate workspace and the unused envelope are erased. Exact manuscript ceiling, divisibility and overshoot formulas are proved; construction costs constant(q) times rounded rows. Paid cleanup erases all five derived descriptors and retains only the original width.
-
 - `Machine/FixedBaseDescriptorQuotient.lean`: One fixed fourteen-tape program replaces its sole canonical runtime descriptor by the canonical quotient by a compiled fixed base and physically erases the remainder. All thirteen private tapes are blank again. Exact divisible suffix shrinking and a fixed-base linear-input-value bound support the repeated high-digit movement controller.
 
 
 
 
 
-- `Machine/ArbitraryWidthHighBudget.lean`: The actual high-digit selector satisfies an explicit constant times every positive width exponent, for all positive widths. The logarithmic construction cost and every fixed-coefficient per-digit movement therefore preserve the certified exponent rather than weakening it to a linear-width bound.
-
 - `Machine/ArbitraryWidthHighExchangeControls.lean`: Actual setup writes zero offset, unit slice width and zero recursion depth, and copies the retained runtime high-digit count into the slice dispatcher. Paid cleanup erases generated offset, width and depth; count source is retained.
 
 - `Machine/ArbitraryWidthHighExchangePlacement.lean`: Injective tape placement shares high-exchange controls with the complete recursive slice bank. Exact framed initialization and cleanup preserve every original parent descriptor, stack and payload spectator.
 
 
-
-- `Machine/ArbitraryWidthHighGuard.lean`: The concrete integer depth and high-row selectors equal the manuscript real ceilings. High depth is positive beyond unit width and eventually below the original width, proving a fixed bounded set suffices for the elementary fallback. This proves the branch arithmetic, not the fallback machine.
-
-- `Machine/ArbitraryWidthHighMetadataBudget.lean`: The actual rounded high-row count is uniformly bounded by a fixed multiple of the original array volume, for every width. The large-width branch uses the selected high-depth guard; the bounded fallback uses monotonicity of the runtime divisor. Thus constructing row metadata before branch selection has a paid linear-volume bound on both branches.
 
 
 
@@ -1101,8 +1062,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/CompactGlobalReservation.lean`: Original global axis counts determine the complete compact shape; row and within-row bits sum to D*K, original volume is retained, padded volume doubles at most and every node compact field fits.
 
 - `Machine/CompactScalarAllowances.lean`: The actual multiplier choices d,K,p derive complete D*K+3 cubic repair sizing and selected-count bounds; the actual dyadic precision log fits K eventually, and literal polynomial-record bits eventually pay padded address width. No independent cubic-width or sufficiently-large-guard premise is assumed.
-
-- `Machine/CompactGuardGrowth.lean`: The actual precision logarithm is little-o of the actual chunk width, with arbitrary positive eventual coefficients.
 
 - `Machine/CompactReservationGrowth.lean`: Actual original row-axis ceilings and front/back reservation rounding yield total reserved axes little-o of actual dimension; all choices are the multiplier scalar parameters.
 

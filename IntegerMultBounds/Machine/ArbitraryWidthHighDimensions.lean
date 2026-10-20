@@ -2,7 +2,12 @@ module
 
 public import IntegerMultBounds.Machine.BinaryDescriptorDifference
 public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
-public import IntegerMultBounds.Machine.ArbitraryWidthHighMetadataBudget
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
+public import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
+public import IntegerMultBounds.Machine.FixedBasePowerUntilRange
+public import IntegerMultBounds.Machine.RoundedRowDescriptor
+public import IntegerMultBounds.Swap.Recurrence
 
 /-! High-field views are constructed from sole original P,G,B,e,rho headers.
 The literal low width, high/low radix ranges and the three movement dimensions
