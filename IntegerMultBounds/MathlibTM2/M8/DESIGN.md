@@ -496,7 +496,12 @@ PR97's plain-frame node (section 5).
 - `StoppedRecurrence.stopped_closed` proves this for any node type. Children have sizes at most
   `(r/m) n`, the moments are `Σ w (r/m) ≤ q₁ < 1` and `0 ≤ Σ w (r/m)^τ ≤ q_τ < 1`, and every node
   has size at least one. The bound is `cost ≤ C/(1−q₁) n + C/(1−q_τ) n^τ L`.
-- The moment certificate is rational, with exp/log enclosures as in `Global/Branching97`.
+- The moment certificate is rational, with exp/log enclosures as in `Global/Branching97`
+  (`Stage2Moments.lean`, data `Stage2Histogram.lean` from `scripts/pr97/stage2hist.py` and
+  `stage2cert.py`). The whole-projector histogram has 23 ranks over 754171495 moves and rank mass
+  `s₀`; `linear_moment` gives `q₁ = 1409269/1409302` and `tau_moment` gives `q_τ = 1 − 2/10⁸` at
+  `τ* = 1 − 969/10⁷`, against `a* ≈ 9.69991·10⁻⁵`. Linking the histogram to the node's moves
+  remains, with the reversed family.
 
 **`F L F` wrapper and width selection.**
 - `F_n L F_n = (H+D, D)` for `L(H, D) = (H, D+H)`. So `D ← D−H; F_n; D ← D+H; F_n; D ← H−D` is
