@@ -37,8 +37,7 @@ def CompactLayerReady (shape : Shape) (n o u ρ R₀ r w Ka D : ℕ)
   | 0, _ => True
   | j+1, a => ∃ left right,
       ∃ layout : CompactRecursiveLayout shape n a (bits u j) ρ left right,
-      ∃ hp : ∀ x y (hxy : x≠y), 1<bits u j → ActivePrefixStageRuntimeData.Packed
-        (compactSlotComputedInputs layout x y hxy (rowsAt R₀ j) hG hGK (rowsAt_pos hR₀ j) hrecord) D,
+      ∃ hp : CompactLayoutPacked layout (rowsAt R₀ j) D,
       (∀ vv x, compactFactorBasisCost layout hG hGK (rowsAt_pos hR₀ j) hrecord D hp
         (nT CompactBReg) Ka o r w vv x ≤ budget j a vv x) ∧
       ∀ p : Fin m, CompactLayerReady shape n o u ρ R₀ r w Ka D hR₀ hG hGK hrecord budget

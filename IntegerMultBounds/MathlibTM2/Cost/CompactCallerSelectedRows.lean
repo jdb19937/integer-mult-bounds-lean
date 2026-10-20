@@ -56,31 +56,5 @@ theorem compactCaller_selected_rows_le {d g K D o N R rBits : ℕ}
 theorem compactCaller_selected_extra_le {N o K D rBits p : ℕ}
     (hp : rBits+N+1≤p) : rBits+(N-(o+K*D))+1≤p := by omega
 
-/-- Actual selected-row geometry supplies the entire row-stock premise of the
-runtime repair theorem. Precision is charged to original address and row bits. -/
-theorem compactCaller_selected_eventually_packed : ∀ᶠ N : ℕ in Filter.atTop,
-    ∀ (D o address R rBits j r w : ℕ)
-      (d : ActivePrefixStageFullData.Inputs
-        (compactReservationShape (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
-          (Mult.Sizes.K N) D (2^o*(3*(r*w))))),
-      D≤Mult.Sizes.d N →
-      CompactReservationFits (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
-        (Mult.Sizes.K N) D →
-      0<R → R≤2^rBits → o+Mult.Sizes.K N*D≤address →
-      d.rows=compactTopRows (Mult.Sizes.d N) R
-        (address-(o+Mult.Sizes.K N*(D-CompactGlobalRowPadding.rowAxes NW m (Mult.Sizes.d N))))/NW^j →
-      rBits+address+1≤Mult.Sizes.p N → Mult.Sizes.r N≤r → Mult.Sizes.p N≤w →
-      ActivePrefixStageRuntimeData.Packed d 1 := by
-  filter_upwards [compactCaller_runtime_eventually_packed,
-    compactCaller_runtime_eventually_guard] with N hp hguard
-  intro D o address R rBits j r w d hD hfit hR hRbits haddress hrows hprecision hr hw
-  have hK : 0<Mult.Sizes.K N := by omega
-  apply hp D o r w (rBits+(address-(o+Mult.Sizes.K N*D))+1) d hD hfit
-  · rw [hrows]
-    exact compactCaller_selected_rows_le hK hR hfit haddress hRbits j
-  · exact compactCaller_selected_extra_le hprecision
-  · exact hr
-  · exact hw
-
 end
 end IntegerMultBounds.MathlibTM2.Cost

@@ -30,8 +30,7 @@ def monoProgC (hQ : compactRuntimeStates ≤ Q) : Instr → Pr P (nT CompactBReg
 def monoCostC {s : Shape} {n a₀ k ρ left right : ℕ} (layout : CompactRecursiveLayout s n a₀ k ρ left right)
     (hG : 1 ≤ s.guard) (hGK : s.guard + 1 ≤ s.chunk) {R : ℕ} (hR : 0 < R)
     (hrecord : s.bits + 1 ≤ s.payload) (D : ℕ)
-    (hp : ∀ x y (hxy : x ≠ y), 1 < k → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy R hG hGK hR hrecord) D)
+    (hp : CompactLayoutPacked layout R D)
     (T o r w j u a₀' R₀ n' : ℕ) : Instr → ℕ
   | .trans _ tv => if h : ∃ x, tv x = 0 then framedCost j u s.chunk R₀
       (2 * compactFactorBasisCost layout hG hGK hR hrecord D hp T Ka o r w
@@ -56,8 +55,7 @@ omit body in
 lemma monoCostC_le {s : Shape} {n a₀ k ρ left right : ℕ} (layout : CompactRecursiveLayout s n a₀ k ρ left right)
     (hG : 1 ≤ s.guard) (hGK : s.guard + 1 ≤ s.chunk) {R : ℕ} (hR : 0 < R)
     (hrecord : s.bits + 1 ≤ s.payload) (D : ℕ)
-    (hp : ∀ x y (hxy : x ≠ y), 1 < k → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy R hG hGK hR hrecord) D)
+    (hp : CompactLayoutPacked layout R D)
     (T o r w j u a₀' R₀ : ℕ) (budget : BinaryWalsh.Address m → Fin m → ℕ)
     (hb : ∀ vv x, compactFactorBasisCost layout hG hGK hR hrecord D hp T Ka o r w vv x ≤ budget vv x)
     (ins : Instr) :
@@ -83,9 +81,7 @@ theorem monoProgC_spec (hQ : compactRuntimeStates ≤ Q) (hA : 14 ≤ prime + Ka
     (hGuard : 1 ≤ shape.guard) (hGuardChunk : shape.guard + 1 ≤ shape.chunk)
     (hRecord : shape.bits + 1 ≤ shape.payload) (hPayload : shape.payload = 2 ^ o * (3 * (r * w)))
     (D : ℕ)
-    (hp : ∀ x y (hxy : x ≠ y), 1 < bits u j → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy (rowsAt R₀ j) hGuard hGuardChunk (rowsAt_pos hR₀ j)
-        hRecord) D)
+    (hp : CompactLayoutPacked layout (rowsAt R₀ j) D)
     (hfit : ∀ i < bits u (j + 1), (o + a₀) + ρ + shape.chunk * i < o + n)
     (child : Fin m → ZArr (Fin (rowsAt R₀ j) × Fin r) (o + n) → ZArr (Fin (rowsAt R₀ j) × Fin r) (o + n))
     (ins : Instr) (hfit' : ins.Fit) (hmono : ins.IsMono) :
@@ -110,7 +106,7 @@ theorem monoProgC_spec (hQ : compactRuntimeStates ≤ Q) (hA : 14 ≤ prime + Ka
     refine framed_spec body _ fw e child _ (pullM e (Networks.Certificates.T16.Impl.xorMap i j'))
       _ (fun B => rfl) fun v S Z hL hpar hrest hx => ?_
     obtain ⟨v', c, hu', hc, hex⟩ := compactBasisW_exec body hQ layout i hGuard hGuardChunk
-      (rowsAt_pos hR₀ j) hRecord (by omega) hPayload D (hp i) fw _ (xor_pivot hij) Z v S hL hpar
+      (rowsAt_pos hR₀ j) hRecord (by omega) hPayload D hp fw _ (xor_pivot hij) Z v S hL hpar
       (fun z => hrest (.bc z) (by simp)) (hrest .tmp (by simp)) hx
     rw [← he', basisMap_xor hij] at hex
     exact ⟨v', c, hu', hc, hex⟩
@@ -120,7 +116,7 @@ theorem monoProgC_spec (hQ : compactRuntimeStates ≤ Q) (hA : 14 ≤ prime + Ka
     refine framed_spec body _ fw e child _ (pullM e (fun t => t + tv)) _ (fun B => rfl)
       fun v S Z hL hpar hrest hZ => ?_
     obtain ⟨v', c, hu', hc, hex⟩ := transW_exec body hQ layout (Fin.find _ h) hGuard hGuardChunk
-      (rowsAt_pos hR₀ j) hRecord (by omega) hPayload D (hp _) fw tv (Fin.find_spec h) Z v S hL hpar
+      (rowsAt_pos hR₀ j) hRecord (by omega) hPayload D hp fw tv (Fin.find_spec h) Z v S hL hpar
       (fun z => hrest (.bc z) (by simp)) (hrest .tmp (by simp)) (hrest (.wtmp fw) (by simp)) hZ
     rw [← he'] at hex
     exact ⟨v', c, hu', hc, hex⟩

@@ -19,10 +19,9 @@ def compactFactorBasisCost {n a₀ k ρ left right R : ℕ}
     (layout : CompactRecursiveLayout shape n a₀ k ρ left right)
     (hG : 1 ≤ shape.guard) (hGK : shape.guard+1 ≤ shape.chunk) (hR : 0<R)
     (hrecord : shape.bits+1 ≤ shape.payload) (D : ℕ)
-    (hp : ∀ x y (hxy : x≠y),1<k → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy R hG hGK hR hrecord) D)
+    (hp : CompactLayoutPacked layout R D)
     (T Ka o r w : ℕ) (vv : BinaryWalsh.Address m) (x : Fin m) :=
-  ((basisTargets vv x).map (compactBasisTargetCost layout x hG hGK hR hrecord D (hp x) T Ka o r w)).sum+1
+  ((basisTargets vv x).map (compactBasisTargetCost layout x hG hGK hR hrecord D hp T Ka o r w)).sum+1
 
 theorem compactBasisW_factor_exec (body : P → Pr P (nT CompactBReg) Q (prime+Ka) U)
     (hQ : compactRuntimeStates ≤ Q) (hA : 4 ≤ prime+Ka)
@@ -30,8 +29,7 @@ theorem compactBasisW_factor_exec (body : P → Pr P (nT CompactBReg) Q (prime+K
     (layout : CompactRecursiveLayout shape n a₀ k ρ left right)
     (hG : 1 ≤ shape.guard) (hGK : shape.guard+1 ≤ shape.chunk) (hR : 0<R)
     (hrecord : shape.bits+1 ≤ shape.payload) (hpayload : shape.payload=2^o*(3*(r*w))) (D : ℕ)
-    (hp : ∀ x y (hxy : x≠y),1<k → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy R hG hGK hR hrecord) D)
+    (hp : CompactLayoutPacked layout R D)
     {e : Fin (m*k) → Fin (o+n)}
     (he : ∀ i,(e i).val=(o+a₀)+ρ+shape.chunk*i.val)
     (fw : NWire) (vv : BinaryWalsh.Address m) (x : Fin m) (hv : vv x=1)
@@ -56,7 +54,7 @@ theorem compactBasisW_factor_exec (body : P → Pr P (nT CompactBReg) Q (prime+K
     apply Fin.ext
     rw [compactOffsetEmbedding_reserved_val,he]
   obtain ⟨v',c,hu,hc,hex⟩ := compactBasisW_exec body hQ layout x hG hGK hR hrecord hA
-    hpayload D (hp x) fw vv hv Z v S hL hpar hbc htmp hstream
+    hpayload D hp fw vv hv Z v S hL hpar hbc htmp hstream
   rw [heq] at hex
   exact ⟨v',c,hu,hc,hex⟩
 

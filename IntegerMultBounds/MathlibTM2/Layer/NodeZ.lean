@@ -1,7 +1,6 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Layer.NodeArr
-public import IntegerMultBounds.Machine.CompactFramedScalarGrid
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 /-!

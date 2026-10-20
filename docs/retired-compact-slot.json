@@ -1,0 +1,28 @@
+{
+  "baseline": "b96c2df9a3e182100eac167977b028282c1765b3",
+  "reason": "Retired the native compact slot pipeline (prepared/computed slot XOR, native runtime program, native header and descriptor banks and their costs), replaced by the Mathlib TM2 compact slot XOR.",
+  "total_files": 20,
+  "total_lines": 2112,
+  "files": [
+    "IntegerMultBounds/Machine/ActivePrefixStageDispatchBudget.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageRuntimeBudget.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageRuntimeEndpoint.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageRuntimeRun.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageSingletonBudget.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageSingletonDispatchBudget.lean",
+    "IntegerMultBounds/MathlibTM2/Cost/CompactPrepared.lean",
+    "IntegerMultBounds/MathlibTM2/Cost/CompactRuntime.lean",
+    "IntegerMultBounds/MathlibTM2/Cost/CompactSlotXor.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactDescriptorArithmetic.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactDescriptorBank.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactDescriptorBankOps.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactDescriptorPadding.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactHeaderBank.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactHeaderBuild.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactHeaderClear.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactRotRuntime.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactSlotComputed.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactSlotPrepared.lean",
+    "IntegerMultBounds/MathlibTM2/Node/CompactSlotXor.lean"
+  ]
+}

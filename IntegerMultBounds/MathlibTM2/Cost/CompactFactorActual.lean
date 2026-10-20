@@ -23,8 +23,7 @@ theorem compactFactorCost_le {s : Shape} {j u ρ a₀ R₀ n o r w left right : 
     (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk)
     (hrecord : s.bits+1≤s.payload) (hpayload : s.payload=2^o*(3*(r*w)))
     (T Ka D : ℕ)
-    (hp : ∀ x y (hxy : x≠y),1<bits u j → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy (rowsAt R₀ j) hG hGK (rowsAt_pos hR₀ j) hrecord) D)
+    (hp : CompactLayoutPacked layout (rowsAt R₀ j) D)
     (hTw : ∀ i≤j,expZ u ds i≤w) (g : ZMod 4 × BinaryWalsh.Address m) (cc : ℕ) :
     (compactFactorCost T ds j u s.chunk ρ (o+a₀) R₀ (o+n) r w g cc
       (compactFactorBasisCost layout hG hGK (rowsAt_pos hR₀ j) hrecord D hp T Ka o r w g.2) : ℝ) ≤
@@ -43,7 +42,7 @@ theorem compactFactorCost_le {s : Shape} {j u ρ a₀ R₀ n o r w left right : 
   have hB0 : 0≤B := by dsimp [B,compactBasisConst]; positivity
   have hb : ∀ x,compactFactorBasisCost layout hG hGK hR hrecord D hp T Ka o r w g.2 x≤⌈B⌉₊ := by
     intro x
-    have hh := compactBasisCost_le layout x hG hGK hR hrecord hpayload T Ka D (hp x) g.2
+    have hh := compactBasisCost_le layout x hG hGK hR hrecord hpayload T Ka D hp g.2
     exact_mod_cast hh.trans (Nat.le_ceil B)
   have hfit : (o+a₀)+s.chunk*bits u (j+1)≤o+n := by
     have hh := layout.live_fit
@@ -55,7 +54,7 @@ theorem compactFactorCost_le {s : Shape} {j u ρ a₀ R₀ n o r w left right : 
   have hwire : rowsAt R₀ j*2^(o+n)*(r*w)≤V := by
     have hv : V=3*(rowsAt R₀ j*2^(o+n)*(r*w)) := by
       rw [show V=(2^(n-s.bits)*rowsAt R₀ j)*s.recordWidth from rfl,
-        compactSlotComputed_volume layout (rowsAt R₀ j),hpayload]
+        compactSlot_volume layout (rowsAt R₀ j),hpayload]
       simp only [pow_add]
       ring
     omega

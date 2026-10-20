@@ -543,6 +543,148 @@ def swapPass (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective
       (.seq (placedSwapProg hd pay hi hQ ι hι hT)
         (.seq (moveR (ι (reg pay)) tmp id) (ofBitsPass tmp str))))
 
+/-- Running `swapPass` on any stream `w` of bit-coded symbols whose interchange with the
+dimensions `(P, G, B', L)` is the bit stream of `w'`. -/
+theorem swapPass_exec_of (body : F → Pr F T Q (prime + K) U)
+    (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
+    (hQ : swapStates hd pay hi ≤ Q)
+    (ι : Fin (swapT t₀) → Fin T) (hι : Function.Injective ι) (hT : swapT t₀ ≤ T)
+    (str tmp : Fin T) (hst : str ≠ tmp) (hstr : ∀ j, ι j ≠ str) (htmp : ∀ j, ι j ≠ tmp)
+    (P G B' L N : ℕ) (hPpos : 0 < P) (hGpos : 0 < G) (hBpos : 0 < B')
+    (w w' : List (Fin (prime + K + 4))) (hwlen : w.length = N) (hw'len : w'.length = N)
+    (hvol : P * 2 ^ L * G * 2 ^ L * B' = 3 * N)
+    (hswap : swapList P (2 ^ L) G (2 ^ L) B' blank (toBits w) = toBits w')
+    (h8' : ∀ s ∈ w', s.val < 8)
+    (hs : Fin 5 → List Bool)
+    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G B' L L k)
+    (hc : ∀ k, GrowingCounterData.Canonical (hs k))
+    (v : HS T Q (prime + K) U) (S : Stacks T (prime + K))
+    (hL : ∀ y, S.L y = [])
+    (hR : S.R str = w) (htmp0 : S.R tmp = []) (hpay0 : S.R (ι (reg pay)) = [])
+    (hpriv : ∀ j : Fin (swapT t₀), t₀ ≤ j.val → S.R (ι j) = [])
+    (hhdr : ∀ k, S.R (ι (reg (hd k))) = separator :: (hs k).map bitSymbol)
+    (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) →
+      ∀ s ∈ S.R (ι (reg i)), s ≠ blank ∧ s.val < prime + 4) :
+    ∃ v' m, v'.user = v.user ∧
+      m ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G B' L L hs +
+        6 * ∑ j, (S.R (ι j)).length + 34 * N + 2 * T + 6 * swapT t₀ + 23 ∧
+      Exec body (swapPass hd pay hi hQ ι hι hT str tmp) (mk v S) m
+        (mk v' { S with R := Function.update S.R str w' }) := by
+  classical
+  set pr := ι (reg pay) with hpr
+  have hpay_str : pr ≠ str := hstr _
+  have hpay_tmp : pr ≠ tmp := htmp _
+  have hhd_pay : ∀ k, hd k ≠ pay := by
+    intro k hk
+    have h' := hhdr k
+    rw [hk, hpay0] at h'
+    exact List.cons_ne_nil _ _ h'.symm
+  have hreg_pay : ∀ j : Fin (swapT t₀), j ≠ reg pay → ι j ≠ pr := fun j hj h' => hj (hι h')
+  -- step 1: expand the stream to bits on `tmp`
+  obtain ⟨v₁, hu₁, he₁⟩ := toBitsPass_exec body str tmp hst v S
+  set S₁ : Stacks T (prime + K) := { S with R := pushedR S.R str tmp (toBits (S.R str)).reverse }
+    with hS₁
+  -- step 2: move the bits to the payload register
+  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body tmp pr hpay_tmp.symm id v₁ S₁
+  set S₂ : Stacks T (prime + K) := { S₁ with R := movedR S₁.R tmp pr id (S₁.R tmp) } with hS₂
+  have hS₁tmp : S₁.R tmp = (toBits w).reverse := by
+    show pushedR S.R str tmp (toBits (S.R str)).reverse tmp = _
+    rw [pushedR, Function.update_self, hR, htmp0, List.append_nil]
+  have hS₁pr : S₁.R pr = [] := by
+    show pushedR S.R str tmp (toBits (S.R str)).reverse pr = _
+    rw [pushedR, Function.update_of_ne hpay_tmp, Function.update_of_ne hpay_str, hpay0]
+  have hS₂pr : S₂.R pr = toBits w := by
+    show movedR S₁.R tmp pr id (S₁.R tmp) pr = _
+    rw [movedR, Function.update_self, hS₁tmp, hS₁pr, List.map_id, List.reverse_reverse,
+      List.append_nil]
+  have hS₂oth : ∀ y, y ≠ pr → y ≠ str → y ≠ tmp → S₂.R y = S.R y := by
+    intro y h₁' h₂' h₃'
+    simp [hS₂, movedR, hS₁, pushedR, h₁', h₂', h₃']
+  have hS₂str : S₂.R str = [] := by
+    simp [hS₂, movedR, hS₁, pushedR, hst, Ne.symm hpay_str]
+  have hS₂tmp : S₂.R tmp = [] := by
+    simp [hS₂, movedR, hS₁, pushedR, Ne.symm hpay_tmp]
+  have hS₂ι : ∀ j, j ≠ reg pay → S₂.R (ι j) = S.R (ι j) := fun j hj =>
+    hS₂oth _ (hreg_pay j hj) (hstr j) (htmp j)
+  -- step 3: the placed interchange
+  have hblen :
+      (toBits w).length = BinaryAdjacentWidthInterchange.volume P (2 ^ L) G (2 ^ L) B' := by
+    rw [length_toBits, hwlen, BinaryAdjacentWidthInterchange.volume, hvol]
+  obtain ⟨x, hx⟩ := exists_ofFn_bits (toBits w) (fun s hs' => mem_toBits hs') hblen
+  obtain ⟨v₃, m₃, hu₃, hm₃, he₃⟩ := placedSwapProg_exec body hd pay hi hQ ι hι hT P G B' L L hs
+    (Nat.le_succ L) (Nat.le_succ L) hv hc hPpos hGpos hBpos x v₂ S₂ hL
+    (fun j hj => by
+      rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega))]
+      exact hpriv j hj)
+    (fun k => by
+      rw [hS₂ι _ (fun h' => hhd_pay k (BinaryInterchangeRun.slot_injective h'))]
+      exact hhdr k)
+    (by rw [hS₂pr, ← hx])
+    (fun i hip hk => by
+      rw [hS₂ι _ (fun h' => hip (BinaryInterchangeRun.slot_injective h'))]
+      exact hother i hip hk)
+  set S₃ : Stacks T (prime + K) := { S₂ with
+    L := fun _ => []
+    R := Function.update S₂.R pr (swapList P (2 ^ L) G (2 ^ L) B' blank (S₂.R pr)) } with hS₃
+  have hS₃pr : S₃.R pr = toBits w' := by
+    show Function.update S₂.R pr (swapList P (2 ^ L) G (2 ^ L) B' blank (S₂.R pr)) pr = _
+    rw [Function.update_self, hS₂pr, hswap]
+  -- step 4: move the interchanged bits back to `tmp`
+  obtain ⟨v₄, hu₄, he₄⟩ := moveR_exec body pr tmp hpay_tmp id v₃ S₃
+  set S₄ : Stacks T (prime + K) := { S₃ with R := movedR S₃.R pr tmp id (S₃.R pr) } with hS₄
+  have hS₃tmp : S₃.R tmp = [] := by
+    show Function.update S₂.R pr (swapList P (2 ^ L) G (2 ^ L) B' blank (S₂.R pr)) tmp = _
+    rw [Function.update_of_ne (Ne.symm hpay_tmp), hS₂tmp]
+  have hS₄tmp : S₄.R tmp = (toBits w').reverse := by
+    show movedR S₃.R pr tmp id (S₃.R pr) tmp = _
+    rw [movedR, Function.update_self, hS₃pr, hS₃tmp, List.map_id, List.append_nil]
+  -- step 5: pack the bits onto the stream register
+  obtain ⟨v₅, hu₅, he₅⟩ := ofBitsPass_exec body tmp str hst.symm w' h8' v₄ S₄ hS₄tmp
+  -- the sum over the placed registers
+  have hsum : ∑ j, (S₂.R (ι j)).length ≤ ∑ j, (S.R (ι j)).length + 3 * N := by
+    have hpt : ∀ j, (S₂.R (ι j)).length ≤
+        (S.R (ι j)).length + if j = reg pay then 3 * N else 0 := by
+      intro j
+      by_cases hj : j = reg pay
+      · subst hj
+        simp only [↓reduceIte]
+        rw [← hpr, hS₂pr, length_toBits, hwlen]
+        omega
+      · simp only [hj, ↓reduceIte]
+        rw [hS₂ι j hj]
+        omega
+    calc ∑ j, (S₂.R (ι j)).length
+        ≤ ∑ j, ((S.R (ι j)).length + if j = reg pay then 3 * N else 0) :=
+          Finset.sum_le_sum fun j _ => hpt j
+      _ = ∑ j, (S.R (ι j)).length + 3 * N := by
+          rw [Finset.sum_add_distrib, Finset.sum_ite_eq']
+          simp
+  refine ⟨v₅, _, hu₅.trans (hu₄.trans (hu₃.trans (hu₂.trans hu₁))), ?_,
+    Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ he₅)))) rfl ?_⟩
+  · have e₁ : (S.R str).length = N := by rw [hR, hwlen]
+    have e₂ : (S₁.R tmp).length = 3 * N := by
+      rw [hS₁tmp, List.length_reverse, length_toBits, hwlen]
+    have e₄ : (S₃.R pr).length = 3 * N := by
+      rw [hS₃pr, length_toBits, hw'len]
+    rw [e₁, e₂, e₄, hw'len]
+    nlinarith [hm₃, hsum]
+  · congr 1
+    refine Stacks.ext rfl rfl ?_ ?_
+    · funext y
+      exact (hL y).symm
+    · funext y
+      by_cases hy₁ : y = str
+      · subst hy₁
+        simp [pushedR, hst, hS₄, movedR, hS₃, Ne.symm hpay_str, hS₂str]
+      · by_cases hy₂ : y = tmp
+        · subst hy₂
+          simp [pushedR, hy₁, htmp0]
+        · by_cases hy₃ : y = pr
+          · subst hy₃
+            simp [pushedR, hy₁, hy₂, hS₄, movedR, hpay0]
+          · simp [pushedR, hy₁, hy₂, hy₃, hS₄, movedR, hS₃, hS₂oth y hy₃ hy₁ hy₂]
+
+
 /-- Running `swapPass` for `swap a b`.
 
 Register interface: `ι` places the interchange bank (caller registers `ι (reg i)`, `i < t₀`,
@@ -588,143 +730,18 @@ theorem swapPass_exec (body : F → Pr F T Q (prime + K) U)
         (mk v' { S with
           R := Function.update S.R str
             (moveRecs (rankPerm N₀ N₁ N₂ N₃ L Kc ρ n [.swap a b]) l).flatten }) := by
-  classical
-  set M := rectSize N₀ N₁ N₂ N₃ L with hM
-  set π := rankPerm N₀ N₁ N₂ N₃ L Kc ρ n [.swap a b] with hπ
-  set P := (swapDims N₀ N₁ N₂ N₃ L a b).1 with hP
-  set G := (swapDims N₀ N₁ N₂ N₃ L a b).2.1 with hG
-  set B' := (swapDims N₀ N₁ N₂ N₃ L a b).2.2 * (3 * B) with hB'
-  set w := l.flatten with hw
-  set w' := (moveRecs π l).flatten with hw'
-  set pr := ι (reg pay) with hpr
-  have hpay_str : pr ≠ str := hstr _
-  have hpay_tmp : pr ≠ tmp := htmp _
-  -- lengths
-  have hwlen : w.length = M * B := by rw [hw, length_flatten_uniform _ hlB, hl]
-  have hw'len : w'.length = M * B := by
-    rw [hw', length_flatten_uniform _ (fun x hx => hlB x (mem_moveRecs π hl hx)), length_moveRecs]
-  have hvol : P * 2 ^ L * G * 2 ^ L * B' = M * (3 * B) :=
-    swapDims_vol N₀ N₁ N₂ N₃ L a b hab (3 * B)
+  have hM := (rfl : rectSize N₀ N₁ N₂ N₃ L = rectSize N₀ N₁ N₂ N₃ L)
   have hpos := swapDims_pos N₀ N₁ N₂ N₃ L a b h₀ h₁ h₂ h₃
-  have hPpos : 0 < P := hpos.1
-  have hGpos : 0 < G := hpos.2.1
-  have hBpos : 0 < B' := Nat.mul_pos hpos.2.2 (by omega)
-  -- the bit streams
-  have hswap : swapList P (2 ^ L) G (2 ^ L) B' blank (toBits w) = toBits w' :=
-    swapList_toBits N₀ N₁ N₂ N₃ L Kc ρ n a b hab B l hl hlB
-  have h8' : ∀ s ∈ w', s.val < 8 := by
-    intro s hs'
-    obtain ⟨x, hx, hsx⟩ := List.mem_flatten.1 hs'
-    exact h8 x (mem_moveRecs π hl hx) s hsx
-  have hhd_pay : ∀ k, hd k ≠ pay := by
-    intro k hk
-    have h' := hhdr k
-    rw [hk, hpay0] at h'
-    exact List.cons_ne_nil _ _ h'.symm
-  have hreg_pay : ∀ j : Fin (swapT t₀), j ≠ reg pay → ι j ≠ pr := fun j hj h' => hj (hι h')
-  -- step 1: expand the stream to bits on `tmp`
-  obtain ⟨v₁, hu₁, he₁⟩ := toBitsPass_exec body str tmp hst v S
-  set S₁ : Stacks T (prime + K) := { S with R := pushedR S.R str tmp (toBits (S.R str)).reverse }
-    with hS₁
-  -- step 2: move the bits to the payload register
-  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body tmp pr hpay_tmp.symm id v₁ S₁
-  set S₂ : Stacks T (prime + K) := { S₁ with R := movedR S₁.R tmp pr id (S₁.R tmp) } with hS₂
-  have hS₁tmp : S₁.R tmp = (toBits w).reverse := by
-    show pushedR S.R str tmp (toBits (S.R str)).reverse tmp = _
-    rw [pushedR, Function.update_self, hR, htmp0, List.append_nil]
-  have hS₁pr : S₁.R pr = [] := by
-    show pushedR S.R str tmp (toBits (S.R str)).reverse pr = _
-    rw [pushedR, Function.update_of_ne hpay_tmp, Function.update_of_ne hpay_str, hpay0]
-  have hS₂pr : S₂.R pr = toBits w := by
-    show movedR S₁.R tmp pr id (S₁.R tmp) pr = _
-    rw [movedR, Function.update_self, hS₁tmp, hS₁pr, List.map_id, List.reverse_reverse,
-      List.append_nil]
-  have hS₂oth : ∀ y, y ≠ pr → y ≠ str → y ≠ tmp → S₂.R y = S.R y := by
-    intro y h₁' h₂' h₃'
-    simp [hS₂, movedR, hS₁, pushedR, h₁', h₂', h₃']
-  have hS₂str : S₂.R str = [] := by
-    simp [hS₂, movedR, hS₁, pushedR, hst, Ne.symm hpay_str]
-  have hS₂tmp : S₂.R tmp = [] := by
-    simp [hS₂, movedR, hS₁, pushedR, Ne.symm hpay_tmp]
-  have hS₂ι : ∀ j, j ≠ reg pay → S₂.R (ι j) = S.R (ι j) := fun j hj =>
-    hS₂oth _ (hreg_pay j hj) (hstr j) (htmp j)
-  -- step 3: the placed interchange
-  have hblen :
-      (toBits w).length = BinaryAdjacentWidthInterchange.volume P (2 ^ L) G (2 ^ L) B' := by
-    rw [length_toBits, hwlen, BinaryAdjacentWidthInterchange.volume, hvol]; ring
-  obtain ⟨x, hx⟩ := exists_ofFn_bits (toBits w) (fun s hs' => mem_toBits hs') hblen
-  obtain ⟨v₃, m₃, hu₃, hm₃, he₃⟩ := placedSwapProg_exec body hd pay hi hQ ι hι hT P G B' L L hs
-    (Nat.le_succ L) (Nat.le_succ L) hv hc hPpos hGpos hBpos x v₂ S₂ hL
-    (fun j hj => by
-      rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega))]
-      exact hpriv j hj)
-    (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (BinaryInterchangeRun.slot_injective h'))]
-      exact hhdr k)
-    (by rw [hS₂pr, ← hx])
-    (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (BinaryInterchangeRun.slot_injective h'))]
-      exact hother i hip hk)
-  set S₃ : Stacks T (prime + K) := { S₂ with
-    L := fun _ => []
-    R := Function.update S₂.R pr (swapList P (2 ^ L) G (2 ^ L) B' blank (S₂.R pr)) } with hS₃
-  have hS₃pr : S₃.R pr = toBits w' := by
-    show Function.update S₂.R pr (swapList P (2 ^ L) G (2 ^ L) B' blank (S₂.R pr)) pr = _
-    rw [Function.update_self, hS₂pr, hswap]
-  -- step 4: move the interchanged bits back to `tmp`
-  obtain ⟨v₄, hu₄, he₄⟩ := moveR_exec body pr tmp hpay_tmp id v₃ S₃
-  set S₄ : Stacks T (prime + K) := { S₃ with R := movedR S₃.R pr tmp id (S₃.R pr) } with hS₄
-  have hS₃tmp : S₃.R tmp = [] := by
-    show Function.update S₂.R pr (swapList P (2 ^ L) G (2 ^ L) B' blank (S₂.R pr)) tmp = _
-    rw [Function.update_of_ne (Ne.symm hpay_tmp), hS₂tmp]
-  have hS₄tmp : S₄.R tmp = (toBits w').reverse := by
-    show movedR S₃.R pr tmp id (S₃.R pr) tmp = _
-    rw [movedR, Function.update_self, hS₃pr, hS₃tmp, List.map_id, List.append_nil]
-  -- step 5: pack the bits onto the stream register
-  obtain ⟨v₅, hu₅, he₅⟩ := ofBitsPass_exec body tmp str hst.symm w' h8' v₄ S₄ hS₄tmp
-  -- the sum over the placed registers
-  have hsum : ∑ j, (S₂.R (ι j)).length ≤ ∑ j, (S.R (ι j)).length + 3 * (M * B) := by
-    have hpt : ∀ j, (S₂.R (ι j)).length ≤
-        (S.R (ι j)).length + if j = reg pay then 3 * (M * B) else 0 := by
-      intro j
-      by_cases hj : j = reg pay
-      · subst hj
-        simp only [↓reduceIte]
-        rw [← hpr, hS₂pr, length_toBits, hwlen]
-        omega
-      · simp only [hj, ↓reduceIte]
-        rw [hS₂ι j hj]
-        omega
-    calc ∑ j, (S₂.R (ι j)).length
-        ≤ ∑ j, ((S.R (ι j)).length + if j = reg pay then 3 * (M * B) else 0) :=
-          Finset.sum_le_sum fun j _ => hpt j
-      _ = ∑ j, (S.R (ι j)).length + 3 * (M * B) := by
-          rw [Finset.sum_add_distrib, Finset.sum_ite_eq']
-          simp
-  refine ⟨v₅, _, hu₅.trans (hu₄.trans (hu₃.trans (hu₂.trans hu₁))), ?_,
-    Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ he₅)))) rfl ?_⟩
-  · have e₁ : (S.R str).length = M * B := by rw [hR, hwlen]
-    have e₂ : (S₁.R tmp).length = 3 * (M * B) := by
-      rw [hS₁tmp, List.length_reverse, length_toBits, hwlen]
-    have e₄ : (S₃.R pr).length = 3 * (M * B) := by
-      rw [hS₃pr, length_toBits, hw'len]
-    rw [e₁, e₂, e₄, hw'len]
-    nlinarith [hm₃, hsum]
-  · congr 1
-    refine Stacks.ext rfl rfl ?_ ?_
-    · funext y
-      exact (hL y).symm
-    · funext y
-      by_cases hy₁ : y = str
-      · subst hy₁
-        simp [pushedR, hst, hS₄, movedR, hS₃, Ne.symm hpay_str, hS₂str]
-      · by_cases hy₂ : y = tmp
-        · subst hy₂
-          simp [pushedR, hy₁, htmp0]
-        · by_cases hy₃ : y = pr
-          · subst hy₃
-            simp [pushedR, hy₁, hy₂, hS₄, movedR, hpay0]
-          · simp [pushedR, hy₁, hy₂, hy₃, hS₄, movedR, hS₃, hS₂oth y hy₃ hy₁ hy₂]
+  have hw'len : (moveRecs (rankPerm N₀ N₁ N₂ N₃ L Kc ρ n [.swap a b]) l).flatten.length =
+      rectSize N₀ N₁ N₂ N₃ L * B := by
+    rw [length_flatten_uniform _ (fun x hx => hlB x (mem_moveRecs _ hl hx)), length_moveRecs]
+  exact swapPass_exec_of body hd pay hi hQ ι hι hT str tmp hst hstr htmp _ _ _ L _ hpos.1 hpos.2.1
+    (Nat.mul_pos hpos.2.2 (by omega)) l.flatten _ (by rw [length_flatten_uniform _ hlB, hl])
+    hw'len (by rw [swapDims_vol N₀ N₁ N₂ N₃ L a b hab (3 * B)]; ring)
+    (swapList_toBits N₀ N₁ N₂ N₃ L Kc ρ n a b hab B l hl hlB)
+    (fun s hs' => by
+      obtain ⟨x, hx, hsx⟩ := List.mem_flatten.1 hs'
+      exact h8 x (mem_moveRecs _ hl hx) s hsx) hs hv hc v S hL hR htmp0 hpay0 hpriv hhdr hother
 
 /-- The constant of the vendored interchange time bound `BinaryInterchangeRun.uniform_bound`. -/
 def swapConst : ℝ := Classical.choose BinaryInterchangeRun.uniform_bound

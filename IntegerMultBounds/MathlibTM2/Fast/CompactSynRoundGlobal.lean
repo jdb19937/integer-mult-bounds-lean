@@ -1,5 +1,6 @@
 module
 public import IntegerMultBounds.MathlibTM2.Node.CompactRegisterEmbedding
+public import IntegerMultBounds.MathlibTM2.Fast.SynBase
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Tactic.NormNum.RealSqrt
 import Mathlib.Tactic.NormNum.Prime

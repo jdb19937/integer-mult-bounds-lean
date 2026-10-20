@@ -3,6 +3,7 @@ public import IntegerMultBounds.MathlibTM2.Layer.PackedXor
 import Mathlib.Tactic.Positivity.Finset
 public import IntegerMultBounds.MathlibTM2.Host.Index
 public import IntegerMultBounds.MathlibTM2.Host.Route
+public import IntegerMultBounds.MathlibTM2.Host.IndexCode
 
 
 /-!
@@ -309,98 +310,6 @@ theorem mapLoop_exec [NeZero ni] {ins : Fin ni → Fin T} {outs : Fin no → Fin
       · intro k hk1 hk2
         rw [hoth' k hk1 hk2, hoth₁ k hk1 hk2]
 
-/-! #### Resetting the field counter -/
-
-/-- Overwrite every symbol of register `c` by `bitSymbol false`, through the empty register
-`tmp`. -/
-def resetField (c tmp : Fin T) : Pr P T Q A U :=
-  .seq (moveR c tmp (fun _ => bitSymbol false)) (moveR tmp c id)
-
-/-- Reset the fields `cf` of the counter to zero. -/
-def resetFields {nf : ℕ} (cf : Fin nf → Fin T) (tmp : Fin T) : Pr P T Q A U :=
-  Prog.seqList ((List.finRange nf).map fun f => resetField (cf f) tmp)
-
-/-- One field: every symbol of `c` becomes `bitSymbol false`; `tmp` ends empty. Exactly
-`4 * |c| + 4` steps. -/
-theorem resetField_exec (c tmp : Fin T) (h : c ≠ tmp) (v : HS T Q A U) (S : Stacks T A)
-    (ht : S.R tmp = []) :
-    ∃ v' : HS T Q A U, v'.user = v.user ∧
-      Exec body (resetField c tmp) (mk v S) (4 * (S.R c).length + 4)
-        (mk v' { S with
-          R := Function.update S.R c (List.replicate (S.R c).length (bitSymbol false)) }) := by
-  obtain ⟨v₁, hu₁, he₁⟩ := moveR_exec body c tmp h (fun _ => bitSymbol false) v S
-  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body tmp c h.symm id v₁
-    { S with R := movedR S.R c tmp (fun _ => bitSymbol false) (S.R c) }
-  refine ⟨v₂, by rw [hu₂, hu₁], Exec.cast (Exec.seq he₁ he₂) ?_ ?_⟩
-  · simp [movedR, ht]; ring
-  · congr 2
-    funext k
-    by_cases hk : k = c
-    · subst hk; simp [movedR, ht, Function.update_of_ne h]
-    · by_cases hk' : k = tmp
-      · subst hk'; simp [movedR, hk, ht, Function.update_of_ne (Ne.symm hk)]
-      · simp [movedR, hk, hk']
-
-lemma binSyms_zero_eq (ℓ : ℕ) :
-    (binSyms ℓ 0 : List (Fin (A + 4))) = List.replicate ℓ (bitSymbol false) := by
-  simp [binSyms, List.ofFn_const]
-
-/-- The fields `fs` of the counter, in order: each ends holding `binSyms (len f) 0`. -/
-theorem resetList_exec {nf : ℕ} (cf : Fin nf → Fin T) (hcf : Function.Injective cf) (tmp : Fin T)
-    (htmp : ∀ f, cf f ≠ tmp) (len : Fin nf → ℕ) :
-    ∀ (fs : List (Fin nf)), fs.Nodup → ∀ (v : HS T Q A U) (S : Stacks T A), S.R tmp = [] →
-      (∀ f ∈ fs, (S.R (cf f)).length = len f) →
-      ∃ (v' : HS T Q A U) (R' : Fin T → List (Fin (A + 4))), v'.user = v.user ∧
-        Exec body (Prog.seqList (fs.map fun f => resetField (cf f) tmp)) (mk v S)
-          ((fs.map fun f => 4 * len f + 4).sum + 1) (mk v' { S with R := R' }) ∧
-        (∀ f ∈ fs, R' (cf f) = binSyms (len f) 0) ∧
-        ∀ k, (∀ f ∈ fs, k ≠ cf f) → R' k = S.R k := by
-  intro fs
-  induction fs with
-  | nil =>
-      intro _ v S _ _
-      exact ⟨v, S.R, rfl, by simpa [Prog.seqList] using Exec.act (body := body) .done (mk v S),
-        by simp, fun _ _ => rfl⟩
-  | cons f fs ih =>
-      intro hnd v S ht hlen
-      rw [List.nodup_cons] at hnd
-      obtain ⟨v₁, hu₁, he₁⟩ := resetField_exec body (cf f) tmp (htmp f) v S ht
-      rw [hlen f List.mem_cons_self] at he₁
-      obtain ⟨v', R', hu, he, hfs, hoth⟩ := ih hnd.2 v₁
-        { S with R := Function.update S.R (cf f) (List.replicate (len f) (bitSymbol false)) }
-        (by simp [Function.update_of_ne (htmp f).symm, ht])
-        (by
-          intro g hg
-          have hgf : g ≠ f := fun h => hnd.1 (h ▸ hg)
-          simp [Function.update_of_ne (fun h => hgf (hcf h)), hlen g (List.mem_cons_of_mem _ hg)])
-      refine ⟨v', R', by rw [hu, hu₁], Exec.cast (Exec.seq he₁ he) ?_ rfl, ?_, ?_⟩
-      · simp; ring
-      · intro g hg
-        rcases List.mem_cons.1 hg with rfl | hg
-        · rw [hoth _ (fun g' hg' h => hnd.1 (by rw [hcf h]; exact hg')), binSyms_zero_eq]
-          simp
-        · exact hfs g hg
-      · intro k hk
-        rw [hoth k (fun g hg => hk g (List.mem_cons_of_mem _ hg))]
-        simp [Function.update_of_ne (hk f List.mem_cons_self)]
-
-/-- Resetting the fields: every field `cf f` holding `len f` symbols ends holding
-`binSyms (len f) 0`; every other register is unchanged. Exactly
-`4 * (∑ f, len f) + 4 * nf + 1` steps. -/
-theorem resetFields_exec {nf : ℕ} (cf : Fin nf → Fin T) (hcf : Function.Injective cf)
-    (tmp : Fin T) (htmp : ∀ f, cf f ≠ tmp) (len : Fin nf → ℕ) (v : HS T Q A U) (S : Stacks T A)
-    (ht : S.R tmp = []) (hlen : ∀ f, (S.R (cf f)).length = len f) :
-    ∃ (v' : HS T Q A U) (R' : Fin T → List (Fin (A + 4))), v'.user = v.user ∧
-      Exec body (resetFields cf tmp) (mk v S) (4 * (∑ f, len f) + 4 * nf + 1)
-        (mk v' { S with R := R' }) ∧
-      (∀ f, R' (cf f) = binSyms (len f) 0) ∧ ∀ k, (∀ f, k ≠ cf f) → R' k = S.R k := by
-  obtain ⟨v', R', hu, he, hfs, hoth⟩ := resetList_exec body cf hcf tmp htmp len
-    (List.finRange nf) (List.nodup_finRange nf) v S ht (fun f _ => hlen f)
-  refine ⟨v', R', hu, Exec.cast he ?_ rfl, fun f => hfs f (List.mem_finRange f),
-    fun k hk => hoth k (fun f _ => hk f)⟩
-  rw [← Fin.sum_univ_def, Finset.sum_add_distrib, ← Finset.mul_sum]
-  simp [Nat.mul_comm]
-
 /-! #### Code automata over an abstract state -/
 
 /-- A code automaton on an abstract state type, through an encoding into stack symbols. -/
@@ -683,33 +592,35 @@ theorem xorF_exec (cy cx cm t0 t1 t2 acc st : Fin T)
 
 /-! #### The key fields of one record -/
 
+variable {nf : ℕ}
+
 /-- The key digit of field `j`: digit `y ⊕ (x ∧ m)` in the field `yF` holding `y` (with `x`
 in field `xF`), the digit itself elsewhere. -/
-def keyDig (yF xF : Fin 8) (mm : ℕ) (ds : Fin 8 → ℕ) (j : Fin 8) : ℕ :=
+def keyDig (yF xF : Fin nf) (mm : ℕ) (ds : Fin nf → ℕ) (j : Fin nf) : ℕ :=
   if j = yF then ds yF ^^^ (ds xF &&& mm) else ds j
 
 /-- The step count of the key field program of field `j`. -/
-def keyCost (yF : Fin 8) (len : Fin 8 → ℕ) (j : Fin 8) : ℕ :=
+def keyCost (yF : Fin nf) (len : Fin nf → ℕ) (j : Fin nf) : ℕ :=
   if j = yF then 9 * len j + 8 else 5 * len j + 4
 
-lemma keyCost_le (yF : Fin 8) (len : Fin 8 → ℕ) (j : Fin 8) :
+lemma keyCost_le (yF : Fin nf) (len : Fin nf → ℕ) (j : Fin nf) :
     keyCost yF len j ≤ 9 * len j + 8 := by
   unfold keyCost; split_ifs <;> omega
 
 /-- The program for field `j` of the key: `xorF` for the field `yF`, `copyF` elsewhere. -/
-def keyF (yF xF : Fin 8) (cf : Fin 8 → Fin T) (cm t0 t1 t2 acc st : Fin T) (j : Fin 8) :
+def keyF (yF xF : Fin nf) (cf : Fin nf → Fin T) (cm t0 t1 t2 acc st : Fin T) (j : Fin nf) :
     Pr P T Q A U :=
   if j = yF then xorF (cf yF) (cf xF) cm t0 t1 t2 acc st else copyF (cf j) t0 acc st
 
 /-- Registers holding the digits `ds` in the fields `cf`, the mask `mm` in `cm`, and the empty
 temporaries `t0`, `t1`, `t2`. -/
-def KeyState (cf : Fin 8 → Fin T) (len : Fin 8 → ℕ) (L : ℕ) (cm t0 t1 t2 : Fin T)
-    (ds : Fin 8 → ℕ) (mm : ℕ) (R : Fin T → List (Fin (A + 4))) : Prop :=
+def KeyState (cf : Fin nf → Fin T) (len : Fin nf → ℕ) (L : ℕ) (cm t0 t1 t2 : Fin T)
+    (ds : Fin nf → ℕ) (mm : ℕ) (R : Fin T → List (Fin (A + 4))) : Prop :=
   (∀ g, R (cf g) = binSyms (len g) (ds g)) ∧ R cm = binSyms L mm ∧ R t0 = [] ∧ R t1 = [] ∧
     R t2 = []
 
-lemma KeyState.update {cf : Fin 8 → Fin T} {len : Fin 8 → ℕ} {L : ℕ} {cm t0 t1 t2 acc : Fin T}
-    {ds : Fin 8 → ℕ} {mm : ℕ} {R : Fin T → List (Fin (A + 4))}
+lemma KeyState.update {cf : Fin nf → Fin T} {len : Fin nf → ℕ} {L : ℕ} {cm t0 t1 t2 acc : Fin T}
+    {ds : Fin nf → ℕ} {mm : ℕ} {R : Fin T → List (Fin (A + 4))}
     (h : KeyState cf len L cm t0 t1 t2 ds mm R) (hc : ∀ g, cf g ≠ acc) (h1 : cm ≠ acc)
     (h2 : t0 ≠ acc) (h3 : t1 ≠ acc) (h4 : t2 ≠ acc) (X : List (Fin (A + 4))) :
     KeyState cf len L cm t0 t1 t2 ds mm (Function.update R acc X) :=
@@ -718,34 +629,34 @@ lemma KeyState.update {cf : Fin 8 → Fin T} {len : Fin 8 → ℕ} {L : ℕ} {cm
     by rw [Function.update_of_ne h4, h.2.2.2.2]⟩
 
 /-- Register facts of the key fields. -/
-structure KeyFieldRegs (cf : Fin 8 → Fin T) (cm t0 t1 t2 acc st : Fin T) : Prop where
+structure KeyFieldRegs (cf : Fin nf → Fin T) (cm t0 t1 t2 acc st : Fin T) : Prop where
   cf_inj : Function.Injective cf
   cf_ne : ∀ g, cf g ∉ [cm, t0, t1, t2, acc]
   cf_st : ∀ g, cf g ≠ st
   cm_st : cm ≠ st
   nd : [cm, t0, t1, t2, acc].Nodup
 
-lemma KeyFieldRegs.cf_acc {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
-    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin 8) : cf g ≠ acc :=
+lemma KeyFieldRegs.cf_acc {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
+    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin nf) : cf g ≠ acc :=
   fun e => h.cf_ne g (by simp [e])
 
-lemma KeyFieldRegs.cf_cm {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
-    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin 8) : cf g ≠ cm :=
+lemma KeyFieldRegs.cf_cm {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
+    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin nf) : cf g ≠ cm :=
   fun e => h.cf_ne g (by simp [e])
 
-lemma KeyFieldRegs.cf_t0 {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
-    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin 8) : cf g ≠ t0 :=
+lemma KeyFieldRegs.cf_t0 {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
+    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin nf) : cf g ≠ t0 :=
   fun e => h.cf_ne g (by simp [e])
 
-lemma KeyFieldRegs.cf_t1 {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
-    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin 8) : cf g ≠ t1 :=
+lemma KeyFieldRegs.cf_t1 {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
+    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin nf) : cf g ≠ t1 :=
   fun e => h.cf_ne g (by simp [e])
 
-lemma KeyFieldRegs.cf_t2 {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
-    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin 8) : cf g ≠ t2 :=
+lemma KeyFieldRegs.cf_t2 {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
+    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) (g : Fin nf) : cf g ≠ t2 :=
   fun e => h.cf_ne g (by simp [e])
 
-lemma KeyFieldRegs.acc_ne {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
+lemma KeyFieldRegs.acc_ne {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
     (h : KeyFieldRegs cf cm t0 t1 t2 acc st) : acc ≠ cm ∧ acc ≠ t0 ∧ acc ≠ t1 ∧ acc ≠ t2 := by
   have hnd := h.nd
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
@@ -753,9 +664,9 @@ lemma KeyFieldRegs.acc_ne {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
   exact ⟨Ne.symm hnd.1.2.2.2, Ne.symm hnd.2.1.2.2, Ne.symm hnd.2.2.1.2, Ne.symm hnd.2.2.2⟩
 
 /-- The key field program of field `j`: `acc` gains the key digit of field `j`, reversed. -/
-theorem keyF_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {cf : Fin 8 → Fin T} {cm t0 t1 t2 acc st : Fin T}
-    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) {len : Fin 8 → ℕ} (hlen : len xF = len yF)
-    {ds : Fin 8 → ℕ} {mm : ℕ} (j : Fin 8) (v : HS T Q A U) (S : Stacks T A)
+theorem keyF_exec {yF xF : Fin nf} (hyx : yF ≠ xF) {cf : Fin nf → Fin T} {cm t0 t1 t2 acc st : Fin T}
+    (h : KeyFieldRegs cf cm t0 t1 t2 acc st) {len : Fin nf → ℕ} (hlen : len xF = len yF)
+    {ds : Fin nf → ℕ} {mm : ℕ} (j : Fin nf) (v : HS T Q A U) (S : Stacks T A)
     (hS : KeyState cf len (len yF) cm t0 t1 t2 ds mm S.R) :
     ∃ v' : HS T Q A U, v'.user = v.user ∧
       Exec body (keyF yF xF cf cm t0 t1 t2 acc st j) (mk v S) (keyCost yF len j)
@@ -791,10 +702,10 @@ theorem keyF_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {cf : Fin 8 → Fin T} {cm t
 
 /-- The key fields `fs`, in order: `acc` gains the key digits of the fields, each least
 significant bit first, reversed; every other register is unchanged. -/
-theorem keyList_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {cf : Fin 8 → Fin T}
-    {cm t0 t1 t2 acc st : Fin T} (h : KeyFieldRegs cf cm t0 t1 t2 acc st) {len : Fin 8 → ℕ}
-    (hlen : len xF = len yF) {ds : Fin 8 → ℕ} {mm : ℕ} :
-    ∀ (fs : List (Fin 8)) (v : HS T Q A U) (S : Stacks T A),
+theorem keyList_exec {yF xF : Fin nf} (hyx : yF ≠ xF) {cf : Fin nf → Fin T}
+    {cm t0 t1 t2 acc st : Fin T} (h : KeyFieldRegs cf cm t0 t1 t2 acc st) {len : Fin nf → ℕ}
+    (hlen : len xF = len yF) {ds : Fin nf → ℕ} {mm : ℕ} :
+    ∀ (fs : List (Fin nf)) (v : HS T Q A U) (S : Stacks T A),
       KeyState cf len (len yF) cm t0 t1 t2 ds mm S.R →
       ∃ v' : HS T Q A U, v'.user = v.user ∧
         Exec body (Prog.seqList (fs.map (keyF yF xF cf cm t0 t1 t2 acc st))) (mk v S)
@@ -828,14 +739,14 @@ theorem keyList_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {cf : Fin 8 → Fin T}
 
 /-- One record of the key pass at index `i`: the key fields onto `acc`, the record itself from
 `src` onto `acc`, an increment of the field counter, and a test of `src`. -/
-def keyRec (yF xF : Fin 8) (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin 8 → Fin T) :
+def keyRec (yF xF : Fin nf) (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin nf → Fin T) :
     Pr P T Q A U :=
-  .seq (Prog.seqList ((List.finRange 8).map (keyF yF xF cf cm t0 t1 t2 acc st)))
+  .seq (Prog.seqList ((List.finRange nf).map (keyF yF xF cf cm t0 t1 t2 acc st)))
     (.seq (xferBlock (fun _ : Fin 1 => src) (fun _ => acc) ctrB tmp st 1 (fun _ => 0) .done)
       (.seq (incrFields cf tmp st) (.act (peekR src))))
 
 /-- Register facts of the key pass. -/
-structure KeyRegs (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin 8 → Fin T) : Prop
+structure KeyRegs (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin nf → Fin T) : Prop
     extends KeyFieldRegs cf cm t0 t1 t2 acc st where
   cf_src : ∀ g, cf g ≠ src
   cf_ctr : ∀ g, cf g ≠ ctrB
@@ -860,18 +771,18 @@ structure KeyRegs (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin 8 → Fin 
   tmp_t2 : tmp ≠ t2
 
 /-- The key symbols emitted for the record with index `i`. -/
-def keyBitsAt (yF xF : Fin 8) (len : Fin 8 → ℕ) (mm i : ℕ) : List (Fin (A + 4)) :=
-  (List.finRange 8).flatMap fun j => binSyms (len j) (keyDig yF xF mm (fun g => digit len g i) j)
+def keyBitsAt (yF xF : Fin nf) (len : Fin nf → ℕ) (mm i : ℕ) : List (Fin (A + 4)) :=
+  (List.finRange nf).flatMap fun j => binSyms (len j) (keyDig yF xF mm (fun g => digit len g i) j)
 
 /-- The step count of one record of the key pass. -/
-def keyRecCost (yF : Fin 8) (len : Fin 8 → ℕ) (B : ℕ) : ℕ :=
-  ((List.finRange 8).map (keyCost yF len)).sum + 1 + (4 * B + 5) + (4 * (∑ f, len f) + 4 * 8 + 2)
+def keyRecCost (yF : Fin nf) (len : Fin nf → ℕ) (B : ℕ) : ℕ :=
+  ((List.finRange nf).map (keyCost yF len)).sum + 1 + (4 * B + 5) + (4 * (∑ f, len f) + 4 * nf + 2)
     + 1
 
 /-- One record of the key pass at index `i`: `src` loses the record `r`, `acc` gains the key
 symbols and `r`, reversed, and the counter advances to `i + 1`. -/
-theorem keyRec_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1 t2 st : Fin T}
-    {cf : Fin 8 → Fin T} (h : KeyRegs src acc ctrB tmp cm t0 t1 t2 st cf) {len : Fin 8 → ℕ}
+theorem keyRec_exec {yF xF : Fin nf} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1 t2 st : Fin T}
+    {cf : Fin nf → Fin T} (h : KeyRegs src acc ctrB tmp cm t0 t1 t2 st cf) {len : Fin nf → ℕ}
     (hlen : len xF = len yF) {mm i : ℕ} (r rest c : List (Fin (A + 4))) (hcr : c.length = r.length)
     (v : HS T Q A U) (S : Stacks T A)
     (hS : KeyState cf len (len yF) cm t0 t1 t2 (fun g => digit len g i) mm S.R)
@@ -883,7 +794,7 @@ theorem keyRec_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1
       R' src = rest ∧ R' acc = (keyBitsAt yF xF len mm i ++ r).reverse ++ S.R acc ∧
       (∀ g, R' (cf g) = binSyms (len g) (digit len g (i + 1))) ∧
       ∀ k, k ≠ src → k ≠ acc → (∀ g, k ≠ cf g) → R' k = S.R k := by
-  obtain ⟨v₁, hu₁, he₁⟩ := keyList_exec body hyx h.toKeyFieldRegs hlen (List.finRange 8) v S hS
+  obtain ⟨v₁, hu₁, he₁⟩ := keyList_exec body hyx h.toKeyFieldRegs hlen (List.finRange nf) v S hS
   set R₁ := Function.update S.R acc ((keyBitsAt yF xF len mm i).reverse ++ S.R acc) with hR₁
   have hR₁f : ∀ k, k ≠ acc → R₁ k = S.R k := fun k hk => Function.update_of_ne hk _ _
   obtain ⟨v₂, R₂, hu₂, -, he₂, hctr₂, htmp₂, hsrc₂, hacc₂, hoth₂⟩ :=
@@ -920,8 +831,8 @@ theorem keyRec_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1
     rw [hR₃f k hk3, hR₂f k hk1 hk2]
 
 /-- The record loop of the key pass, from index `i` with the records `rs` left in `src`. -/
-theorem keyLoop_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1 t2 st : Fin T}
-    {cf : Fin 8 → Fin T} (h : KeyRegs src acc ctrB tmp cm t0 t1 t2 st cf) {len : Fin 8 → ℕ}
+theorem keyLoop_exec {yF xF : Fin nf} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1 t2 st : Fin T}
+    {cf : Fin nf → Fin T} (h : KeyRegs src acc ctrB tmp cm t0 t1 t2 st cf) {len : Fin nf → ℕ}
     (hlen : len xF = len yF) {mm B : ℕ} (hB : 1 ≤ B) (c : List (Fin (A + 4)))
     (hcB : c.length = B) :
     ∀ (rs : List (List (Fin (A + 4)))) (i : ℕ) (v : HS T Q A U) (S : Stacks T A),
@@ -987,11 +898,11 @@ theorem keyLoop_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t
         rw [hoth' k hk1 hk2 hk3]
         exact hR₁ k hk1 hk2 hk3
 
-lemma length_keyBitsAt (yF xF : Fin 8) (len : Fin 8 → ℕ) (mm i : ℕ) :
+lemma length_keyBitsAt (yF xF : Fin nf) (len : Fin nf → ℕ) (mm i : ℕ) :
     (keyBitsAt (A := A) yF xF len mm i).length = ∑ j, len j := by
   simp [keyBitsAt, List.length_flatMap, Fin.sum_univ_def]
 
-lemma length_keyedFrom (yF xF : Fin 8) (len : Fin 8 → ℕ) (mm B : ℕ) :
+lemma length_keyedFrom (yF xF : Fin nf) (len : Fin nf → ℕ) (mm B : ℕ) :
     ∀ (rs : List (List (Fin (A + 4)))) (i : ℕ), (∀ r ∈ rs, r.length = B) →
       (keyedFrom (keyBitsAt yF xF len mm) i rs).flatten.length = rs.length * ((∑ j, len j) + B)
   | [], _, _ => by simp [keyedFrom]
@@ -1004,7 +915,7 @@ lemma length_keyedFrom (yF xF : Fin 8) (len : Fin 8 → ℕ) (mm B : ℕ) :
       ring
 
 /-- The key pass for the chunk field `yF` holding `y` and `xF` holding `x`. -/
-def keyPassAt (yF xF : Fin 8) (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin 8 → Fin T) :
+def keyPassAt (yF xF : Fin nf) (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fin nf → Fin T) :
     Pr P T Q A U :=
   .seq (.act (peekR src))
     (.seq (.loop (·.flag) (keyRec yF xF src acc ctrB tmp cm t0 t1 t2 st cf))
@@ -1012,8 +923,8 @@ def keyPassAt (yF xF : Fin 8) (src acc ctrB tmp cm t0 t1 t2 st : Fin T) (cf : Fi
 
 /-- The key pass on any field layout: the records `l` in `src` are replaced by the keyed records
 `keyedFrom (keyBitsAt …) 0 l`, and every other register is restored. -/
-theorem keyPassAt_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1 t2 st : Fin T}
-    {cf : Fin 8 → Fin T} (h : KeyRegs src acc ctrB tmp cm t0 t1 t2 st cf) {len : Fin 8 → ℕ}
+theorem keyPassAt_exec {yF xF : Fin nf} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0 t1 t2 st : Fin T}
+    {cf : Fin nf → Fin T} (h : KeyRegs src acc ctrB tmp cm t0 t1 t2 st cf) {len : Fin nf → ℕ}
     (hlen : len xF = len yF) {mm B : ℕ} (hB : 1 ≤ B) (l : List (List (Fin (A + 4))))
     (hlB : ∀ r ∈ l, r.length = B) (v : HS T Q A U) (S : Stacks T A)
     (hsrc : S.R src = l.flatten) (hacc : S.R acc = []) (hctr : (S.R ctrB).length = B)
@@ -1021,7 +932,7 @@ theorem keyPassAt_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0
     ∃ v' : HS T Q A U, v'.user = v.user ∧
       Exec body (keyPassAt yF xF src acc ctrB tmp cm t0 t1 t2 st cf) (mk v S)
         (1 + (l.length * (keyRecCost yF len B + 1) + 1) +
-          (2 * (l.length * ((∑ j, len j) + B)) + 2) + (4 * (∑ f, len f) + 4 * 8 + 1))
+          (2 * (l.length * ((∑ j, len j) + B)) + 2) + (4 * (∑ f, len f) + 4 * nf + 1))
         (mk v' { S with R := (Function.update S.R src
           (keyedFrom (keyBitsAt yF xF len mm) 0 l).flatten) }) := by
   obtain ⟨a1, a2, a3, a4⟩ := h.acc_ne

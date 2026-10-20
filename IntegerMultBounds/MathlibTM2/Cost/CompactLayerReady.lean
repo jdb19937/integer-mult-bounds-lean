@@ -19,9 +19,7 @@ theorem compactLayerReady_canonical {shape : Shape} {n o u ρ R₀ r w Ka D j a 
     (hrecord : shape.bits+1≤shape.payload) (hpayload : shape.payload=2^o*(3*(r*w)))
     (hpack : ∀ i≤j, ∀ a left right
       (layout : CompactRecursiveLayout shape n a (bits u i) ρ left right),
-      ∀ x y (hxy : x≠y),1<bits u i → ActivePrefixStageRuntimeData.Packed
-        (compactSlotComputedInputs layout x y hxy (rowsAt R₀ i) hG hGK
-          (rowsAt_pos hR₀ i) hrecord) D)
+      CompactLayoutPacked layout (rowsAt R₀ i) D)
     (layout : CompactRecursiveLayout shape n a (bits u j) ρ left right) :
     CompactLayerReady shape n o u ρ R₀ r w Ka D hR₀ hG hGK hrecord
       (compactLayerBasisBudget (nT CompactBReg) D shape u R₀ n) (j+1) a := by
