@@ -128,4 +128,8 @@ abbrev zG : Fin 𝕌 := 89
 abbrev zO : Fin 𝕌 := 90
 end Tp
 
+/-- Exchange the data tapes `zH, zF, zG, zO` with tapes 0–3. -/
+def dataSwap : Fin 𝕌 ≃ Fin 𝕌 :=
+  (Equiv.swap 0 87).trans ((Equiv.swap 1 88).trans ((Equiv.swap 2 89).trans (Equiv.swap 3 90)))
+
 end IntegerMultBounds.Schoenhage

@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Schoenhage.RingLemma
+public import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 public import IntegerMultBounds.MathlibTM2.Fast.CMulPass
 public import IntegerMultBounds.MathlibTM2.Host.WordCmd

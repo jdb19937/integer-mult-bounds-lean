@@ -2568,28 +2568,25 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   `2^(2N-k)`), lifted to signed representatives and evaluated at `2^M`.
   `level_correct`: the result is `x y` modulo `2^n + 1` whenever `2^k ∣ N`
   and `2M + k + 1 ≤ N`; the pointwise products are left abstract.
-- `Schoenhage/FMachine.lean`: machines whose control is any finite type
-  compile to literal programs by numbering states; runs correspond step for
-  step, so contracts transfer with the same bound.
 - `Schoenhage/Words.lean`: tapes holding lists of binary words, each followed
   by a separator, laid out from cell zero; the abstract tape is a zipper with
-  the head at a word boundary. Reading lemmas and writing words at the end.
+  the head at a word boundary.
 
-- `Schoenhage/Stream.lean`: the generic streaming machine. Tape `0` drives:
+- `Schoenhage/Stream.lean`: the generic streaming rule. Tape `0` drives:
   for each bit of its current word a finite rule reads that bit and the
   current bit of every other input (or that its word has ended), emits at
   most one symbol and chooses which inputs advance; the other inputs then skip
   to their separators, the rule's flush is emitted, and all inputs step past
-  their words. `stream_run`: exact final tapes and heads in exactly
-  `time R w ws` transitions; extend mode overwrites the output's last separator.
-- `Schoenhage/StreamPrim.lean`: the streaming machine as a word-program
+  their words. Its output, time `time R w ws` and word-tape effect
+  (`StreamPre`, `streamSem`); extend mode continues the output's last word.
+- `Schoenhage/StreamPrim.lean`: the streaming rule as a word-program
   primitive: inputs step past their current words and the emitted words are
   appended to the output tape (continuing its last word in extend mode).
 - `Schoenhage/Cmd.lean`: word programs. Verified primitives placed on chosen
   tapes, sequencing, loops while a tape has a current word, and branches on a
-  leading one bit; big-step executions with costs, and `compile_correct`: each
-  execution is a run of the compiled literal program within its cost.
-- `Schoenhage/Moves.lean`: one-tape primitives with exact runs: rewind to the
+  leading one bit; big-step executions with costs. Each primitive carries its
+  host implementation; `Host/WordCmd` runs programs on host stacks.
+- `Schoenhage/Moves.lean`: one-tape primitives: rewind to the
   first word, step back over the previous word, erase the whole tape, and
   append fixed words.
 
@@ -2714,8 +2711,8 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`runs_unpack`, `outWord_eq`).
 - `Schoenhage/RingProduct.lean`, `RingSpec.lean`, `RingProgram.lean`: the whole
   ring product (`runs_ringProd`), its output equal to the truncated
-  negacyclic Gaussian product (`outs_eq`), as a literal 91-tape program
-  (`ringProgram_spec`) within `O(N log N log log N)` steps (`ringCost_le`).
+  negacyclic Gaussian product (`outs_eq`), within `O(N log N log log N)` steps
+  (`ringCost_le`).
 
 - `Spec/SignedRingProduct.lean`: the exact statement of the paper's
   `lem:signed-ring-product` on the literal machine model: the `Γ` header code,
@@ -2748,9 +2745,6 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 
 - `Schoenhage/Chunk.lean`: a three-tape primitive cutting the current word
   into pieces of a register's width (`runs_chunkw`).
-- `Schoenhage/Seal.lean`: literal one-tape programs turning a raw bit string
-  into a sealed word tape and back, placed on any tape of a bank
-  (`sealAt_hoare`, `unsealAt_hoare`).
 - `Schoenhage/RingBridgeMath.lean`: the ring product's least-significant-first
   output words, reversed, are the paper's record of `Q_p(fg/r)` for disk grid
   operands (`ringOut_records`).
@@ -2763,21 +2757,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   multiply record by record and clean up; the output string is the array of
   `Q_p(fᵢ gᵢ / r)` records (`runs_pwCore`), within `pwCost` steps.
 
-- `Schoenhage/RingPointwiseProgram.lean`: the pointwise-product step as a
-  literal program in the paper's formats: seal, run the compiled word program,
-  unseal, data tapes relabelled to 0–3; it meets the statement
-  (`pointwise_meets`) within `pointwiseTime`.
-
-- `Schoenhage/RingPointwiseBound.lean`, `RingPointwiseTarget.lean`: the
-  pointwise program's time is `O(T p log (r p) log log (r p))` plus the header
-  (`pointwiseTime_le`), so the step meets `pointwisePolylogTarget 1`
-  (`pointwise_polylog`).
-
-- `Schoenhage/RingLemmaHeader.lean`, `RingLemma.lean`: the signed ring product
-  lemma on its own interface: a decoder for `Γ(p)Γ(r)Γ(w)` within the same
-  header bound, the pointwise program's core generalized over its decoder
-  (`runs_pwCoreWith`, `pwProg91With_hoare`) and run on one record; it meets
-  `Meets` (`ring_meets`) and `polylogTarget 1` (`ring_polylog`).
+- `Schoenhage/RingLemmaHeader.lean`: a decoder for `Γ(p)Γ(r)Γ(w)` within the
+  same header bound (`hdrDecodes_decodeHeader3`), used with the pointwise core
+  generalized over its decoder (`runs_pwCoreWith`) by `Fast/RingProdBase`. The
+  literal-program statements `ring_meets`, `pointwise_meets` and their polylog
+  targets are retired with the multitape backend (restore from 3ce5bd58).
 
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,

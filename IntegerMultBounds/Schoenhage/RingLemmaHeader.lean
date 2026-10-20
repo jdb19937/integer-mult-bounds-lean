@@ -112,4 +112,11 @@ theorem hdrDecodes_decodeHeader3 {p l w : ℕ} (hp : 1 ≤ p) (hw : 1 ≤ w) :
     HdrDecodes decodeHeader3 (header p (2 ^ l) w) p l w :=
   fun τ hc hH hP hL hW => runs_decodeHeader3 hp hw τ hc hH hP hL hW
 
+theorem ring_header_length_le (p r w : ℕ) : (header p r w).length ≤ 2 * (p + r + w) := by
+  simp only [header, List.length_append, gamma, List.length_replicate, length_msbBits]
+  have := Nat.size_le.mpr (Nat.lt_two_pow_self (n := p))
+  have := Nat.size_le.mpr (Nat.lt_two_pow_self (n := r))
+  have := Nat.size_le.mpr (Nat.lt_two_pow_self (n := w))
+  omega
+
 end IntegerMultBounds.Schoenhage
