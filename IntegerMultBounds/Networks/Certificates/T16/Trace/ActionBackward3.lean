@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackwardRows2
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackward2
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.ActionBackwardRows3
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.Backward
 

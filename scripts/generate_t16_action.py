@@ -152,8 +152,8 @@ def main():
     (TRACE / 'ActionFormat.lean').write_text(text)
     for prefix, name in [('Forward', 'forward'), ('Backward', 'backward')]:
         for k, snap in enumerate(snapshots(prefix), 1):
-            # Rows and reach checks are separate modules: check `k` imports only the rows of
-            # `k - 1` and `k`, so the checks of one orientation build in parallel.
+            # Rows are separate modules and build in parallel. Each reach check takes 8-10 GB, so
+            # check `k` imports check `k - 1` to keep the checks of one orientation in series.
             body = HEADER.format(imp=NS + '.ActionFormat',
                                  doc=f'{prefix} symbolic rows after {CUTS[k - 1]} gates, as overrides of the\n'
                                  'identity trie.')
@@ -174,7 +174,7 @@ def main():
             body += 'end ' + NS + '\n'
             (TRACE / f'Action{prefix}Rows{k}.lean').write_text(body)
             lo = CUTS[k - 2] if k > 1 else 0
-            imps = [NS + f'.Action{prefix}Rows{j}' for j in ([k - 1] if k > 1 else []) + [k]]
+            imps = ([NS + f'.Action{prefix}{k - 1}'] if k > 1 else []) + [NS + f'.Action{prefix}Rows{k}']
             body = HEADER.format(imp='\npublic import '.join(imps + [NS + '.' + prefix]),
                                  doc=f'The kernel check that {name} gates {lo} to {CUTS[k - 1]} reach the rows\n'
                                  f'`{name}Snapshot{k}`.')
