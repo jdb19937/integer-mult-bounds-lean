@@ -37,7 +37,7 @@ theorem accF_eq (N x : ℕ) : ∀ (a t : ℕ) (w : List Bool), a < 2 ^ N + 1 →
 /-! ### One bit -/
 
 /-- Take the next bit of `tY` into `sT1`. -/
-noncomputable def bitOut : Cmd 0 𝕋 :=
+noncomputable def bitOut : Cmd 𝕋 :=
   .seq (op1 Rules.take false c1 tY sT1 (by decide) (by decide) (by decide)) <| .seq (rewind c1) <|
   .seq (rewind tY) <| .seq (op1 Rules.drop false tY c1 sT2 (by decide) (by decide) (by decide)) <|
   .seq (rewind c1) <| .seq (clear tY) <| .seq (rewind sT2) <| .seq (regMove sT2 tY (by decide)) (rewind sT1)
@@ -56,10 +56,10 @@ theorem runs_bitOut (σ : Fin 𝕋 → WTape) (h1 : σ c1 = reg [true]) {b : Boo
   · simp [clen, WTape.words] at t1 t2 t3 ⊢; omega
 
 /-- Copy the operand `sX` into the unit. -/
-noncomputable def loadX : Cmd 0 𝕋 := .seq (op0 Rules.copy false sX aX (by decide)) <| .seq (rewind sX) (rewind aX)
+noncomputable def loadX : Cmd 𝕋 := .seq (op0 Rules.copy false sX aX (by decide)) <| .seq (rewind sX) (rewind aX)
 
 /-- Add `2^t x` (shift `cT`) to the accumulator `sRA`. -/
-noncomputable def addTerm : Cmd 0 𝕋 :=
+noncomputable def addTerm : Cmd 𝕋 :=
   .seq loadX <| .seq mulPow2 <|
   .seq (regMove aO aY (by decide)) <| .seq (regMove sRA aX (by decide)) <| .seq addMod (regMove aO sRA (by decide))
 
@@ -88,10 +88,10 @@ theorem runs_addTerm {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^ 
   set m := 2 ^ t * x % (2 ^ N + 1)
   have hm : m < 2 ^ N + 1 := mod_lt' _ _
   set σ₂ := Function.update (Function.update σ₁ aX emp) aO (reg (rwd N m))
-  have s3 := runs_regMove (a := 0) (r := aO) (r' := aY) (by decide) σ₂ (w := rwd N m) (by tsimp [σ₂])
+  have s3 := runs_regMove (r := aO) (r' := aY) (by decide) σ₂ (w := rwd N m) (by tsimp [σ₂])
     (by tsimp [σ₂, σ₁, haY])
   set σ₃ := Function.update (Function.update σ₂ aO emp) aY (reg (rwd N m))
-  have s4 := runs_regMove (a := 0) (r := sRA) (r' := aX) (by decide) σ₃ (w := rwd N a)
+  have s4 := runs_regMove (r := sRA) (r' := aX) (by decide) σ₃ (w := rwd N a)
     (by tsimp [σ₃, σ₂, σ₁, hA]) (by tsimp [σ₃, σ₂])
   set σ₄ := Function.update (Function.update σ₃ sRA emp) aX (reg (rwd N a))
   have s5 := runs_addMod hN σ₄ ⟨by tsimp [σ₄, σ₃, σ₂, σ₁, hW], by tsimp [σ₄, σ₃, σ₂, σ₁, hF]⟩
@@ -101,7 +101,7 @@ theorem runs_addTerm {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^ 
   rw [addRes_rwd _ _ _ ha hm] at s5
   set σ₅ := Function.update (Function.update (Function.update σ₄ aX emp) aY emp) aO
     (reg (rwd N ((a + m) % (2 ^ N + 1))))
-  have s6 := runs_regMove (a := 0) (r := aO) (r' := sRA) (by decide) σ₅ (w := rwd N ((a + m) % (2 ^ N + 1)))
+  have s6 := runs_regMove (r := aO) (r' := sRA) (by decide) σ₅ (w := rwd N ((a + m) % (2 ^ N + 1)))
     (by tsimp [σ₅]) (by tsimp [σ₅, σ₄])
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 s6))))).mono
     (fun σ' h => ?_) ?_
@@ -109,7 +109,7 @@ theorem runs_addTerm {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^ 
   · simp only [rwd_length]; omega
 
 /-- Lengthen the shift register `cT` by one. -/
-noncomputable def incT : Cmd 0 𝕋 :=
+noncomputable def incT : Cmd 𝕋 :=
   .seq (skp cT tJ (by decide)) <| .seq (op0 Rules.copy true c1 cT (by decide)) <| .seq (rewind c1) (rewind cT)
 
 theorem runs_incT {t : ℕ} (σ : Fin 𝕋 → WTape) (hT : σ cT = reg (ones t)) (h1 : σ c1 = reg [true])
@@ -125,7 +125,7 @@ theorem runs_incT {t : ℕ} (σ : Fin 𝕋 → WTape) (hT : σ cT = reg (ones t)
   · simp at t1 t2 ⊢; omega
 
 /-- One bit of the second operand. -/
-noncomputable def baseStep : Cmd 0 𝕋 :=
+noncomputable def baseStep : Cmd 𝕋 :=
   .seq bitOut <| .seq (.cond sT1 addTerm (rewind sT1)) <| .seq (clear sT1) <| .seq incT (skp tS tJ (by decide))
 
 theorem runs_baseStep {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^ N + 1) (ha : a < 2 ^ N + 1)
@@ -141,7 +141,7 @@ theorem runs_baseStep {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^
   have s1 := runs_bitOut σ hr.2.2.1 hY hT1 hT2
   set σ₁ := Function.update (Function.update σ tY (reg w)) sT1 (reg [b])
   have hr₁ : AluReady N σ₁ := (hr.update tY _ (by decide)).update sT1 _ (by decide)
-  have s2 : Runs (a := 0) (.cond sT1 addTerm (rewind sT1)) σ₁ (· = Function.update σ₁ sRA
+  have s2 : Runs (.cond sT1 addTerm (rewind sT1)) σ₁ (· = Function.update σ₁ sRA
       (reg (rwd N (if b then (a + 2 ^ t * x % (2 ^ N + 1)) % (2 ^ N + 1) else a)))) (400 * N + 1003) := by
     cases b
     · refine Runs.cond_false (by tsimp [σ₁, reg, startsOne_mk]) ?_
@@ -152,12 +152,12 @@ theorem runs_baseStep {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^
         (by tsimp [σ₁, hT])).mono (fun σ' h => ?_) (by omega)
       rw [h]; simp
   set σ₂ := Function.update σ₁ sRA (reg (rwd N (if b then (a + 2 ^ t * x % (2 ^ N + 1)) % (2 ^ N + 1) else a)))
-  have s3 := runs_clear (a := 0) sT1 σ₂
+  have s3 := runs_clear sT1 σ₂
   set σ₃ := Function.update σ₂ sT1 ⟨[], []⟩
   have s4 := runs_incT (t := t) σ₃ (by tsimp [σ₃, σ₂, σ₁, hT]) (by tsimp [σ₃, σ₂, σ₁, hr.2.2.1])
     (by tsimp [σ₃, σ₂, σ₁, hJ])
   set σ₄ := Function.update σ₃ cT (reg (ones (t + 1)))
-  have s5 := runs_skp (a := 0) (s := tS) (j := tJ) (by decide) σ₄ (by tsimp [σ₄, σ₃, σ₂, σ₁, hS])
+  have s5 := runs_skp (s := tS) (j := tJ) (by decide) σ₄ (by tsimp [σ₄, σ₃, σ₂, σ₁, hS])
     (by tsimp [σ₄, σ₃, σ₂, σ₁, hJ, emp])
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 s5)))).mono (fun σ' h => ?_) ?_
   · rw [h]; funext i; fin_cases i <;> tsimp [σ₄, σ₃, σ₂, σ₁, hS, hT1, emp]
@@ -165,7 +165,7 @@ theorem runs_baseStep {N x a t : ℕ} (hN : 0 < N) (htN : t ≤ N) (hx : x < 2 ^
     omega
 
 /-- Every bit of the second operand. -/
-noncomputable def baseLoop : Cmd 0 𝕋 := .loop tS baseStep
+noncomputable def baseLoop : Cmd 𝕋 := .loop tS baseStep
 
 theorem runs_baseLoop {N x : ℕ} (hN : 0 < N) (hx : x < 2 ^ N + 1) :
     ∀ (w : List Bool) (a t : ℕ) (σ : Fin 𝕋 → WTape) (Sl : List (List Bool)),
@@ -203,16 +203,16 @@ theorem runs_baseLoop {N x : ℕ} (hN : 0 < N) (hx : x < 2 ^ N + 1) :
     · simp only [List.length_cons] at htw ⊢; nlinarith
 
 /-- A zero accumulator, an empty shift and `N + 1` bit ticks. -/
-noncomputable def baseInit : Cmd 0 𝕋 :=
+noncomputable def baseInit : Cmd 𝕋 :=
   .seq (op0 (Rules.fill false) false cW sRA (by decide)) <| .seq (rewind cW) <| .seq (rewind sRA) <|
   .seq (emit [[]] cT) <| .seq (rewind cT) <|
   .seq (op0 Rules.ticks false cW tS (by decide)) <| .seq (rewind cW) (rewind tS)
 
 /-- Drop the operands and the loop registers. -/
-noncomputable def baseClean : Cmd 0 𝕋 := .seq (clear sX) <| .seq (clear tY) <| .seq (clear cT) (clear tS)
+noncomputable def baseClean : Cmd 𝕋 := .seq (clear sX) <| .seq (clear tY) <| .seq (clear cT) (clear tS)
 
 /-- The product of the next pair of `tIn` modulo `2^N + 1`, onto `tOut`. -/
-noncomputable def basePair : Cmd 0 𝕋 :=
+noncomputable def basePair : Cmd 𝕋 :=
   .seq (regIn tIn sX (by decide)) <| .seq (regIn tIn tY (by decide)) <| .seq baseInit <| .seq baseLoop <|
   .seq (regOut sRA tOut (by decide)) baseClean
 
@@ -224,9 +224,9 @@ theorem runs_basePair {N x y : ℕ} (hN : 0 < N) (hx : x < 2 ^ N + 1) (hy : y < 
         tOut ⟨rwd N (x * y % (2 ^ N + 1)) :: O, []⟩) ((N + 2) * (420 * N + 1400)) := by
   have hW := hr.1.1
   unfold basePair
-  have s1 := runs_regIn (a := 0) (s := tIn) (r := sX) (by decide) σ hIn hX
+  have s1 := runs_regIn (s := tIn) (r := sX) (by decide) σ hIn hX
   set σ₁ := Function.update (Function.update σ tIn ⟨rwd N x :: Il, rwd N y :: Ir⟩) sX (reg (rwd N x))
-  have s2 := runs_regIn (a := 0) (s := tIn) (r := tY) (by decide) σ₁ (L := rwd N x :: Il) (R := Ir)
+  have s2 := runs_regIn (s := tIn) (r := tY) (by decide) σ₁ (L := rwd N x :: Il) (R := Ir)
     (w := rwd N y) (by tsimp [σ₁]) (by tsimp [σ₁, hY])
   set σ₂ := Function.update (Function.update σ₁ tIn ⟨rwd N y :: rwd N x :: Il, Ir⟩) tY (reg (rwd N y))
   have s3 : Runs baseInit σ₂ (· = Function.update (Function.update (Function.update σ₂
@@ -253,7 +253,7 @@ theorem runs_basePair {N x y : ℕ} (hN : 0 < N) (hx : x < 2 ^ N + 1) (hy : y < 
   set σ₄ := Function.update (Function.update (Function.update (Function.update σ₃
       sRA (reg (rwd N (x * y % (2 ^ N + 1))))) cT (reg (ones (0 + (rwd N y).length)))) tY (reg []))
       tS ⟨List.replicate (rwd N y).length [] ++ [], []⟩
-  have s5 := runs_regOut (a := 0) (r := sRA) (d := tOut) (by decide) σ₄ (M := O)
+  have s5 := runs_regOut (r := sRA) (d := tOut) (by decide) σ₄ (M := O)
     (w := rwd N (x * y % (2 ^ N + 1))) (by tsimp [σ₄]) (by tsimp [σ₄, σ₃, σ₂, σ₁, hO])
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5
     (runs_clear sX _ |>.then (runs_clear tY _ |>.then (runs_clear cT _ |>.then (runs_clear tS _))))))))).mono
@@ -263,7 +263,7 @@ theorem runs_basePair {N x y : ℕ} (hN : 0 < N) (hx : x < 2 ^ N + 1) (hy : y < 
     nlinarith
 
 /-- Products of every pair of `tIn`. -/
-noncomputable def baseBatch : Cmd 0 𝕋 := .loop tIn basePair
+noncomputable def baseBatch : Cmd 𝕋 := .loop tIn basePair
 
 theorem runs_baseBatch {N : ℕ} (hN : 0 < N) :
     ∀ (L : List ℕ) (σ : Fin 𝕋 → WTape) (Il O : List (List Bool)), Even L.length →

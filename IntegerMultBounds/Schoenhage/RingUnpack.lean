@@ -20,20 +20,20 @@ namespace IntegerMultBounds.Schoenhage
 open Machine Strm Tp Schedule
 
 /-- Negative coefficient: add `2^s - 1` into `tV`. -/
-noncomputable def negB : Cmd 0 𝕌 :=
+noncomputable def negB : Cmd 𝕌 :=
   .seq (back (ι tU)) <| .seq (op1 Rules.add false (ι tU) kC (ι tV) (by decide) (by decide) (by decide)) <|
   .seq (rewind kC) (rewind (ι tV))
 
 /-- Nonnegative coefficient: copy it into `tV`. -/
-noncomputable def posB : Cmd 0 𝕌 :=
+noncomputable def posB : Cmd 𝕌 :=
   .seq (back (ι tU)) <| .seq (op0 Rules.copy false (ι tU) (ι tV) (by decide)) (rewind (ι tV))
 
 /-- The difference with the half and its borrow. -/
-noncomputable def digitA : Cmd 0 𝕌 :=
+noncomputable def digitA : Cmd 𝕌 :=
   .seq (op1 Rules.sub false (ι tD) kH (ι tU) (by decide) (by decide) (by decide)) <| .seq (rewind kH) (back (ι tU))
 
 /-- Drop `s` bits and write the first `w` to `L`. -/
-noncomputable def digitC (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 0 𝕌 :=
+noncomputable def digitC (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 𝕌 :=
   .seq (clear (ι tU)) <|
   .seq (op1 Rules.drop false (ι tV) kS (ι tO1) (by decide) (by decide) (by decide)) <| .seq (rewind kS) <|
   .seq (rewind (ι tO1)) <| .seq (clear (ι tV)) <|
@@ -41,7 +41,7 @@ noncomputable def digitC (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 0 �
   .seq (rewind kw) (clear (ι tO1))
 
 /-- One digit to one output word. -/
-noncomputable def digitStep (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 0 𝕌 :=
+noncomputable def digitStep (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 𝕌 :=
   .seq digitA <| .seq (.cond (ι tU) negB posB) (digitC L oL hL)
 
 /-- The word a digit step leaves in `tV`. -/
@@ -196,7 +196,7 @@ theorem outWord_eq {Wd s w e : ℕ} (hW : 1 ≤ Wd) (he : e < 2 ^ Wd) (hw : 1 �
 /-! ### All digits -/
 
 /-- Every digit of `tD` to `L`. -/
-noncomputable def digitLoop (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 0 𝕌 := .loop (ι tD) (digitStep L oL hL)
+noncomputable def digitLoop (L : Fin 𝕌) (oL : Own L) (hL : kw ≠ L) : Cmd 𝕌 := .loop (ι tD) (digitStep L oL hL)
 
 theorem runs_digitLoop {L : Fin 𝕌} (oL : Own L) (hL : kw ≠ L) {Wd s w : ℕ} :
     ∀ (es : List ℕ) (τ : Fin 𝕌 → WTape) (Dl Ll : List (List Bool)),
@@ -233,7 +233,7 @@ theorem runs_digitLoop {L : Fin 𝕌} (oL : Own L) (hL : kw ≠ L) {Wd s w : ℕ
     · simp only [List.length_cons, length_bits]; nlinarith
 
 /-- A residue register to output words on `L`. -/
-noncomputable def unpack (src L : Fin 𝕌) (os : Own src) (oL : Own L) (hL : kw ≠ L) : Cmd 0 𝕌 :=
+noncomputable def unpack (src L : Fin 𝕌) (os : Own src) (oL : Own L) (hL : kw ≠ L) : Cmd 𝕌 :=
   .seq (regDup src (ι sX) (os.ne sX)) <| .seq (regDup kR (ι cR) (by decide)) <| .seq (up splitOp) <|
   .seq (clear (ι cR)) <| .seq (rewind (ι tD)) <| .seq (digitLoop L oL hL) (clear (ι tD))
 
@@ -258,8 +258,8 @@ theorem runs_unpack {src L : Fin 𝕌} (os : Own src) (oL : Own L) (hL : kw ≠ 
   have m3 : kS ≠ L := fun q => by rw [← q] at hLt; rw [hLt] at hS; cases hS
   have m4 : kR ≠ L := fun q => by rw [← q] at hLt; rw [hLt] at hR; cases hR
   set es := pieces Wd r (bval v)
-  have s1 := runs_regDup (a := 0) (os.ne sX) τ hs hX
-  have s2 := runs_regDup (a := 0) (show kR ≠ ι cR by decide) (Function.update τ (ι sX) (reg v)) (w := Rules.ruler Wd (Wd + 1) r)
+  have s1 := runs_regDup (os.ne sX) τ hs hX
+  have s2 := runs_regDup (show kR ≠ ι cR by decide) (Function.update τ (ι sX) (reg v)) (w := Rules.ruler Wd (Wd + 1) r)
     (by tsimp [hR]) (by tsimp [hcR])
   set τ₂ := Function.update (Function.update τ (ι sX) (reg v)) (ι cR) (reg (Rules.ruler Wd (Wd + 1) r))
   have e₂ : τ₂ ∘ ι = Function.update (Function.update (aluBank N) sX (reg v)) cR (reg (Rules.ruler Wd (Wd + 1) r)) := by
@@ -272,8 +272,8 @@ theorem runs_unpack {src L : Fin 𝕌} (os : Own src) (oL : Own L) (hL : kw ≠ 
       (2 * (Rules.ruler Wd (Wd + 1) r).length + 3 * v.length + 20) := by
     refine runs_up' s3 ?_
     rw [ext_update, ext_update, ext_self]
-  have s4 := runs_clear (a := 0) (ι cR) τ₃
-  have s5 := runs_rewind (a := 0) (ι tD) (Function.update τ₃ (ι cR) ⟨[], []⟩)
+  have s4 := runs_clear (ι cR) τ₃
+  have s5 := runs_rewind (ι tD) (Function.update τ₃ (ι cR) ⟨[], []⟩)
   set τ₅ := Function.update τ (ι tD) ⟨[], es.map (bits (Wd + 1))⟩
   have e₅ : Function.update (Function.update τ₃ (ι cR) ⟨[], []⟩) (ι tD)
       ⟨[], (Function.update τ₃ (ι cR) ⟨[], []⟩ (ι tD)).left.reverse ++
@@ -284,7 +284,7 @@ theorem runs_unpack {src L : Fin 𝕌} (os : Own src) (oL : Own L) (hL : kw ≠ 
   have s6 := runs_digitLoop oL hL (Wd := Wd) (s := s) (w := w) es τ₅ [] Ll (by simp [τ₅])
     (by tsimp [τ₅, hH]) (by tsimp [τ₅, hC]) (by tsimp [τ₅, hS]) (by tsimp [τ₅, hw])
     (by tsimp [τ₅, hU]) (by tsimp [τ₅, hV]) (by tsimp [τ₅, hO]) (by simp [τ₅, oL.ne tD, hLt])
-  have s7 := runs_clear (a := 0) (ι tD) (Function.update (Function.update τ₅ (ι tD)
+  have s7 := runs_clear (ι tD) (Function.update (Function.update τ₅ (ι tD)
       ⟨(es.map (bits (Wd + 1))).reverse ++ [], []⟩) L ⟨(es.map (outWord Wd s w)).reverse ++ Ll, []⟩)
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3' (Runs.then s4 (Runs.then (s5.mono (fun _ h => h.trans e₅)
     le_rfl) (Runs.then s6 s7)))))).mono (fun τ' h => ?_) ?_

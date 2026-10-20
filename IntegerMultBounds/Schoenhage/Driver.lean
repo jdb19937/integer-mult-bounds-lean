@@ -27,7 +27,7 @@ end Tp
 /-! ### Between levels -/
 
 /-- Make the output batch the input batch. -/
-noncomputable def swapIO : Cmd 0 𝕋 :=
+noncomputable def swapIO : Cmd 𝕋 :=
   .seq (clear tIn) <| .seq (rewind tOut) <| .seq (appendAll tOut tIn (by decide)) <| .seq (rewind tIn) (clear tOut)
 
 theorem runs_swapIO {N : ℕ} (σ : Fin 𝕋 → WTape) (L : List ℕ) {Il : List (List Bool)}
@@ -36,7 +36,7 @@ theorem runs_swapIO {N : ℕ} (σ : Fin 𝕋 → WTape) (L : List ℕ) {Il : Lis
       (2 * clen Il + L.length * (5 * N + 30) + 20) := by
   unfold swapIO
   refine (Runs.then (runs_clear tIn σ) <| Runs.then (runs_rewind tOut _) <|
-    Runs.then (runs_appendAll (a := 0) (s := tOut) (d := tIn) (by decide) (N + 1) (rwds N L) _ [] []
+    Runs.then (runs_appendAll (s := tOut) (d := tIn) (by decide) (N + 1) (rwds N L) _ [] []
       (by tsimp [hO]) (by tsimp) (rwds_length_le N L)) <|
     Runs.then (runs_rewind tIn _) (runs_clear tOut _)).mono (fun σ' h => ?_) ?_
   · rw [h]; funext i; fin_cases i <;> tsimp [emp]
@@ -44,7 +44,7 @@ theorem runs_swapIO {N : ℕ} (σ : Fin 𝕋 → WTape) (L : List ℕ) {Il : Lis
     nlinarith
 
 /-- Push `pN` on the size stack and a tick on the level count. -/
-noncomputable def pushN : Cmd 0 𝕋 :=
+noncomputable def pushN : Cmd 𝕋 :=
   .seq (op0 Rules.copy false pN tP (by decide)) <| .seq (rewind pN) (emit [[]] tCnt)
 
 theorem runs_pushN {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)) {P C : List (List Bool)}
@@ -60,7 +60,7 @@ theorem runs_pushN {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N
   · simp at t1 ⊢; omega
 
 /-- Make the inner size the outer size. -/
-noncomputable def nextPN : Cmd 0 𝕋 :=
+noncomputable def nextPN : Cmd 𝕋 :=
   .seq (clear pN) <| .seq (op0 Rules.copy false pNp pN (by decide)) <| .seq (rewind pNp) (rewind pN)
 
 theorem runs_nextPN {N Np : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N)) (hNp : σ pNp = reg (ones Np)) :
@@ -74,7 +74,7 @@ theorem runs_nextPN {N Np : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (on
   · simp [clen, WTape.words] at t1 ⊢; omega
 
 /-- Drop a level's registers. -/
-noncomputable def clearLevel : Cmd 0 𝕋 :=
+noncomputable def clearLevel : Cmd 𝕋 :=
   .seq (clear pK) <| .seq (clear cM) <| .seq (clear pNp) <| .seq (clear tK) <| .seq (clear pKh) <|
   .seq (clear pNK) <| .seq (clear cHN) <| .seq (clear cWA) <| .seq (clear cH1) (clear cR)
 
@@ -92,7 +92,7 @@ theorem runs_clearLevel (σ : Fin 𝕋 → WTape) :
   · tsimp; omega
 
 /-- The level test: `fG = ones (size N - 2047)`, which starts with a one iff `N0 ≤ N`. -/
-noncomputable def testG : Cmd 0 𝕋 :=
+noncomputable def testG : Cmd 𝕋 :=
   .seq (clear fG) <| .seq sizeSetupN <| .seq (.seq sizeLoop (.seq (clear qR) (clear qT))) <|
   .seq (op1 Rules.drop false qB c2047 fG (by decide) (by decide) (by decide)) <| .seq (rewind qB) <|
   .seq (rewind c2047) <| .seq (rewind fG) (clear qB)
@@ -103,7 +103,7 @@ theorem runs_testG {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N
     Runs testG σ (· = Function.update σ fG (reg (ones (Nat.size N - 2047))))
       (2 * clen (σ fG).words + 200 * N + 20000) := by
   unfold testG
-  have s0 := runs_clear (a := 0) fG σ
+  have s0 := runs_clear fG σ
   set σ₀ := Function.update σ fG ⟨[], []⟩
   have s1 := runs_sizeSetupN (n := N) σ₀ (by tsimp [σ₀, hp]) (by tsimp [σ₀, hR]) (by tsimp [σ₀, hT])
     (by tsimp [σ₀, hB])
@@ -112,7 +112,7 @@ theorem runs_testG {N : ℕ} (σ : Fin 𝕋 → WTape) (hp : σ pN = reg (ones N
   have s2 := runs_sizeOf (n := N) σ₁ (by tsimp [σ₁]) (by tsimp [σ₁]) (by tsimp [σ₁]) (by tsimp [σ₁, σ₀, h1])
     (by tsimp [σ₁, σ₀, hS]) (by tsimp [σ₁, σ₀, hJ])
   set σ₂ := Function.update (Function.update (Function.update σ₁ qR emp) qB (reg (ones (Nat.size N)))) qT emp
-  have s3 : Runs (a := 0) (.seq (op1 Rules.drop false qB c2047 fG (by decide) (by decide) (by decide)) <|
+  have s3 : Runs (.seq (op1 Rules.drop false qB c2047 fG (by decide) (by decide) (by decide)) <|
       .seq (rewind qB) <| .seq (rewind c2047) <| .seq (rewind fG) (clear qB)) σ₂
       (· = Function.update σ fG (reg (ones (Nat.size N - 2047)))) (6 * N + 10000) := by
     apply Runs.of_wp
@@ -212,7 +212,7 @@ def downCost (N l : ℕ) : ℕ :=
   (l + 1) * ((kOf N + 2) * (10000 * (2 ^ kOf N + 1) * (nextN N + 2)) + 20000 * N + 100000)
 
 /-- One level of the down-sweep. -/
-noncomputable def downLevel : Cmd 0 𝕋 :=
+noncomputable def downLevel : Cmd 𝕋 :=
   .seq mkLevel <| .seq downBatch <| .seq swapIO <| .seq pushN <| .seq nextPN <| .seq clearLevel testG
 
 set_option maxHeartbeats 4000000 in
@@ -321,7 +321,7 @@ def trajCost : ℕ → ℕ → List ℕ → ℕ
     else downCost N L.length + 20 + trajCost j (nextN N) (nextBatch (nextN N) (kOf N) (pieceOf N) L)
 
 /-- One down level when the test says so, once per tick of `tG`. -/
-noncomputable def downLoop : Cmd 0 𝕋 := .loop tG (.seq (.cond fG downLevel (rewind fG)) (skp tG tJ (by decide)))
+noncomputable def downLoop : Cmd 𝕋 := .loop tG (.seq (.cond fG downLevel (rewind fG)) (skp tG tJ (by decide)))
 
 theorem nextBatch_even (Np k M : ℕ) (hl : ∀ x, (tpieces Np k M x).length = 2 ^ k) :
     ∀ L : List ℕ, Even (nextBatch Np k M L).length
@@ -386,13 +386,13 @@ theorem runs_downLoop :
     have hfG := hR.2.2.2.2.2.2.2
     have hJ : σ tJ = emp := hR.2.1 tJ (by decide)
     by_cases hN : N < N0
-    · have s1 : Runs (a := 0) (.seq (.cond fG downLevel (rewind fG)) (skp tG tJ (by decide))) σ
+    · have s1 : Runs (.seq (.cond fG downLevel (rewind fG)) (skp tG tJ (by decide))) σ
           (· = Function.update σ tG ⟨[] :: Gl, List.replicate j []⟩) 9 := by
         have h0 : Nat.size N - 2047 = 0 := by
           have := mt (startsOne_test (N := N)).mp (by omega)
           by_contra hc; exact this (startsOne_reg_ones (by omega))
         refine (Runs.then (Runs.cond_false (by rw [hfG, startsOne_test]; omega) (runs_rewind fG σ))
-          (runs_skp (a := 0) (s := tG) (j := tJ) (by decide) _ (by tsimp [hG, List.replicate_succ])
+          (runs_skp (s := tG) (j := tJ) (by decide) _ (by tsimp [hG, List.replicate_succ])
             (by tsimp [hJ, emp]))).mono (fun σ' h => ?_) ?_
         · rw [h]; funext i; fin_cases i <;> tsimp [hfG, hG, h0, reg, ones, List.replicate_succ]
         · tsimp [hfG, h0, reg, ones, hG, List.replicate_succ]
@@ -415,10 +415,10 @@ theorem runs_downLoop :
           pN (reg (ones (nextN N)))) tIn ⟨[], rwds (nextN N) NB⟩)
           tP ⟨ones N :: P, []⟩) tCnt ⟨[] :: C, []⟩) fG (reg (ones (Nat.size (nextN N) - 2047)))
       have hR₁ : Rest (nextN N) NB (ones N :: P) ([] :: C) σ₁ := hR.of_update
-      have s1 : Runs (a := 0) (.seq (.cond fG downLevel (rewind fG)) (skp tG tJ (by decide))) σ
+      have s1 : Runs (.seq (.cond fG downLevel (rewind fG)) (skp tG tJ (by decide))) σ
           (· = Function.update σ₁ tG ⟨[] :: Gl, List.replicate j []⟩) (downCost N L.length + 7) := by
         refine (Runs.then (Runs.cond_true (by rw [hfG, startsOne_test]; exact hN) s0)
-          (runs_skp (a := 0) (s := tG) (j := tJ) (by decide) _ (by tsimp [σ₁, hG, List.replicate_succ])
+          (runs_skp (s := tG) (j := tJ) (by decide) _ (by tsimp [σ₁, hG, List.replicate_succ])
             (by tsimp [σ₁, hJ, emp]))).mono (fun σ' h => ?_) ?_
         · rw [h]; funext i; fin_cases i <;> tsimp [σ₁, hG, List.replicate_succ]
         · tsimp [σ₁, hG, List.replicate_succ]

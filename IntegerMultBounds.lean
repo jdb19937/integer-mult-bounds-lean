@@ -20,6 +20,7 @@ public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
 public import IntegerMultBounds.MathlibTM2.Host.StateLift
+public import IntegerMultBounds.MathlibTM2.Host.WordCopy
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame
@@ -886,7 +887,6 @@ public import IntegerMultBounds.Networks.BinaryPhaseBasisExtension
 public import IntegerMultBounds.Networks.BinaryPhaseResidualRowProgram
 public import IntegerMultBounds.Networks.ComplexPhaseRowSchedule
 public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
-public import IntegerMultBounds.Schoenhage.FMachine
 public import IntegerMultBounds.Schoenhage.Words
 public import IntegerMultBounds.Schoenhage.Transform
 public import IntegerMultBounds.Schoenhage.Level
@@ -943,15 +943,11 @@ public import IntegerMultBounds.Schoenhage.RingConst
 public import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
 public import IntegerMultBounds.Schoenhage.RingHeader
 public import IntegerMultBounds.Schoenhage.Chunk
-public import IntegerMultBounds.Schoenhage.Seal
 public import IntegerMultBounds.Schoenhage.RingBridgeMath
 public import IntegerMultBounds.Schoenhage.RingRecord
 public import IntegerMultBounds.Machine.CompactComplexActualCallLoweredNetwork
 public import IntegerMultBounds.Schoenhage.RingPointwise
-public import IntegerMultBounds.Schoenhage.RingPointwiseProgram
-public import IntegerMultBounds.Schoenhage.RingPointwiseBound
 public import IntegerMultBounds.Schoenhage.RingLemmaHeader
-public import IntegerMultBounds.Schoenhage.RingLemma
 public import IntegerMultBounds.Spec.SyntheticTransform
 public import IntegerMultBounds.Spec.SyntheticTransformFacts
 public import IntegerMultBounds.Spec.SyntheticConvolution

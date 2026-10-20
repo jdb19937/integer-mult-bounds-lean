@@ -56,7 +56,7 @@ theorem mod_lt' (N v : ℕ) : v % (2 ^ N + 1) < 2 ^ N + 1 := Nat.mod_lt _ (by po
 
 /-- The forward butterfly: load `v`, shift it, keep `2^t v` and `u` in work and
 backup registers, add, restore, subtract. -/
-noncomputable def bflyF : Cmd 0 𝕋 :=
+noncomputable def bflyF : Cmd 𝕋 :=
   .seq (regIn tV aX (by decide)) <| .seq mulPow2 <|
   .seq (regMove aO aY (by decide)) <| .seq (regIn tU aX (by decide)) <|
   .seq (regDup aX bX (by decide)) <| .seq (regDup aY bY (by decide)) <| .seq addMod <|
@@ -110,7 +110,7 @@ theorem runs_bflyF {N t : ℕ} (hN : 0 < N) (htN : t ≤ N) (σ : Fin 𝕋 → W
 /-! ### Negation and the inverse butterfly -/
 
 /-- `-v mod 2^N + 1` with `v` in `aY`: subtract from the zero word. -/
-noncomputable def negMod : Cmd 0 𝕋 :=
+noncomputable def negMod : Cmd 𝕋 :=
   .seq (op0 (Rules.fill false) false cW aX (by decide)) <| .seq (rewind aX) <| .seq (rewind cW) subMod
 
 theorem runs_negMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluConst N σ) {v : List Bool}
@@ -122,7 +122,7 @@ theorem runs_negMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
   have hz : (List.replicate (N + 1) false).length = N + 1 := by simp
   have hzv : bval (List.replicate (N + 1) false) = 0 := bval_replicate_false _
   unfold negMod
-  have s1 : Runs (op0 (a := 0) (Rules.fill false) false cW aX (by decide)) σ
+  have s1 : Runs (op0 (Rules.fill false) false cW aX (by decide)) σ
       (· = Function.update (Function.update σ cW ⟨[ones (N + 1)], []⟩) aX
         ⟨[List.replicate (N + 1) false], []⟩) (N + 7) := by
     apply Runs.of_wp
@@ -142,7 +142,7 @@ theorem runs_negMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
   · tsimp [clen]; omega
 
 /-- The inverse butterfly: `p + q` and `-(2^s (p - q))`, with `s = N - t` in `cT`. -/
-noncomputable def bflyI : Cmd 0 𝕋 :=
+noncomputable def bflyI : Cmd 𝕋 :=
   .seq (regIn tU aX (by decide)) <| .seq (regIn tV aY (by decide)) <|
   .seq (regDup aX bX (by decide)) <| .seq (regDup aY bY (by decide)) <| .seq addMod <|
   .seq (regOut aO tO1 (by decide)) <| .seq (regMove bX aX (by decide)) <|

@@ -19,7 +19,7 @@ namespace IntegerMultBounds.Schoenhage
 open Machine Strm Tp Schedule
 
 /-- Move one word per tick of `qT` from `src` to `dst`, reversed. -/
-noncomputable def moveRev (src dst : Fin 𝕌) (h : src ≠ dst) : Cmd 0 𝕌 :=
+noncomputable def moveRev (src dst : Fin 𝕌) (h : src ≠ dst) : Cmd 𝕌 :=
   .loop (ι qT) (.seq (revw src dst h) (skp (ι qT) (ι tJ) (by decide)))
 
 theorem runs_moveRev {src dst : Fin 𝕌} (h : src ≠ dst) (h1 : src ≠ ι qT) (h2 : dst ≠ ι qT) (h3 : src ≠ ι tJ)
@@ -37,9 +37,9 @@ theorem runs_moveRev {src dst : Fin 𝕌} (h : src ≠ dst) (h1 : src ≠ ι qT)
       simp_all
   | x :: ws, τ, Ls, R, D, Tl, hW, hs, hd, hT, hJ => by
     have hx := hW x (by simp)
-    have s1 := runs_revw (a := 0) h τ (L := Ls) (R := ws ++ R) (w := x) (by simpa using hs) (by simp [hd])
+    have s1 := runs_revw h τ (L := Ls) (R := ws ++ R) (w := x) (by simpa using hs) (by simp [hd])
     set τ₁ := Function.update (Function.update τ src ⟨x :: Ls, ws ++ R⟩) dst ⟨x.reverse :: (τ dst).left, []⟩
-    have s2 := runs_skp (a := 0) (show ι qT ≠ ι tJ by decide) τ₁
+    have s2 := runs_skp (show ι qT ≠ ι tJ by decide) τ₁
       (by simp [τ₁, h1.symm, h2.symm, hT, List.replicate_succ]) (by simp [τ₁, h3.symm, h4.symm, hJ])
     set τ₂ := Function.update τ₁ (ι qT) (τ₁ (ι qT)).next
     have ih := runs_moveRev h h1 h2 h3 h4 ws τ₂ (x :: Ls) R (x.reverse :: D) ([] :: Tl)
@@ -55,20 +55,20 @@ theorem runs_moveRev {src dst : Fin 𝕌} (h : src ≠ dst) (h1 : src ≠ ι qT)
       rw [hc]; simp only [List.length_cons]; nlinarith
 
 /-- Append one output word, reversed, to the output string per tick of `qT`. -/
-noncomputable def gatherTail : Cmd 0 𝕌 :=
+noncomputable def gatherTail : Cmd 𝕌 :=
   .seq (rewind (ι tU)) <| .seq (op0 Rules.copy true (ι tU) zO (by decide)) <|
   .seq (clear (ι tU)) (skp (ι qT) (ι tJ) (by decide))
 
-noncomputable def gatherBody : Cmd 0 𝕌 := .seq (revw rO (ι tU) (by decide)) gatherTail
+noncomputable def gatherBody : Cmd 𝕌 := .seq (revw rO (ι tU) (by decide)) gatherTail
 
-noncomputable def gatherLoop : Cmd 0 𝕌 := .loop (ι qT) gatherBody
+noncomputable def gatherLoop : Cmd 𝕌 := .loop (ι qT) gatherBody
 
 theorem runs_gatherBody (τ : Fin 𝕌 → WTape) {o acc : List Bool} {Lo Ro Tl : List (List Bool)} {n : ℕ}
     (hO : τ rO = ⟨Lo, o :: Ro⟩) (hU : τ (ι tU) = emp) (hZ : τ zO = ⟨[acc], []⟩)
     (hT : τ (ι qT) = ⟨Tl, List.replicate (n + 1) []⟩) (hJ : τ (ι tJ) = emp) :
     Runs gatherBody τ (· = Function.update (Function.update (Function.update τ rO ⟨o :: Lo, Ro⟩)
       zO ⟨[acc ++ o.reverse], []⟩) (ι qT) ⟨[] :: Tl, List.replicate n []⟩) (8 * o.length + 40) := by
-  have s1 := runs_revw (a := 0) (show rO ≠ ι tU by decide) τ hO (by rw [hU]; rfl)
+  have s1 := runs_revw (show rO ≠ ι tU by decide) τ hO (by rw [hU]; rfl)
   set τ₁ := Function.update (Function.update τ rO ⟨o :: Lo, Ro⟩) (ι tU) ⟨o.reverse :: (τ (ι tU)).left, []⟩
   have s2 : Runs gatherTail τ₁
       (· = Function.update (Function.update (Function.update τ rO ⟨o :: Lo, Ro⟩)
@@ -154,16 +154,16 @@ theorem RecReady.update_free {Wd r w s N : ℕ} {τ : Fin 𝕌 → WTape} (h : R
 /-! ### One record -/
 
 /-- Load one record of each operand (reversing its words), multiply, append the reversed output words. -/
-noncomputable def recIn : Cmd 0 𝕌 :=
+noncomputable def recIn : Cmd 𝕌 :=
   .seq (ticksFrom iW (by decide)) <| .seq (moveRev iP rF (by decide)) <| .seq (clear (ι qT)) <|
   .seq (rewind rF) <|
   .seq (ticksFrom iW (by decide)) <| .seq (moveRev iL rG (by decide)) <| .seq (clear (ι qT)) (rewind rG)
 
-noncomputable def recOut : Cmd 0 𝕌 :=
+noncomputable def recOut : Cmd 𝕌 :=
   .seq (ticksFrom iW (by decide)) <| .seq gatherLoop <| .seq (clear (ι qT)) <|
   .seq (clear rF) <| .seq (clear rG) (clear rO)
 
-noncomputable def recStep : Cmd 0 𝕌 := .seq recIn <| .seq ringProd recOut
+noncomputable def recStep : Cmd 𝕌 := .seq recIn <| .seq ringProd recOut
 
 /-- The multiplier's output words for one record pair. -/
 def ringWords (Wd r w s N : ℕ) (fs gs : List (List Bool × List Bool)) : List (List Bool) :=
@@ -213,8 +213,8 @@ theorem runs_recIn {r w : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW : �
   rw [lF] at s2
   set τ₂ := Function.update (Function.update (Function.update τ₁ iP ⟨A.reverse ++ Lf, Rf⟩)
     rF ⟨(A.map List.reverse).reverse ++ [], []⟩) (ι qT) ⟨List.replicate (2 * r) [] ++ [], []⟩
-  have s3 := runs_clear (a := 0) (ι qT) τ₂
-  have s4 := runs_rewind (a := 0) rF (Function.update τ₂ (ι qT) ⟨[], []⟩)
+  have s3 := runs_clear (ι qT) τ₂
+  have s4 := runs_rewind rF (Function.update τ₂ (ι qT) ⟨[], []⟩)
   set τ₄ := Function.update (Function.update τ₂ (ι qT) ⟨[], []⟩) rF ⟨[], flat fs⟩
   have e₄ : Function.update (Function.update τ₂ (ι qT) ⟨[], []⟩) rF
       ⟨[], (Function.update τ₂ (ι qT) ⟨[], []⟩ rF).left.reverse ++ (Function.update τ₂ (ι qT) ⟨[], []⟩ rF).right⟩
@@ -228,8 +228,8 @@ theorem runs_recIn {r w : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW : �
   rw [lG] at s6
   set τ₆ := Function.update (Function.update (Function.update τ₅ iL ⟨B.reverse ++ Lg, Rg⟩)
     rG ⟨(B.map List.reverse).reverse ++ [], []⟩) (ι qT) ⟨List.replicate (2 * r) [] ++ [], []⟩
-  have s7 := runs_clear (a := 0) (ι qT) τ₆
-  have s8 := runs_rewind (a := 0) rG (Function.update τ₆ (ι qT) ⟨[], []⟩)
+  have s7 := runs_clear (ι qT) τ₆
+  have s8 := runs_rewind rG (Function.update τ₆ (ι qT) ⟨[], []⟩)
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then (s4.mono (fun _ h => h.trans e₄) le_rfl)
     (Runs.then s5 (Runs.then s6 (Runs.then s7 s8))))))).mono (fun τ' h => ?_) ?_
   · clear s1 s2 s3 s4 s5 s6 s7 s8 e₄
@@ -291,10 +291,10 @@ theorem runs_recOut {Wd r w s N : ℕ} {fs gs : List (List Bool × List Bool)} (
   rw [lO] at s2
   set τ₂ := Function.update (Function.update (Function.update τ₁ rO ⟨Os.reverse ++ [], []⟩)
     zO ⟨[acc ++ (Os.map List.reverse).flatten], []⟩) (ι qT) ⟨List.replicate (2 * r) [] ++ [], []⟩
-  have s3 := runs_clear (a := 0) (ι qT) τ₂
-  have s4 := runs_clear (a := 0) rF (Function.update τ₂ (ι qT) ⟨[], []⟩)
-  have s5 := runs_clear (a := 0) rG (Function.update (Function.update τ₂ (ι qT) ⟨[], []⟩) rF ⟨[], []⟩)
-  have s6 := runs_clear (a := 0) rO (Function.update (Function.update (Function.update τ₂ (ι qT) ⟨[], []⟩)
+  have s3 := runs_clear (ι qT) τ₂
+  have s4 := runs_clear rF (Function.update τ₂ (ι qT) ⟨[], []⟩)
+  have s5 := runs_clear rG (Function.update (Function.update τ₂ (ι qT) ⟨[], []⟩) rF ⟨[], []⟩)
+  have s6 := runs_clear rO (Function.update (Function.update (Function.update τ₂ (ι qT) ⟨[], []⟩)
     rF ⟨[], []⟩) rG ⟨[], []⟩)
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 s6))))).mono (fun τ' h => ?_) ?_
   · clear s1 s2 s3 s4 s5 s6
@@ -353,7 +353,7 @@ theorem runs_recStep {Wd r w s N : ℕ} (τ : Fin 𝕌 → WTape) (hR : RecReady
 /-! ### Every record -/
 
 /-- One record per pass while operand words remain. -/
-noncomputable def recLoop : Cmd 0 𝕌 := .loop iP recStep
+noncomputable def recLoop : Cmd 𝕌 := .loop iP recStep
 
 /-- The operand words of a list of records, as stored (most significant bit first). -/
 def opWords (qs : List (List (List Bool × List Bool))) : List (List Bool) :=

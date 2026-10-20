@@ -40,7 +40,7 @@ theorem ι_injective : Function.Injective ι := Fin.castLE_injective _
 @[simp] theorem ι_val (i : Fin 𝕋) : (ι i).val = i.val := rfl
 
 /-- A program of the multiplier's bank on the first tapes of the larger bank. -/
-def up (c : Cmd 0 𝕋) : Cmd 0 𝕌 := c.map ι ι_injective
+def up (c : Cmd 𝕋) : Cmd 𝕌 := c.map ι ι_injective
 
 /-- Replace the first 64 tapes of `τ` by `σ`. -/
 def ext (τ : Fin 𝕌 → WTape) (σ : Fin 𝕋 → WTape) : Fin 𝕌 → WTape :=
@@ -74,7 +74,7 @@ theorem comp_ι_update (τ : Fin 𝕌 → WTape) (i : Fin 𝕋) (v : WTape) :
   · rw [Function.update_of_ne (fun e => hx (ι_injective e)), Function.update_of_ne hx]
     rfl
 
-theorem runs_up {c : Cmd 0 𝕋} {τ : Fin 𝕌 → WTape} {σ' : Fin 𝕋 → WTape} {B : ℕ}
+theorem runs_up {c : Cmd 𝕋} {τ : Fin 𝕌 → WTape} {σ' : Fin 𝕋 → WTape} {B : ℕ}
     (h : Runs c (τ ∘ ι) (· = σ') B) : Runs (up c) τ (· = ext τ σ') B := by
   refine (h.map ι ι_injective τ rfl).mono (fun τ' ⟨hq, ho⟩ => ?_) le_rfl
   funext x
@@ -92,7 +92,7 @@ theorem eq_ext {τ τ' : Fin 𝕌 → WTape} {σ : Fin 𝕋 → WTape} (h1 : ∀
   · exact h2 x (by omega)
 
 /-- A lifted run whose result is stated on the larger bank. -/
-theorem runs_up' {c : Cmd 0 𝕋} {τ τ' : Fin 𝕌 → WTape} {σ' : Fin 𝕋 → WTape} {B : ℕ}
+theorem runs_up' {c : Cmd 𝕋} {τ τ' : Fin 𝕌 → WTape} {σ' : Fin 𝕋 → WTape} {B : ℕ}
     (h : Runs c (τ ∘ ι) (· = σ') B) (e : ext τ σ' = τ') : Runs (up c) τ (· = τ') B :=
   e ▸ runs_up h
 
@@ -127,5 +127,9 @@ abbrev zF : Fin 𝕌 := 88
 abbrev zG : Fin 𝕌 := 89
 abbrev zO : Fin 𝕌 := 90
 end Tp
+
+/-- Exchange the data tapes `zH, zF, zG, zO` with tapes 0–3. -/
+def dataSwap : Fin 𝕌 ≃ Fin 𝕌 :=
+  (Equiv.swap 0 87).trans ((Equiv.swap 1 88).trans ((Equiv.swap 2 89).trans (Equiv.swap 3 90)))
 
 end IntegerMultBounds.Schoenhage

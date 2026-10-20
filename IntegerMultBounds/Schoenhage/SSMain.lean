@@ -22,7 +22,7 @@ def SSStart (N x y : ℕ) (σ : Fin 𝕋 → WTape) : Prop :=
   σ tIn = ⟨[], [rwd N x, rwd N y]⟩ ∧ σ pN = reg (ones N) ∧ ∀ i, i ≠ tIn → i ≠ pN → σ i = emp
 
 /-- The constants, the unit for `2^N + 1`, the level test and `N` ticks of fuel. -/
-noncomputable def ssInit : Cmd 0 𝕋 :=
+noncomputable def ssInit : Cmd 𝕋 :=
   .seq (emit [[true]] c1) <| .seq (rewind c1) <| .seq (emit [ones 2047] c2047) <| .seq (rewind c2047) <|
   .seq loadN <| .seq aluSet <| .seq (clear cU) <| .seq testG <|
   .seq (op0 Rules.ticks false pN tG (by decide)) <| .seq (rewind pN) (rewind tG)
@@ -32,13 +32,13 @@ theorem runs_ssInit {N x y : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hS : S
       σ' tG = ⟨[], List.replicate N []⟩ := by
   obtain ⟨hIn, hp, he⟩ := hS
   have e : ∀ i, i ≠ tIn → i ≠ pN → σ i = emp := he
-  have s1 := runs_emit (a := 0) [[true]] c1 σ (by rw [e c1 (by decide) (by decide)]; rfl)
+  have s1 := runs_emit [[true]] c1 σ (by rw [e c1 (by decide) (by decide)]; rfl)
   set σ₁ := Function.update σ c1 ⟨[[true]].reverse ++ (σ c1).left, []⟩
-  have s2 := runs_rewind (a := 0) c1 σ₁
+  have s2 := runs_rewind c1 σ₁
   set σ₂ := Function.update σ₁ c1 ⟨[], (σ₁ c1).left.reverse ++ (σ₁ c1).right⟩
-  have s3 := runs_emit (a := 0) [ones 2047] c2047 σ₂ (by tsimp [σ₂, σ₁, e c2047 (by decide) (by decide), emp])
+  have s3 := runs_emit [ones 2047] c2047 σ₂ (by tsimp [σ₂, σ₁, e c2047 (by decide) (by decide), emp])
   set σ₃ := Function.update σ₂ c2047 ⟨[ones 2047].reverse ++ (σ₂ c2047).left, []⟩
-  have s4 := runs_rewind (a := 0) c2047 σ₃
+  have s4 := runs_rewind c2047 σ₃
   set σ₄ := Function.update σ₃ c2047 ⟨[], (σ₃ c2047).left.reverse ++ (σ₃ c2047).right⟩
   have s5 := runs_loadN (N := N) σ₄ (by tsimp [σ₄, σ₃, σ₂, σ₁, hp]) (by tsimp [σ₄, σ₃, σ₂, σ₁, e cU (by decide) (by decide)])
   set σ₅ := Function.update σ₄ cU (reg (ones N))
@@ -46,7 +46,7 @@ theorem runs_ssInit {N x y : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hS : S
     (by tsimp [σ₅, σ₄, σ₃, σ₂, σ₁, e sT1 (by decide) (by decide)])
   set σ₆ := Function.update (Function.update (Function.update σ₅
         cN (reg (ones N))) cW (reg (ones (N + 1)))) cF (reg (fword N))
-  have s7 := runs_clear (a := 0) cU σ₆
+  have s7 := runs_clear cU σ₆
   set σ₇ := Function.update σ₆ cU ⟨[], []⟩
   have eq : ∀ i, i ≠ tIn → i ≠ pN → i ≠ c1 → i ≠ c2047 → i ≠ cN → i ≠ cW → i ≠ cF → σ₇ i = emp := by
     intro i h1 h2 h3 h4 h5 h6 h7
@@ -64,7 +64,7 @@ theorem runs_ssInit {N x y : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hS : S
     (eq qS (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
     (eq tJ (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   set σ₈ := Function.update σ₇ fG (reg (ones (Nat.size N - 2047)))
-  have s9 : Runs (a := 0) (.seq (op0 Rules.ticks false pN tG (by decide)) <| .seq (rewind pN) (rewind tG)) σ₈
+  have s9 : Runs (.seq (op0 Rules.ticks false pN tG (by decide)) <| .seq (rewind pN) (rewind tG)) σ₈
       (· = Function.update σ₈ tG ⟨[], List.replicate N []⟩) (3 * N + 20) := by
     apply Runs.of_wp
     simp only [WP, wp_op0, wp_rewind]
@@ -116,7 +116,7 @@ theorem traj_inv : ∀ (j N : ℕ) (L : List ℕ), 0 < N → 2 ^ kOf N ∣ N →
       exact traj_inv j _ _ hpos (dvd_chain hN).2.2 (nextBatch_even _ _ _ hl L) (nextBatch_lt hN hk L hv)
 
 /-- The whole multiplier. -/
-noncomputable def ssMain : Cmd 0 𝕋 :=
+noncomputable def ssMain : Cmd 𝕋 :=
   .seq ssInit <| .seq downLoop <| .seq baseBatch <| .seq swapIO <| .seq (rewind tCnt) upLoop
 
 /-- The multiplier's cost along the trajectory of a batch `L` at size `N`. -/
@@ -157,7 +157,7 @@ theorem runs_ssMain {N x y : ℕ} (hN : 0 < N) (hk : 2 ^ kOf N ∣ N) (hx : x < 
       tOut ⟨(rwds NL Qb).reverse ++ [], []⟩
     have b2 := runs_swapIO (N := NL) τ1 Qb (Il := (rwds NL LL).reverse ++ []) (by tsimp [τ1]) (by tsimp [τ1])
     set τ2 := Function.update (Function.update τ1 tIn ⟨[], rwds NL Qb⟩) tOut emp
-    have b3 := runs_rewind (a := 0) tCnt τ2
+    have b3 := runs_rewind tCnt τ2
     set τ3 := Function.update τ2 tCnt ⟨[], (τ2 tCnt).left.reverse ++ (τ2 tCnt).right⟩
     have hQb : Qb = (pairsOf LL).map fun p => ssMul NL p.1 p.2 := by
       simp only [Qb]; congr 1; funext p; rw [ssMul_eq]; simp [hsmall, Fm]

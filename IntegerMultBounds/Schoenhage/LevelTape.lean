@@ -34,7 +34,7 @@ end Tp
 /-! ### Cutting into pieces -/
 
 /-- Cut the operand in `sX` into its padded pieces, appended to `tD`. -/
-noncomputable def splitOp : Cmd 0 𝕋 :=
+noncomputable def splitOp : Cmd 𝕋 :=
   .seq (op1 Rules.split false cR sX tD (by decide) (by decide) (by decide)) <| .seq (rewind cR) (clear sX)
 
 theorem runs_splitOp {M W K : ℕ} (hMW : M + 1 ≤ W) (hK : 0 < K) (σ : Fin 𝕋 → WTape) {v : List Bool}
@@ -82,7 +82,7 @@ theorem bval_window {M W : ℕ} (hM : 1 ≤ M) : ∀ (a : ℕ) (cs : List ℕ), 
     nlinarith
 
 /-- One window step: add the next word of `tC`, emit the low `M` bits, shift. -/
-noncomputable def winStep : Cmd 0 𝕋 :=
+noncomputable def winStep : Cmd 𝕋 :=
   .seq (op1 Rules.add false sA tC sT1 (by decide) (by decide) (by decide)) <| .seq (clear sA) <|
   .seq (rewind sT1) <|
   .seq (op1 Rules.take true cM sT1 sO (by decide) (by decide) (by decide)) <| .seq (rewind cM) <|
@@ -123,7 +123,7 @@ theorem runs_winStep {M W Wc a c : ℕ} (hWc : Wc ≤ W) (ha : a < 2 ^ W) (hc : 
   · simp [clen, WTape.words, hl] at t1 t2 t3 t4 ⊢; omega
 
 /-- The window over every word of `tC`. -/
-noncomputable def winLoop : Cmd 0 𝕋 := .loop tC winStep
+noncomputable def winLoop : Cmd 𝕋 := .loop tC winStep
 
 theorem runs_winLoop {M W Wc : ℕ} (hM : 1 ≤ M) (hWc : Wc + 1 ≤ W) (hMW : M ≤ W) :
     ∀ (cs : List ℕ) (a : ℕ) (σ : Fin 𝕋 → WTape) (o : List Bool) (Cl : List (List Bool)),
@@ -167,14 +167,14 @@ theorem length_chunks (M : ℕ) : ∀ (a : ℕ) (cs : List ℕ), (chunks M a cs)
     simp only [chunks, List.length_append, length_bits, length_chunks M _ cs, List.length_cons]; ring
 
 /-- Start the window: an empty output word and a zero window. -/
-noncomputable def winInit : Cmd 0 𝕋 :=
+noncomputable def winInit : Cmd 𝕋 :=
   .seq (emit [[]] sO) <| .seq (op0 (Rules.fill false) false cWA sA (by decide)) <| .seq (rewind cWA) (rewind sA)
 
 /-- Append the last window to the output word. -/
-noncomputable def winDone : Cmd 0 𝕋 := .seq (op0 Rules.copy true sA sO (by decide)) (clear sA)
+noncomputable def winDone : Cmd 𝕋 := .seq (op0 Rules.copy true sA sO (by decide)) (clear sA)
 
 /-- The shifted sum `Σ cᵢ 2^(M i)` of the words of `tC`, as one word in `sO`. -/
-noncomputable def winSum : Cmd 0 𝕋 := .seq winInit <| .seq winLoop winDone
+noncomputable def winSum : Cmd 𝕋 := .seq winInit <| .seq winLoop winDone
 
 theorem runs_winSum {M W Wc : ℕ} (hM : 1 ≤ M) (hWc : Wc + 1 ≤ W) (hMW : M ≤ W)
     (cs : List ℕ) (hcs : ∀ c ∈ cs, c < 2 ^ Wc) (σ : Fin 𝕋 → WTape) {Cl : List (List Bool)}
@@ -218,7 +218,7 @@ theorem runs_winSum {M W Wc : ℕ} (hM : 1 ≤ M) (hWc : Wc + 1 ≤ W) (hMW : M 
 /-! ### Reduction modulo `2^N + 1` -/
 
 /-- Load the low and high `N`-bit halves of `sO` into the unit's operands. -/
-noncomputable def redPrep : Cmd 0 𝕋 :=
+noncomputable def redPrep : Cmd 𝕋 :=
   .seq (rewind sO) <|
   .seq (op1 Rules.take false cN sO sT1 (by decide) (by decide) (by decide)) <| .seq (rewind cN) <|
   .seq (rewind sO) <| .seq (rewind sT1) <|
@@ -230,7 +230,7 @@ noncomputable def redPrep : Cmd 0 𝕋 :=
   .seq (clear sT2) (rewind aY)
 
 /-- `Z mod 2^N + 1` from the word of `Z` in `sO`, into `aO`. -/
-noncomputable def redOp : Cmd 0 𝕋 := .seq redPrep subMod
+noncomputable def redOp : Cmd 𝕋 := .seq redPrep subMod
 
 set_option maxHeartbeats 1000000 in
 theorem runs_redOp {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hr : AluReady N σ) {z : List Bool}
@@ -280,7 +280,7 @@ theorem runs_redOp {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hr : AluRea
 /-! ### Descaling and the sign split -/
 
 /-- Load the next word of `tD` and divide it by `2^k` (shift `cT = N - k`, then negate). -/
-noncomputable def descaleOp : Cmd 0 𝕋 :=
+noncomputable def descaleOp : Cmd 𝕋 :=
   .seq (regIn tD aX (by decide)) <| .seq mulPow2 <| .seq (regMove aO aY (by decide)) negMod
 
 theorem runs_descaleOp {N k w : ℕ} (hN : 0 < N) (hw : w < 2 ^ N + 1) (σ : Fin 𝕋 → WTape)
@@ -290,14 +290,14 @@ theorem runs_descaleOp {N k w : ℕ} (hN : 0 < N) (hw : w < 2 ^ N + 1) (σ : Fin
         aO (reg (rwd N (descale N k w)))) (300 * N + 700) := by
   obtain ⟨⟨hW, hF⟩, hcN, hc1, hX, hY, hAO, hS1, hS2, hS3, hbX, hbY⟩ := hr
   unfold descaleOp
-  have s1 := runs_regIn (a := 0) (s := tD) (r := aX) (by decide) σ hD hX
+  have s1 := runs_regIn (s := tD) (r := aX) (by decide) σ hD hX
   set σ₁ := Function.update (Function.update σ tD ⟨rwd N w :: Dl, Dr⟩) aX (reg (rwd N w))
   have s2 := runs_mulPow2 (N := N) (t := N - k) hN (Nat.sub_le N k) σ₁ ⟨by tsimp [σ₁, hW], by tsimp [σ₁, hF]⟩
     (by tsimp [σ₁, hcN]) (by tsimp [σ₁, hc1]) (by tsimp [σ₁, hcT]) (v := rwd N w) (by tsimp [σ₁])
     (rwd_length N w) (by rw [bval_rwd hw]; exact hw) (by tsimp [σ₁, hY]) (by tsimp [σ₁, hAO])
     (by tsimp [σ₁, hS1]) (by tsimp [σ₁, hS2]) (by tsimp [σ₁, hS3])
   set σ₂ := Function.update (Function.update σ₁ aX emp) aO (reg (mulRes N (N - k) (rwd N w)))
-  have s3 := runs_regMove (a := 0) (r := aO) (r' := aY) (by decide) σ₂ (w := mulRes N (N - k) (rwd N w))
+  have s3 := runs_regMove (r := aO) (r' := aY) (by decide) σ₂ (w := mulRes N (N - k) (rwd N w))
     (by tsimp [σ₂]) (by tsimp [σ₂, σ₁, hY])
   set σ₃ := Function.update (Function.update σ₂ aO emp) aY (reg (mulRes N (N - k) (rwd N w)))
   have hm : bval (mulRes N (N - k) (rwd N w)) = 2 ^ (N - k) * w % (2 ^ N + 1) := by
@@ -327,7 +327,7 @@ theorem subW_borrow (x y : List Bool) (h : y.length = x.length) :
       eq_comm (a := false), eq_comm (a := true)] <;> push_cast at e <;> omega
 
 /-- Compare the descaled coefficient in `aO` with `2^(N-1) + 1`: the borrow word becomes current in `sT1`. -/
-noncomputable def signTest : Cmd 0 𝕋 :=
+noncomputable def signTest : Cmd 𝕋 :=
   .seq (op1 Rules.sub false aO cH1 sT1 (by decide) (by decide) (by decide)) <| .seq (rewind aO) <|
   .seq (rewind cH1) (back sT1)
 
@@ -358,16 +358,16 @@ theorem runs_signTest {N d : ℕ} (hN : 0 < N) (hd : d < 2 ^ N + 1) (σ : Fin �
   · simp [rwd_length, hword] at t1 ⊢; omega
 
 /-- Nonnegative coefficient: to `tC`, a zero to `tC2`. -/
-noncomputable def posBr : Cmd 0 𝕋 :=
+noncomputable def posBr : Cmd 𝕋 :=
   .seq (regOut aO tC (by decide)) <| .seq (op0 (Rules.fill false) false cW tC2 (by decide)) (rewind cW)
 
 /-- Negative coefficient: its negation to `tC2`, a zero to `tC`. -/
-noncomputable def negBr : Cmd 0 𝕋 :=
+noncomputable def negBr : Cmd 𝕋 :=
   .seq (regMove aO aY (by decide)) <| .seq negMod <| .seq (regOut aO tC2 (by decide)) <|
   .seq (op0 (Rules.fill false) false cW tC (by decide)) (rewind cW)
 
 /-- Route by the borrow word. -/
-noncomputable def route : Cmd 0 𝕋 := .cond sT1 posBr negBr
+noncomputable def route : Cmd 𝕋 := .cond sT1 posBr negBr
 
 theorem rwd_zero (N : ℕ) : rwd N 0 = List.replicate (N + 1) false := by
   rw [rwd, Rules.bits_zero]
@@ -396,14 +396,14 @@ theorem runs_route {N d : ℕ} (hN : 0 < N) (hd : d < 2 ^ N + 1) (σ : Fin 𝕋 
     · simp [clen, WTape.words, rwd_length] at t1 t2 ⊢; omega
   · refine Runs.cond_false (by rw [hT]; simp [startsOne_mk, hs]) ?_
     unfold negBr
-    have s1 := runs_regMove (a := 0) (r := aO) (r' := aY) (by decide) σ (w := rwd N d) hO hY
+    have s1 := runs_regMove (r := aO) (r' := aY) (by decide) σ (w := rwd N d) hO hY
     set σ₁ := Function.update (Function.update σ aO emp) aY (reg (rwd N d))
     have s2 := runs_negMod hN σ₁ ⟨by tsimp [σ₁, hW], by tsimp [σ₁, hF]⟩ (v := rwd N d) (by tsimp [σ₁])
       (rwd_length N d) (by rw [bval_rwd hd]; exact hd) (by tsimp [σ₁, hX]) (by tsimp [σ₁])
       (by tsimp [σ₁, hS1]) (by tsimp [σ₁, hS2])
     set σ₂ := Function.update (Function.update σ₁ aY emp) aO
       (reg (rwd N ((2 ^ N + 1 - bval (rwd N d)) % (2 ^ N + 1))))
-    have s3 : Runs (a := 0) (.seq (regOut aO tC2 (by decide)) <|
+    have s3 : Runs (.seq (regOut aO tC2 (by decide)) <|
         .seq (op0 (Rules.fill false) false cW tC (by decide)) (rewind cW)) σ₂
         (· = Function.update (Function.update (Function.update σ aO emp)
           tC ⟨rwd N (posPart N d) :: C1, []⟩) tC2 ⟨rwd N (negPart N d) :: C2, []⟩) (8 * N + 50) := by
@@ -422,7 +422,7 @@ theorem runs_route {N d : ℕ} (hN : 0 < N) (hd : d < 2 ^ N + 1) (σ : Fin 𝕋 
     exact (Runs.then s1 (Runs.then s2 s3)).mono (fun σ' h => h) (by rw [rwd_length]; omega)
 
 /-- One coefficient of the up-sweep: descale, then route by sign. -/
-noncomputable def coefStep : Cmd 0 𝕋 := .seq descaleOp <| .seq signTest <| .seq route (clear sT1)
+noncomputable def coefStep : Cmd 𝕋 := .seq descaleOp <| .seq signTest <| .seq route (clear sT1)
 
 theorem runs_coefStep {N k w : ℕ} (hN : 0 < N) (hw : w < 2 ^ N + 1) (σ : Fin 𝕋 → WTape)
     (hr : AluReady N σ) (hcT : σ cT = reg (ones (N - k))) (hH : σ cH1 = reg (hword N))
@@ -451,7 +451,7 @@ theorem runs_coefStep {N k w : ℕ} (hN : 0 < N) (hw : w < 2 ^ N + 1) (σ : Fin 
     omega
 
 /-- Every coefficient on `tD`. -/
-noncomputable def coefLoop : Cmd 0 𝕋 := .loop tD coefStep
+noncomputable def coefLoop : Cmd 𝕋 := .loop tD coefStep
 
 theorem runs_coefLoop {N k : ℕ} (hN : 0 < N) :
     ∀ (ws : List ℕ) (σ : Fin 𝕋 → WTape) (Dl C1 C2 : List (List Bool)),
@@ -504,14 +504,14 @@ theorem fword_eq {N : ℕ} (hN : 0 < N) : fword N = true :: (List.replicate (N -
   rw [h1, h2, bits_two_pow]; simp
 
 /-- The modulus words `cN = ones N` and `cW = ones (N + 1)` from `cU = ones N`. -/
-noncomputable def aluSetA : Cmd 0 𝕋 :=
+noncomputable def aluSetA : Cmd 𝕋 :=
   .seq (clear cN) <| .seq (clear cW) <|
   .seq (op0 Rules.copy false cU cN (by decide)) <| .seq (rewind cU) <| .seq (rewind cN) <|
   .seq (op0 Rules.copy false cU cW (by decide)) <| .seq (rewind cU) <|
   .seq (op0 Rules.copy true c1 cW (by decide)) <| .seq (rewind c1) (rewind cW)
 
 /-- The modulus word `cF = fword N` from `cU = ones N`. -/
-noncomputable def aluSetB : Cmd 0 𝕋 :=
+noncomputable def aluSetB : Cmd 𝕋 :=
   .seq (clear cF) <| .seq (emit [[true]] cF) <|
   .seq (op1 Rules.drop false cU c1 sT1 (by decide) (by decide) (by decide)) <| .seq (rewind cU) <|
   .seq (rewind c1) <| .seq (rewind sT1) <|
@@ -519,7 +519,7 @@ noncomputable def aluSetB : Cmd 0 𝕋 :=
   .seq (op0 Rules.copy true c1 cF (by decide)) <| .seq (rewind c1) (rewind cF)
 
 /-- Rebuild the unit's constants for the modulus `2^N + 1` from `cU = ones N`. -/
-noncomputable def aluSet : Cmd 0 𝕋 := .seq aluSetA aluSetB
+noncomputable def aluSet : Cmd 𝕋 := .seq aluSetA aluSetB
 
 theorem runs_aluSet {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hU : σ cU = reg (ones N))
     (h1 : σ c1 = reg [true]) (hT : σ sT1 = emp) :

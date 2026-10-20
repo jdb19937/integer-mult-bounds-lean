@@ -44,13 +44,13 @@ variable {a t : ℕ}
 /-! ### Tapes a program never names -/
 
 /-- Whether a program names tape `x`. -/
-def Cmd.touches (x : Fin t) : Cmd a t → Bool
+def Cmd.touches (x : Fin t) : Cmd t → Bool
   | .prim P slot _ => (List.finRange P.s).any fun i => slot i == x
   | .seq c d => c.touches x || d.touches x
   | .loop _ b => b.touches x
   | .cond _ c d => c.touches x || d.touches x
 
-theorem Exec.frame {c : Cmd a t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Exec c σ σ' k) (x : Fin t)
+theorem Exec.frame {c : Cmd t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Exec c σ σ' k) (x : Fin t)
     (hx : c.touches x = false) : σ' x = σ x := by
   induction h with
   | @prim P slot hinj σ hpre =>
@@ -70,7 +70,7 @@ theorem Exec.frame {c : Cmd a t} {σ σ' : Fin t → WTape} {k : ℕ} (h : Exec 
     simp only [Cmd.touches, Bool.or_eq_false_iff] at hx
     exact ih hx.2
 
-theorem Runs.frame {c : Cmd a t} {σ : Fin t → WTape} {Q : (Fin t → WTape) → Prop} {B : ℕ}
+theorem Runs.frame {c : Cmd t} {σ : Fin t → WTape} {Q : (Fin t → WTape) → Prop} {B : ℕ}
     (h : Runs c σ Q B) (xs : List (Fin t)) (hx : ∀ x ∈ xs, c.touches x = false) :
     Runs c σ (fun σ' => Q σ' ∧ ∀ x ∈ xs, σ' x = σ x) B := by
   obtain ⟨σ', k, he, hq, hk⟩ := h
@@ -104,7 +104,7 @@ theorem runs_upLoop' :
         cN (reg (ones (nextN N)))) cW (reg (ones (nextN N + 1)))) cF (reg (fword (nextN N))))
         pN (reg (ones N))) tIn ⟨[], rwds N U⟩) tP ⟨(rs.map fun p => ones p.1) ++ Pl, ones N :: R⟩
     have hR₁ : RestU (nextN N) N U ((rs.map fun p => ones p.1) ++ Pl) (ones N :: R) σ₁ := hR.of_update
-    have s2 := runs_skp (a := 0) (s := tCnt) (j := tJ) (by decide) σ₁ (by tsimp [σ₁, hC, List.replicate_succ])
+    have s2 := runs_skp (s := tCnt) (j := tJ) (by decide) σ₁ (by tsimp [σ₁, hC, List.replicate_succ])
       (by tsimp [σ₁, hJ, emp])
     have hUv : ∀ q ∈ U, q < Fm N := by
       intro q hq
@@ -188,7 +188,7 @@ theorem runs_ssMain_end0 {N x y : ℕ} (hN : 0 < N) (hk : 2 ^ kOf N ∣ N) (hx :
       tOut ⟨(rwds NL Qb).reverse ++ [], []⟩
     have b2 := runs_swapIO (N := NL) τ1 Qb (Il := (rwds NL LL).reverse ++ []) (by tsimp [τ1]) (by tsimp [τ1])
     set τ2 := Function.update (Function.update τ1 tIn ⟨[], rwds NL Qb⟩) tOut emp
-    have b3 := runs_rewind (a := 0) tCnt τ2
+    have b3 := runs_rewind tCnt τ2
     set τ3 := Function.update τ2 tCnt ⟨[], (τ2 tCnt).left.reverse ++ (τ2 tCnt).right⟩
     have hQb : Qb = (pairsOf LL).map fun p => ssMul NL p.1 p.2 := by
       simp only [Qb]; congr 1; funext p; rw [ssMul_eq]; simp [hsmall, Fm]
@@ -248,12 +248,12 @@ theorem runs_ssMain_end {N x y : ℕ} (hN : 0 < N) (hk : 2 ^ kOf N ∣ N) (hx : 
 /-! ### Clearing the bank -/
 
 /-- Clear the registers and counters the multiplier leaves behind. -/
-noncomputable def ssWipe : Cmd 0 𝕋 :=
+noncomputable def ssWipe : Cmd 𝕋 :=
   .seq (clear cW) <| .seq (clear cF) <| .seq (clear cN) <| .seq (clear c1) <| .seq (clear pN) <|
   .seq (clear tP) <| .seq (clear tCnt) <| .seq (clear tG) <| .seq (clear c2047) (clear fG)
 
 /-- The multiplier followed by the wipe. -/
-noncomputable def ssClean : Cmd 0 𝕋 := .seq ssMain ssWipe
+noncomputable def ssClean : Cmd 𝕋 := .seq ssMain ssWipe
 
 /-- The product alone on `tIn`. -/
 def SSDone (N v : ℕ) (σ : Fin 𝕋 → WTape) : Prop :=

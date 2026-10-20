@@ -17,6 +17,16 @@ def callsWithin {I : Type} {Γ : I → Type} {V P : Type} (allowed : P → Prop)
   | .loop _ p => callsWithin allowed p
   | .call f => allowed f
 
+/-- A program without calls calls only allowed procedures. -/
+theorem callsWithin_of_noCalls {I : Type} {Γ : I → Type} {V P : Type} (allowed : P → Prop)
+    (p : Prog P Γ V) (h : Host.WordCmd.NoCalls p) : callsWithin allowed p := by
+  induction p with
+  | act _ => trivial
+  | seq _ _ ih₁ ih₂ => exact ⟨ih₁ h.1, ih₂ h.2⟩
+  | cond _ _ _ ih₁ ih₂ => exact ⟨ih₁ h.1, ih₂ h.2⟩
+  | loop _ _ ih => exact ih h
+  | call _ => exact h.elim
+
 /-- A closed procedure subset suffices to transport exact execution between tables. -/
 theorem exec_of_callsWithin {I : Type} [DecidableEq I] {Γ : I → Type} {V P : Type}
     {body body' : P → Prog P Γ V} (allowed : P → Prop)

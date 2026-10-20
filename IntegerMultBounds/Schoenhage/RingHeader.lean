@@ -57,7 +57,7 @@ end Rules
 /-! ### Binary to unary -/
 
 /-- Take the first bit into `tE`, drop it from `tO2`, double `tL` into `tH` (head left at the end). -/
-noncomputable def binA : Cmd 0 𝕌 :=
+noncomputable def binA : Cmd 𝕌 :=
   .seq (op1 Rules.take false (ι c1) (ι tO2) (ι tE) (by decide) (by decide) (by decide)) <|
   .seq (rewind (ι c1)) <| .seq (rewind (ι tO2)) <| .seq (rewind (ι tE)) <|
   .seq (op1 Rules.drop false (ι tO2) (ι c1) (ι tE2) (by decide) (by decide) (by decide)) <|
@@ -96,7 +96,7 @@ theorem ones_snoc (v : ℕ) : ones v ++ [true] = ones (v + 1) := by
   simp [ones, List.replicate_succ']
 
 /-- Add the bit. -/
-noncomputable def binC : Cmd 0 𝕌 :=
+noncomputable def binC : Cmd 𝕌 :=
   .cond (ι tE) (.seq (op0 Rules.copy true (ι c1) (ι tH) (by decide)) (rewind (ι c1))) (rewind (ι tJ))
 
 theorem runs_binC (τ : Fin 𝕌 → WTape) {b : Bool} {v : ℕ} (h1 : τ (ι c1) = reg [true]) (hE : τ (ι tE) = reg [b])
@@ -105,7 +105,7 @@ theorem runs_binC (τ : Fin 𝕌 → WTape) {b : Bool} {v : ℕ} (h1 : τ (ι c1
   unfold binC
   cases b
   · refine Runs.le (Runs.cond_false (B := 19) (by rw [hE, reg, startsOne_mk]; simp) ?_) (by omega)
-    refine (runs_rewind (a := 0) (ι tJ) τ).mono (fun τ' h => ?_) (by rw [hJ]; simp)
+    refine (runs_rewind (ι tJ) τ).mono (fun τ' h => ?_) (by rw [hJ]; simp)
     rw [h]; funext x
     simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> tsimp [hJ, hH, emp] at *
@@ -118,7 +118,7 @@ theorem runs_binC (τ : Fin 𝕌 → WTape) {b : Bool} {v : ℕ} (h1 : τ (ι c1
     split_ifs <;> (try subst_vars) <;> tsimp [h1, hH, emp, reg, ones_append, ones_snoc] at *
 
 /-- Install the new accumulator, drop the bit and one tick. -/
-noncomputable def binD : Cmd 0 𝕌 :=
+noncomputable def binD : Cmd 𝕌 :=
   .seq (rewind (ι tH)) <| .seq (regMove (ι tH) (ι tL) (by decide)) <| .seq (clear (ι tE)) (skp (ι qT) (ι tJ) (by decide))
 
 theorem runs_binD (τ : Fin 𝕌 → WTape) {v : ℕ} {b : Bool} {Tl : List (List Bool)} {n : ℕ}
@@ -136,10 +136,10 @@ theorem runs_binD (τ : Fin 𝕌 → WTape) {v : ℕ} {b : Bool} {Tl : List (Lis
   · simp [time_copy, time_skip, clen, WTape.words]; omega
 
 /-- One bit. -/
-noncomputable def binStep : Cmd 0 𝕌 := .seq binA <| .seq binC binD
+noncomputable def binStep : Cmd 𝕌 := .seq binA <| .seq binC binD
 
 /-- Every bit of `tO2` into the unary accumulator `tL`. -/
-noncomputable def binLoop : Cmd 0 𝕌 := .loop (ι qT) binStep
+noncomputable def binLoop : Cmd 𝕌 := .loop (ι qT) binStep
 
 theorem binFinal_step (u : ℕ) (b : Bool) (B : List Bool) :
     (u + u + (if b then 1 else 0)) * 2 ^ B.length + binaryValue B = u * 2 ^ (b :: B).length + binaryValue (b :: B) := by
@@ -204,7 +204,7 @@ theorem gamma_split {v : ℕ} (hv : 1 ≤ v) (rest : List Bool) :
   · rw [e, List.drop_left' (by simp), hm]; rfl
 
 /-- Leading zeros to `tY`, their count plus one to `sX`, the code's digits to `tO2`, the rest to `tX`. -/
-noncomputable def codeA : Cmd 0 𝕌 :=
+noncomputable def codeA : Cmd 𝕌 :=
   .seq (op0 Rules.lead false (ι tX) (ι tY) (by decide)) <| .seq (rewind (ι tX)) <| .seq (rewind (ι tY)) <|
   .seq (op0 Rules.copy false (ι tY) (ι sX) (by decide)) <| .seq (rewind (ι tY)) <|
   .seq (op0 Rules.copy true (ι c1) (ι sX) (by decide)) <| .seq (rewind (ι c1)) <| .seq (rewind (ι sX)) <|
@@ -270,7 +270,7 @@ theorem runs_codeA {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin 𝕌 �
     linarith
 
 /-- Decode the code at the front of `tX` into `tL = ones v`; the rest stays in `tX`. -/
-noncomputable def decodeOne : Cmd 0 𝕌 :=
+noncomputable def decodeOne : Cmd 𝕌 :=
   .seq codeA <| .seq (ticksFrom (ι sX) (by decide)) <| .seq (clear (ι sX)) <| .seq (emit [[]] (ι tL)) <|
   .seq (rewind (ι tL)) <| .seq binLoop <| .seq (clear (ι qT)) (clear (ι tO2))
 
@@ -290,11 +290,11 @@ theorem runs_decodeOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin �
       (ι sX) (reg (ones n))) (ι tO2) (reg (msbBits n v))
   have s2 := runs_ticksFrom (show ι sX ≠ ι qT by decide) τ₁ (b := n) (by tsimp [τ₁]) (by tsimp [τ₁, hT])
   set τ₂ := Function.update τ₁ (ι qT) ⟨[], List.replicate n []⟩
-  have s3 := runs_clear (a := 0) (ι sX) τ₂
+  have s3 := runs_clear (ι sX) τ₂
   set τ₃ := Function.update τ₂ (ι sX) ⟨[], []⟩
-  have s4 := runs_emit (a := 0) [[]] (ι tL) τ₃ (by tsimp [τ₃, τ₂, τ₁, hL, emp])
+  have s4 := runs_emit [[]] (ι tL) τ₃ (by tsimp [τ₃, τ₂, τ₁, hL, emp])
   set τ₄ := Function.update τ₃ (ι tL) ⟨[[]].reverse ++ (τ₃ (ι tL)).left, []⟩
-  have s5 := runs_rewind (a := 0) (ι tL) τ₄
+  have s5 := runs_rewind (ι tL) τ₄
   set τ₅ := Function.update τ₄ (ι tL) ⟨[], (τ₄ (ι tL)).left.reverse ++ (τ₄ (ι tL)).right⟩
   have s6 := runs_binLoop (msbBits n v) 0 v τ₅ [] (by simp [n, binaryValue_msbBits_size])
     (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, h1]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁])
@@ -303,8 +303,8 @@ theorem runs_decodeOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin �
     (by tsimp [τ₅, τ₄, τ₃, τ₂]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, hJ])
   set τ₆ := Function.update (Function.update (Function.update τ₅ (ι tO2) (reg [])) (ι tL) (reg (ones v)))
     (ι qT) ⟨List.replicate (msbBits n v).length [] ++ [], []⟩
-  have s7 := runs_clear (a := 0) (ι qT) τ₆
-  have s8 := runs_clear (a := 0) (ι tO2) (Function.update τ₆ (ι qT) ⟨[], []⟩)
+  have s7 := runs_clear (ι qT) τ₆
+  have s8 := runs_clear (ι tO2) (Function.update τ₆ (ι qT) ⟨[], []⟩)
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6
     (Runs.then s7 s8))))))).mono (fun τ' h => ?_) ?_
   · clear s1 s2 s3 s4 s5 s6 s7 s8
@@ -319,16 +319,16 @@ theorem runs_decodeOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin �
     nlinarith
 
 /-- Step past the code at the front of `tX` without reading its value. -/
-noncomputable def skipOne : Cmd 0 𝕌 := .seq codeA <| .seq (clear (ι sX)) (clear (ι tO2))
+noncomputable def skipOne : Cmd 𝕌 := .seq codeA <| .seq (clear (ι sX)) (clear (ι tO2))
 
 theorem runs_skipOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin 𝕌 → WTape) (h1 : τ (ι c1) = reg [true])
     (hX : τ (ι tX) = reg (gamma v ++ rest)) (hY : τ (ι tY) = emp) (hS : τ (ι sX) = emp) (hD : τ (ι tD) = emp)
     (hO : τ (ι tO2) = emp) :
     Runs skipOne τ (· = Function.update τ (ι tX) (reg rest)) (50 * (gamma v ++ rest).length + 320) := by
   have s1 := runs_codeA hv τ h1 hX hY hS hD hO
-  have s2 := runs_clear (a := 0) (ι sX) (Function.update (Function.update (Function.update τ (ι tX) (reg rest))
+  have s2 := runs_clear (ι sX) (Function.update (Function.update (Function.update τ (ι tX) (reg rest))
       (ι sX) (reg (ones (Nat.size v)))) (ι tO2) (reg (msbBits (Nat.size v) v)))
-  have s3 := runs_clear (a := 0) (ι tO2) (Function.update (Function.update (Function.update (Function.update τ
+  have s3 := runs_clear (ι tO2) (Function.update (Function.update (Function.update (Function.update τ
     (ι tX) (reg rest)) (ι sX) (reg (ones (Nat.size v)))) (ι tO2) (reg (msbBits (Nat.size v) v))) (ι sX) ⟨[], []⟩)
   refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ' h => ?_) ?_
   · rw [h]; funext y
@@ -342,12 +342,12 @@ theorem runs_skipOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin 𝕌 
 /-! ### The header -/
 
 /-- Drop one from the bit length into `iL`. -/
-noncomputable def logTail : Cmd 0 𝕌 :=
+noncomputable def logTail : Cmd 𝕌 :=
   .seq (op1 Rules.drop false (ι qB) (ι c1) iL (by decide) (by decide) (by decide)) <|
   .seq (rewind (ι qB)) <| .seq (rewind (ι c1)) <| .seq (rewind iL) (clear (ι qB))
 
 /-- `ℓ = size r - 1` from `tL = ones r`, into `iL`. -/
-noncomputable def logOf : Cmd 0 𝕌 :=
+noncomputable def logOf : Cmd 𝕌 :=
   .seq (regMove (ι tL) (ι qR) (by decide)) <| .seq (ticksFrom (ι qR) (by decide)) <|
   .seq (emit [[]] (ι qB)) <| .seq (rewind (ι qB)) <| .seq (up (.seq sizeLoop (.seq (clear qR) (clear qT)))) logTail
 
@@ -357,13 +357,13 @@ theorem runs_logOf {r : ℕ} (τ : Fin 𝕌 → WTape) (hL : τ (ι tL) = reg (o
     (hJ : τ (ι tJ) = emp) (hI : τ iL = emp) :
     Runs logOf τ (· = Function.update (Function.update τ (ι tL) emp) iL (reg (ones (Nat.size r - 1))))
       (200 * r + 300) := by
-  have s1 := runs_regMove (a := 0) (show ι tL ≠ ι qR by decide) τ hL hR
+  have s1 := runs_regMove (show ι tL ≠ ι qR by decide) τ hL hR
   set τ₁ := Function.update (Function.update τ (ι tL) emp) (ι qR) (reg (ones r))
   have s2 := runs_ticksFrom (show ι qR ≠ ι qT by decide) τ₁ (b := r) (by tsimp [τ₁]) (by tsimp [τ₁, hT])
   set τ₂ := Function.update τ₁ (ι qT) ⟨[], List.replicate r []⟩
-  have s3 := runs_emit (a := 0) [[]] (ι qB) τ₂ (by tsimp [τ₂, τ₁, hB, emp])
+  have s3 := runs_emit [[]] (ι qB) τ₂ (by tsimp [τ₂, τ₁, hB, emp])
   set τ₃ := Function.update τ₂ (ι qB) ⟨[[]].reverse ++ (τ₂ (ι qB)).left, []⟩
-  have s4 := runs_rewind (a := 0) (ι qB) τ₃
+  have s4 := runs_rewind (ι qB) τ₃
   set τ₄ := Function.update τ₃ (ι qB) ⟨[], (τ₃ (ι qB)).left.reverse ++ (τ₃ (ι qB)).right⟩
   have s5 := runs_upSize (n := r) τ₄ (by tsimp [τ₄, τ₃, τ₂, τ₁]) (by tsimp [τ₄, τ₃, τ₂, τ₁, hB, emp, reg])
     (by tsimp [τ₄, τ₃, τ₂]) (by tsimp [τ₄, τ₃, τ₂, τ₁, h1]) (by tsimp [τ₄, τ₃, τ₂, τ₁, hS])
@@ -392,11 +392,11 @@ theorem runs_logOf {r : ℕ} (τ : Fin 𝕌 → WTape) (hL : τ (ι tL) = reg (o
   omega
 
 /-- Load the header and the unit word. -/
-noncomputable def hdrInit : Cmd 0 𝕌 :=
+noncomputable def hdrInit : Cmd 𝕌 :=
   .seq (emit [[true]] (ι c1)) <| .seq (rewind (ι c1)) (regDup zH (ι tX) (by decide))
 
 /-- Decode `Γ(p)Γ(d)Γ(r)Γ(K)Γ(w)…` from `zH` into `iP = ones p`, `iL = ones (log₂ r)`, `iW = ones w`. -/
-noncomputable def decodeHeader : Cmd 0 𝕌 :=
+noncomputable def decodeHeader : Cmd 𝕌 :=
   .seq hdrInit <|
   .seq decodeOne <| .seq (regMove (ι tL) iP (by decide)) <|
   .seq skipOne <|
@@ -443,7 +443,7 @@ theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd :
     (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz])
     (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz]) (by tsimp [τ₀, hz])
   set τ₁ := Function.update (Function.update τ₀ (ι tX) (reg R1)) (ι tL) (reg (ones p))
-  have s2 := runs_regMove (a := 0) (show ι tL ≠ iP by decide) τ₁ (w := ones p) (by tsimp [τ₁])
+  have s2 := runs_regMove (show ι tL ≠ iP by decide) τ₁ (w := ones p) (by tsimp [τ₁])
     (by tsimp [τ₁, τ₀, hP])
   set τ₂ := Function.update (Function.update τ₁ (ι tL) emp) iP (reg (ones p))
   -- d
@@ -477,11 +477,11 @@ theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd :
     (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
     (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
   set τ₉ := Function.update (Function.update τ₈ (ι tX) (reg tsc)) (ι tL) (reg (ones w))
-  have s10 := runs_regMove (a := 0) (show ι tL ≠ iW by decide) τ₉ (w := ones w) (by tsimp [τ₉])
+  have s10 := runs_regMove (show ι tL ≠ iW by decide) τ₉ (w := ones w) (by tsimp [τ₉])
     (by tsimp [τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hW])
   set τ₁₀ := Function.update (Function.update τ₉ (ι tL) emp) iW (reg (ones w))
-  have s11 := runs_clear (a := 0) (ι tX) τ₁₀
-  have s12 := runs_clear (a := 0) (ι c1) (Function.update τ₁₀ (ι tX) ⟨[], []⟩)
+  have s11 := runs_clear (ι tX) τ₁₀
+  have s12 := runs_clear (ι c1) (Function.update τ₁₀ (ι tX) ⟨[], []⟩)
   refine (Runs.then s0 (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s5 (Runs.then s6
     (Runs.then s7 (Runs.then s9 (Runs.then s10 (Runs.then s11 s12)))))))))).mono
     (fun τ' h => ?_) ?_

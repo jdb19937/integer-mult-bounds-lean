@@ -23,7 +23,7 @@ end Tp
 /-! ### Transform registers -/
 
 /-- The root shift on `tE`, `cH = ones (K/2)`, `K/2` ticks on `tH`, `k` ticks on `tL`. -/
-noncomputable def fwdSetup : Cmd 0 𝕋 :=
+noncomputable def fwdSetup : Cmd 𝕋 :=
   .seq (op0 Rules.copy false cHN tE (by decide)) <| .seq (rewind cHN) <| .seq (rewind tE) <|
   .seq (op0 Rules.copy false pKh cH (by decide)) <| .seq (rewind pKh) <| .seq (rewind cH) <|
   .seq (op0 Rules.ticks false pKh tH (by decide)) <| .seq (rewind pKh) <| .seq (rewind tH) <|
@@ -70,10 +70,10 @@ theorem length_kidsIter (N : ℕ) : ∀ (n : ℕ) (E : List ℕ), ((kids N)^[n] 
     rw [Function.iterate_succ_apply, length_kidsIter N n, length_kids, pow_succ]; ring
 
 /-- Drop the transform registers. -/
-noncomputable def fwdClean : Cmd 0 𝕋 := .seq (clear tE) <| .seq (clear cH) <| .seq (clear tH) (clear tL)
+noncomputable def fwdClean : Cmd 𝕋 := .seq (clear tE) <| .seq (clear cH) <| .seq (clear tH) (clear tL)
 
 /-- Cut the next operand of `tIn` into pieces and transform them; the result on `tD`. -/
-noncomputable def downCore : Cmd 0 𝕋 :=
+noncomputable def downCore : Cmd 𝕋 :=
   .seq (regIn tIn sX (by decide)) <| .seq splitOp <| .seq (rewind tD) <| .seq fwdSetup <|
   .seq fwdLoop fwdClean
 
@@ -96,7 +96,7 @@ theorem runs_downCore {N Np k M x : ℕ} (hNp : 0 < Np) (hs : N = M * 2 ^ k) (hM
   have qtH := q tH (by decide); have qcH := q cH (by decide); have qH2 := q cH2 (by decide)
   have qtL := q tL (by decide); have qsX := q sX (by decide); have qtD := hD0
   unfold downCore
-  have s1 := runs_regIn (a := 0) (s := tIn) (r := sX) (by decide) σ hIn qsX
+  have s1 := runs_regIn (s := tIn) (r := sX) (by decide) σ hIn qsX
   set σ₁ := Function.update (Function.update σ tIn ⟨rwd N x :: Il, Ir⟩) sX (reg (rwd N x))
   have hxv : bval (rwd N x) < 2 ^ (M * 2 ^ k + 1) := by
     have e : 2 ^ (M * 2 ^ k + 1) = 2 * 2 ^ N := by rw [hs, pow_succ]; ring
@@ -106,7 +106,7 @@ theorem runs_downCore {N Np k M x : ℕ} (hNp : 0 < Np) (hs : N = M * 2 ^ k) (hM
   rw [bval_rwd hx] at s2
   set D := pieces M (2 ^ k) x
   set σ₂ := Function.update (Function.update σ₁ sX emp) tD ⟨(D.map (bits (Np + 1))).reverse ++ [], []⟩
-  have s3 := runs_rewind (a := 0) tD σ₂
+  have s3 := runs_rewind tD σ₂
   set σ₃ := Function.update σ₂ tD ⟨[], (σ₂ tD).left.reverse ++ (σ₂ tD).right⟩
   have s4 := runs_fwdSetup (Np := Np) (k := k) (Kh := 2 ^ k / 2) σ₃ (by tsimp [σ₃, σ₂, σ₁, hHN])
     (by tsimp [σ₃, σ₂, σ₁, hKh]) (by tsimp [σ₃, σ₂, σ₁, hK]) (by tsimp [σ₃, σ₂, σ₁, qtE])
@@ -184,7 +184,7 @@ def zipFlat : List ℕ → List ℕ → List ℕ
   | _, _ => []
 
 /-- Interleave `tX` and `tY` onto `tOut`. -/
-noncomputable def ileave : Cmd 0 𝕋 := .loop tX (.seq (cpy tX tOut (by decide)) (cpy tY tOut (by decide)))
+noncomputable def ileave : Cmd 𝕋 := .loop tX (.seq (cpy tX tOut (by decide)) (cpy tY tOut (by decide)))
 
 theorem runs_ileave {Np : ℕ} :
     ∀ (X Y : List ℕ) (σ : Fin 𝕋 → WTape) (Xl Yl O : List (List Bool)), X.length = Y.length →
@@ -200,7 +200,7 @@ theorem runs_ileave {Np : ℕ} :
     funext i; fin_cases i <;> tsimp [hX, hY, hO, rwds, zipFlat]
   | x :: X, [], _, _, _, _, hl, _, _, _ => by simp at hl
   | x :: X, y :: Y, σ, Xl, Yl, O, hl, hX, hY, hO => by
-    have s1 : Runs (a := 0) (.seq (cpy tX tOut (by decide)) (cpy tY tOut (by decide))) σ
+    have s1 : Runs (.seq (cpy tX tOut (by decide)) (cpy tY tOut (by decide))) σ
         (· = Function.update (Function.update (Function.update σ
           tX ⟨rwd Np x :: Xl, rwds Np X⟩) tY ⟨rwd Np y :: Yl, rwds Np Y⟩)
           tOut ⟨rwd Np y :: rwd Np x :: O, []⟩) (2 * Np + 18) := by
@@ -224,17 +224,17 @@ theorem runs_ileave {Np : ℕ} :
 /-! ### One pair -/
 
 /-- Move the transformed pieces from `tD` to `tX`. -/
-noncomputable def moveX : Cmd 0 𝕋 := .seq (appendAll tD tX (by decide)) <| .seq (rewind tX) (clear tD)
+noncomputable def moveX : Cmd 𝕋 := .seq (appendAll tD tX (by decide)) <| .seq (rewind tX) (clear tD)
 
 /-- Move the transformed pieces from `tD` to `tY`. -/
-noncomputable def moveY : Cmd 0 𝕋 := .seq (appendAll tD tY (by decide)) <| .seq (rewind tY) (clear tD)
+noncomputable def moveY : Cmd 𝕋 := .seq (appendAll tD tY (by decide)) <| .seq (rewind tY) (clear tD)
 
 theorem runs_moveX {Np : ℕ} (σ : Fin 𝕋 → WTape) (L : List ℕ) (hD : σ tD = ⟨[], rwds Np L⟩)
     (hX : σ tX = emp) :
     Runs moveX σ (· = Function.update (Function.update σ tD emp) tX ⟨[], rwds Np L⟩)
       (L.length * (4 * Np + 20) + 10) := by
   unfold moveX
-  refine (Runs.then (runs_appendAll (a := 0) (s := tD) (d := tX) (by decide) (Np + 1) (rwds Np L) σ [] []
+  refine (Runs.then (runs_appendAll (s := tD) (d := tX) (by decide) (Np + 1) (rwds Np L) σ [] []
       hD (by simpa [emp] using hX) (rwds_length_le Np L)) <|
     Runs.then (runs_rewind tX _) (runs_clear tD _)).mono (fun σ' h => ?_) ?_
   · rw [h]; funext i; fin_cases i <;> tsimp [emp]
@@ -245,7 +245,7 @@ theorem runs_moveY {Np : ℕ} (σ : Fin 𝕋 → WTape) (L : List ℕ) (hD : σ 
     Runs moveY σ (· = Function.update (Function.update σ tD emp) tY ⟨[], rwds Np L⟩)
       (L.length * (4 * Np + 20) + 10) := by
   unfold moveY
-  refine (Runs.then (runs_appendAll (a := 0) (s := tD) (d := tY) (by decide) (Np + 1) (rwds Np L) σ [] []
+  refine (Runs.then (runs_appendAll (s := tD) (d := tY) (by decide) (Np + 1) (rwds Np L) σ [] []
       hD (by simpa [emp] using hY) (rwds_length_le Np L)) <|
     Runs.then (runs_rewind tY _) (runs_clear tD _)).mono (fun σ' h => ?_) ?_
   · rw [h]; funext i; fin_cases i <;> tsimp [emp]
@@ -270,7 +270,7 @@ theorem pair_arith (A N Np K : ℕ) :
   nlinarith [Nat.zero_le (K * Np)]
 
 /-- The down-sweep of one pair: both operands transformed and interleaved onto `tOut`. -/
-noncomputable def downPair : Cmd 0 𝕋 :=
+noncomputable def downPair : Cmd 𝕋 :=
   .seq downCore <| .seq moveX <| .seq downCore <| .seq moveY <| .seq ileave <| .seq (clear tX) (clear tY)
 
 set_option maxHeartbeats 1000000 in

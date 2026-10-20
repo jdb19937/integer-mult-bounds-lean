@@ -17,7 +17,7 @@ open Machine Strm Tp Schedule
 /-! ### Popping a size -/
 
 /-- Read the size below the head of `tP` into `pN` and move the head before it. -/
-noncomputable def popN : Cmd 0 𝕋 :=
+noncomputable def popN : Cmd 𝕋 :=
   .seq (back tP) <| .seq (clear pN) <| .seq (op0 Rules.copy false tP pN (by decide)) <| .seq (rewind pN) (back tP)
 
 theorem runs_popN {N : ℕ} (σ : Fin 𝕋 → WTape) {Pl R : List (List Bool)} (hP : σ tP = ⟨ones N :: Pl, R⟩) :
@@ -69,7 +69,7 @@ def upCost (N g : ℕ) : ℕ :=
   (g + 1) * ((kOf N + 4) * (10000 * (2 ^ kOf N + 1) * (nextN N + 2)) + 30000 * N + 100000)
 
 /-- One level of the up-sweep. -/
-noncomputable def upLevel : Cmd 0 𝕋 := .seq popN <| .seq mkLevel <| .seq upBatch <| .seq swapIO clearLevel
+noncomputable def upLevel : Cmd 𝕋 := .seq popN <| .seq mkLevel <| .seq upBatch <| .seq swapIO clearLevel
 
 set_option maxHeartbeats 4000000 in
 theorem runs_upLevel {Ni : ℕ} (hN : N0 ≤ Ni) (hk : 2 ^ kOf Ni ∣ Ni) {Na : ℕ} (hNa : Na ≤ nextN Ni)
@@ -193,7 +193,7 @@ def upFoldCost : List (ℕ × List ℕ) → ℕ
   | (N, L) :: rs => upCost N (L.length / 2) + 10 + upFoldCost rs
 
 /-- One up level per tick of `tCnt`. -/
-noncomputable def upLoop : Cmd 0 𝕋 := .loop tCnt (.seq upLevel (skp tCnt tJ (by decide)))
+noncomputable def upLoop : Cmd 𝕋 := .loop tCnt (.seq upLevel (skp tCnt tJ (by decide)))
 
 theorem runs_upLoop :
     ∀ (rs : List (ℕ × List ℕ)) (Na Nc : ℕ) (Q : List ℕ) (σ : Fin 𝕋 → WTape) (Pl R Cl : List (List Bool)),
@@ -215,7 +215,7 @@ theorem runs_upLoop :
         cN (reg (ones (nextN N)))) cW (reg (ones (nextN N + 1)))) cF (reg (fword (nextN N))))
         pN (reg (ones N))) tIn ⟨[], rwds N U⟩) tP ⟨(rs.map fun p => ones p.1) ++ Pl, ones N :: R⟩
     have hR₁ : RestU (nextN N) N U ((rs.map fun p => ones p.1) ++ Pl) (ones N :: R) σ₁ := hR.of_update
-    have s2 := runs_skp (a := 0) (s := tCnt) (j := tJ) (by decide) σ₁ (by tsimp [σ₁, hC, List.replicate_succ])
+    have s2 := runs_skp (s := tCnt) (j := tJ) (by decide) σ₁ (by tsimp [σ₁, hC, List.replicate_succ])
       (by tsimp [σ₁, hJ, emp])
     have hUv : ∀ q ∈ U, q < Fm N := by
       intro q hq

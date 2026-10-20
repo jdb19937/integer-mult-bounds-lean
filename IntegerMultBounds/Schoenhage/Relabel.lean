@@ -17,7 +17,7 @@ open Machine
 variable {a t t' : ℕ}
 
 /-- Relabel the tapes of a word program. -/
-def Cmd.map (f : Fin t → Fin t') (hf : Function.Injective f) : Cmd a t → Cmd a t'
+def Cmd.map (f : Fin t → Fin t') (hf : Function.Injective f) : Cmd t → Cmd t'
   | .prim P slot hinj => .prim P (f ∘ slot) (hf.comp hinj)
   | .seq c d => .seq (c.map f hf) (d.map f hf)
   | .loop i b => .loop (f i) (b.map f hf)
@@ -36,7 +36,7 @@ theorem upd_comp {s : ℕ} (f : Fin t → Fin t') (hf : Function.Injective f) (�
     rw [upd_other τ (f ∘ slot) ρ (f x) (fun i h => hx i (hf h)), upd_other _ _ _ _ hx]
     rfl
 
-theorem Exec.map (f : Fin t → Fin t') (hf : Function.Injective f) {c : Cmd a t} {σ σ' : Fin t → WTape}
+theorem Exec.map (f : Fin t → Fin t') (hf : Function.Injective f) {c : Cmd t} {σ σ' : Fin t → WTape}
     {k : ℕ} (h : Exec c σ σ' k) :
     ∀ τ : Fin t' → WTape, τ ∘ f = σ → ∃ τ', Exec (c.map f hf) τ τ' k ∧ τ' ∘ f = σ' ∧
       ∀ x, (∀ y, f y ≠ x) → τ' x = τ x := by
@@ -72,7 +72,7 @@ theorem Exec.map (f : Fin t → Fin t') (hf : Function.Injective f) {c : Cmd a t
     obtain ⟨τ', e, c', o⟩ := ih τ rfl
     exact ⟨τ', .cond_false hc e, c', o⟩
 
-theorem Runs.map (f : Fin t → Fin t') (hf : Function.Injective f) {c : Cmd a t} {σ : Fin t → WTape}
+theorem Runs.map (f : Fin t → Fin t') (hf : Function.Injective f) {c : Cmd t} {σ : Fin t → WTape}
     {Q : (Fin t → WTape) → Prop} {B : ℕ} (h : Runs c σ Q B) (τ : Fin t' → WTape) (hτ : τ ∘ f = σ) :
     Runs (c.map f hf) τ (fun τ' => Q (τ' ∘ f) ∧ ∀ x, (∀ y, f y ≠ x) → τ' x = τ x) B := by
   obtain ⟨σ', k, he, hq, hk⟩ := h

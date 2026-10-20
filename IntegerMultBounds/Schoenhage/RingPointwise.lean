@@ -22,18 +22,18 @@ namespace IntegerMultBounds.Schoenhage
 open Machine Strm Tp Schedule Spec.SignedRingProduct
 
 /-- `qR = ones 2`. -/
-noncomputable def pwA : Cmd 0 𝕌 := .seq (emit [[true, true]] (ι qR)) (rewind (ι qR))
+noncomputable def pwA : Cmd 𝕌 := .seq (emit [[true, true]] (ι qR)) (rewind (ι qR))
 
 /-- `iW = ones (2r)`; `iP`, `iL` cleared. -/
-noncomputable def pwB : Cmd 0 𝕌 :=
+noncomputable def pwB : Cmd 𝕌 :=
   .seq (clear iW) <| .seq (regMove (ι qR) iW (by decide)) <| .seq (clear iP) (clear iL)
 
 /-- Cut both operands into words; start the output string. -/
-noncomputable def pwC : Cmd 0 𝕌 :=
+noncomputable def pwC : Cmd 𝕌 :=
   .seq (chunkw zF kw iP (by decide) (by decide) (by decide)) <| .seq (rewind iP) <|
   .seq (chunkw zG kw iL (by decide) (by decide) (by decide)) <| .seq (rewind iL) (emit [[]] zO)
 
-noncomputable def pwPrep : Cmd 0 𝕌 := .seq pwA <| .seq (ticksFrom iL (by decide)) <| .seq doubleT <| .seq pwB pwC
+noncomputable def pwPrep : Cmd 𝕌 := .seq pwA <| .seq (ticksFrom iL (by decide)) <| .seq doubleT <| .seq pwB pwC
 
 set_option maxHeartbeats 16000000 in
 theorem runs_pwPrep {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc : Clean τ)
@@ -67,19 +67,19 @@ theorem runs_pwPrep {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc :
     · simp [time_copy, clen, WTape.words]; omega
   set τ₄ := Function.update (Function.update (Function.update (Function.update τ₃
       iW (reg (ones (2 * 2 ^ l)))) (ι qR) emp) iP emp) iL emp
-  have s5 := runs_chunkw (a := 0) (show zF ≠ kw by decide) (show zF ≠ iP by decide) (show kw ≠ iP by decide) τ₄
+  have s5 := runs_chunkw (show zF ≠ kw by decide) (show zF ≠ iP by decide) (show kw ≠ iP by decide) τ₄
     (L := []) (R := []) (x := F) (w := w) (by tsimp [τ₄, τ₃, τ₂, τ₁, hF, reg]) (by tsimp [τ₄, τ₃, τ₂, τ₁, hk]) hw
     (by tsimp [τ₄])
   set τ₅ := Function.update (Function.update τ₄ zF ⟨[F], []⟩) iP ⟨(cut w F).reverse ++ (τ₄ iP).left, []⟩
-  have s6 := runs_rewind (a := 0) iP τ₅
+  have s6 := runs_rewind iP τ₅
   set τ₆ := Function.update τ₅ iP ⟨[], (τ₅ iP).left.reverse ++ (τ₅ iP).right⟩
-  have s7 := runs_chunkw (a := 0) (show zG ≠ kw by decide) (show zG ≠ iL by decide) (show kw ≠ iL by decide) τ₆
+  have s7 := runs_chunkw (show zG ≠ kw by decide) (show zG ≠ iL by decide) (show kw ≠ iL by decide) τ₆
     (L := []) (R := []) (x := G) (w := w) (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hG, reg])
     (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hk]) hw (by tsimp [τ₆, τ₅, τ₄])
   set τ₇ := Function.update (Function.update τ₆ zG ⟨[G], []⟩) iL ⟨(cut w G).reverse ++ (τ₆ iL).left, []⟩
-  have s8 := runs_rewind (a := 0) iL τ₇
+  have s8 := runs_rewind iL τ₇
   set τ₈ := Function.update τ₇ iL ⟨[], (τ₇ iL).left.reverse ++ (τ₇ iL).right⟩
-  have s9 := runs_emit (a := 0) [[]] zO τ₈ (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hO, emp])
+  have s9 := runs_emit [[]] zO τ₈ (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hO, emp])
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 (Runs.then s7
     (Runs.then s8 s9)))))))).mono (fun τ' h => ?_) ?_
   · clear s1 s2 s3 s4 s5 s6 s7 s8 s9
@@ -213,7 +213,7 @@ theorem ringWords_record {p l w : ℕ} (hw : p + 2 ≤ w) {τ : Fin 𝕌 → WTa
 /-! ### Cleanup -/
 
 /-- Rewind the output and the operands; clear the words and constants. -/
-noncomputable def pwFinish : Cmd 0 𝕌 :=
+noncomputable def pwFinish : Cmd 𝕌 :=
   .seq (rewind zO) <| .seq (clear iP) <| .seq (clear iL) <| .seq (clear iW) <| .seq (rewind zF) <|
   .seq (rewind zG) <| .seq (clear kS) <| .seq (clear kw) <| .seq (clear kW) <| .seq (clear kN) <|
   .seq (clear kR) <| .seq (clear kH) <| .seq (clear kC) <| .seq (clear kO) (clear kI)
@@ -237,15 +237,15 @@ theorem runs_pwFinish (τ : Fin 𝕌 → WTape) {out F G : List Bool} (hO : τ z
 /-! ### The whole step on word tapes -/
 
 /-- Header decoding by `dec`, then constants, preparation, the records, cleanup. -/
-noncomputable def pwCoreWith (dec : Cmd 0 𝕌) : Cmd 0 𝕌 :=
+noncomputable def pwCoreWith (dec : Cmd 𝕌) : Cmd 𝕌 :=
   .seq dec <| .seq constAll <| .seq pwPrep <| .seq recLoop pwFinish
 
 /-- Header, constants, preparation, the records, cleanup. -/
-noncomputable def pwCore : Cmd 0 𝕌 := pwCoreWith decodeHeader
+noncomputable def pwCore : Cmd 𝕌 := pwCoreWith decodeHeader
 
 /-- `dec` decodes the header `hdr` into `iP = ones p`, `iL = ones l`, `iW = ones w` within the
 header bound. -/
-def HdrDecodes (dec : Cmd 0 𝕌) (hdr : List Bool) (p l w : ℕ) : Prop :=
+def HdrDecodes (dec : Cmd 𝕌) (hdr : List Bool) (p l w : ℕ) : Prop :=
   ∀ τ : Fin 𝕌 → WTape, Clean τ → τ zH = reg hdr → τ iP = emp → τ iL = emp → τ iW = emp →
     Runs dec τ (· = Function.update (Function.update (Function.update τ iP (reg (ones p)))
       iL (reg (ones l))) iW (reg (ones w))) (headerCost p (2 ^ l) w hdr.length)
@@ -293,7 +293,7 @@ def pwCost (p _d l _K w H M X : ℕ) : ℕ :=
     10 * wOf p l w + 1000
 
 set_option maxHeartbeats 32000000 in
-theorem runs_pwCoreWith {dec : Cmd 0 𝕌} {hdr : List Bool} {p l w : ℕ} {fs gs : List (Rec (2 ^ l))}
+theorem runs_pwCoreWith {dec : Cmd 𝕌} {hdr : List Bool} {p l w : ℕ} {fs gs : List (Rec (2 ^ l))}
     (hdec : HdrDecodes dec hdr p l w) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
     (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
     Runs (pwCoreWith dec) (startBank hdr (array w fs) (array w gs))

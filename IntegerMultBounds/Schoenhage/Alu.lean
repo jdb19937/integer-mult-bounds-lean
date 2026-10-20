@@ -44,13 +44,13 @@ def AluConst (N : ℕ) (σ : Fin 𝕋 → WTape) : Prop :=
   σ cW = reg (ones (N + 1)) ∧ σ cF = reg (fword N)
 
 /-- The cleanup after a two-operand operation. -/
-noncomputable def cleanup : Cmd 0 𝕋 :=
+noncomputable def cleanup : Cmd 𝕋 :=
   .seq (clear aX) <| .seq (clear aY) <| .seq (clear aS1) <| .seq (clear aS2) (rewind aO)
 
 /-! ### Modular subtraction -/
 
 /-- `x - y mod 2^N + 1` from `aX`, `aY` into `aO`. -/
-noncomputable def subMod : Cmd 0 𝕋 :=
+noncomputable def subMod : Cmd 𝕋 :=
   .seq (op1 Rules.sub false aX aY aS1 (by decide) (by decide) (by decide)) <|
   .seq (back aS1) <|
   .seq (.cond aS1
@@ -159,7 +159,7 @@ theorem runs_subMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
 /-! ### Modular addition -/
 
 /-- `x + y mod 2^N + 1` from `aX`, `aY` into `aO`. -/
-noncomputable def addMod : Cmd 0 𝕋 :=
+noncomputable def addMod : Cmd 𝕋 :=
   .seq (op1 Rules.add false aX aY aS1 (by decide) (by decide) (by decide)) <|
   .seq (rewind aS1) <|
   .seq (op1 Rules.sub false aS1 cF aS2 (by decide) (by decide) (by decide)) <|
@@ -230,31 +230,31 @@ theorem runs_addMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
 /-! ### Multiplication by a power of two -/
 
 /-- Unary `N - t` into `aS3`. -/
-noncomputable def mpDiff : Cmd 0 𝕋 :=
+noncomputable def mpDiff : Cmd 𝕋 :=
   .seq (op1 Rules.drop false cN cT aS3 (by decide) (by decide) (by decide)) <|
   .seq (rewind aS3) <| .seq (rewind cN) (rewind cT)
 
 /-- The shifted low part into `aS1`. -/
-noncomputable def mpLow : Cmd 0 𝕋 :=
+noncomputable def mpLow : Cmd 𝕋 :=
   .seq (op0 (Rules.fill false) false cT aS1 (by decide)) <|
   .seq (op1 Rules.take true aS3 aX aS1 (by decide) (by decide) (by decide)) <|
   .seq (op0 (Rules.fill false) true c1 aS1 (by decide)) <|
   .seq (rewind aS1) <| .seq (rewind cT) <| .seq (rewind aS3) <| .seq (rewind c1) (rewind aX)
 
 /-- The high part into `aY`. -/
-noncomputable def mpHigh : Cmd 0 𝕋 :=
+noncomputable def mpHigh : Cmd 𝕋 :=
   .seq (op1 Rules.drop false aX aS3 aS2 (by decide) (by decide) (by decide)) <|
   .seq (rewind aS2) <|
   .seq (op1 Rules.take false cW aS2 aY (by decide) (by decide) (by decide)) <|
   .seq (rewind aY) <| .seq (rewind aX) <| .seq (rewind aS3) <| .seq (rewind cW) (clear aS2)
 
 /-- Move the low part into `aX` and clear the scratch. -/
-noncomputable def mpMove : Cmd 0 𝕋 :=
+noncomputable def mpMove : Cmd 𝕋 :=
   .seq (clear aX) <| .seq (op0 Rules.copy false aS1 aX (by decide)) <|
   .seq (rewind aX) <| .seq (clear aS1) (clear aS3)
 
 /-- `2^t v mod 2^N + 1` for `t ≤ N`, with `v` in `aX` and `t` in unary in `cT`. -/
-noncomputable def mulPow2 : Cmd 0 𝕋 :=
+noncomputable def mulPow2 : Cmd 𝕋 :=
   .seq mpDiff <| .seq mpLow <| .seq mpHigh <| .seq mpMove subMod
 
 /-- The residue `2^t v` modulo `2^N + 1` as a word. -/

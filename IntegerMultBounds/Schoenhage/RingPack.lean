@@ -24,7 +24,7 @@ variable {t : ℕ}
 
 theorem runs_flip {s d : Fin t} (h : s ≠ d) (σ : Fin t → WTape) {L R C : List (List Bool)} {w : List Bool}
     (hs : σ s = ⟨L, w :: R⟩) (hw : w ≠ []) (hd : σ d = ⟨C, []⟩) :
-    Runs (a := 0) (op0 Rules.flip false s d h) σ
+    Runs (op0 Rules.flip false s d h) σ
       (· = Function.update (Function.update σ s ⟨w :: L, R⟩) d ⟨flipLast w :: C, []⟩) (w.length + 7) := by
   apply Runs.of_wp
   rw [wp_op0]
@@ -48,7 +48,7 @@ def flat (ps : List (List Bool × List Bool)) : List (List Bool) := ps.flatMap f
 def pick (odd : Bool) (p : List Bool × List Bool) : List Bool := if odd then p.2 else p.1
 
 /-- One pair: flip the chosen word onto the coefficient tape, step past the other. -/
-noncomputable def packBody (src : Fin 𝕌) (o : Own src) : Bool → Cmd 0 𝕌
+noncomputable def packBody (src : Fin 𝕌) (o : Own src) : Bool → Cmd 𝕌
   | false => .seq (op0 Rules.flip false src (ι tC) (o.ne tC)) (skp src (ι tU) (o.ne tU))
   | true => .seq (skp src (ι tU) (o.ne tU)) (op0 Rules.flip false src (ι tC) (o.ne tC))
 
@@ -62,7 +62,7 @@ theorem runs_packBody {src : Fin 𝕌} (o : Own src) (odd : Bool) (τ : Fin 𝕌
   cases odd with
   | false =>
     have s1 := runs_flip n1 τ hs h1 hC
-    have s2 := runs_skp (a := 0) n2 (Function.update (Function.update τ src ⟨p.1 :: L, p.2 :: R⟩) (ι tC)
+    have s2 := runs_skp n2 (Function.update (Function.update τ src ⟨p.1 :: L, p.2 :: R⟩) (ι tC)
       ⟨flipLast p.1 :: C, []⟩) (by rw [Function.update_of_ne n1]; simp)
       (by rw [Function.update_of_ne n3, Function.update_of_ne n2.symm, hU]; rfl)
     refine (Runs.then s1 s2).mono (fun τ' h => ?_) ?_
@@ -70,7 +70,7 @@ theorem runs_packBody {src : Fin 𝕌} (o : Own src) (odd : Bool) (τ : Fin 𝕌
       by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [pick]
     · rw [Function.update_of_ne n1, Function.update_self]; simp; omega
   | true =>
-    have s1 := runs_skp (a := 0) n2 τ (by simp [hs]) (by rw [hU]; rfl)
+    have s1 := runs_skp n2 τ (by simp [hs]) (by rw [hU]; rfl)
     have s2 := runs_flip n1 (Function.update τ src (τ src).next) (L := p.1 :: L) (R := R) (w := p.2)
       (by simp [hs]) h2 (by rw [Function.update_of_ne n1.symm, hC])
     refine (Runs.then s1 s2).mono (fun τ' h => ?_) ?_
@@ -79,7 +79,7 @@ theorem runs_packBody {src : Fin 𝕌} (o : Own src) (odd : Bool) (τ : Fin 𝕌
     · simp [hs]; omega
 
 /-- Every pair of the source. -/
-noncomputable def packLoop (src : Fin 𝕌) (o : Own src) (odd : Bool) : Cmd 0 𝕌 := .loop src (packBody src o odd)
+noncomputable def packLoop (src : Fin 𝕌) (o : Own src) (odd : Bool) : Cmd 𝕌 := .loop src (packBody src o odd)
 
 theorem runs_packLoop {src : Fin 𝕌} (o : Own src) (odd : Bool) {w : ℕ} :
     ∀ (ps : List (List Bool × List Bool)) (τ : Fin 𝕌 → WTape) (L C : List (List Bool)),
@@ -121,7 +121,7 @@ theorem comp_ι_update_own {s : Fin 𝕌} (o : Own s) (τ : Fin 𝕌 → WTape) 
   funext i; simp [Function.update_of_ne (o.ne' i)]
 
 /-- Flip the chosen words onto the coefficient tape and load the window widths. -/
-noncomputable def packA (src : Fin 𝕌) (o : Own src) (odd : Bool) : Cmd 0 𝕌 :=
+noncomputable def packA (src : Fin 𝕌) (o : Own src) (odd : Bool) : Cmd 𝕌 :=
   .seq (packLoop src o odd) <| .seq (rewind src) <| .seq (rewind (ι tC)) <|
   .seq (regDup kW (ι cM) (by decide)) (regDup kW (ι cWA) (by decide))
 
@@ -135,17 +135,17 @@ theorem runs_packA {src : Fin 𝕌} (o : Own src) (_hW : src ≠ kW) (odd : Bool
   have s1 := runs_packLoop o odd ps τ [] [] hw hw0 hs (by rw [hC]; rfl) hU
   set ds := ps.map fun p => flipLast (pick odd p)
   set τ₁ := Function.update (Function.update τ src ⟨(flat ps).reverse ++ [], []⟩) (ι tC) ⟨ds.reverse ++ [], []⟩
-  have s2 := runs_rewind (a := 0) src τ₁
-  have s3 := runs_rewind (a := 0) (ι tC) (Function.update τ₁ src ⟨[], (τ₁ src).left.reverse ++ (τ₁ src).right⟩)
+  have s2 := runs_rewind src τ₁
+  have s3 := runs_rewind (ι tC) (Function.update τ₁ src ⟨[], (τ₁ src).left.reverse ++ (τ₁ src).right⟩)
   set τ₃ := Function.update τ (ι tC) ⟨[], ds⟩
   have e₃ : Function.update (Function.update τ₁ src ⟨[], (τ₁ src).left.reverse ++ (τ₁ src).right⟩) (ι tC)
       ⟨[], (Function.update τ₁ src ⟨[], (τ₁ src).left.reverse ++ (τ₁ src).right⟩ (ι tC)).left.reverse ++
         (Function.update τ₁ src ⟨[], (τ₁ src).left.reverse ++ (τ₁ src).right⟩ (ι tC)).right⟩ = τ₃ := by
     funext x
     by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [τ₁, τ₃, Function.update_apply, o.ne tC]
-  have s4 := runs_regDup (a := 0) (show kW ≠ ι cM by decide) τ₃ (w := ones Wd) (by tsimp [τ₃, hK])
+  have s4 := runs_regDup (show kW ≠ ι cM by decide) τ₃ (w := ones Wd) (by tsimp [τ₃, hK])
     (by tsimp [τ₃, hM])
-  have s5 := runs_regDup (a := 0) (show kW ≠ ι cWA by decide) (Function.update τ₃ (ι cM) (reg (ones Wd)))
+  have s5 := runs_regDup (show kW ≠ ι cWA by decide) (Function.update τ₃ (ι cM) (reg (ones Wd)))
     (w := ones Wd) (by tsimp [τ₃, hK]) (by tsimp [τ₃, hA])
   refine (Runs.then s1 (Runs.then s2 (Runs.then (s3.mono (fun _ h => h.trans e₃) le_rfl)
     (Runs.then s4 s5)))).mono (fun τ' h => h) ?_
@@ -161,7 +161,7 @@ theorem runs_packA {src : Fin 𝕌} (o : Own src) (_hW : src ≠ kW) (odd : Bool
   omega
 
 /-- Cut the sum to `N + 1` bits into `xP` and clear the window's tapes. -/
-noncomputable def packD : Cmd 0 𝕌 :=
+noncomputable def packD : Cmd 𝕌 :=
   .seq (rewind (ι sO)) <| .seq (op1 Rules.take false (ι cW) (ι sO) xP (by decide) (by decide) (by decide)) <|
   .seq (rewind (ι cW)) <| .seq (rewind xP) <| .seq (clear (ι sO)) <| .seq (clear (ι tC)) <|
   .seq (clear (ι cM)) (clear (ι cWA))
@@ -184,7 +184,7 @@ theorem runs_packD {N : ℕ} (τ : Fin 𝕌 → WTape) {z : List Bool} {C M A : 
   · simp [clen, WTape.words] at t1 ⊢; omega
 
 /-- One component of a polynomial as a residue in `dst`. -/
-noncomputable def pack (src dst : Fin 𝕌) (o : Own src) (od : Own dst) (odd : Bool) : Cmd 0 𝕌 :=
+noncomputable def pack (src dst : Fin 𝕌) (o : Own src) (od : Own dst) (odd : Bool) : Cmd 𝕌 :=
   .seq (packA src o odd) <| .seq (up winSum) <| .seq packD <|
   .seq (aluOp subMod xP kI dst (by unfold Own; decide) (by unfold Own; decide) od) (clear xP)
 
@@ -262,7 +262,7 @@ theorem runs_pack {src dst : Fin 𝕌} (o : Own src) (od : Own dst) (hsW : src �
     τD (by simp only [τD, comp_ι_update_own (show Own xP by unfold Own; decide), hA])
     (by simp [τD]) (by simp only [τD]; rw [Function.update_of_ne (by decide), hI])
     (by simp only [τD]; rw [Function.update_of_ne hdP, hD])
-  have s5 := runs_clear (a := 0) xP (Function.update τD dst (reg (subRes N (Rules.fit (N + 1) zw) (rwd N Oin))))
+  have s5 := runs_clear xP (Function.update τD dst (reg (subRes N (Rules.fit (N + 1) zw) (rwd N Oin))))
   refine (Runs.then s1 (Runs.then s2' (Runs.then s3 (Runs.then s4 s5)))).mono (fun τ' h => ?_) ?_
   · rw [h]
     have e : subRes N (Rules.fit (N + 1) zw) (rwd N Oin) = rwd N ((wsum Wd cs + Fm N - Oin) % Fm N) := by
