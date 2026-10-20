@@ -3,36 +3,33 @@ module
 public import IntegerMultBounds.Schoenhage.RingLemma
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 public import IntegerMultBounds.MathlibTM2.Fast.CMulPass
-import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.MathlibTM2.Host.WordCmd
 
 /-!
-# The vendored ring product as a host subroutine: machine, banks and formats
+# The vendored ring product as a host subroutine: program, costs and formats
 
-The vendored signed ring product `ringLemmaProgram` (`Schoenhage/RingLemma`: header decoder
-`decodeHeader3`, constants, one packed Schönhage–Strassen product per record pair) runs on any
-number of record pairs.
+The vendored signed ring product (`Schoenhage/RingLemma`: header decoder `decodeHeader3`,
+constants, one packed Schönhage–Strassen product per record pair) is the word program
+`pwCoreWith decodeHeader3` over 91 word tapes; it runs on any number of record pairs.
 
-**The contract on arrays** (`rp_vendor_hoare`). Tape 0 holds the header `Γ(p)Γ(r)Γ(w)`
-(`header p r w`, `r = 2^l`), tapes 1 and 2 the arrays `array w fs`, `array w gs` of `M` records
-each (`Spec.SignedRingProduct.array`: each coefficient as the real then the imaginary numerator,
-both signed `w`-bit two's-complement words, most significant bit first), tape 3 is empty. For
-`1 ≤ p`, `p + 2 ≤ w` and disk-grid records the program halts within `rpTime p l w M` transitions
-with tapes 0–2 unchanged and `array w (zipWith (prodRec p) fs gs)` on tape 3: record `n` is
-`Q_p(f_n g_n / r)` (`prodRec`). This is `runs_pwCoreWith` with the three-code header decoder,
-sealed, compiled and relabelled exactly as in `ring_meets`. `rpTime` is the vendored
-`pwCost p 0 l 0 w H M X` plus the sealing overhead; `pwCost` charges
+**The word program** (`runs_pwCoreWith`). Tape `zH` holds the header `Γ(p)Γ(r)Γ(w)`
+(`header p r w`, `r = 2^l`), tapes `zF`, `zG` the arrays `array w fs`, `array w gs` of `M`
+records each (`Spec.SignedRingProduct.array`: each coefficient as the real then the imaginary
+numerator, both signed `w`-bit two's-complement words, most significant bit first), each as a
+single word; every other tape is empty. For `1 ≤ p`, `p + 2 ≤ w` and disk-grid records it ends
+within `pwCost p 0 l 0 w H M X` steps with `array w (zipWith (prodRec p) fs gs)` on `zO`: record
+`n` is `Q_p(f_n g_n / r)` (`prodRec`). `pwCost` charges
 `M (r (56 w + 400) + ringCost W r w (p + l) (W r) + 204)` for the records, `W = wOf p l w`, with
 `ringCost` the bound of the packed product (`ringProgram`, truncation by `s = p + l` bits).
+`rpTime` is `pwCost` plus a sealing allowance.
 
-**On the host** (`rpMachine`, `rpMachine_hoare`). The program runs through the alphabet
-encoding `SS.code A` (`Fin 4` into `Fin (A + 4)`, every symbol keeps its code) with its states
-embedded by `liftQ`. Its banks are raw bit words: tape `j` holds `rpCells A hdr F G out j`
-(the bit symbols of the header, the two operands and the output on tapes 0–3, nothing
-elsewhere) from cell 0, heads at cell 0.
-
-**Placed runs on raw words** (`rp_placedRun_exec`): `placedRun` (of `Host/SSMul`) with an exact
-contract between banks of blank-free words. The placed registers go from the start words to
-the final words, every other stack is unchanged.
+**On the host** (`rpHost`, `rpHost_exec`). The header and the operands are raw bit words on the
+registers `ι 0`, `ι 1`, `ι 2` (empty left stacks), the output register `ι 3` and the registers
+`ι j`, `j ≥ 4`, are empty. `rpSeal` appends a separator below each input word, so the registers
+hold the placed start bank with the data tapes `zH`, `zF`, `zG`, `zO` on `ι 0`–`ι 3`
+(`ι ∘ dataSwap`); `tcompile` runs the word program (`rpStates = cmdStates`); `rpUnseal` drops the
+separators again. At most `3 · rpTime p l w M` steps, the output array on `ι 3`, every other
+stack and the `user` component unchanged.
 
 **Formats.** `rpLsb w v` are the `w` low bits of `v`, least significant first;
 `msbBits w v = (rpLsb w v).reverse`. A host coefficient `csyms A w z` carries the bits
@@ -60,208 +57,289 @@ open IntegerMultBounds.Spec.SignedRingProduct
 
 noncomputable section
 
-/-! ### The vendored contract on arrays -/
+/-! ### The ring product on host stacks -/
 
-section Vendor
+section Host
 
-open IntegerMultBounds.Schoenhage
+open IntegerMultBounds.Schoenhage (WTape Cmd cells emp startBank pwCoreWith pwCost decodeHeader3
+  runs_pwCoreWith hdrDecodes_decodeHeader3 dataSwap)
+open IntegerMultBounds.Schoenhage.Tp (zH zF zG zO)
+open IntegerMultBounds.MathlibTM2.Host.WordCmd (regs regs_L_at regs_R_at regs_L_off regs_R_off
+  regs_set moveRL moveRL_exec moveLR moveLR_exec pushL pushL_run place place_L_at place_R_at
+  place_L_off place_R_off place_self lcells cells_cons' bitSymbol_ne_sep cmdStates tcompile
+  tcompile_runs)
 
-/-- The vendored time bound of the ring product on `M` record pairs of `2^l` coefficients:
-the word-level bound `pwCost` and the cost of sealing and unsealing the four data tapes. -/
+/-- The time bound of the ring product on `M` record pairs of `2^l` coefficients: the word-level
+bound `pwCost` and the cost of sealing and unsealing the four data registers. -/
 def rpTime (p l w M : ℕ) : ℕ :=
   pwCost p 0 l 0 w (header p (2 ^ l) w).length M (2 * 2 ^ l * w * M) +
     4 * ((header p (2 ^ l) w).length + 3 * (2 * 2 ^ l * w * M)) + 60
 
-set_option maxHeartbeats 4000000 in
-/-- The vendored ring product on arrays of record pairs. -/
-theorem rp_vendor_hoare {p l w : ℕ} {fs gs : List (Rec (2 ^ l))} (hp : 1 ≤ p) (hw : p + 2 ≤ w)
-    (hlen : fs.length = gs.length) (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2)
-    (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
-    HoareTime ringLemmaProgram
-      (· = bank (header p (2 ^ l) w) (array w fs) (array w gs) [])
-      (· = bank (header p (2 ^ l) w) (array w fs) (array w gs)
-        (array w (List.zipWith (prodRec p) fs gs)))
-      (rpTime p l w fs.length) := by
-  obtain ⟨σ', k, hx, hq, hk⟩ := runs_pwCoreWith (fs := fs) (gs := gs)
-    (hdrDecodes_decodeHeader3 (l := l) hp (by omega)) hw hlen hf hg
-  subst hq
-  have h4 := (compile_correct (by decide) hx).consequence (fun _ h => h) (fun _ h => h) hk
-  have h := (pwProg91With_hoare (core := ringCoreProg) h4).reindex dataSwap
-  refine h.consequence (fun v hv => ⟨_, rfl, by rw [hv, raw91_reindex]⟩)
-    (fun v ⟨o, ho, hv⟩ => by rw [hv, ho, raw91_reindex]) ?_
-  have hF : (array w fs).length = 2 * 2 ^ l * w * fs.length := by rw [length_array]
-  have hG : (array w gs).length = 2 * 2 ^ l * w * fs.length := by rw [length_array, hlen]
-  have hO : (array w (List.zipWith (prodRec p) fs gs)).length = 2 * 2 ^ l * w * fs.length := by
-    rw [length_array, List.length_zipWith, hlen, min_self]
-  unfold rpTime
-  rw [hF, hG, hO]
+/-- The control-state count of the ring product's word program. -/
+abbrev rpStates : ℕ := cmdStates (pwCoreWith decodeHeader3)
+
+variable {T Q A : ℕ} {U P : Type} (body : P → Pr P T Q A U)
+
+/-- Append a separator below the bit word on the right stack of `r`. -/
+def rpSeal (r : Fin T) : Pr P T Q A U :=
+  .seq (moveRL r (fun _ => true)) (.seq (.act (pushL r [separator])) (moveLR r (fun _ => true)))
+
+/-- Drop the separator below the bit word on the right stack of `r`. -/
+def rpUnseal (r : Fin T) : Pr P T Q A U :=
+  .seq (moveRL r (· != separator))
+    (.seq (.act (.pop (.rt r) (fun v _ => v) .done)) (moveLR r (fun _ => true)))
+
+/-- The ring product on the registers `ι`: seal the header and the operands on `ι 0`, `ι 1`,
+`ι 2`, run the word program with its data tapes `zH`, `zF`, `zG`, `zO` on `ι 0`–`ι 3`, unseal. -/
+def rpHost (ι : Fin 91 → Fin T) : Pr P T Q A U :=
+  .seq (rpSeal (ι 0)) <| .seq (rpSeal (ι 1)) <| .seq (rpSeal (ι 2)) <|
+  .seq (tcompile (ι ∘ dataSwap) (pwCoreWith decodeHeader3)) <|
+  .seq (rpUnseal (ι 3)) <| .seq (rpUnseal (ι 0)) <| .seq (rpUnseal (ι 1)) (rpUnseal (ι 2))
+
+lemma rp_regs_one (S : Stacks T A) (r : Fin T) (F : Fin 1 → WordCmd.LR A) :
+    regs S (fun _ => r) F = { S with
+      L := Function.update S.L r (F 0).1
+      R := Function.update S.R r (F 0).2 } := by
+  have hj : Function.Injective (fun _ : Fin 1 => r) := Function.injective_of_subsingleton _
+  ext1
+  · rfl
+  · rfl
+  all_goals
+    funext r'
+    by_cases h : r' = r
+    · subst h
+      first | simpa using regs_L_at hj S F 0 | simpa using regs_R_at hj S F 0
+    · have hoff : ∀ x : Fin 1, (fun _ => r) x ≠ r' := fun _ e => h e.symm
+      first | simpa [h] using regs_L_off S F hoff | simpa [h] using regs_R_off S F hoff
+
+lemma rp_update_one {α : Type} (F : Fin 1 → α) (a : α) : Function.update F 0 a = fun _ => a := by
+  funext y
+  rw [Subsingleton.elim y 0, Function.update_self]
+
+/-- `moveRL_exec` on a raw register. -/
+lemma rp_moveRL_exec (r : Fin T) (p : Fin (A + 4) → Bool) (l rest : List (Fin (A + 4)))
+    (v : HS T Q A U) (S : Stacks T A) (hl : ∀ e ∈ l, p e = true)
+    (hrest : (rest.head?.map p).getD false = false) (hS : S.R r = l ++ rest) :
+    ∃ v', v'.user = v.user ∧ Exec body (moveRL r p) (mk v S) (2 * l.length + 2)
+      (mk v' { S with
+        L := Function.update S.L r (l.reverse ++ S.L r)
+        R := Function.update S.R r rest }) := by
+  have hj : Function.Injective (fun _ : Fin 1 => r) := Function.injective_of_subsingleton _
+  have e : S = regs S (fun _ : Fin 1 => r) (fun _ : Fin 1 => (S.L r, S.R r)) := by
+    rw [rp_regs_one]; simp
+  obtain ⟨v', hu, he⟩ := moveRL_exec body hj S 0 p l rest (fun _ : Fin 1 => (S.L r, S.R r)) v hl
+    hrest hS
+  refine ⟨v', hu, ?_⟩
+  rw [e]
+  refine Exec.cast he rfl ?_
+  rw [rp_update_one, rp_regs_one, rp_regs_one]
+  simp
+
+/-- Sealing a bit word: `4 |w| + 7` steps. -/
+theorem rpSeal_exec (r : Fin T) (w : List Bool) (v : HS T Q A U) (S : Stacks T A)
+    (hL : S.L r = []) (hR : S.R r = w.map bitSymbol) :
+    ∃ v', v'.user = v.user ∧ Exec body (rpSeal r) (mk v S) (4 * w.length + 7)
+      (mk v' { S with R := Function.update S.R r (cells [w]) }) := by
+  obtain ⟨v₁, hu₁, he₁⟩ := rp_moveRL_exec body r (fun _ => true) (w.map bitSymbol) [] v S
+    (fun _ _ => rfl) rfl (by rw [hR, List.append_nil])
+  set S₁ : Stacks T A := { S with
+    L := Function.update S.L r ((w.map bitSymbol).reverse ++ S.L r)
+    R := Function.update S.R r [] }
+  set S₂ : Stacks T A := { S with
+    L := Function.update S.L r (separator :: (w.map bitSymbol).reverse)
+    R := Function.update S.R r [] }
+  have h₂ : (pushL r [separator] : Act T Q A U).run (mk v₁ S₁) = mk v₁ S₂ := by
+    rw [pushL_run]
+    simp [S₁, S₂, hL]
+  obtain ⟨v₃, hu₃, he₃⟩ := moveLR_exec body r (fun _ => true)
+    (separator :: (w.map bitSymbol).reverse) [] v₁ S₂ (fun _ _ => rfl) rfl (by simp [S₂])
+  refine ⟨v₃, hu₃.trans hu₁, Exec.cast (Exec.seq he₁ (Exec.seq
+    (h₂ ▸ Exec.act (body := body) (pushL r [separator]) (mk v₁ S₁)) he₃)) (by simp; ring) ?_⟩
+  congr 1
+  simp only [S₂, Function.update_self, Function.update_idem, List.reverse_cons,
+    List.reverse_reverse, List.append_nil, cells_cons']
+  rw [show Function.update S.L r [] = S.L from Function.update_eq_self_iff.2 hL.symm]
+  rfl
+
+/-- Unsealing a bit word: `4 |w| + 5` steps. -/
+theorem rpUnseal_exec (r : Fin T) (w : List Bool) (v : HS T Q A U) (S : Stacks T A)
+    (hL : S.L r = []) (hR : S.R r = cells [w]) :
+    ∃ v', v'.user = v.user ∧ Exec body (rpUnseal r) (mk v S) (4 * w.length + 5)
+      (mk v' { S with R := Function.update S.R r (w.map bitSymbol) }) := by
+  obtain ⟨v₁, hu₁, he₁⟩ := rp_moveRL_exec body r (· != separator) (w.map bitSymbol) [separator] v S
+    (fun e he => by
+      obtain ⟨b, -, rfl⟩ := List.mem_map.1 he
+      simpa using bitSymbol_ne_sep b)
+    (by simp) (by rw [hR, cells_cons']; rfl)
+  set S₁ : Stacks T A := { S with
+    L := Function.update S.L r ((w.map bitSymbol).reverse ++ S.L r)
+    R := Function.update S.R r [separator] }
+  set S₂ : Stacks T A := { S with
+    L := Function.update S.L r (w.map bitSymbol).reverse
+    R := Function.update S.R r [] }
+  have h₂ : (.pop (.rt r) (fun v _ => v) .done : Act T Q A U).run (mk v₁ S₁) = mk v₁ S₂ := by
+    simp [Action.run, S₁, S₂, hL, update_rt]
+  obtain ⟨v₃, hu₃, he₃⟩ := moveLR_exec body r (fun _ => true) (w.map bitSymbol).reverse [] v₁ S₂
+    (fun _ _ => rfl) rfl (by simp [S₂])
+  refine ⟨v₃, hu₃.trans hu₁, Exec.cast (Exec.seq he₁ (Exec.seq
+    (h₂ ▸ Exec.act (body := body) (.pop (.rt r) (fun v _ => v) .done) (mk v₁ S₁)) he₃))
+    (by simp; ring) ?_⟩
+  congr 1
+  simp only [S₂, Function.update_self, Function.update_idem, List.reverse_reverse, List.append_nil]
+  rw [show Function.update S.L r [] = S.L from Function.update_eq_self_iff.2 hL.symm]
+
+/-- Placing a bank that differs from a placed bank in one tape. -/
+lemma rp_place_update {t : ℕ} {ι : Fin t → Fin T} (hι : Function.Injective ι) (S : Stacks T A)
+    (σ : Fin t → WTape) (x : Fin t) (τ : WTape) :
+    place S ι (Function.update σ x τ) = { place S ι σ with
+      L := Function.update (place S ι σ).L (ι x) (lcells τ.left)
+      R := Function.update (place S ι σ).R (ι x) (cells τ.right) } := by
+  ext1
+  · rfl
+  · rfl
+  all_goals
+    funext r
+    by_cases h : ∃ y, ι y = r
+    · obtain ⟨y, rfl⟩ := h
+      by_cases hy : y = x
+      · subst hy
+        simp [place_L_at hι, place_R_at hι]
+      · have hne : ι y ≠ ι x := fun e => hy (hι e)
+        simp [place_L_at hι, place_R_at hι, hne, hy]
+    · have hoff : ∀ y, ι y ≠ r := fun y e => h ⟨y, e⟩
+      have hne : r ≠ ι x := fun e => hoff x e.symm
+      simp [place_L_off _ _ hoff, place_R_off _ _ hoff, hne]
+
+lemma rp_dataSwap_ge {x : Fin 91} (h0 : x ≠ zH) (h1 : x ≠ zF) (h2 : x ≠ zG) (h3 : x ≠ zO) :
+    4 ≤ (dataSwap x).val := by
+  have e : ∀ k : Fin 91, dataSwap x = k ↔ x = dataSwap.symm k :=
+    fun _ => (Equiv.eq_symm_apply dataSwap).symm
+  have n0 : dataSwap x ≠ 0 := fun h => h0 ((e 0).1 h)
+  have n1 : dataSwap x ≠ 1 := fun h => h1 ((e 1).1 h)
+  have n2 : dataSwap x ≠ 2 := fun h => h2 ((e 2).1 h)
+  have n3 : dataSwap x ≠ 3 := fun h => h3 ((e 3).1 h)
+  simp only [ne_eq, Fin.ext_iff] at n0 n1 n2 n3
   omega
 
-/-- The state count of the vendored ring product. -/
-abbrev rpStates : ℕ := stateCount ringLemmaProgram
+/-- The ring product on host stacks: the header and the operand arrays as bit words on `ι 0`,
+`ι 1`, `ι 2`, the output array onto the empty `ι 3`, within `3 · rpTime` steps. -/
+theorem rpHost_exec {ι : Fin 91 → Fin T} (hι : Function.Injective ι) (hQ : rpStates ≤ Q)
+    {p l w : ℕ} {fs gs : List (Rec (2 ^ l))} (hp : 1 ≤ p) (hw : p + 2 ≤ w)
+    (hlen : fs.length = gs.length) (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2)
+    (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) (v : HS T Q A U) (S : Stacks T A)
+    (hL : ∀ j, S.L (ι j) = []) (h0 : S.R (ι 0) = (header p (2 ^ l) w).map bitSymbol)
+    (h1 : S.R (ι 1) = (array w fs).map bitSymbol) (h2 : S.R (ι 2) = (array w gs).map bitSymbol)
+    (h3 : S.R (ι 3) = []) (hpriv : ∀ j : Fin 91, 4 ≤ j.val → S.R (ι j) = []) :
+    ∃ v' n, v'.user = v.user ∧ n ≤ 3 * rpTime p l w fs.length ∧
+      Exec body (rpHost ι) (mk v S) n (mk v' { S with
+        R := Function.update S.R (ι 3) ((array w (List.zipWith (prodRec p) fs gs)).map bitSymbol) }) := by
+  set hdr := header p (2 ^ l) w
+  set F := array w fs
+  set G := array w gs
+  set out := array w (List.zipWith (prodRec p) fs gs)
+  have n01 : ι 0 ≠ ι 1 := fun e => absurd (hι e) (by decide)
+  have n02 : ι 0 ≠ ι 2 := fun e => absurd (hι e) (by decide)
+  have n03 : ι 0 ≠ ι 3 := fun e => absurd (hι e) (by decide)
+  have n12 : ι 1 ≠ ι 2 := fun e => absurd (hι e) (by decide)
+  have n13 : ι 1 ≠ ι 3 := fun e => absurd (hι e) (by decide)
+  have n23 : ι 2 ≠ ι 3 := fun e => absurd (hι e) (by decide)
+  -- seal the header and the operands
+  obtain ⟨v₁, hu₁, he₁⟩ := rpSeal_exec body (ι 0) hdr v S (hL 0) h0
+  set S₁ : Stacks T A := { S with R := Function.update S.R (ι 0) (cells [hdr]) }
+  obtain ⟨v₂, hu₂, he₂⟩ := rpSeal_exec body (ι 1) F v₁ S₁ (hL 1) (by simp [S₁, n01.symm, h1])
+  set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R (ι 1) (cells [F]) }
+  obtain ⟨v₃, hu₃, he₃⟩ := rpSeal_exec body (ι 2) G v₂ S₂ (hL 2)
+    (by simp [S₂, S₁, n02.symm, n12.symm, h2])
+  set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R (ι 2) (cells [G]) }
+  -- the sealed stacks are the placed start bank
+  have hι' : Function.Injective (ι ∘ dataSwap) := hι.comp dataSwap.injective
+  have hd : ∀ x, (ι ∘ dataSwap) x = ι (dataSwap x) := fun _ => rfl
+  have hS₃ : place S₃ (ι ∘ dataSwap) (startBank hdr F G) = S₃ := by
+    refine place_self hι' (fun x => ?_) (fun x => ?_)
+    · have : (startBank hdr F G x).left = [] := by
+        simp only [startBank, Function.update_apply]; split_ifs <;> rfl
+      rw [this, hd]; exact hL _
+    · rw [hd]
+      by_cases x0 : x = zH
+      · subst x0
+        rw [show dataSwap zH = 0 by decide, startBank, Function.update_of_ne (by decide),
+          Function.update_of_ne (by decide), Function.update_self]
+        simp [S₃, S₂, S₁, Schoenhage.reg, n02, n01]
+      by_cases x1 : x = zF
+      · subst x1
+        rw [show dataSwap zF = 1 by decide, startBank, Function.update_of_ne (by decide),
+          Function.update_self]
+        simp [S₃, S₂, S₁, Schoenhage.reg, n12]
+      by_cases x2 : x = zG
+      · subst x2
+        rw [show dataSwap zG = 2 by decide, startBank, Function.update_self]
+        simp [S₃, S₂, S₁, Schoenhage.reg]
+      have hx : startBank hdr F G x = emp := by simp [startBank, x0, x1, x2]
+      rw [hx]
+      by_cases x3 : x = zO
+      · subst x3
+        rw [show dataSwap zO = 3 by decide]
+        simp [S₃, S₂, S₁, n03.symm, n13.symm, n23.symm, h3, emp, Schoenhage.cells]
+      have h4 := rp_dataSwap_ge x0 x1 x2 x3
+      have m0 : ι (dataSwap x) ≠ ι 0 := fun e => by have := congrArg Fin.val (hι e); simp at this; omega
+      have m1 : ι (dataSwap x) ≠ ι 1 := fun e => by have := congrArg Fin.val (hι e); simp at this; omega
+      have m2 : ι (dataSwap x) ≠ ι 2 := fun e => by have := congrArg Fin.val (hι e); simp at this; omega
+      simp [S₃, S₂, S₁, m0, m1, m2, hpriv _ h4, emp, Schoenhage.cells]
+  -- the word program
+  obtain ⟨σ', hσ', v₄, m₄, hu₄, hm₄, he₄⟩ := tcompile_runs (body := body) hι'
+    (runs_pwCoreWith (hdrDecodes_decodeHeader3 (l := l) hp (by omega)) hw hlen hf hg) hQ v₃ S₃
+  rw [hS₃] at he₄
+  subst hσ'
+  have hzO : (ι ∘ dataSwap) zO = ι 3 := rfl
+  have hS₄ : place S₃ (ι ∘ dataSwap) (Function.update (startBank hdr F G) zO (Schoenhage.reg out)) =
+      { S₃ with R := Function.update S₃.R (ι 3) (cells [out]) } := by
+    rw [rp_place_update hι', hS₃, hzO]
+    simp only [Schoenhage.reg, lcells]
+    rw [show Function.update S₃.L (ι 3) [] = S₃.L from Function.update_eq_self_iff.2 (hL 3).symm]
+  rw [hS₄] at he₄
+  set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R (ι 3) (cells [out]) }
+  -- unseal the four data registers
+  obtain ⟨v₅, hu₅, he₅⟩ := rpUnseal_exec body (ι 3) out v₄ S₄ (hL 3) (by simp [S₄])
+  set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R (ι 3) (out.map bitSymbol) }
+  obtain ⟨v₆, hu₆, he₆⟩ := rpUnseal_exec body (ι 0) hdr v₅ S₅ (hL 0)
+    (by simp [S₅, S₄, S₃, S₂, S₁, n03, n02, n01])
+  set S₆ : Stacks T A := { S₅ with R := Function.update S₅.R (ι 0) (hdr.map bitSymbol) }
+  obtain ⟨v₇, hu₇, he₇⟩ := rpUnseal_exec body (ι 1) F v₆ S₆ (hL 1)
+    (by simp [S₆, S₅, S₄, S₃, S₂, S₁, n01.symm, n13, n12])
+  set S₇ : Stacks T A := { S₆ with R := Function.update S₆.R (ι 1) (F.map bitSymbol) }
+  obtain ⟨v₈, hu₈, he₈⟩ := rpUnseal_exec body (ι 2) G v₇ S₇ (hL 2)
+    (by simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, n02.symm, n12.symm, n23])
+  refine ⟨v₈, _, hu₈.trans (hu₇.trans (hu₆.trans (hu₅.trans (hu₄.trans (hu₃.trans (hu₂.trans hu₁)))))),
+    ?_, Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
+      (Exec.seq he₆ (Exec.seq he₇ (Exec.cast he₈ rfl ?_)))))))⟩
+  · have hF : (array w fs).length = 2 * 2 ^ l * w * fs.length := by rw [length_array]
+    have hG : (array w gs).length = 2 * 2 ^ l * w * fs.length := by rw [length_array, hlen]
+    have hO : (array w (List.zipWith (prodRec p) fs gs)).length = 2 * 2 ^ l * w * fs.length := by
+      rw [length_array, List.length_zipWith, hlen, min_self]
+    simp only [hdr, F, G, out, rpTime, hF, hG, hO] at hm₄ ⊢
+    omega
+  · congr 1
+    ext1
+    · rfl
+    · rfl
+    · rfl
+    funext r
+    by_cases r0 : r = ι 0
+    · subst r0; simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, n01, n02, n03, h0, hdr]
+    by_cases r1 : r = ι 1
+    · subst r1; simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, n12, n13, h1, F]
+    by_cases r2 : r = ι 2
+    · subst r2; simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, n23, h2, G]
+    by_cases r3 : r = ι 3
+    · subst r3; simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, n03.symm, n13.symm, n23.symm]
+    simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, r0, r1, r2, r3]
 
-end Vendor
+end Host
 
-/-! ### Raw banks over the host alphabet -/
-
-/-- The words of the ring product's raw bank: header and operands on tapes `0`, `1`, `2`, the
-output on tape `3`, every other tape empty. -/
-def rpCells (A : ℕ) (hdr F G out : List Bool) (j : Fin 91) : List (Fin (A + 4)) :=
-  if j.val = 0 then hdr.map bitSymbol else if j.val = 1 then F.map bitSymbol
-  else if j.val = 2 then G.map bitSymbol else if j.val = 3 then out.map bitSymbol else []
-
-/-- The raw bank with heads at cell `0`. -/
-def rpRaw (A : ℕ) (hdr F G out : List Bool) : Tapes 91 A :=
-  ⟨fun _ => 0, fun j => wordTape (rpCells A hdr F G out j)⟩
-
-lemma rp_code_bitSymbol (A : ℕ) (b : Bool) : (SS.code A).encode (bitSymbol b) = bitSymbol b := by
-  cases b <;> rfl
+/-! ### Bit formats -/
 
 lemma rp_bitSymbol_ne_blank {A : ℕ} (b : Bool) : (bitSymbol b : Fin (A + 4)) ≠ blank := by
   cases b <;> simp [bitSymbol, blank, Fin.ext_iff]
-
-lemma rp_blank_not_mem_cells (A : ℕ) (hdr F G out : List Bool) (j : Fin 91) :
-    blank ∉ rpCells A hdr F G out j := by
-  unfold rpCells
-  split_ifs <;> simp [rp_bitSymbol_ne_blank]
-
-/-- The encoded vendored bank is the raw host bank. -/
-lemma rp_map_bank (A : ℕ) (hdr F G out : List Bool) :
-    Alphabet.mapTapes (SS.code A) (bank (t := 91) (a := 0) hdr F G out) = rpRaw A hdr F G out := by
-  simp only [Alphabet.mapTapes, bank, rpRaw, Tapes.mk.injEq, true_and]
-  funext j z
-  simp only [rpCells]
-  split_ifs
-  any_goals simp [wordAt, SS.code_wordTape, List.map_map, Function.comp_def, rp_code_bitSymbol]
-  simp [wordTape_nil]
-  rfl
-
-/-- The vendored ring product over the host alphabet with its states embedded in `Fin Q`. -/
-def rpMachine (A : ℕ) {Q : ℕ} (hQ : rpStates ≤ Q) : Program 91 Q A :=
-  liftQ (Alphabet.program (SS.code A) IntegerMultBounds.Schoenhage.ringLemmaProgram) hQ
-
-/-- `rp_vendor_hoare` on the raw host banks. -/
-theorem rpMachine_hoare (A : ℕ) {Q : ℕ} (hQ : rpStates ≤ Q) {p l w : ℕ}
-    {fs gs : List (Rec (2 ^ l))} (hp : 1 ≤ p) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
-    (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
-    HoareTime (rpMachine A hQ)
-      (· = rpRaw A (header p (2 ^ l) w) (array w fs) (array w gs) [])
-      (· = rpRaw A (header p (2 ^ l) w) (array w fs) (array w gs)
-        (array w (List.zipWith (prodRec p) fs gs)))
-      (rpTime p l w fs.length) := by
-  refine HoareTime.liftQ hQ ((Alphabet.map_hoare (SS.code A)
-    (rp_vendor_hoare hp hw hlen hf hg)).consequence
-    (fun w hw => ⟨_, rfl, by rw [hw, rp_map_bank]⟩) (fun w ⟨o, ho, hw⟩ => ?_) le_rfl)
-  rw [hw, ho, rp_map_bank]
-
-/-! ### Placed runs on raw words -/
-
-section PlacedRaw
-
-variable {s T Q A : ℕ} {U F : Type}
-
-/-- Running a placed program with an exact contract between banks of blank-free words from
-cell `0`. The placed registers hold the start words with empty left stacks; afterwards they hold
-the final words, and every other stack is unchanged. -/
-theorem rp_placedRun_exec (body : F → Pr F T Q A U) (M : Program s Q A) (ι : Fin s → Fin T)
-    (hι : Function.Injective ι) (hT : s ≤ T) {l₀ l₁ : Fin s → List (Fin (A + 4))} {k : ℕ}
-    (hM : HoareTime M (· = ⟨fun _ => 0, fun j => wordTape (l₀ j)⟩)
-      (· = ⟨fun _ => 0, fun j => wordTape (l₁ j)⟩) k)
-    (hb : ∀ j, blank ∉ l₁ j) (v : HS T Q A U) (S : Stacks T A) (hL : ∀ j, S.L (ι j) = [])
-    (hR : ∀ j, S.R (ι j) = l₀ j) :
-    ∃ v' n R', v'.user = v.user ∧
-      n ≤ (T + 12 * s + 5) * k + 6 * ∑ j, (S.R (ι j)).length + 2 * T + 6 * s + 9 ∧
-      (∀ j, R' (ι j) = l₁ j) ∧ (∀ y, (∀ j, ι j ≠ y) → R' y = S.R y) ∧
-      Exec body (placedRun M ι hι hT) (mk v S) n (mk v' { S with R := R' }) := by
-  classical
-  set pe := InjectivePlacement.placement ι hι (Nat.add_sub_cancel' hT) with hpe
-  have hun : ∀ j, ι j ∉ unplaced ι := fun j hm => (mem_unplaced ι _).1 hm j rfl
-  -- step 1: mark the unplaced registers
-  have he₀ := markList_exec body (unplaced ι) (unplaced_nodup ι) v S
-  set S₀ : Stacks T A :=
-    { S with R := fun y => if y ∈ unplaced ι then blank :: S.R y else S.R y } with hS₀
-  have hS₀ι : ∀ j, S₀.R (ι j) = S.R (ι j) := fun j => by simp [S₀, hun j]
-  -- the host bank represented by `S₀`
-  let w₀ : Tapes T A := ⟨fun _ => 0, fun y z => readAt blank (S₀.L y) (S₀.R y) z⟩
-  let W := Placement.replace pe w₀ ⟨fun _ => 0, fun j => wordTape (l₀ j)⟩
-  have hrep : RepT W S₀.L S₀.R := by
-    intro y z
-    by_cases hy : ∃ j, ι j = y
-    · obtain ⟨j, rfl⟩ := hy
-      rw [InjectivePlacement.replace_tape_slot, InjectivePlacement.replace_head_slot]
-      show wordTape (l₀ j) z = readAt blank (S.L (ι j)) (S₀.R (ι j)) (z - 0)
-      rw [hL j, hS₀ι, hR j, sub_zero, readAt_nil_left]
-    · have hy' : ∀ j, ι j ≠ y := fun j hj => hy ⟨j, hj⟩
-      rw [InjectivePlacement.replace_tape_other _ _ _ _ _ _ hy',
-        InjectivePlacement.replace_head_other _ _ _ _ _ _ hy']
-      show readAt blank (S₀.L y) (S₀.R y) z = readAt blank (S₀.L y) (S₀.R y) (z - 0)
-      rw [sub_zero]
-  have hpre := Placement.hoare_at hM pe W (Placement.active_replace pe w₀ _)
-  -- step 2: run the placed program
-  obtain ⟨v₂, S₂, W', ⟨w', hw', hW'⟩, hrep', hu₂, hinp₂, hout₂, hlen₂, hfr₂, m₂, hm₂, he₂⟩ :=
-    foreign_exec_frame body _ (placed_idle_injective M ι hι _) hpre v S₀ W rfl hrep
-  subst hw'
-  have hsweep : ∀ j, sweep (S₂.L (ι j)) (S₂.R (ι j)) = l₁ j := by
-    intro j
-    refine filter_window (S₂.L (ι j)) (S₂.R (ι j)) (W'.head (ι j)) _ (hb j) (fun z => ?_)
-    have := hrep' (ι j) z
-    rw [hW', InjectivePlacement.replace_tape_slot] at this
-    rw [hW', ← this]
-  have hS₂un : ∀ y, (∀ j, ι j ≠ y) → S₂.L y = S.L y ∧ S₂.R y = blank :: S.R y := by
-    intro y hy
-    have hu : y ∈ unplaced ι := (mem_unplaced ι y).2 hy
-    have h₂ := idle_stacks_eq (hfr₂ y hy) (by simp [S₀, hu])
-    exact ⟨h₂.1, h₂.2.trans (by simp [S₀, hu])⟩
-  -- step 3: normalize the placed registers
-  obtain ⟨v₃, n₃, hu₃, hn₃, he₃⟩ :=
-    normList_exec body (List.ofFn ι) (List.nodup_ofFn.2 hι) v₂ S₂
-  -- step 4: unmark the unplaced registers
-  have he₄ := dropList_exec body (unplaced ι) (unplaced_nodup ι) v₃ { S₂ with
-    L := fun i => if i ∈ List.ofFn ι then [] else S₂.L i
-    R := fun i => if i ∈ List.ofFn ι then sweep (S₂.L i) (S₂.R i) else S₂.R i }
-  refine ⟨v₃, ((unplaced ι).length + 1) + (m₂ + (n₃ + ((unplaced ι).length + 1))),
-    fun y => if y ∈ unplaced ι then
-      (if y ∈ List.ofFn ι then sweep (S₂.L y) (S₂.R y) else S₂.R y).tail
-      else if y ∈ List.ofFn ι then sweep (S₂.L y) (S₂.R y) else S₂.R y,
-    hu₃.trans hu₂, ?_, fun j => ?_, fun y hy => ?_,
-    Exec.cast (Exec.seq he₀ (Exec.seq he₂ (Exec.seq he₃ he₄))) rfl ?_⟩
-  · rw [List.map_ofFn, List.sum_ofFn] at hn₃
-    have hsum : ∑ j, ((fun i => 6 * ((S₂.L i).length + (S₂.R i).length) + 6) ∘ ι) j ≤
-        ∑ j, (6 * (S.R (ι j)).length + (12 * k + 6)) := by
-      apply Finset.sum_le_sum
-      intro j _
-      have h1 := hlen₂ (ι j)
-      have h2 : S₀.L (ι j) = [] := hL j
-      rw [h2, hS₀ι] at h1
-      simp only [Function.comp_apply, List.length_nil] at h1 ⊢
-      omega
-    have hR : ∑ j : Fin s, (6 * (S.R (ι j)).length + (12 * k + 6)) =
-        6 * ∑ j, (S.R (ι j)).length + s * (12 * k + 6) := by
-      rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ,
-        Fintype.card_fin, smul_eq_mul]
-    have key : k * (T + 5) + s * (12 * k + 6) = (T + 12 * s + 5) * k + 6 * s := by ring
-    have hu := unplaced_length_le ι
-    omega
-  · have hm : ι j ∈ List.ofFn ι := List.mem_ofFn.2 ⟨j, rfl⟩
-    simp only [hun j, hm, ite_true, ite_false]
-    exact hsweep j
-  · have hm : y ∉ List.ofFn ι := fun hm => by
-      obtain ⟨j, hj⟩ := List.mem_ofFn.1 hm
-      exact hy j hj
-    have hu : y ∈ unplaced ι := (mem_unplaced ι y).2 hy
-    simp only [hu, hm, ite_true, ite_false, (hS₂un y hy).2, List.tail_cons]
-  · congr 1
-    refine Stacks.ext hinp₂ hout₂ ?_ rfl
-    funext y
-    by_cases hy : y ∈ List.ofFn ι
-    · obtain ⟨j, rfl⟩ := List.mem_ofFn.1 hy
-      simp only [hy, ite_true, hL j]
-    · have hy' : ∀ j, ι j ≠ y := fun j hj => hy (List.mem_ofFn.2 ⟨j, hj⟩)
-      simp only [hy, ite_false, (hS₂un y hy').1]
-
-end PlacedRaw
-
-/-! ### Bit formats -/
 
 /-- The `w` low bits of `v`, least significant first. -/
 def rpLsb (w v : ℕ) : List Bool := List.ofFn fun t : Fin w => v.testBit t

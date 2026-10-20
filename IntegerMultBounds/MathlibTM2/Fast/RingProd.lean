@@ -29,8 +29,8 @@ import Mathlib.Tactic.ENatToNat
 
 `rpProg` computes the pointwise negacyclic products `pwC p u v n = Q_p(u_n v_n / r)` (`r = 2^l`,
 `Mult/SynthErr`) of the first `M` records of two numerator arrays `X`, `Y` by running the
-vendored signed ring product (`RingProdBase`) once on all `M` record pairs as a placed foreign
-machine.
+vendored signed ring product (`RingProdBase`) once on all `M` record pairs, its word program
+run directly on the host registers `ι` (`rpHost`).
 
 **Formats.** A numerator array `X : ℕ → Fin r → GaussianInt` has grid records
 `rpGrid p X n c = X n c / 2^p`. Its stream on a host register is
@@ -52,8 +52,8 @@ and by the product scale `2^(2p)` back to scale `2^p`.
    `ta`, `tb` (most significant on top); moving `ta` and then `tb` onto `acc` appends the
    coefficient's vendored chunk to `acc` in reverse. Finally `acc` moves onto the data register
    and `sv` back onto the operand register.
-2. `placedRun` of `rpMachine` on the 91 registers `ι`: header on `d0 = ι 0`, the operand arrays on
-   `d1`, `d2`, the output array onto `d3` (`rp_placed_runs`).
+2. `rpHost` on the 91 registers `ι`: header on `d0 = ι 0`, the operand arrays on `d1`, `d2`, the
+   output array onto `d3`, within `3 · rpTime` steps (`rp_placed_runs`).
 3. `uclear` empties `d1` and `d2`.
 4. `rpDec`: per coefficient, two words of `rpCpyAuto` move its real and its imaginary word from
    `d3` to `ta`, `tb` (least significant bit on top), one word of `rpZipAuto` pairs them into the
@@ -69,9 +69,10 @@ record: `re² + im² ≤ 2^(2p)` per coefficient (`DiskGrid`; `rp_diskGrid_of_no
 `‖rpGrid p X n c‖ ≤ 1`).
 
 **Cost.** `rpCost T p l w M = (T + 1097) · rpTime p l w M + 100 M 2^l w + 6 H + 2 T + 600`,
-`H` the header length: the vendored time `rpTime` (`pwCost` and sealing) at `T + 1097` host steps
-per transition (`T + 5` for `foreign`, `12 · 91` for the placement passes), and the format
-conversions. `rpCost_eq`: `rpCost = M · rpRecCost + rpFixCost`, with
+`H` the header length: the vendored time `rpTime` (`pwCost` and sealing) and the format
+conversions. The host run takes only `3 · rpTime` steps (`rp_placed_runs`); the factor
+`T + 1097` is kept from the earlier simulation of the compiled machine so that the budgets
+downstream are unchanged. `rpCost_eq`: `rpCost = M · rpRecCost + rpFixCost`, with
 `rpRecCost T p l w = (T + 1097) (ringCost W r w (p + l) (W r) + r (180 w + 400) + 204) + 100 r w`
 (`W = wOf p l w`) and `rpFixCost` independent of `M`. `rpCost_le`: the same with
 `rpRecBound`, where `ringCost` is replaced by the vendored bound `rpRingBound N`
@@ -122,11 +123,12 @@ def rpDec : Pr P T Q A U :=
   .seq (rpWhile rg .d3 (rpDecBody rg)) (moveR (rg .acc) (rg .out) id)
 
 /-- The pointwise ring products of the operand streams `xs`, `ys` onto `out`: encode both
-operands onto `d1`, `d2`, run the placed vendored ring product, clear `d1`, `d2`, decode `d3`. -/
-def rpProg (ι : Fin 91 → Fin T) (hι : Function.Injective ι) (hT : 91 ≤ T)
-    (hQ : rpStates ≤ Q) : Pr P T Q A U :=
+operands onto `d1`, `d2`, run the ring product on the registers `ι`, clear `d1`, `d2`, decode
+`d3`. -/
+def rpProg (ι : Fin 91 → Fin T) (_hι : Function.Injective ι) (_hT : 91 ≤ T)
+    (_hQ : rpStates ≤ Q) : Pr P T Q A U :=
   .seq (rpEnc rg .xs .d1) <| .seq (rpEnc rg .ys .d2) <|
-  .seq (placedRun (rpMachine A hQ) ι hι hT) <|
+  .seq (rpHost ι) <|
   .seq (uclear (rg .d1)) <| .seq (uclear (rg .d2)) (rpDec rg)
 
 end Programs
@@ -419,25 +421,7 @@ theorem rp_dec_runs (h : RpLayout rg ι) {w : ℕ} (hw : 1 ≤ w) (zs : List Gau
   · funext r
     cases r <;> simp [hacc]
 
-/-! ### The placed vendored run -/
-
-/-- The cells of the raw bank. -/
-lemma rp_sum_cells (A : ℕ) (hdr F G out : List Bool) :
-    ∑ j : Fin 91, (rpCells A hdr F G out j).length =
-      hdr.length + F.length + G.length + out.length := by
-  set f : ℕ → ℕ := fun n => if n = 0 then hdr.length else if n = 1 then F.length
-    else if n = 2 then G.length else if n = 3 then out.length else 0 with hf
-  have e : ∀ j : Fin 91, (rpCells A hdr F G out j).length = f j.val := by
-    intro j
-    simp only [rpCells, hf]
-    split_ifs <;> simp
-  rw [Finset.sum_congr rfl (fun j _ => e j), Fin.sum_univ_eq_sum_range f 91, Finset.range_eq_Ico,
-    ← Finset.sum_Ico_consecutive _ (by norm_num : 0 ≤ 4) (by norm_num : 4 ≤ 91),
-    Finset.sum_eq_zero (s := Finset.Ico 4 91) (fun i hi => by
-      simp only [Finset.mem_Ico] at hi
-      simp only [hf]
-      split_ifs <;> omega)]
-  simp [Finset.sum_range_succ, hf]
+/-! ### The ring product run -/
 
 /-- A register outside the data registers is not a placed register. -/
 lemma RpLayout.ι_ne (h : RpLayout rg ι) {r : RpReg} (h0 : r ≠ .d0) (h1 : r ≠ .d1) (h2 : r ≠ .d2)
@@ -455,79 +439,28 @@ lemma RpLayout.ι_ne (h : RpLayout rg ι) {r : RpReg} (h0 : r ≠ .d0) (h1 : r �
     · obtain rfl : j = 3 := Fin.ext hj
       exact h3 (h.rg_inj (e.symm.trans h.d3.symm))
 
-/-- The placed vendored ring product: the output array onto `d3`. -/
-theorem rp_placed_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) {p l w : ℕ}
+/-- The ring product on the placed registers: the output array onto `d3`. -/
+theorem rp_placed_runs (h : RpLayout rg ι) (hQ : rpStates ≤ Q) {p l w : ℕ}
     {fs gs : List (Rec (2 ^ l))} (hp : 1 ≤ p) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
     (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2)
     {ρ : RpReg → List (Fin (A + 4))} (h0 : ρ .d0 = (header p (2 ^ l) w).map bitSymbol)
     (h1 : ρ .d1 = (array w fs).map bitSymbol) (h2 : ρ .d2 = (array w gs).map bitSymbol)
     (h3 : ρ .d3 = []) :
-    RpRuns body rg ι (placedRun (rpMachine A hQ) ι h.ι_inj hT) ρ
+    RpRuns body rg ι (rpHost ι) ρ
       (Function.update ρ .d3 ((array w (List.zipWith (prodRec p) fs gs)).map bitSymbol))
-      ((T + 1097) * rpTime p l w fs.length +
-        6 * ((header p (2 ^ l) w).length + 4 * 2 ^ l * w * fs.length) + 2 * T + 555) := by
+      (3 * rpTime p l w fs.length) := by
   intro v S hc hS
-  set hdr := header p (2 ^ l) w
-  set out := array w (List.zipWith (prodRec p) fs gs)
-  have hR : ∀ j, S.R (ι j) = rpCells A hdr (array w fs) (array w gs) [] j := by
-    intro j
-    by_cases j0 : j.val = 0
-    · obtain rfl : j = 0 := Fin.ext j0
-      rw [← h.d0, hS, h0]; simp [rpCells, hdr]
-    by_cases j1 : j.val = 1
-    · obtain rfl : j = 1 := Fin.ext j1
-      rw [← h.d1, hS, h1]; simp [rpCells]
-    by_cases j2 : j.val = 2
-    · obtain rfl : j = 2 := Fin.ext j2
-      rw [← h.d2, hS, h2]; simp [rpCells]
-    by_cases j3 : j.val = 3
-    · obtain rfl : j = 3 := Fin.ext j3
-      rw [← h.d3, hS, h3]; simp [rpCells]
-    rw [hc.2 j (by omega)]
-    simp [rpCells, j0, j1, j2, j3]
-  obtain ⟨v', n, R', hu, hn, hR'ι, hR'o, he⟩ := rp_placedRun_exec body (rpMachine A hQ) ι
-    h.ι_inj hT (rpMachine_hoare A hQ hp hw hlen hf hg) (rp_blank_not_mem_cells A _ _ _ _) v S
-    hc.1 hR
-  have hpriv : ∀ j : Fin 91, 4 ≤ j.val → R' (ι j) = S.R (ι j) := by
-    intro j hj
-    rw [hR'ι, hc.2 j hj]
-    have : ¬ j.val = 0 ∧ ¬ j.val = 1 ∧ ¬ j.val = 2 ∧ ¬ j.val = 3 := by omega
-    simp [rpCells, this]
-  refine ⟨v', _, n, hu, ?_, he, ?_, ⟨rfl, rfl, rfl, ?_⟩⟩
-  · have hsum : ∑ j, (S.R (ι j)).length = hdr.length + 4 * 2 ^ l * w * fs.length := by
-      simp only [hR]
-      rw [rp_sum_cells]
-      simp [length_array, hlen]
-      ring
-    rw [hsum] at hn
-    simpa using hn
-  · intro r
-    show R' (rg r) = _
-    cases r
-    case d0 => rw [h.d0, hR'ι]; simp [rpCells, h0, hdr]
-    case d1 => rw [h.d1, hR'ι]; simp [rpCells, h1]
-    case d2 => rw [h.d2, hR'ι]; simp [rpCells, h2]
-    case d3 => rw [h.d3, hR'ι]; simp [rpCells, out]
-    all_goals
-      rw [hR'o _ (fun j => h.ι_ne (by decide) (by decide) (by decide) (by decide) j), hS]
-      simp
-  · intro k hk
-    by_cases hk' : ∃ j, ι j = k
-    · obtain ⟨j, rfl⟩ := hk'
-      by_cases j4 : 4 ≤ j.val
-      · exact hpriv j j4
-      · exfalso
-        rcases (show j.val = 0 ∨ j.val = 1 ∨ j.val = 2 ∨ j.val = 3 by omega) with
-          hj | hj | hj | hj
-        · obtain rfl : j = 0 := Fin.ext hj
-          exact hk .d0 h.d0
-        · obtain rfl : j = 1 := Fin.ext hj
-          exact hk .d1 h.d1
-        · obtain rfl : j = 2 := Fin.ext hj
-          exact hk .d2 h.d2
-        · obtain rfl : j = 3 := Fin.ext hj
-          exact hk .d3 h.d3
-    · exact hR'o k (fun j hj => hk' ⟨j, hj⟩)
+  obtain ⟨v', n, hu, hn, he⟩ := rpHost_exec body h.ι_inj hQ hp hw hlen hf hg v S hc.1
+    (by rw [← h.d0, hS, h0]) (by rw [← h.d1, hS, h1]) (by rw [← h.d2, hS, h2])
+    (by rw [← h.d3, hS, h3]) hc.2
+  refine ⟨v', _, n, hu, hn, he, fun r => ?_, ⟨rfl, rfl, rfl, fun k hk => ?_⟩⟩
+  · by_cases hr : r = .d3
+    · subst hr; simp [h.d3]
+    · have hne : rg r ≠ ι 3 := fun e => hr (h.rg_inj (e.trans h.d3.symm))
+      simp [hne, hr]
+      exact hS r
+  · have hne : k ≠ ι 3 := fun e => hk .d3 (h.d3.trans e.symm)
+    simp [hne]
 
 end Coeff
 
@@ -658,7 +591,7 @@ theorem rpProg_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (
     (rpStream M Y) (ρ := ρ₁) (by simp [ρ₁, hys]) (by simp [ρ₁, hwn]) (by simp [ρ₁, hsv])
     (by simp [ρ₁, hta]) (by simp [ρ₁, htb]) (by simp [ρ₁, hacc]) (by simp [ρ₁, htmp])
   set ρ₂ := Function.update ρ₁ .d2 (((rpStream M Y).flatMap (rpChunk w)).map bitSymbol ++ ρ₁ .d2)
-  have s3 := rp_placed_runs (body := body) h hT hQ (fs := fs) (gs := gs) hp hw
+  have s3 := rp_placed_runs (body := body) h hQ (fs := fs) (gs := gs) hp hw
     (by simp [fs, gs]) hdf hdg (ρ := ρ₂) (by simp [ρ₂, ρ₁, hd0]) (by simp [ρ₂, ρ₁, hd1, hF])
     (by simp [ρ₂, ρ₁, hd2, hG]) (by simp [ρ₂, ρ₁, hd3])
   set ρ₃ := Function.update ρ₂ .d3 ((array w (List.zipWith (prodRec p) fs gs)).map bitSymbol)
@@ -673,6 +606,7 @@ theorem rpProg_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (
   refine ((s1.seq h (s2.seq h (s3.seq h (s4.seq h (s5.seq h s6))))).mono ?_).congr ?_
   · simp only [length_rpStream, hfl]
     unfold rpCost
+    have hrp : 3 * rpTime p l w M ≤ (T + 1097) * rpTime p l w M := Nat.mul_le_mul_right _ (by omega)
     have hw3 : 3 ≤ w := by omega
     have hK : M * 2 ^ l * 44 ≤ M * 2 ^ l * (21 * w) := Nat.mul_le_mul_left _ (by omega)
     nlinarith

@@ -6,7 +6,6 @@ public import IntegerMultBounds.MathlibTM2.Host.Index
 public import IntegerMultBounds.Schoenhage.SSClean
 public import IntegerMultBounds.Schoenhage.SSCost
 public import IntegerMultBounds.MathlibTM2.Host.WordCmd
-import IntegerMultBounds.Machine.PlacementBank
 
 /-!
 # Schönhage–Strassen multiplication as a host subroutine
@@ -21,12 +20,6 @@ every other tape empty) to the bank `SS.doneBank (topN m) (a * b)` (the word `rw
 on `tIn`) within `SS.cleanBound m` steps. The host runs it as `WordCmd.tcompile ι ssClean` on the
 registers `ι` (`WordCmd.tcompile_runs`, within `3 (SS.cleanBound m + 1)` host steps), with
 `SS.states = WordCmd.cmdStates ssClean` control states.
-
-**Placed runs.** `placedRun M ι` runs a multitape program placed on an injective family `ι` of
-host registers: it marks every unplaced register, runs the placed program with `foreign`,
-normalizes the placed registers and unmarks (the pattern of `placedSwapProg`). `placedRun_exec`
-turns an exact contract between word-tape banks into an execution. The ring product
-(`Fast/RingProdBase`) runs this way; `ssMul` does not.
 
 **Register interface of `ssMul ι … xa xb xn xc`.**
 * `ι : Fin 64 → Fin T` (injective) holds the multiplier's tapes; these registers are empty
@@ -130,185 +123,10 @@ theorem doneBank_left (N v : ℕ) (j : Fin 64) : (doneBank N v j).left = [] := b
 
 end SS
 
-/-! ### Running a placed word-tape program with an exact contract -/
-
-section PlacedRun
-
-open IntegerMultBounds.Schoenhage
-
-variable {s T Q A : ℕ} {U F : Type}
-
-/-- Run a program placed on host registers `ι`: mark every unplaced register, run, normalize
-the placed registers, unmark. -/
-def placedRun (M : Program s Q A) (ι : Fin s → Fin T) (hι : Function.Injective ι) (hT : s ≤ T) :
-    Pr F T Q A U :=
-  .seq (markList (unplaced ι))
-    (.seq (foreign
-        (Placement.placed M (InjectivePlacement.placement ι hι (Nat.add_sub_cancel' hT))))
-      (.seq (normList (List.ofFn ι)) (dropList (unplaced ι))))
-
-/-- Word cells are blank-free. -/
-lemma SS.blank_not_mem_cells (ws : List (List Bool)) : (blank : Fin (A + 4)) ∉ cells ws := by
-  intro h
-  simp only [cells, List.mem_map] at h
-  obtain ⟨o, -, ho⟩ := h
-  exact sym_ne_blank o ho
-
-/-- A word tape is the word tape of its cells. -/
-lemma SS.wtape_eq_wordTape (σ : WTape) : σ.tape (a := A) = wordTape (cells σ.words) := rfl
-
-/-- Running a placed program with an exact contract between word-tape banks. The placed
-registers hold the start bank (heads at cell `0`), every left stack among them empty. Afterwards
-the placed registers hold the cells of the final bank with empty left stacks, and every other
-stack is unchanged. -/
-theorem placedRun_exec (body : F → Pr F T Q A U) (M : Program s Q A) (ι : Fin s → Fin T)
-    (hι : Function.Injective ι) (hT : s ≤ T) {σ₀ σ₁ : Fin s → WTape} {k : ℕ}
-    (hM : HoareTime M (· = enc σ₀) (· = enc σ₁) k) (h0 : ∀ j, (σ₀ j).left = [])
-    (v : HS T Q A U) (S : Stacks T A) (hL : ∀ j, S.L (ι j) = [])
-    (hR : ∀ j, S.R (ι j) = cells (σ₀ j).right) :
-    ∃ v' n R', v'.user = v.user ∧
-      n ≤ (T + 12 * s + 5) * k + 6 * ∑ j, (S.R (ι j)).length + 2 * T + 6 * s + 9 ∧
-      (∀ j, R' (ι j) = cells (σ₁ j).words) ∧ (∀ y, (∀ j, ι j ≠ y) → R' y = S.R y) ∧
-      Exec body (placedRun M ι hι hT) (mk v S) n (mk v' { S with R := R' }) := by
-  classical
-  set pe := InjectivePlacement.placement ι hι (Nat.add_sub_cancel' hT) with hpe
-  have hun : ∀ j, ι j ∉ unplaced ι := fun j hm => (mem_unplaced ι _).1 hm j rfl
-  -- step 1: mark the unplaced registers
-  have he₀ := markList_exec body (unplaced ι) (unplaced_nodup ι) v S
-  set S₀ : Stacks T A :=
-    { S with R := fun y => if y ∈ unplaced ι then blank :: S.R y else S.R y } with hS₀
-  have hS₀ι : ∀ j, S₀.R (ι j) = S.R (ι j) := fun j => by simp [S₀, hun j]
-  -- the host bank represented by `S₀`
-  let w₀ : Tapes T A := ⟨fun _ => 0, fun y z => readAt blank (S₀.L y) (S₀.R y) z⟩
-  let W := Placement.replace pe w₀ (enc σ₀)
-  have hrep : RepT W S₀.L S₀.R := by
-    intro y z
-    by_cases hy : ∃ j, ι j = y
-    · obtain ⟨j, rfl⟩ := hy
-      rw [InjectivePlacement.replace_tape_slot, InjectivePlacement.replace_head_slot]
-      show (σ₀ j).tape z = readAt blank (S.L (ι j)) (S₀.R (ι j)) (z - (σ₀ j).pos)
-      rw [WTape.pos, h0 j, hL j, hS₀ι, hR j, clen_nil, Nat.cast_zero, sub_zero, readAt_nil_left,
-        SS.wtape_eq_wordTape, WTape.words, h0 j, List.reverse_nil, List.nil_append]
-    · have hy' : ∀ j, ι j ≠ y := fun j hj => hy ⟨j, hj⟩
-      rw [InjectivePlacement.replace_tape_other _ _ _ _ _ _ hy',
-        InjectivePlacement.replace_head_other _ _ _ _ _ _ hy']
-      show readAt blank (S₀.L y) (S₀.R y) z = readAt blank (S₀.L y) (S₀.R y) (z - 0)
-      rw [sub_zero]
-  have hpre := Placement.hoare_at hM pe W (Placement.active_replace pe w₀ _)
-  -- step 2: run the placed program
-  obtain ⟨v₂, S₂, W', ⟨w', hw', hW'⟩, hrep', hu₂, hinp₂, hout₂, hlen₂, hfr₂, m₂, hm₂, he₂⟩ :=
-    foreign_exec_frame body _ (placed_idle_injective M ι hι _) hpre v S₀ W rfl hrep
-  subst hw'
-  have hsweep : ∀ j, sweep (S₂.L (ι j)) (S₂.R (ι j)) = cells (σ₁ j).words := by
-    intro j
-    refine filter_window (S₂.L (ι j)) (S₂.R (ι j)) (W'.head (ι j)) _ (SS.blank_not_mem_cells _)
-      (fun z => ?_)
-    have := hrep' (ι j) z
-    rw [hW', InjectivePlacement.replace_tape_slot] at this
-    rw [hW', ← this]
-    rfl
-  have hS₂un : ∀ y, (∀ j, ι j ≠ y) → S₂.L y = S.L y ∧ S₂.R y = blank :: S.R y := by
-    intro y hy
-    have hu : y ∈ unplaced ι := (mem_unplaced ι y).2 hy
-    have h₂ := idle_stacks_eq (hfr₂ y hy) (by simp [S₀, hu])
-    exact ⟨h₂.1, h₂.2.trans (by simp [S₀, hu])⟩
-  -- step 3: normalize the placed registers
-  obtain ⟨v₃, n₃, hu₃, hn₃, he₃⟩ :=
-    normList_exec body (List.ofFn ι) (List.nodup_ofFn.2 hι) v₂ S₂
-  -- step 4: unmark the unplaced registers
-  have he₄ := dropList_exec body (unplaced ι) (unplaced_nodup ι) v₃ { S₂ with
-    L := fun i => if i ∈ List.ofFn ι then [] else S₂.L i
-    R := fun i => if i ∈ List.ofFn ι then sweep (S₂.L i) (S₂.R i) else S₂.R i }
-  refine ⟨v₃, ((unplaced ι).length + 1) + (m₂ + (n₃ + ((unplaced ι).length + 1))),
-    fun y => if y ∈ unplaced ι then
-      (if y ∈ List.ofFn ι then sweep (S₂.L y) (S₂.R y) else S₂.R y).tail
-      else if y ∈ List.ofFn ι then sweep (S₂.L y) (S₂.R y) else S₂.R y,
-    hu₃.trans hu₂, ?_, fun j => ?_, fun y hy => ?_,
-    Exec.cast (Exec.seq he₀ (Exec.seq he₂ (Exec.seq he₃ he₄))) rfl ?_⟩
-  · rw [List.map_ofFn, List.sum_ofFn] at hn₃
-    have hsum : ∑ j, ((fun i => 6 * ((S₂.L i).length + (S₂.R i).length) + 6) ∘ ι) j ≤
-        ∑ j, (6 * (S.R (ι j)).length + (12 * k + 6)) := by
-      apply Finset.sum_le_sum
-      intro j _
-      have h1 := hlen₂ (ι j)
-      have h2 : S₀.L (ι j) = [] := hL j
-      rw [h2, hS₀ι] at h1
-      simp only [Function.comp_apply, List.length_nil] at h1 ⊢
-      omega
-    have hR : ∑ j : Fin s, (6 * (S.R (ι j)).length + (12 * k + 6)) =
-        6 * ∑ j, (S.R (ι j)).length + s * (12 * k + 6) := by
-      rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ,
-        Fintype.card_fin, smul_eq_mul]
-    have key : k * (T + 5) + s * (12 * k + 6) = (T + 12 * s + 5) * k + 6 * s := by ring
-    have hu := unplaced_length_le ι
-    omega
-  · have hm : ι j ∈ List.ofFn ι := List.mem_ofFn.2 ⟨j, rfl⟩
-    simp only [hun j, hm, ite_true, ite_false]
-    exact hsweep j
-  · have hm : y ∉ List.ofFn ι := fun hm => by
-      obtain ⟨j, hj⟩ := List.mem_ofFn.1 hm
-      exact hy j hj
-    have hu : y ∈ unplaced ι := (mem_unplaced ι y).2 hy
-    simp only [hu, hm, ite_true, ite_false, (hS₂un y hy).2, List.tail_cons]
-  · congr 1
-    refine Stacks.ext hinp₂ hout₂ ?_ rfl
-    funext y
-    by_cases hy : y ∈ List.ofFn ι
-    · obtain ⟨j, rfl⟩ := List.mem_ofFn.1 hy
-      simp only [hy, ite_true, hL j]
-    · have hy' : ∀ j, ι j ≠ y := fun j hj => hy (List.mem_ofFn.2 ⟨j, hj⟩)
-      simp only [hy, ite_false, (hS₂un y hy').1]
-
-end PlacedRun
-
-/-! ### The multiplier over the host alphabet -/
-
 namespace SS
 
-open IntegerMultBounds.Schoenhage IntegerMultBounds.Schoenhage.Schedule
-
-/-- The binary alphabet `Fin 4` inside the host alphabet `Fin (A + 4)`; every symbol keeps its
-code. -/
-def code (A : ℕ) : Alphabet.Encoding 0 A where
-  encode x := ⟨x.val, by have := x.isLt; omega⟩
-  decode y := if h : y.val < 4 then ⟨y.val, by omega⟩ else blank
-  decode_encode x := by
-    have : x.val < 4 := x.isLt
-    simp [this]
-
-/-- Word symbols keep their codes. -/
-lemma code_sym (A : ℕ) (o : Option Bool) : (code A).encode (sym o) = sym o := by
-  cases o with
-  | none => rfl
-  | some b => cases b <;> rfl
-
-/-- Encoding commutes with reading a word tape. -/
-lemma code_wordTape (A : ℕ) (l : List (Fin (0 + 4))) (z : ℤ) :
-    (code A).encode (wordTape l z) = wordTape (l.map (code A).encode) z := by
-  unfold wordTape
-  split_ifs
-  · rw [List.getElem?_map]
-    cases l[z.toNat]? <;> rfl
-  · rfl
-
-/-- Encoding word cells gives the host word cells. -/
-lemma code_cells (A : ℕ) (ws : List (List Bool)) :
-    (cells (a := 0) ws).map (code A).encode = cells (a := A) ws := by
-  simp only [cells, List.map_map]
-  congr 1
-  funext o
-  exact code_sym A o
-
-/-- Encoding a word-tape bank over `Fin 4` into the host alphabet. -/
-lemma mapTapes_enc {t : ℕ} (A : ℕ) (σ : Fin t → WTape) :
-    Alphabet.mapTapes (code A) (enc (a := 0) σ) = enc (a := A) σ := by
-  refine Placement.Tapes.ext' (fun x => rfl) (fun x => ?_)
-  funext z
-  show (code A).encode (wordTape (cells (σ x).words) z) = wordTape (cells (σ x).words) z
-  rw [code_wordTape, code_cells]
-
 /-- The control states the cleaned multiplier needs on the host. -/
-abbrev states : ℕ := WordCmd.cmdStates ssClean
+abbrev states : ℕ := WordCmd.cmdStates Schoenhage.ssClean
 
 end SS
 
