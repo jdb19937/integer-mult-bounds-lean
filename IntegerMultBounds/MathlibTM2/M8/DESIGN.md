@@ -467,6 +467,15 @@ PR97's plain-frame node (section 5).
   adapters need, and the machine side.
 
 **Atom adapters.**
+- Chosen design (2026-10-20): a coordinate carries its `f` atoms, with atomwise arithmetic in
+  `S = (ℤ/q^w)^f`, and the atom reversal is a ring involution `σ` of `S`. The field programs and
+  the control stay the network's, at `m` coordinates, for every `f`. `TwistedExchange.lean`:
+  conjugating the tail by `σ` keeps fixed transformations, twists the cross shear to
+  `d ← d + K σ(h)` and every interchange to `h_i ← σ(d_j)`, `d_j ← σ(h_i)`; so the reversed
+  exchange over `S` is `twisted_rev_factor`. `TwistedProgram.lean`: the twisted semantics
+  `twRun` of the unchanged field operations is the conjugated ordinary run (`twRun_eq`) when the
+  coefficients are scalars, and `revOps_twRun` runs the reversed exchange program. Remaining:
+  the coordinate stages with atomwise carries and a reversed head read.
 - Each lower-triangular factor expands to unit scalings and additions from earlier to later
   fields.
 - A cross-bank update `D_{i,t} += k H_{j,f−1−t}` reads an earlier head atom. So the
