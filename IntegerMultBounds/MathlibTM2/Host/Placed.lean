@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Host.Core
+public import IntegerMultBounds.MathlibTM2.Host.Foreign
+public import IntegerMultBounds.MathlibTM2.Host.StackLoops
 public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-!
@@ -159,73 +160,5 @@ theorem foreign_exec_frame (M : Program T Q A) {I : Fin T → Prop} (hI : Idle M
 lemma idle_stacks_eq {L L' R R' : List (Fin (A + 4))} (h : L' = L ∧ (R' = R ∨ R' = padR R))
     (hR : R ≠ []) : L' = L ∧ R' = R :=
   ⟨h.1, h.2.elim id (fun h' => h'.trans (padR_of_ne_nil hR))⟩
-
-/-! ### Marking right stacks -/
-
-/-- Run `a i` for each tape `i` of a list, where `a i` maps the right stack of tape `i` by `g`. -/
-theorem eachR_exec (a : Fin T → Act T Q A U) (g : List (Fin (A + 4)) → List (Fin (A + 4)))
-    (ha : ∀ i v S, (a i).run (mk v S) = mk v { S with R := Function.update S.R i (g (S.R i)) }) :
-    ∀ (l : List (Fin T)), l.Nodup → ∀ (v : HS T Q A U) (S : Stacks T A),
-      Exec body (Prog.seqList (l.map fun i => .act (a i))) (mk v S) (l.length + 1)
-        (mk v { S with R := fun i => if i ∈ l then g (S.R i) else S.R i }) := by
-  intro l
-  induction l with
-  | nil =>
-      intro _ v S
-      have : ({ S with R := fun i => if i ∈ ([] : List (Fin T)) then g (S.R i) else S.R i } :
-          Stacks T A) = S := by cases S; simp
-      rw [this]
-      exact Exec.act .done (mk v S)
-  | cons i rest ih =>
-      intro hnd v S
-      rw [List.nodup_cons] at hnd
-      have he₂ := ih hnd.2 v { S with R := Function.update S.R i (g (S.R i)) }
-      refine Exec.cast (Exec.seq ((ha i v S) ▸ Exec.act (body := body) (a i) (mk v S)) he₂)
-        (by simp; ring) ?_
-      congr 2
-      funext j
-      by_cases hj : j = i
-      · subst hj; simp [hnd.1]
-      · simp [hj]
-
-/-- Push a blank onto the right stack of tape `i`. -/
-def markStep (i : Fin T) : Act T Q A U := .push (.rt i) (fun _ => blank) .done
-
-/-- Pop the right stack of tape `i`, discarding the symbol. -/
-def dropStep (i : Fin T) : Act T Q A U := .pop (.rt i) (fun v _ => v) .done
-
-/-- Push a blank onto the right stack of each tape of a list. -/
-def markList (l : List (Fin T)) : Pr P T Q A U := Prog.seqList (l.map fun i => .act (markStep i))
-
-/-- Pop the right stack of each tape of a list. -/
-def dropList (l : List (Fin T)) : Pr P T Q A U := Prog.seqList (l.map fun i => .act (dropStep i))
-
-theorem markList_exec (l : List (Fin T)) (hl : l.Nodup) (v : HS T Q A U) (S : Stacks T A) :
-    Exec body (markList l) (mk v S) (l.length + 1)
-      (mk v { S with R := fun i => if i ∈ l then blank :: S.R i else S.R i }) :=
-  eachR_exec body markStep (fun r => blank :: r)
-    (fun i v S => by simp [markStep, Action.run, update_rt]) l hl v S
-
-theorem dropList_exec (l : List (Fin T)) (hl : l.Nodup) (v : HS T Q A U) (S : Stacks T A) :
-    Exec body (dropList l) (mk v S) (l.length + 1)
-      (mk v { S with R := fun i => if i ∈ l then (S.R i).tail else S.R i }) :=
-  eachR_exec body dropStep List.tail
-    (fun i v S => by simp [dropStep, Action.run, update_rt]) l hl v S
-
-/-! ### Tapes outside a family -/
-
-/-- The tapes outside the range of `ι`, in increasing order. -/
-def unplaced {s : ℕ} (ι : Fin s → Fin T) : List (Fin T) :=
-  (List.finRange T).filter fun x => decide (∀ j, ι j ≠ x)
-
-lemma mem_unplaced {s : ℕ} (ι : Fin s → Fin T) (x : Fin T) :
-    x ∈ unplaced ι ↔ ∀ j, ι j ≠ x := by
-  simp [unplaced, List.mem_filter, List.mem_finRange]
-
-lemma unplaced_nodup {s : ℕ} (ι : Fin s → Fin T) : (unplaced ι).Nodup :=
-  (List.nodup_finRange T).filter _
-
-lemma unplaced_length_le {s : ℕ} (ι : Fin s → Fin T) : (unplaced ι).length ≤ T :=
-  (List.length_filter_le _ _).trans (List.length_finRange).le
 
 end IntegerMultBounds.MathlibTM2.Host

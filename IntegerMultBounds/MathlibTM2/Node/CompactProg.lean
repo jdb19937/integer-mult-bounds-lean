@@ -299,7 +299,7 @@ theorem opPass_exec (hι : Function.Injective ι) (hF : F.Valid p len) (hO : F.O
     (hQ : swapStates cxHd cxPay cxHd_inj ≤ Q) (hT : swapT 6 ≤ T) {Rr q B : ℕ} (hRr : 0 < Rr)
     (hq : ∀ g, touched F g → fieldOff len g + len g ≤ q) (hB : 1 ≤ B)
     (hs : Fin 2 → Fin 5 → List Bool)
-    (hv : ∀ c k, Counter.value (hs c k) = BinaryInterchangeRun.values
+    (hv : ∀ c k, Counter.value (hs c k) = swapValues
       (swapDimsIdx (len := len) F.b (swapFld F c) p.wc Rr q B).1
       (swapDimsIdx (len := len) F.b (swapFld F c) p.wc Rr q B).2.1
       (swapDimsIdx (len := len) F.b (swapFld F c) p.wc Rr q B).2.2 p.wc p.wc k)
@@ -391,7 +391,7 @@ theorem progPass_exec (hι : Function.Injective ι) (hF : F.Valid p len) (hO : F
     (hQ : swapStates cxHd cxPay cxHd_inj ≤ Q) (hT : swapT 6 ≤ T) {Rr q B : ℕ} (hRr : 0 < Rr)
     (hq : ∀ g, touched F g → fieldOff len g + len g ≤ q) (hB : 1 ≤ B)
     (hs : Fin 2 → Fin 5 → List Bool)
-    (hv : ∀ c k, Counter.value (hs c k) = BinaryInterchangeRun.values
+    (hv : ∀ c k, Counter.value (hs c k) = swapValues
       (swapDimsIdx (len := len) F.b (swapFld F c) p.wc Rr q B).1
       (swapDimsIdx (len := len) F.b (swapFld F c) p.wc Rr q B).2.1
       (swapDimsIdx (len := len) F.b (swapFld F c) p.wc Rr q B).2.2 p.wc p.wc k)

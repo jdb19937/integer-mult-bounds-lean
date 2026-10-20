@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.PointwiseBinary
 public import IntegerMultBounds.Machine.WordSegments
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! A pointwise finite-symbol operation followed by an actual counted rewind
 of both payload heads. The same length descriptor and work clock are reused;

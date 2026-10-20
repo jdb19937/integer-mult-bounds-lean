@@ -109,12 +109,12 @@ theorem mt_rsa_bankSum_le (hd : Fin 5 → Fin t₀) (hs : Fin 5 → List Bool) :
 
 /-- The canonical headers of `values P G B h d` have at most `P + G + B + h + d` bits. -/
 theorem mt_rsa_hsSum_le (P G B h d : ℕ) :
-    ∑ k, (sxBits (BinaryInterchangeRun.values P G B h d k)).length ≤ P + G + B + h + d := by
-  calc ∑ k, (sxBits (BinaryInterchangeRun.values P G B h d k)).length ≤
-      ∑ k, BinaryInterchangeRun.values P G B h d k :=
+    ∑ k, (sxBits (swapValues P G B h d k)).length ≤ P + G + B + h + d := by
+  calc ∑ k, (sxBits (swapValues P G B h d k)).length ≤
+      ∑ k, swapValues P G B h d k :=
         Finset.sum_le_sum fun k _ => mt_length_sxBits_le _
     _ = P + G + B + h + d := by
-        simp [Fin.sum_univ_five, BinaryInterchangeRun.values]
+        simp [Fin.sum_univ_five, swapValues]
 
 
 
@@ -269,9 +269,9 @@ theorem mt_rsa_swap_le (h : Big n) {w : ℕ} (hw : 1 ≤ w) (i : Fin (d n))
     (h12 : 2 ^ h₁ * 2 ^ h₂ = t n i * t n ⟨d n - 1, by omega⟩) (hh₁ : h₁ ≤ ℓ n)
     (hh₂ : h₂ ≤ ℓ n) (hle₁ : h₁ ≤ h₂ + 1) (hle₂ : h₂ ≤ h₁ + 1)
     (hv : ∀ k, Counter.value (hs k) =
-      BinaryInterchangeRun.values (rsaPre (t n) i) (rsaMid (t n) i) (3 * w) h₁ h₂ k)
+      swapValues (rsaPre (t n) i) (rsaMid (t n) i) (3 * w) h₁ h₂ k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) :
-    (BinaryInterchangeRun.cost (rsaPre (t n) i) (rsaMid (t n) i) (3 * w) h₁ h₂ hs : ℝ) ≤
+    (swapCost (rsaPre (t n) i) (rsaMid (t n) i) (3 * w) h₁ h₂ hs : ℝ) ≤
       swapConst * (T n * (3 * w) : ℕ) * (ℓ n : ℝ) ^ Parameters.tau + 1 := by
   have ht : ∀ j, 1 ≤ t n j := fun j => mt_t_pos n j
   obtain ⟨hP, hG⟩ := mt_rsa_pre_pos (t n) ht i hi
@@ -455,12 +455,12 @@ theorem mt_rsa_nat_le {K : ℕ} (Tm cw cW : ℕ) (h : Big n) (hd0 : 0 < d n) (w 
         rsaStepCost Tm t₀ w (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 (j + 1))).s
           (t n (rsaStepAx hd0 (j + 1))) m
           (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 (j + 1))).Lb N
-          (BinaryInterchangeRun.cost (rsaPre (t n) (rsaStepAx hd0 (j + 1)))
+          (swapCost (rsaPre (t n) (rsaStepAx hd0 (j + 1)))
             (rsaMid (t n) (rsaStepAx hd0 (j + 1))) (3 * w)
             (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 (j + 1))).Lb
             (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 0)).Lb
             (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 (j + 1))).hs)
-          (BinaryInterchangeRun.cost (rsaPre (t n) (rsaStepAx hd0 (j + 1)))
+          (swapCost (rsaPre (t n) (rsaStepAx hd0 (j + 1)))
             (rsaMid (t n) (rsaStepAx hd0 (j + 1))) (3 * w)
             (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 0)).Lb
             (rsaPipeData n (preHsA n w hd0) (rsaStepAx hd0 (j + 1))).Lb
@@ -523,9 +523,9 @@ theorem mt_rsa_nat_le {K : ℕ} (Tm cw cW : ℕ) (h : Big n) (hd0 : 0 < d n) (w 
       (fun k => by simp only [preHsA]; rw [value_sxBits, rsa_values_swap34])
       (fun k => canonical_sxBits _))
     have hterm := mt_rsa_term_nat (t₀ := t₀) (Tm := Tm) (c₁ :=
-        BinaryInterchangeRun.cost (rsaPre (t n) ax) (rsaMid (t n) ax) (3 * w)
+        swapCost (rsaPre (t n) ax) (rsaMid (t n) ax) (3 * w)
           (Nat.log 2 (t n ax)) (Nat.log 2 (t n a0)) (preHsA n w hd0 ax))
-      (c₂ := BinaryInterchangeRun.cost (rsaPre (t n) ax) (rsaMid (t n) ax) (3 * w)
+      (c₂ := swapCost (rsaPre (t n) ax) (rsaMid (t n) ax) (3 * w)
           (Nat.log 2 (t n a0)) (Nat.log 2 (t n ax)) (fun k => preHsA n w hd0 ax (Equiv.swap 3 4 k)))
       hsx hmx htx hb₁ hb₂ he hcp hwY (hLb.trans hlY) (by omega) hN1
     have q1 := Nat.mul_le_mul_left (Tm + 12 * swapT t₀ + 5) hc₁

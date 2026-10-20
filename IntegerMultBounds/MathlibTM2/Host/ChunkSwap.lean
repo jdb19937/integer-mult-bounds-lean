@@ -2,7 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Host.Stream
 public import IntegerMultBounds.MathlibTM2.Host.Lift
+public import IntegerMultBounds.MathlibTM2.Host.Foreign
+public import IntegerMultBounds.MathlibTM2.Host.StackLoops
+public import IntegerMultBounds.MathlibTM2.Host.SwapList
 public import IntegerMultBounds.Machine.BinaryInterchangeRun
+public import IntegerMultBounds.Machine.BinaryInterchangeBudget
 
 /-!
 # Rectangular interchange on host registers
@@ -158,308 +162,6 @@ theorem filter_window (L R : List (Fin (a + 4))) (h : ℤ) (w : List (Fin (a + 4
 
 end Tape
 
-section Loops
-
-variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
-
-/-- Record in `flag` whether the left stack of tape `i` is nonempty. -/
-def peekL (i : Fin T) : Act T Q A U :=
-  .peek (.lt i) (fun v o => { v with flag := o.isSome }) .done
-
-lemma peekL_run (i : Fin T) (v : HS T Q A U) (S : Stacks T A) :
-    (peekL i : Act T Q A U).run (mk v S) = mk { v with flag := (S.L i).head?.isSome } S := rfl
-
-/-- One step of `unload`: pop the left stack of tape `i` onto its right stack. -/
-def unloadStep (i : Fin T) : Act T Q A U :=
-  .pop (.lt i) (fun v o => { v with sym := o })
-    (.push (.rt i) (fun v => v.sym.getD blank) (peekL i))
-
-/-- Move the whole left stack of tape `i` onto its right stack. -/
-def unload (i : Fin T) : Pr P T Q A U :=
-  .seq (.act (peekL i)) (.loop (·.flag) (.act (unloadStep i)))
-
-theorem unload_loop (i : Fin T) :
-    ∀ (l : List (Fin (A + 4))) (v : HS T Q A U) (S : Stacks T A),
-      S.L i = l → v.flag = l.head?.isSome →
-      ∃ v', v'.user = v.user ∧
-        Exec body (.loop (·.flag) (.act (unloadStep i))) (mk v S) (2 * l.length + 1)
-          (mk v' { S with
-            L := Function.update S.L i []
-            R := Function.update S.R i (l.reverse ++ S.R i) }) := by
-  intro l
-  induction l with
-  | nil =>
-      intro v S hS hf
-      refine ⟨v, rfl, ?_⟩
-      have : ({ S with
-          L := Function.update S.L i []
-          R := Function.update S.R i (([] : List (Fin (A + 4))).reverse ++ S.R i) } :
-            Stacks T A) = S := by
-        cases S with
-        | mk inp out L R =>
-          simp only at hS
-          congr 1
-          · funext k; by_cases hk : k = i
-            · subst hk; simp [hS]
-            · simp [hk]
-          · funext k; by_cases hk : k = i
-            · subst hk; simp
-            · simp [hk]
-      rw [this]
-      exact .loop_false (by simpa using hf)
-  | cons e rest ih =>
-      intro v S hS hf
-      obtain ⟨v', hu, he⟩ := ih { v with sym := some e, flag := rest.head?.isSome }
-        { S with
-          L := Function.update S.L i rest
-          R := Function.update S.R i (e :: S.R i) }
-        (by simp) rfl
-      refine ⟨v', hu, ?_⟩
-      have hrun : (unloadStep i : Act T Q A U).run (mk v S) =
-          mk { v with sym := some e, flag := rest.head?.isSome }
-            { S with
-              L := Function.update S.L i rest
-              R := Function.update S.R i (e :: S.R i) } := by
-        simp [unloadStep, peekL, Action.run, hS, update_rt, update_lt]
-      refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
-        (hrun ▸ Exec.act (body := body) (unloadStep i) (mk v S)) he) (by simp; ring) ?_
-      congr 2
-      · funext k; by_cases hk : k = i
-        · subst hk; simp
-        · simp [hk]
-      · funext k; by_cases hk : k = i
-        · subst hk; simp
-        · simp [hk]
-
-theorem unload_exec (i : Fin T) (v : HS T Q A U) (S : Stacks T A) :
-    ∃ v', v'.user = v.user ∧
-      Exec body (unload i) (mk v S) (2 * (S.L i).length + 2)
-        (mk v' { S with
-          L := Function.update S.L i []
-          R := Function.update S.R i ((S.L i).reverse ++ S.R i) }) := by
-  obtain ⟨v', hu, he⟩ := unload_loop body i (S.L i) { v with flag := (S.L i).head?.isSome } S
-    rfl rfl
-  exact ⟨v', hu, Exec.cast
-    (Exec.seq (peekL_run i v S ▸ Exec.act (body := body) (peekL i) (mk v S)) he) (by ring) rfl⟩
-
-/-- One step of `sieve`: pop the right stack of tape `i`, keeping non-blank symbols on its left
-stack. -/
-def sieveStep (i : Fin T) : Act T Q A U :=
-  .pop (.rt i) (fun v o => { v with sym := o })
-    (.branch (fun v => decide (v.sym.getD blank ≠ blank))
-      (.push (.lt i) (fun v => v.sym.getD blank) (peekR i))
-      (peekR i))
-
-/-- Move the right stack of tape `i` onto its left stack, dropping blanks. -/
-def sieve (i : Fin T) : Pr P T Q A U :=
-  .seq (.act (peekR i)) (.loop (·.flag) (.act (sieveStep i)))
-
-theorem sieve_loop (i : Fin T) :
-    ∀ (r : List (Fin (A + 4))) (v : HS T Q A U) (S : Stacks T A),
-      S.R i = r → v.flag = r.head?.isSome →
-      ∃ v', v'.user = v.user ∧
-        Exec body (.loop (·.flag) (.act (sieveStep i))) (mk v S) (2 * r.length + 1)
-          (mk v' { S with
-            L := Function.update S.L i ((r.filter (· ≠ blank)).reverse ++ S.L i)
-            R := Function.update S.R i [] }) := by
-  intro r
-  induction r with
-  | nil =>
-      intro v S hS hf
-      refine ⟨v, rfl, ?_⟩
-      have : ({ S with
-          L := Function.update S.L i
-            ((([] : List (Fin (A + 4))).filter (· ≠ blank)).reverse ++ S.L i)
-          R := Function.update S.R i [] } : Stacks T A) = S := by
-        cases S with
-        | mk inp out L R =>
-          simp only at hS
-          congr 1
-          · funext k; by_cases hk : k = i
-            · subst hk; simp
-            · simp [hk]
-          · funext k; by_cases hk : k = i
-            · subst hk; simp [hS]
-            · simp [hk]
-      rw [this]
-      exact .loop_false (by simpa using hf)
-  | cons e rest ih =>
-      intro v S hS hf
-      by_cases he : e = blank
-      · obtain ⟨v', hu, hx⟩ := ih { v with sym := some e, flag := rest.head?.isSome }
-          { S with R := Function.update S.R i rest } (by simp) rfl
-        refine ⟨v', hu, ?_⟩
-        have hrun : (sieveStep i : Act T Q A U).run (mk v S) =
-            mk { v with sym := some e, flag := rest.head?.isSome }
-              { S with R := Function.update S.R i rest } := by
-          simp [sieveStep, peekR, Action.run, hS, update_rt, he]
-        refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
-          (hrun ▸ Exec.act (body := body) (sieveStep i) (mk v S)) hx) (by simp; ring) ?_
-        congr 2
-        · funext k; by_cases hk : k = i
-          · subst hk; simp [he]
-          · simp [hk]
-        · funext k; by_cases hk : k = i
-          · subst hk; simp
-          · simp [hk]
-      · obtain ⟨v', hu, hx⟩ := ih { v with sym := some e, flag := rest.head?.isSome }
-          { S with
-            L := Function.update S.L i (e :: S.L i)
-            R := Function.update S.R i rest }
-          (by simp) rfl
-        refine ⟨v', hu, ?_⟩
-        have hrun : (sieveStep i : Act T Q A U).run (mk v S) =
-            mk { v with sym := some e, flag := rest.head?.isSome }
-              { S with
-                L := Function.update S.L i (e :: S.L i)
-                R := Function.update S.R i rest } := by
-          simp [sieveStep, peekR, Action.run, hS, update_rt, update_lt, he]
-        refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
-          (hrun ▸ Exec.act (body := body) (sieveStep i) (mk v S)) hx) (by simp; ring) ?_
-        congr 2
-        · funext k; by_cases hk : k = i
-          · subst hk; simp [he]
-          · simp [hk]
-        · funext k; by_cases hk : k = i
-          · subst hk; simp
-          · simp [hk]
-
-theorem sieve_exec (i : Fin T) (v : HS T Q A U) (S : Stacks T A) :
-    ∃ v', v'.user = v.user ∧
-      Exec body (sieve i) (mk v S) (2 * (S.R i).length + 2)
-        (mk v' { S with
-          L := Function.update S.L i (((S.R i).filter (· ≠ blank)).reverse ++ S.L i)
-          R := Function.update S.R i [] }) := by
-  obtain ⟨v', hu, he⟩ := sieve_loop body i (S.R i) { v with flag := (S.R i).head?.isSome } S
-    rfl rfl
-  exact ⟨v', hu, Exec.cast
-    (Exec.seq (peekR_run i v S ▸ Exec.act (body := body) (peekR i) (mk v S)) he) (by ring) rfl⟩
-
-/-- The blank-free content of a tape stored as stacks `L`, `R`. -/
-def sweep (L R : List (Fin (A + 4))) : List (Fin (A + 4)) := (L.reverse ++ R).filter (· ≠ blank)
-
-/-- Normalize tape `i`: its blank-free content ends on the right stack, the left stack empty. -/
-def normTape (i : Fin T) : Pr P T Q A U := .seq (unload i) (.seq (sieve i) (unload i))
-
-theorem normTape_exec (i : Fin T) (v : HS T Q A U) (S : Stacks T A) :
-    ∃ v' n, v'.user = v.user ∧ n ≤ 6 * ((S.L i).length + (S.R i).length) + 6 ∧
-      Exec body (normTape i) (mk v S) n
-        (mk v' { S with
-          L := Function.update S.L i []
-          R := Function.update S.R i (sweep (S.L i) (S.R i)) }) := by
-  obtain ⟨v₁, hu₁, he₁⟩ := unload_exec body i v S
-  obtain ⟨v₂, hu₂, he₂⟩ := sieve_exec body i v₁ _
-  obtain ⟨v₃, hu₃, he₃⟩ := unload_exec body i v₂ _
-  refine ⟨v₃, _, hu₃.trans (hu₂.trans hu₁), ?_,
-    Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) rfl ?_⟩
-  · simp only [Function.update_self, List.length_append, List.length_reverse, List.append_nil]
-    have := List.length_filter_le (fun x => decide (x ≠ (blank : Fin (A + 4))))
-      ((S.L i).reverse ++ S.R i)
-    simp only [List.length_append, List.length_reverse] at this
-    omega
-  · congr 2
-    · funext k; by_cases hk : k = i
-      · subst hk; simp
-      · simp [hk]
-    · funext k; by_cases hk : k = i
-      · subst hk; simp [sweep]
-      · simp [hk]
-
-/-- Normalize every tape of a list. -/
-def normList (l : List (Fin T)) : Pr P T Q A U := Prog.seqList (l.map normTape)
-
-theorem normList_exec : ∀ (l : List (Fin T)), l.Nodup → ∀ (v : HS T Q A U) (S : Stacks T A),
-    ∃ v' n, v'.user = v.user ∧
-      n ≤ (l.map fun i => 6 * ((S.L i).length + (S.R i).length) + 6).sum + 1 ∧
-      Exec body (normList l) (mk v S) n
-        (mk v' { S with
-          L := fun i => if i ∈ l then [] else S.L i
-          R := fun i => if i ∈ l then sweep (S.L i) (S.R i) else S.R i }) := by
-  intro l
-  induction l with
-  | nil =>
-      intro _ v S
-      refine ⟨v, 1, rfl, by simp, ?_⟩
-      have : ({ S with
-          L := fun i => if i ∈ ([] : List (Fin T)) then [] else S.L i
-          R := fun i => if i ∈ ([] : List (Fin T)) then sweep (S.L i) (S.R i) else S.R i } :
-            Stacks T A) = S := by cases S; simp
-      rw [this]
-      exact Exec.act .done (mk v S)
-  | cons i rest ih =>
-      intro hnd v S
-      rw [List.nodup_cons] at hnd
-      obtain ⟨v₁, n₁, hu₁, hn₁, he₁⟩ := normTape_exec body i v S
-      obtain ⟨v₂, n₂, hu₂, hn₂, he₂⟩ := ih hnd.2 v₁ _
-      refine ⟨v₂, n₁ + n₂, hu₂.trans hu₁, ?_, Exec.cast (Exec.seq he₁ he₂) rfl ?_⟩
-      · have hsum : (rest.map fun j => 6 * ((Function.update S.L i [] j).length +
-            (Function.update S.R i (sweep (S.L i) (S.R i)) j).length) + 6) =
-            rest.map fun j => 6 * ((S.L j).length + (S.R j).length) + 6 := by
-          apply List.map_congr_left
-          intro j hj
-          have hji : j ≠ i := fun h => hnd.1 (h ▸ hj)
-          simp [Function.update_of_ne hji]
-        simp only [hsum] at hn₂
-        simp only [List.map_cons, List.sum_cons]
-        omega
-      · congr 2
-        · funext j
-          by_cases hj : j = i
-          · subst hj; simp [hnd.1]
-          · simp [hj]
-        · funext j
-          by_cases hj : j = i
-          · subst hj; simp [hnd.1]
-          · simp [hj]
-
-/-- Move the top of the right stack of tape `i` to its left stack. -/
-def shiftStep (i : Fin T) : Act T Q A U :=
-  .pop (.rt i) (fun v o => { v with sym := o }) (.push (.lt i) (fun v => v.sym.getD blank) .done)
-
-/-- Shift every tape of a list one cell to the right. -/
-def shiftList (l : List (Fin T)) : Pr P T Q A U :=
-  Prog.seqList (l.map fun i => .act (shiftStep i))
-
-theorem shiftList_exec : ∀ (l : List (Fin T)), l.Nodup → ∀ (v : HS T Q A U) (S : Stacks T A),
-    ∃ v', v'.user = v.user ∧
-      Exec body (shiftList l) (mk v S) (l.length + 1)
-        (mk v' { S with
-          L := fun i => if i ∈ l then (S.R i).head?.getD blank :: S.L i else S.L i
-          R := fun i => if i ∈ l then (S.R i).tail else S.R i }) := by
-  intro l
-  induction l with
-  | nil =>
-      intro _ v S
-      refine ⟨v, rfl, ?_⟩
-      have : ({ S with
-          L := fun i =>
-            if i ∈ ([] : List (Fin T)) then (S.R i).head?.getD blank :: S.L i else S.L i
-          R := fun i => if i ∈ ([] : List (Fin T)) then (S.R i).tail else S.R i } :
-            Stacks T A) = S := by cases S; simp
-      rw [this]
-      exact Exec.act .done (mk v S)
-  | cons i rest ih =>
-      intro hnd v S
-      rw [List.nodup_cons] at hnd
-      have hrun : (shiftStep i : Act T Q A U).run (mk v S) =
-          mk { v with sym := (S.R i).head? } { S with
-            L := Function.update S.L i ((S.R i).head?.getD blank :: S.L i)
-            R := Function.update S.R i (S.R i).tail } := by
-        simp [shiftStep, Action.run, update_rt, update_lt]
-      obtain ⟨v₂, hu₂, he₂⟩ := ih hnd.2 { v with sym := (S.R i).head? } _
-      refine ⟨v₂, hu₂, Exec.cast
-        (Exec.seq (hrun ▸ Exec.act (body := body) (shiftStep i) (mk v S)) he₂) (by simp; ring) ?_⟩
-      congr 2
-      · funext j
-        by_cases hj : j = i
-        · subst hj; simp [hnd.1]
-        · simp [hj]
-      · funext j
-        by_cases hj : j = i
-        · subst hj; simp [hnd.1]
-        · simp [hj]
-
-end Loops
 
 /-! ### The interchange machine's tape bank -/
 
@@ -507,16 +209,6 @@ section Interchange
 
 open BinaryAdjacentWidthInterchange
 
-/-- Source offset of the cell at target offset `z` when `[P]×[H]×[G]×[D]×[B]` (row-major, `P`
-outermost) is interchanged into `[P]×[D]×[G]×[H]×[B]`. -/
-def swapSrc (H G D B z : ℕ) : ℕ :=
-  (((z / B / H / G / D * H + z / B % H) * G + z / B / H % G) * D + z / B / H / G % D) * B + z % B
-
-/-- The interchange of a list laid out as `[P]×[H]×[G]×[D]×[B]` into `[P]×[D]×[G]×[H]×[B]`;
-`dflt` fills offsets beyond the list. -/
-def swapList {α : Type*} (P H G D B : ℕ) (dflt : α) (l : List α) : List α :=
-  (List.range (P * D * G * H * B)).map fun z => l.getD (swapSrc H G D B z) dflt
-
 theorem ofFn_transpose {α : Type*} {P H G D B : ℕ} (x : Fin (volume P H G D B) → α) (dflt : α) :
     List.ofFn (transpose x) = swapList P H G D B dflt (List.ofFn x) := by
   apply List.ext_getElem
@@ -531,36 +223,6 @@ theorem ofFn_transpose {α : Type*} {P H G D B : ℕ} (x : Fin (volume P H G D B
     rw [← hidx, List.getD_eq_getElem?_getD, List.getElem?_ofFn,
       dite_eq_left (index c.1 c.2.2.2.1 c.2.2.1 c.2.1 c.2.2.2.2).isLt]
     rfl
-
-lemma div_mod_mix {a b n : ℕ} (hb : b < n) : (a * n + b) / n = a ∧ (a * n + b) % n = b := by
-  have hn : 0 < n := by omega
-  constructor
-  · rw [add_comm, Nat.add_mul_div_right _ _ hn, Nat.div_eq_of_lt hb, zero_add]
-  · rw [add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hb]
-
-lemma mix_lt {a b A n : ℕ} (ha : a < A) (hb : b < n) : a * n + b < A * n := by
-  have : (a + 1) * n ≤ A * n := Nat.mul_le_mul_right _ ha
-  nlinarith
-
-/-- Entry of the interchanged list: target cell `(p, d, g, h, b)` holds source cell
-`(p, h, g, d, b)`. -/
-theorem swapList_getElem? {α : Type*} {P H G D B : ℕ} (dflt : α) (l : List α)
-    (hl : l.length = P * H * G * D * B) {p h g d b : ℕ}
-    (hp : p < P) (hh : h < H) (hg : g < G) (hd : d < D) (hb : b < B) :
-    (swapList P H G D B dflt l)[(((p * D + d) * G + g) * H + h) * B + b]? =
-      l[(((p * H + h) * G + g) * D + d) * B + b]? := by
-  have hz : (((p * D + d) * G + g) * H + h) * B + b < P * D * G * H * B :=
-    mix_lt (mix_lt (mix_lt (mix_lt hp hd) hg) hh) hb
-  have hs : (((p * H + h) * G + g) * D + d) * B + b < l.length :=
-    hl ▸ mix_lt (mix_lt (mix_lt (mix_lt hp hh) hg) hd) hb
-  rw [swapList, List.getElem?_map, List.getElem?_range hz, Option.map_some]
-  have hsrc : swapSrc H G D B ((((p * D + d) * G + g) * H + h) * B + b) =
-      (((p * H + h) * G + g) * D + d) * B + b := by
-    unfold swapSrc
-    rw [(div_mod_mix hb).1, (div_mod_mix hb).2, (div_mod_mix hh).1, (div_mod_mix hh).2,
-      (div_mod_mix hg).1, (div_mod_mix hg).2, (div_mod_mix hd).1, (div_mod_mix hd).2]
-  rw [hsrc, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hs]
-  rfl
 
 /-- The interchanged payload bits as a list. -/
 lemma transpose_bits_eq_swapList {P H G D B a : ℕ} (x : Fin (volume P H G D B) → Bool) :
@@ -584,6 +246,29 @@ abbrev swapT (t₀ : ℕ) : ℕ := BinaryInterchangeRun.bankCount t₀ + 1
 abbrev reg {t₀ : ℕ} (i : Fin t₀) : Fin (swapT t₀) := BinaryInterchangeRun.slot i
 
 lemma reg_val {t₀ : ℕ} (i : Fin t₀) : (reg i).val = i.val := rfl
+
+lemma self_le_swapT (t₀ : ℕ) : t₀ ≤ swapT t₀ := by
+  unfold swapT BinaryInterchangeRun.bankCount; omega
+
+lemma reg_injective {t₀ : ℕ} : Function.Injective (reg (t₀ := t₀)) :=
+  BinaryInterchangeRun.slot_injective
+
+/-- The header values of the interchange of `[P]×[2^h]×[G]×[2^d]×[B]`: register `k` holds
+`swapValues P G B h d k` as a binary counter. -/
+abbrev swapValues (P G B h d : ℕ) : Fin 5 → ℕ := ![P, G, B, h, d]
+
+/-- The step bound of the interchange machine on headers `hs`. -/
+abbrev swapCost (P G B h d : ℕ) (hs : Fin 5 → List Bool) : ℕ := BinaryInterchangeRun.cost P G B h d hs
+
+/-- **The interchange bound**: `swapCost = O(V max(1, h, d)^τ)` on volume `V`. -/
+theorem swapCost_le : ∃ C : ℝ, 0 < C ∧ ∀ (P G B h d : ℕ) (hs : Fin 5 → List Bool),
+    0 < P → 0 < G → 0 < B → h ≤ d + 1 → d ≤ h + 1 →
+    (∀ i, Counter.value (hs i) = swapValues P G B h d i) →
+    (∀ i, GrowingCounterData.Canonical (hs i)) →
+    (swapCost P G B h d hs : ℝ) ≤
+      C * (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ d) B : ℝ) *
+        ((max 1 (max h d) : ℕ) : ℝ) ^ Parameters.tau :=
+  BinaryInterchangeRun.uniform_bound
 
 /-- The state count of a program. -/
 def stateCount {t q a : ℕ} (_ : Program t q a) : ℕ := q
@@ -665,7 +350,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
     (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
     (hQ : swapStates hd pay hi ≤ Q)
     (P G B h d : ℕ) (hs : Fin 5 → List Bool) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G B h d k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G B h d k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
     (x : Fin (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ d) B) → Bool)
     (v : HS (swapT t₀) Q (prime + K) U) (S : Stacks (swapT t₀) (prime + K))
@@ -675,7 +360,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
     (hpay : S.R (reg pay) = List.ofFn fun i => bitSymbol (x i))
     (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) → ∀ s ∈ S.R (reg i), s ≠ blank ∧ s.val < prime + 4) :
     ∃ v' m, v'.user = v.user ∧
-      m ≤ (13 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G B h d hs +
+      m ≤ (13 * swapT t₀ + 5) * swapCost P G B h d hs +
         6 * ∑ j, (S.R j).length + 6 * swapT t₀ + 13 ∧
       Exec body (swapProg hd pay hi hQ) (mk v S) m
         (mk v' { S with
@@ -743,7 +428,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
   have hnd₀ : l₀.Nodup := by
     rw [hl₀, List.nodup_ofFn]
     intro a b hab
-    exact hi (BinaryInterchangeRun.slot_injective hab)
+    exact hi (reg_injective hab)
   have hmem : ∀ j, j ∈ l₀ ↔ ∃ k, reg (hd k) = j := fun j => List.mem_ofFn
   obtain ⟨v₁, hu₁, he₁⟩ := shiftList_exec body l₀ hnd₀ v S
   set S₁ : Stacks (swapT t₀) (prime + K) := { S with
@@ -776,7 +461,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
         rw [readAt_single]
       · have hm : reg i ∉ l₀ := fun hm => by
           obtain ⟨k, hk'⟩ := (hmem _).1 hm
-          exact hk ⟨k, BinaryInterchangeRun.slot_injective hk'⟩
+          exact hk ⟨k, reg_injective hk'⟩
         have hc0 : caller.head i = 0 := ite_eq_right hk
         simp only [S₁, hm, ite_false, hL, hc0, sub_zero]
         rw [readAt_nil_left]
@@ -813,7 +498,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
         rw [Function.update_self, Function.update_self, BinaryRadixRangePrepareAlphabet.word,
           putWord_blank_zero, encode_wordTape, List.map_ofFn]
         rfl
-      · have hr : reg i ≠ reg pay := fun h' => hip (BinaryInterchangeRun.slot_injective h')
+      · have hr : reg i ≠ reg pay := fun h' => hip (reg_injective h')
         rw [Function.update_of_ne hip, Function.update_of_ne hr]
         exact encode_wordTape_decode _ (fun s hs => (hgood _ s hs).2) z
     · rw [dite_eq_right hj]
@@ -835,7 +520,7 @@ theorem swapProg_exec {t₀ Q K : ℕ} {U F : Type} (body : F → Pr F (swapT t�
   refine ⟨v₃, l₀.length + 1 + (m₂ + n₃), hu₃.trans (hu₂.trans hu₁), ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) rfl ?_⟩
   · rw [← Fin.sum_univ_def] at hn₃
-    set k := BinaryInterchangeRun.cost P G B h d hs
+    set k := swapCost P G B h d hs
     have hsum : ∑ i, (6 * ((S₂.L i).length + (S₂.R i).length) + 6) ≤
         ∑ i, (6 * (S.R i).length + (12 * k + 6)) := by
       apply Finset.sum_le_sum

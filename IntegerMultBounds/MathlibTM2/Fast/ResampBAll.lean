@@ -149,7 +149,7 @@ lemma rsbBank_hd {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : Fi
   have h : ∃ k', reg (hd k') = reg (hd k) := ⟨k, rfl⟩
   rw [rsbBank, dite_eq_left h]
   have := Classical.choose_spec h
-  rw [hi (BinaryInterchangeRun.slot_injective this)]
+  rw [hi (reg_injective this)]
 
 lemma rsbBank_other {hd : Fin 5 → Fin t₀} (hs : Fin 5 → List Bool) {j : Fin (swapT t₀)}
     (hj : ∀ k, reg (hd k) ≠ j) : (rsbBank hd hs j : List (Fin (A + 4))) = [] := by
@@ -180,8 +180,8 @@ lemma rsbBank_xchg {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : 
         rw [rsbBank_other _ hk, rsbBank_other _ hk]
 
 lemma rsb_values_swap34 (P G B h d : ℕ) (k : Fin 5) :
-    BinaryInterchangeRun.values P G B h d (Equiv.swap 3 4 k) =
-      BinaryInterchangeRun.values P G B d h k := by
+    swapValues P G B h d (Equiv.swap 3 4 k) =
+      swapValues P G B d h k := by
   fin_cases k <;> rfl
 
 end Bank
@@ -336,7 +336,7 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
     (Ok : List GaussianInt → Prop) (cax : ℕ → ℕ)
     (hP : 0 < rsbPre t i) (hG : 0 < rsbMid t i) (hs : Fin 5 → List Bool)
     (hv : ∀ k, Counter.value (hs k) =
-      BinaryInterchangeRun.values (rsbPre t i) (rsbMid t i) (3 * w) Lb Ld k)
+      swapValues (rsbPre t i) (rsbMid t i) (3 * w) Lb Ld k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
     (ρ : RsbR → List (Fin (prime + K + 4))) (ξ : RsbX t₀ → List (Fin (prime + K + 4)))
     (hax : ∀ lines : List (List GaussianInt), (∀ c ∈ lines, Ok c) →
@@ -352,8 +352,8 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
       (Sum.elim (Function.update ρ .src (cstream (prime + K) w
         (rsbAxisL (rsbPre t i) (t i) (rsbSuf t i) g L))) ξ)
       (rsbStepAxCostG T t₀ w (cax (L.length / t i)) L.length
-        (BinaryInterchangeRun.cost (rsbPre t i) (rsbMid t i) (3 * w) Lb Ld hs)
-        (BinaryInterchangeRun.cost (rsbPre t i) (rsbMid t i) (3 * w) Ld Lb
+        (swapCost (rsbPre t i) (rsbMid t i) (3 * w) Lb Ld hs)
+        (swapCost (rsbPre t i) (rsbMid t i) (3 * w) Ld Lb
           (fun k => hs (Equiv.swap 3 4 k)))
         (∑ j, (rsbBank hd hs j : List (Fin (prime + K + 4))).length)
         (∑ j, (rsbBank hd (fun k => hs (Equiv.swap 3 4 k)) j :
@@ -371,9 +371,9 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
   have hL' : L.length = Pp * H * G * Dl := by
     rw [hL, ← rsbPre_mul t i, hsuf]; ring
   have hinj : Function.Injective fun k => reg (hd k) :=
-    fun a b h => hi (BinaryInterchangeRun.slot_injective h)
+    fun a b h => hi (reg_injective h)
   have hreg : ∀ k, reg (hd k) ≠ reg pay :=
-    fun k h => hdpay k (BinaryInterchangeRun.slot_injective h)
+    fun k h => hdpay k (reg_injective h)
   set hs' : Fin 5 → List Bool := fun k => hs (Equiv.swap 3 4 k) with hhs'
   -- 1. interchange axis `i` with the last axis
   set Lsw := swapList Pp (2 ^ Lb) G (2 ^ Ld) 1 0 L with hLsw
@@ -394,7 +394,7 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
     (fun i' _ hk => by
       simp only [Sum.elim_inr]
       rw [hbank, rsbBank_other]
-      intro k h; exact hk k (BinaryInterchangeRun.slot_injective h))
+      intro k h; exact hk k (reg_injective h))
   rw [Sum.update_elim_inl, ← hLsw] at h1
   -- 2. `B̃₀` along the innermost axis
   have hlsw : Lsw.length = Pp * Dl * G * H := by
@@ -448,7 +448,7 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
     (fun i' _ hk => by
       simp only [Sum.elim_inr]
       rw [hbank', rsbBank_other]
-      intro k h; exact hk k (BinaryInterchangeRun.slot_injective h))
+      intro k h; exact hk k (reg_injective h))
   have hsw_back : swapList Pp (2 ^ Ld) G (2 ^ Lb) 1 0 (lines.flatMap g) =
       rsbAxisL Pp H (rsbSuf t i) g L := by
     rw [hax, hLsw, ← ht, ← htd, rsbAxisL_swap Pp H G Dl g hglen L hL', hsuf]
@@ -548,10 +548,10 @@ def rsbAllCostG (T t₀ w d : ℕ) (t : Fin d → ℕ) (hd0 : 0 < d) (Lb : Fin d
   cp 0 + cax (rsbAx hd0 0) (n / t (rsbAx hd0 0)) +
   ((∑ j ∈ Finset.range (d - 1), (cp (j + 1) +
     rsbStepAxCostG T t₀ w (cax (rsbAx hd0 (j + 1)) (n / t (rsbAx hd0 (j + 1)))) n
-      (BinaryInterchangeRun.cost (rsbPre t (rsbAx hd0 (j + 1)))
+      (swapCost (rsbPre t (rsbAx hd0 (j + 1)))
         (rsbMid t (rsbAx hd0 (j + 1))) (3 * w) (Lb (rsbAx hd0 (j + 1)))
         (Lb (rsbAx hd0 0)) (hs (rsbAx hd0 (j + 1))))
-      (BinaryInterchangeRun.cost (rsbPre t (rsbAx hd0 (j + 1)))
+      (swapCost (rsbPre t (rsbAx hd0 (j + 1)))
         (rsbMid t (rsbAx hd0 (j + 1))) (3 * w) (Lb (rsbAx hd0 0))
         (Lb (rsbAx hd0 (j + 1)))
         (fun k => hs (rsbAx hd0 (j + 1)) (Equiv.swap 3 4 k)))
@@ -612,7 +612,7 @@ theorem rsb_allG_runs (prep ax : Pr F T Q (prime + K) U)
     (hDt : ∀ i, t i = 2 ^ Lb i)
     (hDw : ∀ i : Fin d, (i : ℕ) + 1 < d → Lb i ≤ Lb (rsbAx hd0 0) + 1 ∧
       Lb (rsbAx hd0 0) ≤ Lb i + 1 ∧
-      (∀ k, Counter.value (hs i k) = BinaryInterchangeRun.values (rsbPre t i) (rsbMid t i)
+      (∀ k, Counter.value (hs i k) = swapValues (rsbPre t i) (rsbMid t i)
         (3 * w) (Lb i) (Lb (rsbAx hd0 0)) k) ∧
       ∀ k, GrowingCounterData.Canonical (hs i k))
     (V₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
@@ -693,10 +693,10 @@ theorem rsb_allG_runs (prep ax : Pr F T Q (prime + K) U)
       (rsbUpd2 (Ψ j) (.inr .ax) X (.inr .ax') Y) (rsbUpd2 (Ψ (j + 1)) (.inr .ax) X (.inr .ax') Y)
       (cp (j + 1) + rsbStepAxCostG T t₀ w
         (cax (rsbAx hd0 (j + 1)) (l₀.length / t (rsbAx hd0 (j + 1)))) l₀.length
-        (BinaryInterchangeRun.cost (rsbPre t (rsbAx hd0 (j + 1)))
+        (swapCost (rsbPre t (rsbAx hd0 (j + 1)))
           (rsbMid t (rsbAx hd0 (j + 1))) (3 * w) (Lb (rsbAx hd0 (j + 1)))
           (Lb (rsbAx hd0 0)) (hs (rsbAx hd0 (j + 1))))
-        (BinaryInterchangeRun.cost (rsbPre t (rsbAx hd0 (j + 1)))
+        (swapCost (rsbPre t (rsbAx hd0 (j + 1)))
           (rsbMid t (rsbAx hd0 (j + 1))) (3 * w) (Lb (rsbAx hd0 0))
           (Lb (rsbAx hd0 (j + 1)))
           (fun k => hs (rsbAx hd0 (j + 1)) (Equiv.swap 3 4 k)))
@@ -785,7 +785,7 @@ theorem rsb_allG_tensor (prep ax : Pr F T Q (prime + K) U)
     (hDt : ∀ i, t i = 2 ^ Lb i)
     (hDw : ∀ i : Fin d, (i : ℕ) + 1 < d → Lb i ≤ Lb (rsbAx hd0 0) + 1 ∧
       Lb (rsbAx hd0 0) ≤ Lb i + 1 ∧
-      (∀ k, Counter.value (hs i k) = BinaryInterchangeRun.values (rsbPre t i) (rsbMid t i)
+      (∀ k, Counter.value (hs i k) = swapValues (rsbPre t i) (rsbMid t i)
         (3 * w) (Lb i) (Lb (rsbAx hd0 0)) k) ∧
       ∀ k, GrowingCounterData.Canonical (hs i k))
     (V₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))

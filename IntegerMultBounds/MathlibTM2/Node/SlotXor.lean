@@ -1122,8 +1122,7 @@ def sxStage : SXReg → ℕ
   | .swp c j => if j.val < 5 then 24 + 5 * c.val + j.val else 0
   | _ => 0
 
-lemma sx_five_lt_swapT : 5 < swapT 6 := by
-  unfold swapT IntegerMultBounds.Machine.BinaryInterchangeRun.bankCount; omega
+lemma sx_five_lt_swapT : 5 < swapT 6 := self_le_swapT 6
 
 /-- The register built by a setup stage. -/
 def sxOfStage : ℕ → SXReg
@@ -2726,12 +2725,12 @@ lemma sx_canonical_rep_false (e : ℕ) {bs : List Bool} (h : bs ≠ [])
 variable {d : SxD}
 
 lemma sxHs_value (_hv : d.Valid) (a b : Fin 3) (k : Fin 5) :
-    Counter.value (sxHs d (sxCls a b) k) = BinaryInterchangeRun.values
+    Counter.value (sxHs d (sxCls a b) k) = swapValues
       (swapDims d.N₀ d.N₁ d.N₂ d.N₃ d.L a b).1 (swapDims d.N₀ d.N₁ d.N₂ d.N₃ d.L a b).2.1
       ((swapDims d.N₀ d.N₁ d.N₂ d.N₃ d.L a b).2.2 * (3 * d.Bk)) d.L d.L k := by
   unfold sxCls swapDims
   split_ifs <;> fin_cases k <;>
-    simp [sxHs, sxHe, sxHbits, sx_value_rep_false, value_sxBits, BinaryInterchangeRun.values,
+    simp [sxHs, sxHe, sxHbits, sx_value_rep_false, value_sxBits, swapValues,
       SxD.N₀, SxD.N₁, SxD.N₂, SxD.N₃, Counter.value, pow_add] <;> (ring_nf; try simp)
 
 lemma sxHs_canonical (hv : d.Valid) (c : Fin 3) (k : Fin 5) :
@@ -2794,7 +2793,7 @@ variable {T Q Ka : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q (prime + Ka
 variable {ι : SXReg → Fin T} {par : SXPar → Fin T} {d : SxD}
 
 /-- The vendored part of the step bound of one interchange (`swapConst` from
-`BinaryInterchangeRun.uniform_bound`): `3 C (T + 12 t + 5) V max(1, L)^τ` for `V` keyed symbols. -/
+`swapCost_le`): `3 C (T + 12 t + 5) V max(1, L)^τ` for `V` keyed symbols. -/
 noncomputable def sxSwapReal (d : SxD) (T : ℕ) : ℝ :=
   3 * swapConst * (T + 12 * swapT 6 + 5 : ℕ) * (d.M * d.Bk : ℕ) *
     ((max 1 d.L : ℕ) : ℝ) ^ Parameters.tau

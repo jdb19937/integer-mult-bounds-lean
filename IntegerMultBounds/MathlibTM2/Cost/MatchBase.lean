@@ -292,11 +292,11 @@ theorem mt_rpow_tau_le {h w L : ℕ} (hh : h ≤ L) (hw : w ≤ L) (hL : 1 ≤ L
 headers of its dimensions and `h, w ≤ L`: at most `swapConst V L^τ + 1` steps. -/
 theorem mt_swap_le {P G E h w L : ℕ} (hs : Fin 5 → List Bool) (hP : 0 < P) (hG : 0 < G)
     (hE : 0 < E) (hhw : h ≤ w + 1) (hwh : w ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G E h w k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G E h w k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hh : h ≤ L) (hw : w ≤ L) (hL : 1 ≤ L) :
-    (BinaryInterchangeRun.cost P G E h w hs : ℝ) ≤
+    (swapCost P G E h w hs : ℝ) ≤
       swapConst * (P * 2 ^ h * G * 2 ^ w * E : ℕ) * (L : ℝ) ^ Parameters.tau + 1 := by
-  have h1 : (BinaryInterchangeRun.cost P G E h w hs : ℝ) ≤
+  have h1 : (swapCost P G E h w hs : ℝ) ≤
       (crtSwapCostN (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ w) E) h w : ℝ) := by
     exact_mod_cast crt_cost_le P G E h w hs hP hG hE hhw hwh hv hc
   have h2 := mt_swapN_le (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ w) E) h w

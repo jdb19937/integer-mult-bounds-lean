@@ -559,7 +559,7 @@ theorem ldlH_injective (hrg : Function.Injective rg) {hd : Fin 5 → Fin t₀}
   intro k k' e
   have e1 := hrg e
   simp only [LayReg.sw.injEq] at e1
-  exact hi (BinaryInterchangeRun.slot_injective e1)
+  exact hi (reg_injective e1)
 
 theorem ldlSetH_apply (hrg : Function.Injective rg) {hd : Fin 5 → Fin t₀}
     (hi : Function.Injective hd) (R : Fin T → List (Fin (A + 4))) (h : Fin 5 → List (Fin (A + 4)))
@@ -1003,7 +1003,7 @@ theorem ldl_stage_gen (body : F → Pr F T Q (prime + Ka) U) (hd : Fin 5 → Fin
     intro k i hki e
     have e1 := h.rg_inj e
     simp only [LayReg.sw.injEq] at e1
-    exact hki (BinaryInterchangeRun.slot_injective e1)
+    exact hki (reg_injective e1)
   have hWX1 : ∀ j, W (bs.length + (j + 1)) = ldlWX rg lr hd (prime + Ka) wX R₁ xs (j + 1) :=
     fun j => ldlW_X _ _ _ _ _ _ _ _ _ _
   have h := layApply_exec_gen body hd pay hi hQ h.rg_inj hT (ldlPrepM rg lr) (ldlPrepX hd rg lr)

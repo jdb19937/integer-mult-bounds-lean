@@ -106,7 +106,7 @@ theorem rsb_swap (body : F → Pr F T Q (prime + K) U) {rg : R → Fin T} {ι : 
     (hlx : rl ≠ rx) (hbl : ∀ j, rb j ≠ rl) (hbx : ∀ j, rb j ≠ rx)
     {P G h d w : ℕ} (hP : 0 < P) (hG : 0 < G) (hw : 0 < w)
     (hhd : h ≤ d + 1) (hdh : d ≤ h + 1) (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G (3 * w) h d k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G (3 * w) h d k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hA : 4 ≤ prime + K)
     (ρ : R → List (Fin (prime + K + 4))) (L : List GaussianInt)
     (hL : L.length = P * 2 ^ h * G * 2 ^ d)
@@ -117,7 +117,7 @@ theorem rsb_swap (body : F → Pr F T Q (prime + K) U) {rg : R → Fin T} {ι : 
     (hoth : ∀ i : Fin t₀, i ≠ pay → (∀ k, hd k ≠ i) → ρ (rb (reg i)) = []) :
     RsbRuns body rg ι (swapPass hd pay hi hQ (fun j => rg (rb j)) hsw hT (rg rl) (rg rx)) ρ
       (Function.update ρ rl (cstream (prime + K) w (swapList P (2 ^ h) G (2 ^ d) 1 0 L)))
-      (rsbSwapCost T t₀ (BinaryInterchangeRun.cost P G (3 * w) h d hs)
+      (rsbSwapCost T t₀ (swapCost P G (3 * w) h d hs)
         (∑ j, (ρ (rb j)).length) (L.length * w)) := by
   classical
   refine RsbRuns.of_raw fun v S hcl hS => ?_
@@ -190,11 +190,11 @@ theorem rsb_swap (body : F → Pr F T Q (prime + K) U) {rg : R → Fin T} {ι : 
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega)), hSι]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (BinaryInterchangeRun.slot_injective h')), hSι]
+      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h')), hSι]
       exact hhdr k)
     (by rw [hS₂pr, ← hx])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (BinaryInterchangeRun.slot_injective h')), hSι,
+      rw [hS₂ι _ (fun h' => hip (reg_injective h')), hSι,
         hoth i hip hk]
       simp)
   set S₃ : Stacks T (prime + K) := { S₂ with

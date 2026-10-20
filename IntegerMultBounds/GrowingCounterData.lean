@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.Counter
+public import IntegerMultBounds.Counter
 
 /-! Binary increment with a growing most-significant end. Carry into the end
 creates a new true bit, so no width is supplied in advance. The exact scan

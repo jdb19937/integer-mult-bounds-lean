@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 public import IntegerMultBounds.Machine.WordSegments
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! A literal counted row transfer into one fixed role tape. All alphabet
 symbols, including blank and separator, are copied. The finite control depends

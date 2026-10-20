@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.RecursiveInterchangeVolume
 public import Mathlib.Data.Nat.Log
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Descriptor-size comparison along recursive child selections. Retained
 spectator digits ensure that the root's binary size is at most a fixed multiple

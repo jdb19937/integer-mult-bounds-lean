@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.BinaryDescriptorStack
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! A physical four-state width-one guard. It reads the first bit and, only
 when that bit is one, its successor. Every tape and head is restored exactly;

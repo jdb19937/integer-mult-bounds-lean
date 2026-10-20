@@ -246,7 +246,7 @@ def PreAxB.fields (D : PreAxB) : List ℕ := [D.t, D.s, D.m, D.L, D.Ld, D.P, D.G
 
 /-- The canonical headers of the interchange of the axis with the last axis. -/
 def PreAxB.hs (D : PreAxB) (w : ℕ) : Fin 5 → List Bool :=
-  fun k => sxBits (BinaryInterchangeRun.values D.P D.G (3 * w) D.L D.Ld k)
+  fun k => sxBits (swapValues D.P D.G (3 * w) D.L D.Ld k)
 
 variable {t₀ T Q K : ℕ} {U F : Type}
 
@@ -370,7 +370,7 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (preHdrCostB D w) := by
   have htg := preLay_inj hg hι hdisj
   have hinj : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (BinaryInterchangeRun.slot_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
   refine twRuns_congr (twRuns_mono
     (twRuns_seq (twRuns_umul (body := body) htg 3 (a := .inl (.inl (.cm .wn))) (b := .inl (.inl .tL))
       (t := .inl (.inl .ac2)) (by simp) (by simp) (by simp) (preStB σ) ?_)
@@ -406,7 +406,7 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       · by_cases hj : ∃ k, reg (hd k) = j
         · obtain ⟨k, rfl⟩ := hj
           fin_cases k <;> simp (config := { decide := true }) [preBankB, hinj, rsbBank_hd hdi,
-            PreAxB.hs, BinaryInterchangeRun.values, hxs, hpr, htb, hxa, hwn, htL]
+            PreAxB.hs, swapValues, hxs, hpr, htb, hxa, hwn, htL]
         · have hne : ∀ k, j ≠ reg (hd k) := fun k h => hj ⟨k, h.symm⟩
           simp [preBankB, hj, hne]
       all_goals simp [preBankB]
@@ -565,7 +565,7 @@ lemma preRecsB_succ {A : ℕ} (n W : ℕ) (hd0 : 0 < d n) {j : ℕ} (hj : j < d 
 
 /-- The canonical interchange headers of the pipeline at width `w`. -/
 def preHsB (n w : ℕ) (hd0 : 0 < d n) : Fin (d n) → Fin 5 → List Bool := fun i k =>
-  sxBits (BinaryInterchangeRun.values (rsbPre (t n) i) (rsbMid (t n) i) (3 * w)
+  sxBits (swapValues (rsbPre (t n) i) (rsbMid (t n) i) (3 * w)
     (Nat.log 2 (t n i)) (Nat.log 2 (t n (rsbAx hd0 0))) k)
 
 variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}

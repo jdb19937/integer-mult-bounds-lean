@@ -182,7 +182,7 @@ lemma rsaBank_hd {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : Fi
   have h : ∃ k', reg (hd k') = reg (hd k) := ⟨k, rfl⟩
   rw [rsaBank, dite_eq_left h]
   have := Classical.choose_spec h
-  rw [hi (BinaryInterchangeRun.slot_injective this)]
+  rw [hi (reg_injective this)]
 
 lemma rsaBank_other {hd : Fin 5 → Fin t₀} (hs : Fin 5 → List Bool) {j : Fin (swapT t₀)}
     (hj : ∀ k, reg (hd k) ≠ j) : (rsaBank hd hs j : List (Fin (A + 4))) = [] := by
@@ -194,7 +194,7 @@ lemma rsaBank_xchg {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : 
       (reg (hd 3)) (rsaBank hd hs (reg (hd 4)))) (reg (hd 4)) (rsaBank hd hs (reg (hd 3))) =
       rsaBank hd (fun k => hs (Equiv.swap 3 4 k)) := by
   have hinj : Function.Injective fun k => reg (hd k) :=
-    fun a b h => hi (BinaryInterchangeRun.slot_injective h)
+    fun a b h => hi (reg_injective h)
   funext j
   by_cases h4 : j = reg (hd 4)
   · subst h4
@@ -243,8 +243,8 @@ def rsaStepCost (T t₀ w s ti m L n c₁ c₂ b₁ b₂ e : ℕ) : ℕ :=
     rsaSwapCost T t₀ c₂ b₂ (n * w) + (4 * e + 8)
 
 lemma rsa_values_swap34 (P G B h d : ℕ) (k : Fin 5) :
-    BinaryInterchangeRun.values P G B h d (Equiv.swap 3 4 k) =
-      BinaryInterchangeRun.values P G B d h k := by
+    swapValues P G B h d (Equiv.swap 3 4 k) =
+      swapValues P G B d h k := by
   fin_cases k <;> rfl
 
 variable {body : F → Pr F T Q (prime + K) U}
@@ -268,7 +268,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
     (hFT : ∀ y ∈ rsaTabL (t i) (2 * m + 1) wt, Fits w y ∧ y.im = 0)
     (hP : 0 < rsaPre t i) (hG : 0 < rsaMid t i) (hs : Fin 5 → List Bool)
     (hv : ∀ k, Counter.value (hs k) =
-      BinaryInterchangeRun.values (rsaPre t i) (rsaMid t i) (3 * w) Lb Ld k)
+      swapValues (rsaPre t i) (rsaMid t i) (3 * w) Lb Ld k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (V : RsaV (RsaX t₀) (prime + K))
     (hI : RsaIdle V w q Lb s (t i) m wt) (hob : V.ob = [])
     (hbank : ∀ j, V.xr (.sw j) = rsaBank hd hs j) (hxt : V.xr .xt = [])
@@ -280,8 +280,8 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
         ln := cstream (prime + K) w
           (rsaAxisL (rsaPre t i) (t i) (rsaSuf t i) (rsaLineMap q s (t i) m wt) L) }.get
       (rsaStepCost T t₀ w s (t i) m Lb L.length
-        (BinaryInterchangeRun.cost (rsaPre t i) (rsaMid t i) (3 * w) Lb Ld hs)
-        (BinaryInterchangeRun.cost (rsaPre t i) (rsaMid t i) (3 * w) Ld Lb
+        (swapCost (rsaPre t i) (rsaMid t i) (3 * w) Lb Ld hs)
+        (swapCost (rsaPre t i) (rsaMid t i) (3 * w) Ld Lb
           (fun k => hs (Equiv.swap 3 4 k)))
         (∑ j, (rsaBank hd hs j : List (Fin (prime + K + 4))).length)
         (∑ j, (rsaBank hd (fun k => hs (Equiv.swap 3 4 k)) j :
@@ -296,8 +296,8 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
   have hL' : L.length = P * H * G * D := by
     rw [hL, ← rsaPre_mul t i, hsuf]; ring
   have hinj : Function.Injective fun k => reg (hd k) :=
-    fun a b h => hi (BinaryInterchangeRun.slot_injective h)
-  have hreg : ∀ k, reg (hd k) ≠ reg pay := fun k h => hdpay k (BinaryInterchangeRun.slot_injective h)
+    fun a b h => hi (reg_injective h)
+  have hreg : ∀ k, reg (hd k) ≠ reg pay := fun k h => hdpay k (reg_injective h)
   set hs' : Fin 5 → List Bool := fun k => hs (Equiv.swap 3 4 k) with hhs'
   -- 1. interchange axis `i` with the last axis
   set Lsw := swapList P (2 ^ Lb) G (2 ^ Ld) 1 0 L with hLsw
@@ -312,7 +312,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
     (fun k => by rw [hbank, rsaBank_hd hi])
     (fun i' _ hk => by
       rw [hbank, rsaBank_other]
-      intro k h; exact hk k (BinaryInterchangeRun.slot_injective h))
+      intro k h; exact hk k (reg_injective h))
   -- 2. `Ã` along the innermost axis
   have hlsw : Lsw.length = P * D * G * H := by
     rw [hLsw, rsa_length_swapList, ← ht, ← htd]; ring
@@ -366,7 +366,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
   set V₄ : RsaV (RsaX t₀) (prime + K) := { V₃ with
     ln := cstream (prime + K) w (rsaAxisL P H (rsaSuf t i) g L) } with hV₄
   have h4 : RsaRuns body rg ι (rsaSwapP rg hd pay hi hQs RsaX.sw hsw hTs .xt) V₃.get V₄.get
-      (rsaSwapCost T t₀ (BinaryInterchangeRun.cost P G (3 * w) Ld Lb hs')
+      (rsaSwapCost T t₀ (swapCost P G (3 * w) Ld Lb hs')
         (∑ j, (rsaBank hd hs' j : List (Fin (prime + K + 4))).length) (L.length * w)) := by
     have h := rsa_swap body (ι := ι) hrg hd pay hi hQs RsaX.sw hsw hTs .xt (by simp) hP hG
       (by omega) hdh hhd hs' (fun k => by rw [hhs', hv, rsa_values_swap34]) (fun k => hc _)
@@ -379,7 +379,7 @@ theorem rsa_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
       (fun k => by rw [show V₃.xr = xr' from rfl, hbank', rsaBank_hd hi])
       (fun i' _ hk => by
         rw [show V₃.xr = xr' from rfl, hbank', rsaBank_other]
-        intro k h; exact hk k (BinaryInterchangeRun.slot_injective h))
+        intro k h; exact hk k (reg_injective h))
     have hbs : ∑ j, (V₃.xr (.sw j)).length =
         ∑ j, (rsaBank hd hs' j : List (Fin (prime + K + 4))).length := by
       simp only [show V₃.xr = xr' from rfl, hbank']
@@ -497,10 +497,10 @@ def rsaAllCost (T t₀ w m d : ℕ) (t : Fin d → ℕ) (hd0 : 0 < d) (Dt : Fin 
   (∑ j ∈ Finset.range (d - 1), (cp (j + 1) +
     rsaStepCost T t₀ w (Dt (rsaStepAx hd0 (j + 1))).s (t (rsaStepAx hd0 (j + 1))) m
       (Dt (rsaStepAx hd0 (j + 1))).Lb n
-      (BinaryInterchangeRun.cost (rsaPre t (rsaStepAx hd0 (j + 1)))
+      (swapCost (rsaPre t (rsaStepAx hd0 (j + 1)))
         (rsaMid t (rsaStepAx hd0 (j + 1))) (3 * w) (Dt (rsaStepAx hd0 (j + 1))).Lb
         (Dt (rsaStepAx hd0 0)).Lb (Dt (rsaStepAx hd0 (j + 1))).hs)
-      (BinaryInterchangeRun.cost (rsaPre t (rsaStepAx hd0 (j + 1)))
+      (swapCost (rsaPre t (rsaStepAx hd0 (j + 1)))
         (rsaMid t (rsaStepAx hd0 (j + 1))) (3 * w) (Dt (rsaStepAx hd0 0)).Lb
         (Dt (rsaStepAx hd0 (j + 1))).Lb
         (fun k => (Dt (rsaStepAx hd0 (j + 1))).hs (Equiv.swap 3 4 k)))
@@ -533,7 +533,7 @@ theorem rsa_all (prep : Pr F T Q (prime + K) U) (hrg : Function.Injective rg)
       (Dt i).q ≤ w ∧ ∀ y ∈ rsaTabL (t i) (2 * m + 1) (Dt i).wt, Fits w y ∧ y.im = 0)
     (hDw : ∀ i : Fin d, (i : ℕ) + 1 < d → (Dt i).Lb ≤ (Dt (rsaStepAx hd0 0)).Lb + 1 ∧
       (Dt (rsaStepAx hd0 0)).Lb ≤ (Dt i).Lb + 1 ∧
-      (∀ k, Counter.value ((Dt i).hs k) = BinaryInterchangeRun.values (rsaPre t i) (rsaMid t i)
+      (∀ k, Counter.value ((Dt i).hs k) = swapValues (rsaPre t i) (rsaMid t i)
         (3 * w) (Dt i).Lb (Dt (rsaStepAx hd0 0)).Lb k) ∧
       ∀ k, GrowingCounterData.Canonical ((Dt i).hs k))
     (V₀ : RsaV (RsaX t₀) (prime + K)) (cfg : ℕ → RsaV (RsaX t₀) (prime + K))
@@ -605,10 +605,10 @@ theorem rsa_all (prep : Pr F T Q (prime + K) U) (hrg : Function.Injective rg)
     (by simp) (p := .seq prep (rsaStepP rg ι hι hT hQ hd pay hi hQs hsw hTs)) Φ
     (b := fun j => cp (j + 1) + rsaStepCost T t₀ w (Dt (rsaStepAx hd0 (j + 1))).s
       (t (rsaStepAx hd0 (j + 1))) m (Dt (rsaStepAx hd0 (j + 1))).Lb l₀.length
-      (BinaryInterchangeRun.cost (rsaPre t (rsaStepAx hd0 (j + 1)))
+      (swapCost (rsaPre t (rsaStepAx hd0 (j + 1)))
         (rsaMid t (rsaStepAx hd0 (j + 1))) (3 * w) (Dt (rsaStepAx hd0 (j + 1))).Lb
         (Dt (rsaStepAx hd0 0)).Lb (Dt (rsaStepAx hd0 (j + 1))).hs)
-      (BinaryInterchangeRun.cost (rsaPre t (rsaStepAx hd0 (j + 1)))
+      (swapCost (rsaPre t (rsaStepAx hd0 (j + 1)))
         (rsaMid t (rsaStepAx hd0 (j + 1))) (3 * w) (Dt (rsaStepAx hd0 0)).Lb
         (Dt (rsaStepAx hd0 (j + 1))).Lb
         (fun k => (Dt (rsaStepAx hd0 (j + 1))).hs (Equiv.swap 3 4 k)))
@@ -712,7 +712,7 @@ theorem rsa_all_tensor (prep : Pr F T Q (prime + K) U) (hrg : Function.Injective
       (Dt i).q ≤ w ∧ ∀ y ∈ rsaTabL (t i) (2 * m + 1) (Dt i).wt, Fits w y ∧ y.im = 0)
     (hDw : ∀ i : Fin d, (i : ℕ) + 1 < d → (Dt i).Lb ≤ (Dt (rsaStepAx hd0 0)).Lb + 1 ∧
       (Dt (rsaStepAx hd0 0)).Lb ≤ (Dt i).Lb + 1 ∧
-      (∀ k, Counter.value ((Dt i).hs k) = BinaryInterchangeRun.values (rsaPre t i) (rsaMid t i)
+      (∀ k, Counter.value ((Dt i).hs k) = swapValues (rsaPre t i) (rsaMid t i)
         (3 * w) (Dt i).Lb (Dt (rsaStepAx hd0 0)).Lb k) ∧
       ∀ k, GrowingCounterData.Canonical ((Dt i).hs k))
     (V₀ : RsaV (RsaX t₀) (prime + K)) (cfg : ℕ → RsaV (RsaX t₀) (prime + K))
@@ -813,7 +813,7 @@ theorem rsa_all_lineA (n : ℕ) (prep : Pr F T Q (prime + K) U) (hrg : Function.
     (hDw : ∀ i : Fin (d n), (i : ℕ) + 1 < d n →
       (rsaPipeData n hs i).Lb ≤ (rsaPipeData n hs (rsaStepAx hd0 0)).Lb + 1 ∧
       (rsaPipeData n hs (rsaStepAx hd0 0)).Lb ≤ (rsaPipeData n hs i).Lb + 1 ∧
-      (∀ k, Counter.value (hs i k) = BinaryInterchangeRun.values (rsaPre (t n) i)
+      (∀ k, Counter.value (hs i k) = swapValues (rsaPre (t n) i)
         (rsaMid (t n) i) (3 * w) (rsaPipeData n hs i).Lb (rsaPipeData n hs (rsaStepAx hd0 0)).Lb
           k) ∧
       ∀ k, GrowingCounterData.Canonical (hs i k))

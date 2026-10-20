@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ScalingMergeData
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 public import IntegerMultBounds.Machine.ScalingSplit
 
 /-! Growing binary descriptor families for scaling pieces. The merge selector

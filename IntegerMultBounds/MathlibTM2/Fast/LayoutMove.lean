@@ -40,7 +40,7 @@ rectangle `[N₀] × [2^K] × [N₁] × [2^K] × [N₂] × [2^K] × [N₃]` (`la
 `layXchg_exec`: with the bank holding canonical headers of the interchange dimensions
 `layXcDims` (`LayBank`, `LayHdr`), the stream ends as
 `(moveRecs (layRec ((LayMove.xc (o a) (o b)).perm K n)) l).flatten`, within `layXcCost`: the
-vendored interchange term `(T + 12 swapT t₀ + 5) · BinaryInterchangeRun.cost` of
+vendored interchange term `(T + 12 swapT t₀ + 5) · swapCost` of
 `swapPass_exec`, plus `6` per bank symbol, `34` per stream symbol and `2 T + 6 swapT t₀ + 23`.
 `layXchg_exec_le` bounds the interchange term by `3 C_swap (T + 12 swapT t₀ + 5) 2^n B
 max(1, K)^τ` (`swapPass_exec_le`).
@@ -558,16 +558,16 @@ structure LayBank (rg : LayReg t₀ → Fin T) (R : Fin T → List (Fin (prime +
 
 /-- The headers `hs` are canonical counters of the dimensions of the exchange. -/
 def LayHdr (n K : ℕ) (o : Fin 3 → ℕ) (a b : Fin 3) (B : ℕ) (hs : Fin 5 → List Bool) : Prop :=
-  (∀ k, Counter.value (hs k) = BinaryInterchangeRun.values (layXcDims n K o a b B).1
+  (∀ k, Counter.value (hs k) = swapValues (layXcDims n K o a b B).1
       (layXcDims n K o a b B).2.1 (layXcDims n K o a b B).2.2 K K k) ∧
     ∀ k, GrowingCounterData.Canonical (hs k)
 
 /-- The step bound of one exchange: `(T + 12 swapT t₀ + 5)` host steps per step of the
-interchange machine (`BinaryInterchangeRun.cost`), `6` per symbol on the bank, `34` per stream
+interchange machine (`swapCost`), `6` per symbol on the bank, `34` per stream
 symbol, and a term linear in the tape counts. -/
 noncomputable def layXcCost (T t₀ n K : ℕ) (o : Fin 3 → ℕ) (a b : Fin 3) (B : ℕ)
     (hs : Fin 5 → List Bool) (bank : ℕ) : ℕ :=
-  (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost (layXcDims n K o a b B).1
+  (T + 12 * swapT t₀ + 5) * swapCost (layXcDims n K o a b B).1
     (layXcDims n K o a b B).2.1 (layXcDims n K o a b B).2.2 K K hs +
     6 * bank + 34 * (2 ^ n * B) + 2 * T + 6 * swapT t₀ + 23
 
@@ -608,7 +608,7 @@ theorem layXchg_exec (body : F → Pr F T Q (prime + Ka) U) (hd : Fin 5 → Fin 
     exact he
 
 /-- `layXchg_exec` with the interchange cost bounded by the vendored
-`BinaryInterchangeRun.uniform_bound` (`swapPass_exec_le`): at most
+`swapCost_le` (`swapPass_exec_le`): at most
 `3 C_swap (T + 12 swapT t₀ + 5) · 2^n B · max(1, K)^τ` plus the linear terms. -/
 theorem layXchg_exec_le (body : F → Pr F T Q (prime + Ka) U) (hd : Fin 5 → Fin t₀) (pay : Fin t₀)
     (hi : Function.Injective hd) (hQ : swapStates hd pay hi ≤ Q) {rg : LayReg t₀ → Fin T}

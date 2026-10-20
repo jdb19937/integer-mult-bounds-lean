@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.CountedSeek
 public import IntegerMultBounds.Machine.CountedLoopReuse
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Reposition a complete uniform fiber using only its block-width and count
 descriptors. This physically moves the payload head and restores both clocks;

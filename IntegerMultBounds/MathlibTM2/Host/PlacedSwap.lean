@@ -74,7 +74,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
     (hQ : swapStates hd pay hi ≤ Q)
     (ι : Fin (swapT t₀) → Fin T) (hι : Function.Injective ι) (hT : swapT t₀ ≤ T)
     (P G B h d : ℕ) (hs : Fin 5 → List Bool) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G B h d k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G B h d k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
     (x : Fin (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ d) B) → Bool)
     (v : HS T Q (prime + K) U) (S : Stacks T (prime + K))
@@ -85,7 +85,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
     (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) →
       ∀ s ∈ S.R (ι (reg i)), s ≠ blank ∧ s.val < prime + 4) :
     ∃ v' m, v'.user = v.user ∧
-      m ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G B h d hs +
+      m ≤ (T + 12 * swapT t₀ + 5) * swapCost P G B h d hs +
         6 * ∑ j, (S.R (ι j)).length + 2 * T + 6 * swapT t₀ + 15 ∧
       Exec body (placedSwapProg hd pay hi hQ ι hι hT) (mk v S) m
         (mk v' { S with
@@ -159,7 +159,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
   have hnd₀ : l₀.Nodup := by
     rw [hl₀, List.nodup_ofFn]
     intro a b hab
-    exact hi (BinaryInterchangeRun.slot_injective (hι hab))
+    exact hi (reg_injective (hι hab))
   have hmem : ∀ y, y ∈ l₀ ↔ ∃ k, ι (reg (hd k)) = y := fun y => List.mem_ofFn
   obtain ⟨v₁, hu₁, he₁⟩ := shiftList_exec body l₀ hnd₀ v S₀
   set S₁ : Stacks T (prime + K) := { S₀ with
@@ -214,7 +214,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
         · obtain ⟨k, rfl⟩ := hk
           rw [(hS₁hdr k).1, (hS₁hdr k).2, hheads k, hhdr k, readAt_single]
         · have hc0 : caller.head i = 0 := ite_eq_right hk
-          have hoth := hS₁oth (reg i) (fun k hk' => hk ⟨k, BinaryInterchangeRun.slot_injective hk'⟩)
+          have hoth := hS₁oth (reg i) (fun k hk' => hk ⟨k, reg_injective hk'⟩)
           rw [hoth.1, hoth.2, hc0, sub_zero, readAt_nil_left]
       · rw [dite_eq_right hj, dite_eq_right hj]
         have hoth := hS₁oth j (fun k hk' => hj (hk' ▸ (hd k).isLt))
@@ -259,7 +259,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
         rw [Function.update_self, hR', Function.update_self, BinaryRadixRangePrepareAlphabet.word,
           putWord_blank_zero, encode_wordTape, List.map_ofFn]
         rfl
-      · have hr : reg i ≠ reg pay := fun h' => hip (BinaryInterchangeRun.slot_injective h')
+      · have hr : reg i ≠ reg pay := fun h' => hip (reg_injective h')
         rw [Function.update_of_ne hip, hR'ι _ hr]
         exact encode_wordTape_decode _ (fun s hs => (hgood _ s hs).2) z
     · rw [dite_eq_right hj]
@@ -299,7 +299,7 @@ theorem placedSwapProg_run {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T 
     ((unplaced ι).length + 1)))), hu₃.trans (hu₂.trans hu₁), ?_,
     Exec.cast (Exec.seq he₀ (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ he₄)))) rfl ?_⟩
   · rw [List.map_ofFn, List.sum_ofFn] at hn₃
-    set k := BinaryInterchangeRun.cost P G B h d hs
+    set k := swapCost P G B h d hs
     have hsum : ∑ j, ((fun i => 6 * ((S₂.L i).length + (S₂.R i).length) + 6) ∘ ι) j ≤
         ∑ j, (6 * (S.R (ι j)).length + (12 * k + 6)) := by
       apply Finset.sum_le_sum
@@ -346,7 +346,7 @@ theorem placedSwapProg_exec {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T
     (hQ : swapStates hd pay hi ≤ Q)
     (ι : Fin (swapT t₀) → Fin T) (hι : Function.Injective ι) (hT : swapT t₀ ≤ T)
     (P G B h d : ℕ) (hs : Fin 5 → List Bool) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G B h d k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G B h d k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
     (x : Fin (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ d) B) → Bool)
     (v : HS T Q (prime + K) U) (S : Stacks T (prime + K))
@@ -357,7 +357,7 @@ theorem placedSwapProg_exec {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T
     (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) →
       ∀ s ∈ S.R (ι (reg i)), s ≠ blank ∧ s.val < prime + 4) :
     ∃ v' m, v'.user = v.user ∧
-      m ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G B h d hs +
+      m ≤ (T + 12 * swapT t₀ + 5) * swapCost P G B h d hs +
         6 * ∑ j, (S.R (ι j)).length + 2 * T + 6 * swapT t₀ + 15 ∧
       Exec body (placedSwapProg hd pay hi hQ ι hι hT) (mk v S) m
         (mk v' { S with

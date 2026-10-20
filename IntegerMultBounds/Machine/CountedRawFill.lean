@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLoopReuse
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Exact delimiter-free constant filling with a physical reusable countdown.
 The immutable count is supplied on its own tape; no generated count is assumed.

@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLoopReuse
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Delimiter-free erasure of an arbitrary raw segment, with an immutable length
 and fully reusable clock. Every overwritten symbol and head move is charged. -/

@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.Placement
 public import IntegerMultBounds.Machine.CountedCopyReuse
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Literal constant-one binary descriptor construction from a blank tape.
 This fixed two-transition bootstrap supplies the one used to form Q minus one

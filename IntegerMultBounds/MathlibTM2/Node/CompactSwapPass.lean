@@ -208,7 +208,7 @@ theorem cxSwap_exec {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T Q (prim
     {B : ℕ} (hB : 0 < B) (l : List (List (Fin (prime + K + 4)))) (hl : l.length = Rr * 2 ^ q)
     (hlB : ∀ x ∈ l, x.length = B) (h8 : ∀ x ∈ l, ∀ s ∈ x, s.val < 8)
     (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values
+    (hv : ∀ k, Counter.value (hs k) = swapValues
       (swapDimsIdx (len := len) f₁ f₂ w Rr q B).1 (swapDimsIdx (len := len) f₁ f₂ w Rr q B).2.1
       (swapDimsIdx (len := len) f₁ f₂ w Rr q B).2.2 w w k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
@@ -264,7 +264,7 @@ theorem cxSwap_exec {t₀ T Q K : ℕ} {U F : Type} (body : F → Pr F T Q (prim
       obtain ⟨x, hx, hsx⟩ := List.mem_flatten.1 hs'
       exact h8 x (mem_moveRecs π hl hx) s hsx) hs hv hc v S hL hR htmp0 hpay0 hpriv hhdr hother
   refine ⟨v', m, hu, ?_, he⟩
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2
+  have hC := (Classical.choose_spec swapCost_le).2
     P G B' w w hs hPpos hGpos hBpos (Nat.le_succ w) (Nat.le_succ w) hv hc
   rw [max_self, BinaryAdjacentWidthInterchange.volume, hvol] at hC
   have hvol' : ((Rr * 2 ^ q * (3 * B) : ℕ) : ℝ) = 3 * ((Rr * 2 ^ q * B : ℕ) : ℝ) := by

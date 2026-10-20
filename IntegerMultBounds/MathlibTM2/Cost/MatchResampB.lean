@@ -56,13 +56,13 @@ theorem mt_rsb_bank_sum_le {t₀ A : ℕ} (hd : Fin 5 → Fin t₀) (hs : Fin 5 
 
 /-- The headers of an interchange of `[P] × [2^h] × [G] × [2^d] × [B]`. -/
 theorem mt_rsb_hs_sum_le (P G B h e : ℕ) :
-    ∑ k, (sxBits (BinaryInterchangeRun.values P G B h e k)).length ≤ 5 * (P + G + B + h + e) := by
-  have : ∀ k, (sxBits (BinaryInterchangeRun.values P G B h e k)).length ≤ P + G + B + h + e := by
+    ∑ k, (sxBits (swapValues P G B h e k)).length ≤ 5 * (P + G + B + h + e) := by
+  have : ∀ k, (sxBits (swapValues P G B h e k)).length ≤ P + G + B + h + e := by
     intro k
     refine (mt_length_sxBits_le _).trans ?_
-    fin_cases k <;> simp [BinaryInterchangeRun.values] <;> omega
+    fin_cases k <;> simp [swapValues] <;> omega
   have := Finset.sum_le_card_nsmul Finset.univ
-    (fun k => (sxBits (BinaryInterchangeRun.values P G B h e k)).length) (P + G + B + h + e)
+    (fun k => (sxBits (swapValues P G B h e k)).length) (P + G + B + h + e)
     (fun k _ => this k)
   simpa using this
 
@@ -182,10 +182,10 @@ theorem mt_rsb_logs (h : Big n) (hd0 : 0 < d n) (i : Fin (d n)) :
 `swapConst · 3 T w · ℓ^τ + 1` steps each. -/
 theorem mt_rsb_swap_le (h : Big n) (hd0 : 0 < d n) (i : Fin (d n)) (hi : (i : ℕ) + 1 < d n)
     {w : ℕ} (hw : 1 ≤ w) :
-    (BinaryInterchangeRun.cost (rsbPre (t n) i) (rsbMid (t n) i) (3 * w) (Nat.log 2 (t n i))
+    (swapCost (rsbPre (t n) i) (rsbMid (t n) i) (3 * w) (Nat.log 2 (t n i))
         (Nat.log 2 (t n (rsbAx hd0 0))) (preHsB n w hd0 i) : ℝ) ≤
         swapConst * (T n * (3 * w) : ℕ) * (ℓ n : ℝ) ^ Parameters.tau + 1 ∧
-      (BinaryInterchangeRun.cost (rsbPre (t n) i) (rsbMid (t n) i) (3 * w)
+      (swapCost (rsbPre (t n) i) (rsbMid (t n) i) (3 * w)
         (Nat.log 2 (t n (rsbAx hd0 0))) (Nat.log 2 (t n i))
         (fun k => preHsB n w hd0 i (Equiv.swap 3 4 k)) : ℝ) ≤
         swapConst * (T n * (3 * w) : ℕ) * (ℓ n : ℝ) ^ Parameters.tau + 1 := by

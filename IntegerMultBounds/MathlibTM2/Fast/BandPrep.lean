@@ -160,7 +160,7 @@ variable {body : F → Pr F T Q (prime + K) U} {g : RsbR ⊕ RsbX t₀ → Fin T
 lemma bandClrB_nodup {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd) :
     ((bandClrB hd).map (Sum.inl : _ → (RsbR ⊕ RsbX t₀) ⊕ TblR 48)).Nodup := by
   have h : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (BinaryInterchangeRun.slot_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
   simp [bandClrB, preHB, List.nodup_cons, h]
 
 /-- **Step 1 of the band loader.** -/

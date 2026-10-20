@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.Machine.CountedRotateAdvance
 public import IntegerMultBounds.Machine.WordSegments
 public import IntegerMultBounds.Machine.CountedLoop
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! A single fixed body for shifting successive equal-length raw fibers.
 The offset and binary length descriptors are reused unchanged. All payload

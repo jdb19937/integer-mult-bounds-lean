@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.CRT
-public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
+public import IntegerMultBounds.MathlibTM2.Host.SwapList
 public import IntegerMultBounds.MathlibTM2.Host.Index
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial

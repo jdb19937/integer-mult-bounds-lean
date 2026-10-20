@@ -54,7 +54,7 @@ theorem cxSlot_exec {d : CxData} (hd : d.OK) {r w : ℕ} (hB : d.B = r * w)
     (hι : Function.Injective ι) (hb : Banks ι bank) (hA : 4 ≤ prime + K)
     (hQ : swapStates cxHd cxPay cxHd_inj ≤ Q) (hT : swapT 6 ≤ T)
     (hs : Fin 2 → Fin 5 → List Bool)
-    (hv : ∀ c k, Counter.value (hs c k) = BinaryInterchangeRun.values
+    (hv : ∀ c k, Counter.value (hs c k) = swapValues
       (swapDimsIdx (len := d.lens) d.fields.b (swapFld d.fields c) d.par.wc d.R d.n
         (d.n + d.rb + d.B)).1
       (swapDimsIdx (len := d.lens) d.fields.b (swapFld d.fields c) d.par.wc d.R d.n

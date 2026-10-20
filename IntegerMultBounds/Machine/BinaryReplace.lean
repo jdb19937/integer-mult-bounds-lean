@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLoopReuse
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Physically replace a sentinel-marked binary descriptor from a second tape.
 Erase the old word, copy the supplied replacement, and rewind both equal words.

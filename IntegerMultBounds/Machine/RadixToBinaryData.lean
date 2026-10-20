@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.RadixDigits
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Radix-q countdown data and amortized conversion cost. Long zero suffixes
 are charged against zero-digit potential, never against the full width on each

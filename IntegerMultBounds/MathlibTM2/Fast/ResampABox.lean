@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
+public import IntegerMultBounds.MathlibTM2.Host.SwapList
 public import IntegerMultBounds.NLogN.ResamplingMultiNumeric
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial

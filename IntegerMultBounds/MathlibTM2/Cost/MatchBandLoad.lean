@@ -739,7 +739,7 @@ theorem band_load_clr_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))
     have h1 := mt_rsb_bank_length_le (A := prime + K) hd (D.hs w) (reg (hd k))
     have h2 := mt_rsb_hs_sum_le D.P D.G (3 * w) D.L D.Ld
     have e : (∑ k, (D.hs w k).length) =
-        ∑ k, (sxBits (BinaryInterchangeRun.values D.P D.G (3 * w) D.L D.Ld k)).length := rfl
+        ∑ k, (sxBits (swapValues D.P D.G (3 * w) D.L D.Ld k)).length := rfl
     omega
   have h0 := hb 0
   have h1 := hb 1

@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.WordTape
 public import IntegerMultBounds.Machine.Hoare
-public import IntegerMultBounds.Machine.Counter
+public import IntegerMultBounds.Counter
 
 /-! Literal two-tape preparation of equally padded LSF operands. Missing
 high bits become zero, at one transition per column of the longer operand. -/

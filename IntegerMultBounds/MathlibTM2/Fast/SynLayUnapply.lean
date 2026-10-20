@@ -109,7 +109,7 @@ theorem sly_unstage_gen (body : F → Pr F T Q (prime + Ka) U) (hd : Fin 5 → F
     intro k i hki e
     have e1 := h.rg_inj e
     simp only [LayReg.sw.injEq] at e1
-    exact hki (BinaryInterchangeRun.slot_injective e1)
+    exact hki (reg_injective e1)
   have hR₁rg : ∀ x : LayReg t₀, (∀ i, x ≠ .sw i) → R₁ (rg x) = R₀ (rg x) := fun x hx =>
     ldlWX_rg hd hi wX R₀ xs _ h (fun k => hHne k x hx)
   have hR₁lr : ∀ y : LdlReg, y ≠ .dX → R₁ (lr y) = R₀ (lr y) := fun y hy =>

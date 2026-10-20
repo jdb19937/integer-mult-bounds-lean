@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.Machine.BinarySub
 public import IntegerMultBounds.Machine.CountedCopyReuse
 public import IntegerMultBounds.Machine.Placement
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Immutable arbitrary-width binary subtraction. The literal ripple machine
 reads missing high bits as zero until both source tapes end. It creates an

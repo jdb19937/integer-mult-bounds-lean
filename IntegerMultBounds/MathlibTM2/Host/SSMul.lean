@@ -1,7 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
-public import IntegerMultBounds.MathlibTM2.Host.Placed
+public import IntegerMultBounds.MathlibTM2.Host.StackLoops
 public import IntegerMultBounds.MathlibTM2.Host.Index
 public import IntegerMultBounds.Schoenhage.SSClean
 public import IntegerMultBounds.Schoenhage.SSCost

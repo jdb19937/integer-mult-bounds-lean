@@ -63,7 +63,7 @@ lemma cxSetReg_inj {ι : CxReg → Fin T} {bank : Fin 2 → Fin (swapT 6) → Fi
     (hbc : ∀ c c' j j', bank c j = bank c' j' → c = c') :
     Function.Injective (cxSetReg ι bank) := by
   have hreg : Function.Injective fun k : Fin 5 => (reg (cxHd k) : Fin (swapT 6)) :=
-    fun k k' e => cxHd_inj (BinaryInterchangeRun.slot_injective e)
+    fun k k' e => cxHd_inj (reg_injective e)
   rintro (x | ⟨c, k⟩) (y | ⟨c', k'⟩) e <;> simp only [cxSetReg] at e
   · rw [hι e]
   · exact absurd e.symm (hb.ne _ _ _)
@@ -175,7 +175,7 @@ lemma swapFld_off (hd : d.OK) (c : Fin 2) :
   · simp [swapFld, fields, e8]
 
 lemma hs_value (hd : d.OK) (c : Fin 2) (k : Fin 5) :
-    Counter.value (d.hs c k) = BinaryInterchangeRun.values
+    Counter.value (d.hs c k) = swapValues
       (swapDimsIdx (len := d.lens) d.fields.b (swapFld d.fields c) d.par.wc d.R d.n
         (d.n + d.rb + d.B)).1
       (swapDimsIdx (len := d.lens) d.fields.b (swapFld d.fields c) d.par.wc d.R d.n
@@ -186,7 +186,7 @@ lemma hs_value (hd : d.OK) (c : Fin 2) (k : Fin 5) :
   have hoff := swapFld_off hd c
   simp only [swapDimsIdx, hb0, hoff, par_wc, pow_zero, Nat.one_mul, Nat.sub_zero]
   fin_cases c <;> fin_cases k <;>
-    (simp [hs, he, hbits, sx_value_rep_false, value_sxBits, BinaryInterchangeRun.values,
+    (simp [hs, he, hbits, sx_value_rep_false, value_sxBits, swapValues,
       Counter.value, Nat.mul_comm]; try (ring_nf; try simp))
 
 lemma hs_canonical (hd : d.OK) (c : Fin 2) (k : Fin 5) :

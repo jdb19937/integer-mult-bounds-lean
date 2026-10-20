@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.Counter
+public import IntegerMultBounds.Counter
 public import Mathlib.Tactic.Bound
 
 /-! Fixed-width LSB-first binary countdown and its exact digit trace. Successful

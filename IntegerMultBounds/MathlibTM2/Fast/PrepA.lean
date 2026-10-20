@@ -107,7 +107,7 @@ def PreAxA.fields (D : PreAxA) : List ℕ := [D.t, D.q, D.m, D.s, D.L, D.Ld, D.P
 
 /-- The canonical headers of the interchange of the axis with the last axis. -/
 def PreAxA.hs (D : PreAxA) (w : ℕ) : Fin 5 → List Bool :=
-  fun k => sxBits (BinaryInterchangeRun.values D.P D.G (3 * w) D.L D.Ld k)
+  fun k => sxBits (swapValues D.P D.G (3 * w) D.L D.Ld k)
 
 variable {t₀ T Q K : ℕ} {U F : Type}
 
@@ -295,7 +295,7 @@ omit hrg hι hdisj in
 lemma preHA_nodup {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd) :
     ((preClrA hd).map (Sum.inl : _ → RsaR (RsaX t₀) ⊕ TblR 48)).Nodup := by
   have h : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (BinaryInterchangeRun.slot_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
   simp [preClrA, preHA, List.nodup_cons, h]
 
 theorem preA_clr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd) (V : RsaV (RsaX t₀) (prime + K)) :
@@ -390,7 +390,7 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (preSt { V with xr := preBankA V.xr hd (D.hs w) }) (preHdrCost D w) := by
   have htg := preLay_inj hrg hι hdisj
   have hinj : ∀ a b, reg (hd a) = reg (hd b) ↔ a = b := fun a b =>
-    ⟨fun e => hdi (BinaryInterchangeRun.slot_injective e), fun e => e ▸ rfl⟩
+    ⟨fun e => hdi (reg_injective e), fun e => e ▸ rfl⟩
   have hH' : ∀ k, V.get (preHA hd k) = [] := fun k => hH k
   refine twRuns_congr (twRuns_mono
     (twRuns_seq (twRuns_umul (body := body) htg 3 (a := .inl (.c .wn)) (b := .inl .sm2)
@@ -428,7 +428,7 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
         · by_cases hj : ∃ k, reg (hd k) = j
           · obtain ⟨k, rfl⟩ := hj
             fin_cases k <;> simp (config := { decide := true }) [preBankA, hinj, rsaBank_hd hdi,
-              PreAxA.hs, BinaryInterchangeRun.values, hkb, hkx, her, hka, hwn, hsm2]
+              PreAxA.hs, swapValues, hkb, hkx, her, hka, hwn, hsm2]
           · have hne : ∀ k, j ≠ reg (hd k) := fun k h => hj ⟨k, h.symm⟩
             simp [preBankA, hj, hne]
         all_goals simp [preBankA]
@@ -947,7 +947,7 @@ lemma preRecsA_succ {A : ℕ} (n W : ℕ) (hd0 : 0 < d n) {j : ℕ} (hj : j < d 
 
 /-- The canonical interchange headers of the pipeline at width `w`. -/
 def preHsA (n w : ℕ) (hd0 : 0 < d n) : Fin (d n) → Fin 5 → List Bool := fun i k =>
-  sxBits (BinaryInterchangeRun.values (rsaPre (t n) i) (rsaMid (t n) i) (3 * w)
+  sxBits (swapValues (rsaPre (t n) i) (rsaMid (t n) i) (3 * w)
     (Nat.log 2 (t n i)) (Nat.log 2 (t n (rsaStepAx hd0 0))) k)
 
 /-- The register file configured for step `k`. -/

@@ -24,8 +24,8 @@ value below `8`. The pass
 
 `swapList_moveRecs` identifies the list interchange with `moveRecs (rankPerm [.swap a b])` for
 records of any uniform length, and `swapList_toBits` transfers it to bit streams. `swapPass_exec`
-states the exact effect of the pass and a step bound in terms of `BinaryInterchangeRun.cost`;
-`swapPass_exec_le` bounds that cost with `BinaryInterchangeRun.uniform_bound`.
+states the exact effect of the pass and a step bound in terms of `swapCost`;
+`swapPass_exec_le` bounds that cost with `swapCost_le`.
 
 The caller fills the five header registers with the canonical counters of `(P, G, B', L, L)`;
 the pass leaves them unchanged.
@@ -556,7 +556,7 @@ theorem swapPass_exec_of (body : F → Pr F T Q (prime + K) U)
     (hswap : swapList P (2 ^ L) G (2 ^ L) B' blank (toBits w) = toBits w')
     (h8' : ∀ s ∈ w', s.val < 8)
     (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G B' L L k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G B' L L k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
     (v : HS T Q (prime + K) U) (S : Stacks T (prime + K))
     (hL : ∀ y, S.L y = [])
@@ -566,7 +566,7 @@ theorem swapPass_exec_of (body : F → Pr F T Q (prime + K) U)
     (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) →
       ∀ s ∈ S.R (ι (reg i)), s ≠ blank ∧ s.val < prime + 4) :
     ∃ v' m, v'.user = v.user ∧
-      m ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G B' L L hs +
+      m ≤ (T + 12 * swapT t₀ + 5) * swapCost P G B' L L hs +
         6 * ∑ j, (S.R (ι j)).length + 34 * N + 2 * T + 6 * swapT t₀ + 23 ∧
       Exec body (swapPass hd pay hi hQ ι hι hT str tmp) (mk v S) m
         (mk v' { S with R := Function.update S.R str w' }) := by
@@ -617,11 +617,11 @@ theorem swapPass_exec_of (body : F → Pr F T Q (prime + K) U)
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega))]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (BinaryInterchangeRun.slot_injective h'))]
+      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h'))]
       exact hhdr k)
     (by rw [hS₂pr, ← hx])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (BinaryInterchangeRun.slot_injective h'))]
+      rw [hS₂ι _ (fun h' => hip (reg_injective h'))]
       exact hother i hip hk)
   set S₃ : Stacks T (prime + K) := { S₂ with
     L := fun _ => []
@@ -710,7 +710,7 @@ theorem swapPass_exec (body : F → Pr F T Q (prime + K) U)
     (l : List (List (Fin (prime + K + 4)))) (hl : l.length = rectSize N₀ N₁ N₂ N₃ L)
     (hlB : ∀ x ∈ l, x.length = B) (h8 : ∀ x ∈ l, ∀ s ∈ x, s.val < 8)
     (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values
+    (hv : ∀ k, Counter.value (hs k) = swapValues
       (swapDims N₀ N₁ N₂ N₃ L a b).1 (swapDims N₀ N₁ N₂ N₃ L a b).2.1
       ((swapDims N₀ N₁ N₂ N₃ L a b).2.2 * (3 * B)) L L k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
@@ -722,7 +722,7 @@ theorem swapPass_exec (body : F → Pr F T Q (prime + K) U)
     (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) →
       ∀ s ∈ S.R (ι (reg i)), s ≠ blank ∧ s.val < prime + 4) :
     ∃ v' m, v'.user = v.user ∧
-      m ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost (swapDims N₀ N₁ N₂ N₃ L a b).1
+      m ≤ (T + 12 * swapT t₀ + 5) * swapCost (swapDims N₀ N₁ N₂ N₃ L a b).1
           (swapDims N₀ N₁ N₂ N₃ L a b).2.1 ((swapDims N₀ N₁ N₂ N₃ L a b).2.2 * (3 * B)) L L hs +
         6 * ∑ j, (S.R (ι j)).length + 34 * (rectSize N₀ N₁ N₂ N₃ L * B) + 2 * T +
         6 * swapT t₀ + 23 ∧
@@ -743,10 +743,10 @@ theorem swapPass_exec (body : F → Pr F T Q (prime + K) U)
       obtain ⟨x, hx, hsx⟩ := List.mem_flatten.1 hs'
       exact h8 x (mem_moveRecs _ hl hx) s hsx) hs hv hc v S hL hR htmp0 hpay0 hpriv hhdr hother
 
-/-- The constant of the vendored interchange time bound `BinaryInterchangeRun.uniform_bound`. -/
-def swapConst : ℝ := Classical.choose BinaryInterchangeRun.uniform_bound
+/-- The constant of the vendored interchange time bound `swapCost_le`. -/
+def swapConst : ℝ := Classical.choose swapCost_le
 
-lemma swapConst_pos : 0 < swapConst := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).1
+lemma swapConst_pos : 0 < swapConst := (Classical.choose_spec swapCost_le).1
 
 /-- Transfer a step count bound `k * c + r` with `c ≤ C * (3 * V) * F` to the reals. -/
 lemma cast_time_bound {m k c r : ℕ} {C V F : ℝ} (hm : m ≤ k * c + r)
@@ -756,7 +756,7 @@ lemma cast_time_bound {m k c r : ℕ} {C V F : ℝ} (hm : m ≤ k * c + r)
   have h₂ := mul_le_mul_of_nonneg_left hc (Nat.cast_nonneg (α := ℝ) k)
   nlinarith
 
-/-- `swapPass_exec` with the interchange cost bounded by `BinaryInterchangeRun.uniform_bound`. -/
+/-- `swapPass_exec` with the interchange cost bounded by `swapCost_le`. -/
 theorem swapPass_exec_le (body : F → Pr F T Q (prime + K) U)
     (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
     (hQ : swapStates hd pay hi ≤ Q)
@@ -767,7 +767,7 @@ theorem swapPass_exec_le (body : F → Pr F T Q (prime + K) U)
     (l : List (List (Fin (prime + K + 4)))) (hl : l.length = rectSize N₀ N₁ N₂ N₃ L)
     (hlB : ∀ x ∈ l, x.length = B) (h8 : ∀ x ∈ l, ∀ s ∈ x, s.val < 8)
     (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values
+    (hv : ∀ k, Counter.value (hs k) = swapValues
       (swapDims N₀ N₁ N₂ N₃ L a b).1 (swapDims N₀ N₁ N₂ N₃ L a b).2.1
       ((swapDims N₀ N₁ N₂ N₃ L a b).2.2 * (3 * B)) L L k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
@@ -792,7 +792,7 @@ theorem swapPass_exec_le (body : F → Pr F T Q (prime + K) U)
     hpriv hhdr hother
   refine ⟨v', m, hu, ?_, he⟩
   have hpos := swapDims_pos N₀ N₁ N₂ N₃ L a b h₀ h₁ h₂ h₃
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2
+  have hC := (Classical.choose_spec swapCost_le).2
     (swapDims N₀ N₁ N₂ N₃ L a b).1 (swapDims N₀ N₁ N₂ N₃ L a b).2.1
     ((swapDims N₀ N₁ N₂ N₃ L a b).2.2 * (3 * B)) L L hs hpos.1 hpos.2.1
     (Nat.mul_pos hpos.2.2 (by omega)) (Nat.le_succ L) (Nat.le_succ L) hv hc

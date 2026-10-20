@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Delimiter-free simultaneous erasure and head restoration for any fixed
 selection of payload tapes over the full native alphabet. Runtime lengths live

@@ -196,10 +196,10 @@ lemma crtGapHdrBits_canonical (u g v h w : ℕ) (e : List Bool)
 
 lemma crtGapHdrBits_value (u g v h w : ℕ) (e : List Bool) :
     ∀ i, Counter.value (crtGapHdrBits u g v h w e i) =
-      BinaryInterchangeRun.values (2 ^ u) (2 ^ g) (2 ^ v * Counter.value e) h w i := by
+      swapValues (2 ^ u) (2 ^ g) (2 ^ v * Counter.value e) h w i := by
   intro i
   fin_cases i <;>
-    simp [crtGapHdrBits, crtHdrBits, BinaryInterchangeRun.values,
+    simp [crtGapHdrBits, crtHdrBits, swapValues,
       crt_value_replicate_false, Counter.value, GrowingCounterData.empty_value]
 
 noncomputable section
@@ -221,7 +221,7 @@ theorem crtSwapGapPass_runs {T Q K d : ℕ} {U F : Type}
     (C : (Fin d → ℕ) → List (Fin (prime + K + 4))) (B : ℕ) (hB : 0 < B)
     (hC : ∀ y, (C y).length = B) (h8 : ∀ y, ∀ s ∈ C y, s.val < 8)
     (x : Fin d → ℕ) (hs : Fin 5 → List Bool)
-    (hv : ∀ i, Counter.value (hs i) = BinaryInterchangeRun.values
+    (hv : ∀ i, Counter.value (hs i) = swapValues
       (2 ^ crtW a pre) (2 ^ crtW a gap) (3 * (2 ^ crtW a post * B)) (a j) (a k) i)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i))
     (R : Regs T (prime + K))

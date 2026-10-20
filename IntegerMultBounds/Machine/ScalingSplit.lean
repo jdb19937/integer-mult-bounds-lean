@@ -4,7 +4,7 @@ public import IntegerMultBounds.Machine.ScalingControl
 public import IntegerMultBounds.Machine.CountedCopyReuse
 public import IntegerMultBounds.Machine.Placement
 public import IntegerMultBounds.Machine.WordSegments
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Literal finite-piece splitting for fixed-coefficient scaling. The program
 is a fixed sequence of reusable counted copies, one per fixed coefficient

@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.BitTape
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 public import IntegerMultBounds.Machine.Loop
 
 /-! A literal growing binary counter. Carry into the end blank creates a new

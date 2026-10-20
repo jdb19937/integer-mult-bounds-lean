@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.WordTape
 public import IntegerMultBounds.Machine.Hoare
-public import IntegerMultBounds.Machine.Counter
+public import IntegerMultBounds.Counter
 
 /-! Literal least-significant-first binary addition. Three tapes and three
 states suffice for every equally padded input width; carry is finite control.

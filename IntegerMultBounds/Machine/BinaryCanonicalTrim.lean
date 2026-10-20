@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Physically remove high zero bits from a marked binary word and return its

@@ -115,7 +115,7 @@ theorem mt_lay_hs_le {n K B : ℕ} {d : LayXcD} (hd : d.OK n K B) (hB : 0 < B) (
       _ ≤ P * 2 ^ K * G * 2 ^ K := Nat.le_mul_of_pos_right _ hK1
       _ ≤ _ := Nat.le_mul_of_pos_right _ hE3
   rw [e1] at c1 c2 c3 c4
-  fin_cases k <;> simp [BinaryInterchangeRun.values] at hl ⊢ <;> omega
+  fin_cases k <;> simp [swapValues] at hl ⊢ <;> omega
 
 /-- The writer's output file agrees with its input on the layout registers other than `cM`,
 `cX`. -/

@@ -25,8 +25,8 @@ registers `sw (reg (hd k))` hold `separator :: (hs k).map bitSymbol` for canonic
 bank. The alphabet is `Fin (prime + K + 4)`. Every register other than `ln` ends as it started.
 
 **Cost** (`rsaSwapCost`): `(T + 12 swapT t₀ + 5)` host steps per step of the interchange machine
-(`BinaryInterchangeRun.cost`), plus `6` per symbol on the bank and `34` per stream symbol.
-`rsa_swap_le` bounds the interchange by `BinaryInterchangeBudget.uniform_bound`: in total
+(`swapCost`), plus `6` per symbol on the bank and `34` per stream symbol.
+`rsa_swap_le` bounds the interchange by `swapCost_le`: in total
 `O(T_box · 3 w · max(1, h, d)^τ)` steps for a box of `T_box` records.
 -/
 
@@ -169,7 +169,7 @@ theorem rsa_swap (body : F → Pr F T Q (prime + K) U) {rg : RsaR X → Fin T}
     (hsw : Function.Injective fun j => rg (.x (sw j))) (hT : swapT t₀ ≤ T) (xt : X)
     (hxt : ∀ j, sw j ≠ xt) {P G h d w : ℕ} (hP : 0 < P) (hG : 0 < G) (hw : 0 < w)
     (hhd : h ≤ d + 1) (hdh : d ≤ h + 1) (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G (3 * w) h d k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G (3 * w) h d k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (hA : 4 ≤ prime + K)
     (V : RsaV X (prime + K)) (L : List GaussianInt) (hL : L.length = P * 2 ^ h * G * 2 ^ d)
     (hln : V.ln = cstream (prime + K) w L) (hxt0 : V.xr xt = [])
@@ -179,7 +179,7 @@ theorem rsa_swap (body : F → Pr F T Q (prime + K) U) {rg : RsaR X → Fin T}
     (hoth : ∀ i : Fin t₀, i ≠ pay → (∀ k, hd k ≠ i) → V.xr (sw (reg i)) = []) :
     RsaRuns body rg ι (rsaSwapP rg hd pay hi hQ sw hsw hT xt) V.get
       { V with ln := cstream (prime + K) w (swapList P (2 ^ h) G (2 ^ d) 1 0 L) }.get
-      (rsaSwapCost T t₀ (BinaryInterchangeRun.cost P G (3 * w) h d hs)
+      (rsaSwapCost T t₀ (swapCost P G (3 * w) h d hs)
         (∑ j, (V.xr (sw j)).length) (L.length * w)) := by
   classical
   refine RsaRuns.of_raw fun v S hcl hS => ?_
@@ -252,11 +252,11 @@ theorem rsa_swap (body : F → Pr F T Q (prime + K) U) {rg : RsaR X → Fin T}
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega)), hSι]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (BinaryInterchangeRun.slot_injective h')), hSι]
+      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h')), hSι]
       exact hhdr k)
     (by rw [hS₂pr, ← hx])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (BinaryInterchangeRun.slot_injective h')), hSι,
+      rw [hS₂ι _ (fun h' => hip (reg_injective h')), hSι,
         hoth i hip hk]
       simp)
   set S₃ : Stacks T (prime + K) := { S₂ with
@@ -342,13 +342,13 @@ end Machine
 bound: `O(T_box · 3w · ℓ^τ)` for a box of `T_box = P 2^h G 2^d` records of `w` symbols. -/
 theorem rsaSwapCost_le (T t₀ : ℕ) {P G h d w : ℕ} (hP : 0 < P) (hG : 0 < G) (hw : 0 < w)
     (hhd : h ≤ d + 1) (hdh : d ≤ h + 1) (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G (3 * w) h d k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G (3 * w) h d k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (sb n : ℕ) :
-    (rsaSwapCost T t₀ (BinaryInterchangeRun.cost P G (3 * w) h d hs) sb n : ℝ) ≤
+    (rsaSwapCost T t₀ (swapCost P G (3 * w) h d hs) sb n : ℝ) ≤
       3 * swapConst * (T + 12 * swapT t₀ + 5 : ℕ) * (P * 2 ^ h * G * 2 ^ d * w : ℕ) *
         ((max 1 (max h d) : ℕ) : ℝ) ^ Parameters.tau +
       (6 * sb + 34 * n + 2 * T + 6 * swapT t₀ + 23 : ℕ) := by
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2 P G (3 * w) h d hs hP hG
+  have hC := (Classical.choose_spec swapCost_le).2 P G (3 * w) h d hs hP hG
     (by omega) hhd hdh hv hc
   have hvol : (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ d) (3 * w) : ℝ) =
       3 * ((P * 2 ^ h * G * 2 ^ d * w : ℕ) : ℝ) := by
@@ -357,8 +357,8 @@ theorem rsaSwapCost_le (T t₀ : ℕ) {P G h d w : ℕ} (hP : 0 < P) (hG : 0 < G
   have hF : (0 : ℝ) ≤ ((max 1 (max h d) : ℕ) : ℝ) ^ Parameters.tau := by positivity
   have hk : (0 : ℝ) ≤ ((T + 12 * swapT t₀ + 5 : ℕ) : ℝ) := by positivity
   have := mul_le_mul_of_nonneg_left hC hk
-  have e : rsaSwapCost T t₀ (BinaryInterchangeRun.cost P G (3 * w) h d hs) sb n =
-      (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G (3 * w) h d hs +
+  have e : rsaSwapCost T t₀ (swapCost P G (3 * w) h d hs) sb n =
+      (T + 12 * swapT t₀ + 5) * swapCost P G (3 * w) h d hs +
         (6 * sb + 34 * n + 2 * T + 6 * swapT t₀ + 23) := by
     unfold rsaSwapCost; ring
   rw [e, Nat.cast_add, Nat.cast_mul]

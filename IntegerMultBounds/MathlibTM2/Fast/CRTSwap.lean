@@ -31,7 +31,7 @@ symbols below `8` whose bit expansion is interchanged into the bit expansion of 
 **Swap step.** `crtSwapStep` writes the headers, runs the swap pass on the stream register and
 empties the headers. `crtSwapStep_runs` turns the flattened box along `pre ++ j :: k :: post`
 into the flattened box along `pre ++ k :: j :: post`; its cost is bounded through
-`BinaryInterchangeRun.cost` (`crtSwapStep_runs`) and through `BinaryInterchangeRun.uniform_bound`
+`swapCost` (`crtSwapStep_runs`) and through `swapCost_le`
 (`crtSwapStep_runs_le`).
 -/
 
@@ -220,7 +220,7 @@ theorem crtSwapPass_exec (body : F → Pr F T Q (prime + K) U)
     (h8' : ∀ s ∈ x', s.val < 8)
     (hsw : swapList Pp (2 ^ h) G (2 ^ w) (3 * E) blank (toBits x) = toBits x')
     (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values Pp G (3 * E) h w k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues Pp G (3 * E) h w k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
     (v : HS T Q (prime + K) U) (S : Stacks T (prime + K))
     (hL : ∀ y, S.L y = [])
@@ -230,7 +230,7 @@ theorem crtSwapPass_exec (body : F → Pr F T Q (prime + K) U)
     (hother : ∀ i, i ≠ pay → (∀ k, hd k ≠ i) →
       ∀ s ∈ S.R (ι (reg i)), s ≠ blank ∧ s.val < prime + 4) :
     ∃ v' m, v'.user = v.user ∧
-      m ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost Pp G (3 * E) h w hs +
+      m ≤ (T + 12 * swapT t₀ + 5) * swapCost Pp G (3 * E) h w hs +
         6 * ∑ j, (S.R (ι j)).length + 34 * x.length + 2 * T + 6 * swapT t₀ + 23 ∧
       Exec body (swapPass hd pay hi hQ ι hι hT str tmp) (mk v S) m
         (mk v' { S with R := Function.update S.R str x' }) := by
@@ -288,11 +288,11 @@ theorem crtSwapPass_exec (body : F → Pr F T Q (prime + K) U)
       rw [hS₂ι j (fun h' => by rw [h', reg_val] at hj; exact absurd pay.isLt (by omega))]
       exact hpriv j hj)
     (fun k => by
-      rw [hS₂ι _ (fun h' => hhd_pay k (BinaryInterchangeRun.slot_injective h'))]
+      rw [hS₂ι _ (fun h' => hhd_pay k (reg_injective h'))]
       exact hhdr k)
     (by rw [hS₂pr, ← hxb])
     (fun i hip hk => by
-      rw [hS₂ι _ (fun h' => hip (BinaryInterchangeRun.slot_injective h'))]
+      rw [hS₂ι _ (fun h' => hip (reg_injective h'))]
       exact hother i hip hk)
   set S₃ : Stacks T (prime + K) := { S₂ with
     L := fun _ => []
@@ -429,14 +429,14 @@ lemma crtHdrBits_canonical (u v h w : ℕ) (e : List Bool) (he : e.getLast? = so
 
 lemma crtHdrBits_value (u v h w : ℕ) (e : List Bool) :
     ∀ k, Counter.value (crtHdrBits u v h w e k) =
-      BinaryInterchangeRun.values (2 ^ u) 1 (2 ^ v * Counter.value e) h w k := by
+      swapValues (2 ^ u) 1 (2 ^ v * Counter.value e) h w k := by
   intro k
   fin_cases k
-  · simp [crtHdrBits, BinaryInterchangeRun.values, crt_value_replicate_false, Counter.value]
-  · simp [crtHdrBits, BinaryInterchangeRun.values]
-  · simp [crtHdrBits, BinaryInterchangeRun.values, crt_value_replicate_false]
-  · simp [crtHdrBits, BinaryInterchangeRun.values, GrowingCounterData.empty_value]
-  · simp [crtHdrBits, BinaryInterchangeRun.values, GrowingCounterData.empty_value]
+  · simp [crtHdrBits, swapValues, crt_value_replicate_false, Counter.value]
+  · simp [crtHdrBits, swapValues]
+  · simp [crtHdrBits, swapValues, crt_value_replicate_false]
+  · simp [crtHdrBits, swapValues, GrowingCounterData.empty_value]
+  · simp [crtHdrBits, swapValues, GrowingCounterData.empty_value]
 
 /-- The header registers after `crtHdrP`. -/
 def crtHdrRegs (hdr : Fin 5 → Fin T) (R : Regs T A) (u v h w : ℕ) (e : List Bool) : Regs T A :=
@@ -581,18 +581,18 @@ lemma crtHd_ne_pay (k : Fin 5) : crtHd k ≠ crtPay := by
 lemma crt_eq_hd_of_ne_pay (i : Fin 6) (hi : i ≠ crtPay) : ∃ k, crtHd k = i :=
   ⟨⟨i.val, by have := i.isLt; simp [crtPay, Fin.ext_iff] at hi; omega⟩, Fin.ext rfl⟩
 
-/-- A natural upper bound of the interchange cost from `BinaryInterchangeRun.uniform_bound`:
+/-- A natural upper bound of the interchange cost from `swapCost_le`:
 volume `V`, chunk widths `h`, `w`. -/
 def crtSwapCostN (V h w : ℕ) : ℕ :=
   ⌈swapConst * V * ((max 1 (max h w) : ℕ) : ℝ) ^ Parameters.tau⌉₊
 
 lemma crt_cost_le (Pp G E h w : ℕ) (hs : Fin 5 → List Bool) (hP : 0 < Pp) (hG : 0 < G)
     (hE : 0 < E) (hhw : h ≤ w + 1) (hwh : w ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values Pp G E h w k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues Pp G E h w k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k)) :
-    BinaryInterchangeRun.cost Pp G E h w hs ≤
+    swapCost Pp G E h w hs ≤
       crtSwapCostN (BinaryAdjacentWidthInterchange.volume Pp (2 ^ h) G (2 ^ w) E) h w := by
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2 Pp G E h w hs hP hG hE
+  have hC := (Classical.choose_spec swapCost_le).2 Pp G E h w hs hP hG hE
     hhw hwh hv hc
   unfold crtSwapCostN
   exact Nat.cast_le.1 (hC.trans (Nat.le_ceil _))
@@ -638,7 +638,7 @@ theorem crtSwapStep_runs {body : F → Pr F T Q (prime + K) U}
   regs_ne hreg'
   set hdr : Fin 5 → Fin T := fun k => ι (reg (crtHd k)) with hhdr
   have hdr_inj : Function.Injective hdr := fun a b h =>
-    crtHd_inj (BinaryInterchangeRun.slot_injective (hι h))
+    crtHd_inj (reg_injective (hι h))
   have hb : ∀ r ∈ [str, stmp, uU, vU, aJ, aK, e3B, tu, t₁, t₂], ∀ k, hdr k ≠ r :=
     fun r hr k => hbank r hr _
   have hreg₂ : [uU, vU, aJ, aK, e3B, tu, t₁, t₂, hdr 0, hdr 1, hdr 2, hdr 3, hdr 4].Nodup := by
@@ -692,7 +692,7 @@ theorem crtSwapStep_runs {body : F → Pr F T Q (prime + K) U}
       rw [crtBox_flatten_length a _ C x B hC, crtW_append, crtW_cons, crtW_cons]
       simp only [pow_add]; ring
     have hvals : ∀ k', Counter.value (crtHdrBits (crtW a pre) (crtW a post) (a j) (a k) e k') =
-        BinaryInterchangeRun.values (2 ^ crtW a pre) 1 (3 * (2 ^ crtW a post * B)) (a j) (a k)
+        swapValues (2 ^ crtW a pre) 1 (3 * (2 ^ crtW a post * B)) (a j) (a k)
           k' := by
       intro k'
       rw [crtHdrBits_value, hevalue]
@@ -714,7 +714,7 @@ theorem crtSwapStep_runs {body : F → Pr F T Q (prime + K) U}
       (by rw [hS, hR₁oth _ (hb stmp (by simp)), hstmp])
       (by
         rw [hS, hR₁oth _ (fun k' hk' => crtHd_ne_pay k'
-          (BinaryInterchangeRun.slot_injective (hι hk'))), hι0])
+          (reg_injective (hι hk'))), hι0])
       (fun i hi => by
         rw [hS, hR₁oth _ (fun k' hk' => by
           have h2 : (reg (crtHd k')).val = i.val := congrArg Fin.val (hι hk')

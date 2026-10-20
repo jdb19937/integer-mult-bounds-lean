@@ -95,7 +95,7 @@ theorem compactSwap_exec {t₀ T Q K : ℕ} {U F : Type}
     (ι : Fin (swapT t₀) → Fin T) (hι : Function.Injective ι) (hT : swapT t₀ ≤ T)
     (P G R h : ℕ) (hP : 0 < P) (hG : 0 < G) (hR : 0 < R)
     (data : CompactSwapAddr P G R h → Bool) (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G R h h k)
+    (hv : ∀ k, Counter.value (hs k) = swapValues P G R h h k)
     (hc : ∀ k, GrowingCounterData.Canonical (hs k))
     (v : HS T Q (prime + K) U) (S : Stacks T (prime + K))
     (hL : ∀ j, S.L j = [])
@@ -113,21 +113,21 @@ theorem compactSwap_exec {t₀ T Q K : ℕ} {U F : Type}
   obtain ⟨v', steps, hu, hsteps, hexec⟩ := placedSwapProg_exec body hd pay hi hQ ι hι hT
     P G R h h hs (Nat.le_succ h) (Nat.le_succ h) hv hc hP hG hR
     (data ∘ (compactSwapRank P G R h).symm) v S hL hpriv hhdr hpay hother
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2
+  have hC := (Classical.choose_spec swapCost_le).2
     P G R h h hs hP hG hR (Nat.le_succ h) (Nat.le_succ h) hv hc
   rw [max_self] at hC
-  have hC' : (BinaryInterchangeRun.cost P G R h h hs : ℝ) ≤
+  have hC' : (swapCost P G R h h hs : ℝ) ≤
       swapConst * (3 * (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ h) R : ℕ)) *
         ((max 1 h : ℕ) : ℝ) ^ Parameters.tau := by
     have hnonneg : 0 ≤ swapConst * (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ h) R : ℕ) *
         ((max 1 h : ℕ) : ℝ) ^ Parameters.tau := by
       have := swapConst_pos
       positivity
-    change (BinaryInterchangeRun.cost P G R h h hs : ℝ) ≤
+    change (swapCost P G R h h hs : ℝ) ≤
       swapConst * (BinaryAdjacentWidthInterchange.volume P (2 ^ h) G (2 ^ h) R : ℕ) *
         ((max 1 h : ℕ) : ℝ) ^ Parameters.tau at hC
     nlinarith
-  have hsteps' : steps ≤ (T + 12 * swapT t₀ + 5) * BinaryInterchangeRun.cost P G R h h hs +
+  have hsteps' : steps ≤ (T + 12 * swapT t₀ + 5) * swapCost P G R h h hs +
       (6 * ∑ j, (S.R (ι j)).length + 2 * T + 6 * swapT t₀ + 15) := by
     simpa only [Nat.add_assoc] using hsteps
   have hb := cast_time_bound hsteps' hC'

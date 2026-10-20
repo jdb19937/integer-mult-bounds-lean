@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Three nested physical counted loops for a flat P-by-Q-by-B payload.
 Only the separate dimension descriptors are inputs; no product descriptor or

@@ -52,7 +52,7 @@ bit `j` of `x`, and the records themselves (the polynomial suffixes) are untouch
 * One single-bit move: `layMvCost N B = 2^N (18 B + 20 N + 36) + 8 N + 26`, that is
   `O(V + M N)` for `V = M B` stream symbols.
 * One exchange: `layXcStep` (`layXcCost`), the vendored interchange term
-  `(T + 12 swapT t₀ + 5) · BinaryInterchangeRun.cost` of `swapPass_exec` plus `6` per bank
+  `(T + 12 swapT t₀ + 5) · swapCost` of `swapPass_exec` plus `6` per bank
   symbol, `34 V` and `2 T + 6 swapT t₀ + 23`; `layXcStep_le` bounds it by
   `3 C_swap (T + 12 swapT t₀ + 5) V max(1, K)^τ` plus those linear terms.
 * `layApply_cost_le`: at most `D (b + 1)` single-bit moves and `D q - 1` exchanges, so the
@@ -365,7 +365,7 @@ def layXcB (p : ℕ) : Fin 3 := if 0 < p then 1 else 2
 
 /-- The canonical header counters of an exchange. -/
 def layHs (n K : ℕ) (o : Fin 3 → ℕ) (a b : Fin 3) (B : ℕ) : Fin 5 → List Bool := fun k =>
-  GrowingCounterData.advance (BinaryInterchangeRun.values (layXcDims n K o a b B).1
+  GrowingCounterData.advance (swapValues (layXcDims n K o a b B).1
     (layXcDims n K o a b B).2.1 (layXcDims n K o a b B).2.2 K K k) []
 
 theorem layHdr_layHs (n K : ℕ) (o : Fin 3 → ℕ) (a b : Fin 3) (B : ℕ) :
@@ -777,7 +777,7 @@ theorem lay_moveRecs_roundtrip {α : Type*} {N : ℕ} (P : Equiv.Perm (Fin N))
 
 /-- One exchange costs at most the vendored interchange bound `3 C_swap (T + 12 swapT t₀ + 5) V
 max(1, K)^τ` for `V = 2^n B` stream symbols, plus `6` per bank symbol, `34 V` and
-`2 T + 6 swapT t₀ + 23` (`BinaryInterchangeRun.uniform_bound`, as in `swapPass_exec_le`). -/
+`2 T + 6 swapT t₀ + 23` (`swapCost_le`, as in `swapPass_exec_le`). -/
 theorem layXcStep_le (T t₀ n K B : ℕ) (rg : LayReg t₀ → Fin T)
     (R : Fin T → List (Fin (prime + Ka + 4))) {d : LayXcD} (hd : d.OK n K B) (hB : 0 < B) :
     (layXcStep T t₀ n K B rg R d : ℝ) ≤
@@ -788,7 +788,7 @@ theorem layXcStep_le (T t₀ n K B : ℕ) (rg : LayReg t₀ → Fin T)
   have hp : ∀ e : ℕ, 0 < 2 ^ e := fun e => by positivity
   have hpos := swapDims_pos (layN0 n K d.o) (layN1 K d.o) (layN2 K d.o) (layN3 d.o) K d.a d.b
     (hp _) (hp _) (hp _) (hp _)
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2
+  have hC := (Classical.choose_spec swapCost_le).2
     (swapDims (layN0 n K d.o) (layN1 K d.o) (layN2 K d.o) (layN3 d.o) K d.a d.b).1
     (swapDims (layN0 n K d.o) (layN1 K d.o) (layN2 K d.o) (layN3 d.o) K d.a d.b).2.1
     ((swapDims (layN0 n K d.o) (layN1 K d.o) (layN2 K d.o) (layN3 d.o) K d.a d.b).2.2 * (3 * B))

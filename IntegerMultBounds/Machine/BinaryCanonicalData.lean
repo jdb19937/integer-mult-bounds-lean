@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 
 /-! Canonical little-endian binary words are uniquely determined by value.
 These lemmas identify physically emitted normalized descriptors with semantic

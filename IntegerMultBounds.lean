@@ -85,7 +85,7 @@ public import IntegerMultBounds.Machine.Hoare
 public import IntegerMultBounds.Machine.Loop
 public import IntegerMultBounds.Machine.Branch
 public import IntegerMultBounds.Machine.Frame
-public import IntegerMultBounds.Machine.Counter
+public import IntegerMultBounds.Counter
 public import IntegerMultBounds.Machine.BitTape
 public import IntegerMultBounds.Machine.BinaryAdd
 public import IntegerMultBounds.Machine.BinarySub
@@ -145,7 +145,7 @@ public import IntegerMultBounds.Machine.FiberShift
 public import IntegerMultBounds.Machine.BlockReverseAdvance
 public import IntegerMultBounds.Machine.BlockReverseStream
 public import IntegerMultBounds.Machine.CountedLoopReuse
-public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.GrowingCounterData
 public import IntegerMultBounds.Machine.GrowingCounter
 public import IntegerMultBounds.Machine.CountedLoop
 public import IntegerMultBounds.Machine.Placement
