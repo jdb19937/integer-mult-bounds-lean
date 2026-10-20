@@ -176,7 +176,7 @@ theorem power_step {n : ℕ} {e o : Fin 17} {xs : List Bool} {x : ℕ}
     apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [powerSlots, h0.1, h1.1, hd, ho₀, descriptorHead, descriptorTape]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [powerSlots, h0.2, h1.2, he₁, ho₁, descriptorHead, descriptorTape, RadixPowerDescriptor.output]
+      simp [powerSlots, h0.2, h1.2, he₁, ho₁, descriptorHead, descriptorTape]
   · intro j hj
     exact hframe j (fun h => hj 3 (by simp [powerSlots, h]))
 
@@ -204,11 +204,9 @@ theorem product_step {n : ℕ} {w o m : Fin 17} {xs ys : List Bool} {x y : ℕ}
   refine placed_bank _ _ _ ?_ ?_ ?_
     (DimensionProductDescriptor.construct_hoare ys xs x y hy0 hy hx cy cx)
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [productSlots, h0.1, h1.1, h2.1, hdw, hdm, ho₀, descriptorHead, descriptorTape,
-        DimensionProductDescriptor.input]
+      simp [productSlots, h0.1, h1.1, h2.1, hdw, hdm, ho₀, descriptorHead, descriptorTape]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [productSlots, h0.2, h1.2, h2.2, hw₁, hm₁, ho₁, descriptorHead, descriptorTape,
-        DimensionProductDescriptor.output]
+      simp [productSlots, h0.2, h1.2, h2.2, hw₁, hm₁, ho₁, descriptorHead, descriptorTape]
   · intro j hj
     exact hframe j (fun h => hj 1 (by simp [productSlots, h]))
 
