@@ -1,6 +1,5 @@
 module
 
-import IntegerMultBounds.Resampling.NeumannWords
 import IntegerMultBounds.NLogN.ResamplingManuscript
 public import IntegerMultBounds.NLogN.NeumannHalved
 public import IntegerMultBounds.Resampling.OffDiagSum
@@ -200,7 +199,7 @@ section Tables
 theorem tol_of_int (p : ℕ) (W : ℤ) (x : ℝ) (h : |(W : ℝ) - 2 ^ p * x| ≤ 2) :
     2 ^ p * ‖rhoC p (((W : ℝ) / 2 ^ p : ℝ) : ℂ) - (x : ℂ)‖ ≤ 2 := by
   have hp : (0 : ℝ) < 2 ^ p := by positivity
-  rw [WindowSum.rhoC_real, mul_div_cancel₀ _ hp.ne', NeumannWords.rho0_int, ← Complex.ofReal_sub,
+  rw [WindowSum.rhoC_real, mul_div_cancel₀ _ hp.ne', WindowSum.rho0_int, ← Complex.ofReal_sub,
     Complex.norm_real, Real.norm_eq_abs]
   calc 2 ^ p * |(W : ℝ) / 2 ^ p - x| = |(W : ℝ) - 2 ^ p * x| := by
         rw [← abs_of_pos hp, ← abs_mul, abs_of_pos hp]; congr 1; field_simp
@@ -241,7 +240,7 @@ theorem permuted_numeric_tabled (hst : s < t) (hcop : Nat.Coprime s t) (hα : 2 
   have hdf1 : ∀ ℓ, ‖rhoC p ((((WD ℓ : ℝ) / 2 ^ p : ℝ)) : ℂ)‖ ≤ 1 := by
     intro ℓ
     have hp' : (0 : ℝ) < 2 ^ p := by positivity
-    rw [WindowSum.rhoC_real, mul_div_cancel₀ _ hp'.ne', NeumannWords.rho0_int, Complex.norm_real,
+    rw [WindowSum.rhoC_real, mul_div_cancel₀ _ hp'.ne', WindowSum.rho0_int, Complex.norm_real,
       Real.norm_eq_abs, abs_of_nonneg (div_nonneg (by exact_mod_cast (hWD1 ℓ).1) hp'.le),
       div_le_one hp']
     exact_mod_cast (hWD1 ℓ).2
@@ -258,29 +257,6 @@ theorem permuted_numeric_tabled (hst : s < t) (hcop : Nat.Coprime s t) (hα : 2 
   ext u j
   simp only [comp_apply, smul_apply, map_smul, ContinuousLinearEquiv.coe_coe,
     ContinuousLinearEquiv.apply_symm_apply]
-
-/-- The Gaussian line machine fed an integer weight table computes `Ã` with that table. -/
-theorem accumulators_eq_W (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) [NeZero s] [NeZero t]
-    (WA : ZMod t → ℤ → ℤ) (u : ZMod s → ℂ) (ar ai : ℤ → ℤ)
-    (hu : ∀ j : ℤ, u (j : ZMod s) = ⟨(ar j : ℝ) / 2 ^ p, (ai j : ℝ) / 2 ^ p⟩)
-    (hwt' : ∀ k j, k < t → j < 2 * m + 1 →
-      Machine.TwosComplement.signed (wtWords.getD (k * (2 * m + 1) + j) []) =
-        WA (k : ZMod t) ((Machine.GaussianLine.centre s t k : ℤ) - m + j))
-    (hre : ∀ q, q < s + 2 * m → Machine.TwosComplement.signed (uWords.getD (2 * q) []) = ar ((q : ℤ) - m))
-    (him : ∀ q, q < s + 2 * m → Machine.TwosComplement.signed (uWords.getD (2 * q + 1) []) = ai ((q : ℤ) - m))
-    (hw : p + 2 ≤ w) (hwW : w ≤ W) (hW : ((2 * m + 1 : ℕ) : ℤ) * 2 ^ p < 2 ^ (W - 1))
-    (hwt : ∀ x ∈ wtWords, x.length = w) (hul' : ∀ x ∈ uWords, x.length = w)
-    (hwb : ∀ x ∈ wtWords, |Machine.TwosComplement.signed x| ≤ 2 ^ p)
-    (hub : ∀ x ∈ uWords, |Machine.TwosComplement.signed x| ≤ 2 ^ p)
-    (hwtl : wtWords.length = t * (2 * m + 1)) (hul : 2 * (s + 2 * m + 1) ≤ uWords.length)
-    (hst : s ≤ t) (hs : 0 < s) (k : ℕ) (hk : k < t) :
-    resampANum s t m (termW p fun k j => (WA k j : ℝ) / 2 ^ p) u (k : ZMod t) =
-      ⟨(Machine.TwosComplement.signed (Machine.GaussianLine.accR wtWords uWords s t m p w W k (2 * m + 1)) : ℝ) / 2 ^ (p + 1),
-       (Machine.TwosComplement.signed (Machine.GaussianLine.accI wtWords uWords s t m p w W k (2 * m + 1)) : ℝ) / 2 ^ (p + 1)⟩ := by
-  have hp' : (0 : ℝ) < 2 ^ p := by positivity
-  refine WindowSum.accumulators_eq wtWords uWords s t m p w W (fun k j => (WA k j : ℝ) / 2 ^ p) u ar ai hu
-    (fun k j hk hj => ?_) hre him hw hwW hW hwt hul' hwb hub hwtl hul hst hs k hk
-  rw [hwt' k j hk hj, mul_div_cancel₀ _ hp'.ne', NeumannWords.rho0_int]
 
 end Tables
 

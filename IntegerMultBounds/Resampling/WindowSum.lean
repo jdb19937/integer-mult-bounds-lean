@@ -1,6 +1,5 @@
 module
 
-public import IntegerMultBounds.Machine.GaussianLineValue
 public import IntegerMultBounds.NLogN.ExplicitNumeric
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
@@ -18,8 +17,12 @@ and imaginary parts of `resampANum s t m (resampTermNum p s t α) u k`. -/
 namespace IntegerMultBounds.Resampling.WindowSum
 
 open IntegerMultBounds.NLogN (rho0 rhoC resampWeight resampTermNum resampANum truncWindow resampCentre)
-open IntegerMultBounds.Machine.GaussianLine (termR termI centre accR accI accR_signed accI_signed)
-open IntegerMultBounds.Machine.TwosComplement (signed)
+
+/-- The window centre `⌊sk/t⌋`. -/
+def centre (s t k : ℕ) : ℕ := s * k / t
+
+theorem rho0_int (n : ℤ) : rho0 (n : ℝ) = n := by
+  unfold rho0; split_ifs <;> simp
 
 section Rounding
 
@@ -102,81 +105,5 @@ theorem floor_centre (_hst : s ≤ t) (k : ℕ) (hk : k < t) :
     Int.floor_div_natCast, Int.floor_natCast, Int.natCast_div]
 
 end Terms
-
-section Bridge
-
-variable (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) [NeZero s] [NeZero t] (wf : ZMod t → ℤ → ℝ)
-  (u : ZMod s → ℂ) (ar ai : ℤ → ℤ)
-  (hu : ∀ j : ℤ, u (j : ZMod s) = ⟨(ar j : ℝ) / 2 ^ p, (ai j : ℝ) / 2 ^ p⟩)
-  (hwt' : ∀ k j, k < t → j < 2 * m + 1 →
-    signed (wtWords.getD (k * (2 * m + 1) + j) []) =
-      rho0 (2 ^ p * wf (k : ZMod t) ((centre s t k : ℤ) - m + j)))
-  (hre : ∀ q, q < s + 2 * m → signed (uWords.getD (2 * q) []) = ar ((q : ℤ) - m))
-  (him : ∀ q, q < s + 2 * m → signed (uWords.getD (2 * q + 1) []) = ai ((q : ℤ) - m))
-  (hw : p + 2 ≤ w) (hwW : w ≤ W) (hW : ((2 * m + 1 : ℕ) : ℤ) * 2 ^ p < 2 ^ (W - 1))
-  (hwt : ∀ x ∈ wtWords, x.length = w) (hul' : ∀ x ∈ uWords, x.length = w)
-  (hwb : ∀ x ∈ wtWords, |signed x| ≤ 2 ^ p) (hub : ∀ x ∈ uWords, |signed x| ≤ 2 ^ p)
-  (hwtl : wtWords.length = t * (2 * m + 1)) (hul : 2 * (s + 2 * m + 1) ≤ uWords.length)
-  (hst : s ≤ t) (hs : 0 < s)
-
-omit [NeZero s] [NeZero t] in
-include hu hwt' hre hst hs in
-/-- The real part of the window sum is the sum of the machine's real terms. -/
-theorem sum_re (k : ℕ) (hk : k < t) :
-    (∑ j ∈ truncWindow s t m (k : ZMod t), termW p wf u (k : ZMod t) j).re =
-      ((∑ j ∈ Finset.range (2 * m + 1), termR wtWords uWords s t m p k j : ℤ) : ℝ) / 2 ^ p := by
-  have hcen : centre s t k < s := by
-    unfold centre; exact Nat.div_lt_of_lt_mul (by nlinarith)
-  unfold truncWindow
-  rw [floor_centre hst k hk, show (centre s t k : ℤ) + m = (centre s t k : ℤ) - m + (2 * m : ℕ) by push_cast; ring,
-    sum_Icc_eq_range, Complex.re_sum, Int.cast_sum, Finset.sum_div]
-  refine Finset.sum_congr rfl fun j hj => ?_
-  simp only [Finset.mem_range] at hj
-  rw [term_parts p wf u ar ai hu]
-  simp only
-  unfold termR
-  rw [hwt' k j hk hj, show 2 * centre s t k + 2 * j = 2 * (centre s t k + j) by ring,
-    hre (centre s t k + j) (by omega),
-    show ((centre s t k + j : ℕ) : ℤ) - m = (centre s t k : ℤ) - m + j by push_cast; ring]
-
-omit [NeZero s] [NeZero t] in
-include hu hwt' him hst hs in
-/-- The imaginary part of the window sum is the sum of the machine's imaginary terms. -/
-theorem sum_im (k : ℕ) (hk : k < t) :
-    (∑ j ∈ truncWindow s t m (k : ZMod t), termW p wf u (k : ZMod t) j).im =
-      ((∑ j ∈ Finset.range (2 * m + 1), termI wtWords uWords s t m p k j : ℤ) : ℝ) / 2 ^ p := by
-  have hcen : centre s t k < s := by
-    unfold centre; exact Nat.div_lt_of_lt_mul (by nlinarith)
-  unfold truncWindow
-  rw [floor_centre hst k hk, show (centre s t k : ℤ) + m = (centre s t k : ℤ) - m + (2 * m : ℕ) by push_cast; ring,
-    sum_Icc_eq_range, Complex.im_sum, Int.cast_sum, Finset.sum_div]
-  refine Finset.sum_congr rfl fun j hj => ?_
-  simp only [Finset.mem_range] at hj
-  rw [term_parts p wf u ar ai hu]
-  simp only
-  unfold termI
-  rw [hwt' k j hk hj, show 2 * centre s t k + 2 * j + 1 = 2 * (centre s t k + j) + 1 by ring,
-    him (centre s t k + j) (by omega),
-    show ((centre s t k + j : ℕ) : ℤ) - m = (centre s t k : ℤ) - m + j by push_cast; ring]
-
-omit [NeZero s] [NeZero t] in
-include hu hwt' hre him hw hwW hW hwt hul' hwb hub hwtl hul hst hs in
-/-- The accumulator words of output `k` are `2^(p+1)` times the parts of the
-numerical map `Ã` at `k`. -/
-theorem accumulators_eq (k : ℕ) (hk : k < t) :
-    resampANum s t m (termW p wf) u (k : ZMod t) =
-      ⟨(signed (accR wtWords uWords s t m p w W k (2 * m + 1)) : ℝ) / 2 ^ (p + 1),
-       (signed (accI wtWords uWords s t m p w W k (2 * m + 1)) : ℝ) / 2 ^ (p + 1)⟩ := by
-  rw [accR_signed wtWords uWords s t m p w W hw hwW hW hwt hul' hwb hub hwtl hul hs k hk _ le_rfl,
-    accI_signed wtWords uWords s t m p w W hw hwW hW hwt hul' hwb hub hwtl hul hs k hk _ le_rfl]
-  have hr := sum_re wtWords uWords s t m p wf u ar ai hu hwt' hre hst hs k hk
-  have hi := sum_im wtWords uWords s t m p wf u ar ai hu hwt' him hst hs k hk
-  unfold resampANum
-  rw [show (1 / 2 : ℂ) = ((1 / 2 : ℝ) : ℂ) by push_cast; rfl]
-  apply Complex.ext
-  · rw [Complex.re_ofReal_mul, hr]; dsimp only; rw [pow_succ]; ring
-  · rw [Complex.im_ofReal_mul, hi]; dsimp only; rw [pow_succ]; ring
-
-end Bridge
 
 end IntegerMultBounds.Resampling.WindowSum

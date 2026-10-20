@@ -79,7 +79,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   for any alphabet, a halting empty program for conditional branches, the
   rewind to a word's origin from an arbitrary position over an arbitrary
   background, and two one-tape moves, step left and prepend a zero bit.
-- `Machine/BinaryMultiply.lean`: a fixed three-tape, seventeen-state
   multiplier by Horner's rule. The multiplier is read from its most
   significant bit down; each bit doubles the accumulator by writing a zero one
   cell left of its origin and, when set, adds the multiplicand in place and
@@ -110,12 +109,10 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   returning to its origin, and copy a fixed number of cells with blanks read
   as zero bits, the last unrolled with a state count linear in the count.
   Each has an exact contract and transition count.
-- `Machine/ColumnTransducer.lean`: a generic three-tape column transducer on
   equally padded words, a finite control reading one bit from each operand and
   writing one output bit, halting on the common blank in exactly the common
   width with both operands preserved. Modular addition (sum modulo two to the
   width) and bitwise exclusive or are proved instances.
-- `Machine/Gather.lean`: a stride gadget on three tapes, source, control and
   target, unrolled into finite control: for each digit the source head skips
   to a field, each field bit is combined with the digit's control bit by a
   fixed Boolean operation into the target digit at a chosen offset, the other
@@ -172,47 +169,38 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   closed cost `cost_le`: the input volume plus `10 L + 52` per record for a
   modulus of `L` bits.
 
-- `Machine/TwosComplement.lean`: two's complement words, least significant
   bit first: the signed value `signed`, its bounds and its agreement with the
   unsigned value modulo `2^n`, sign extension `extTo`, the modular sum
   `addMod` of an extended word into a wider accumulator (exact when the sum
   fits, `signed_addMod`), and negation `negWord` (`signed_negWord`, except for
   the most negative value).
 
-- `Machine/SignExtendAdd.lean`: the two-tape, four-state adder realizing
   `addMod`: one transition per accumulator cell, the addend head advancing
   over its bits and parking on its blank, the final carry dropped
   (`add_hoare`).
 
-- `Machine/Negate.lean`: in-place two's complement negation on one tape,
   two states, one transition per bit (`neg_hoare`).
 
-- `Machine/RulerAdvance.lean`: advance (`RulerAdvance.advance_hoare`) or
   retreat (`RulerRetreat.retreat_hoare`) a data head by the length of a
   unary ruler word, with the ruler head parked at its end or origin.
 
-- `Machine/RulerCopy.lean`: copy as many zero-filled cells as a ruler is long
   from a source head to a destination (`copy_hoare`, the same `cells`
   semantics as the unrolled `CopyCells`), and `WriteSymbol`, a one-cell
   writer of a fixed symbol.
 
-- `Machine/FixedMul.lean`: signed fixed-point multiplication on twelve tapes
   (generated like the key routine): operand copies replaced by magnitudes
   with the signs in two flag cells, the unsigned `BinaryMultiply` product
   padded to `2w` bits by a ruler copy, bits `p` to `p + w` copied into the
   output word, negated when the signs differ, all scratch erased
   (`mul_hoare`, cost `w(7w+18) + 50w + 4p + 140`).
 
-- `Machine/FixedMulValue.lean`: the result word's signed value is the
   product truncated toward zero by `p` bits, `(x * y).tdiv 2^p`
   (`signed_result`), for widths `w ≥ p + 2` and magnitudes at most `2^p`.
 
-- `Machine/RecordTape.lean`: blank-separated records: the cell before a
   record's origin is blank (`bg_left`), bit words map to records
   (`getD_map`), and `BackWord`, a four-state move from the origin of one
   record back to the origin of the previous one (`back_hoare`).
 
-- `Machine/GaussianLine.lean`: the Gaussian window sums of the resampling
   map on twenty-two tapes (generated like the key routine). For each output
   `k`, the window loop runs `2m + 1` terms on a unary ruler: the weight word
   times the real and imaginary input words by two placed `FixedMul`s, the
@@ -226,7 +214,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
   `line_hoare`, with the outputs `outWords` and cost `t` times
   `outerBound`.
 
-- `Machine/GaussianLineValue.lean`: the accumulators of the Gaussian line
   hold the exact sums of truncated products: `accR_signed`, `accI_signed`
   give `signed (accR k i) = ∑_{j<i} (w_j · a_j).tdiv 2^p` when every word has
   magnitude at most `2^p`, width at least `p + 2`, and the accumulator width
@@ -1489,7 +1476,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/CompactRowPaddingRound.lean`: Physically writes the static role count, derives the least enclosing row multiple from original runtime row count/width, erases role-count arithmetic scratch and returns the exact Compact.Layout.paddedRows descriptor. Every positive row/role case is included.
 
 
 
@@ -2221,7 +2207,6 @@ Compact packed controls, repair, and density bounds.
   `2k + 3` per exceptional address, and `k + 14`. The key routine's tape
   arithmetic is a program parameter; the concrete legacy instance still depends
   on runtime dimensions in finite control, so uniform key compilation remains open.
-- `Compact/PowerTwoDigits.lean`: bit words as packed integers in a
   power-of-two radix: a word of `n·q` bits is the packed integer whose
   base-`2^q` digits are its `q`-bit block values, the gather gadget's word is
   the packing of its digit words, and the per-digit forms of the compact
@@ -3462,7 +3447,6 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `rr x = s β(x)` is the centered residue of `t x mod s` (`rr_eq`) with square
   `min(u, s − u)²` (`rr_sq`).
 
-- `Resampling/NeumannWords.lean`: the Neumann evaluation of `J̃'` on words.
   An iterate is `2s` signed words; one step extends it cyclically by `m`
   records (`ext`, `cycIdx`), takes the stride-one window sums of the line
   machine (`outWords`), truncates each accumulator to the word width

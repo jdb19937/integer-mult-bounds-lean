@@ -1,10 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandPrep
+import IntegerMultBounds.Resampling.WindowSum
 import IntegerMultBounds.MathlibTM2.Fast.BandFits
 import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
 import IntegerMultBounds.MathlibTM2.Fast.PrepA
-import IntegerMultBounds.Resampling.NeumannWords
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -525,7 +525,7 @@ theorem band_axis_rel (h : Big n) (i : Fin (d n)) :
     (fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n)
     (fun ℓ => by
       rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ (by positivity : (2 : ℝ) ^ p n ≠ 0),
-        Resampling.NeumannWords.rho0_int]
+        Resampling.WindowSum.rho0_int]
       apply Complex.ext <;> simp [rsbGrid, rsbReal, GaussianInt.toComplex_def])
   rw [bandG_eq h i] at hrel
   exact hrel

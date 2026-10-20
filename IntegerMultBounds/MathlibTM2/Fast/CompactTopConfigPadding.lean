@@ -1,7 +1,6 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
-import IntegerMultBounds.Machine.CompactRowPaddingRound
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 public import IntegerMultBounds.Compact.Layout
 
@@ -20,7 +19,7 @@ variable {Q A : ℕ} {U P : Type}
 theorem compactTopConfig_ceil_mul (x k : ℕ) (hk : 0<k) :
     chunks x k*k = Compact.Layout.paddedRows x k := by
   obtain ⟨hx,hlt⟩ := Compact.Layout.ceiling_chunks x k hk
-  obtain ⟨hp,hplt,hpd⟩ := CompactRowPaddingRound.padded_bounds x k hk
+  obtain ⟨hp,hplt,hpd⟩ := Compact.Layout.paddedRows_bounds x k hk
   have hcd : k ∣ chunks x k*k := dvd_mul_left k (chunks x k)
   change x ≤ chunks x k*k at hx
   change chunks x k*k < x+k at hlt

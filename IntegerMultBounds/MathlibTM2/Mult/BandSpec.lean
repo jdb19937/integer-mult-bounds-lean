@@ -2,12 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.BandFoldRows
+import IntegerMultBounds.Resampling.WindowSum
 import IntegerMultBounds.NLogN.PhaseCellPerturb
 import IntegerMultBounds.NLogN.PhaseCellFactorization
 import IntegerMultBounds.NLogN.PhaseCellSharpInverse
 import IntegerMultBounds.MathlibTM2.Mult.SmallGapSizes
 import IntegerMultBounds.NLogN.ResamplingManuscript
-import IntegerMultBounds.Resampling.NeumannWords
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -214,7 +214,7 @@ theorem band_axis_full (h : Big n) (hwidth : 8 * p n ≤ 2 ^ (alpha n ^ 2))
   set df : ZMod (s n i) → ℝ := fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n
   have hP : (0 : ℝ) < 2 ^ p n := by positivity
   have hrd : ∀ ℓ, rhoC (p n) (df ℓ : ℂ) = ((df ℓ : ℝ) : ℂ) := fun ℓ => by
-    rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ hP.ne', Resampling.NeumannWords.rho0_int]
+    rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ hP.ne', Resampling.WindowSum.rho0_int]
   have hD := fun ℓ => tableD_spec (s n i) (t n i) (alpha n) (p n) hp13 (by omega) h.alpha_sq_le_p ℓ
   have hdf : ∀ ℓ, 2 ^ p n * ‖rhoC (p n) (df ℓ : ℂ) - (dPrime (s n i) (t n i) (alpha n : ℝ) ℓ : ℂ)‖ ≤ 2 := by
     intro ℓ

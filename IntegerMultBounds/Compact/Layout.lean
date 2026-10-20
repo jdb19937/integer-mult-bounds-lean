@@ -33,9 +33,9 @@ theorem role_volume (rows roles : ℕ) (Suffix : Type*) [Fintype Suffix] :
 /-- Padding adds whole rows to the next multiple, never individual suffixes. -/
 def paddedRows (rows unit : ℕ) : ℕ := rows + (unit - rows % unit) % unit
 
-theorem padding_bounds (rows unit : ℕ) (hu : 0 < unit) (hur : unit ≤ rows) :
+theorem paddedRows_bounds (rows unit : ℕ) (hu : 0 < unit) :
     rows ≤ paddedRows rows unit ∧ paddedRows rows unit < rows + unit ∧
-    paddedRows rows unit ≤ 2 * rows ∧ unit ∣ paddedRows rows unit := by
+    unit ∣ paddedRows rows unit := by
   have hr := Nat.mod_lt rows hu
   have hp := Nat.mod_lt (unit - rows % unit) hu
   have hd : (paddedRows rows unit) % unit = 0 := by
@@ -47,8 +47,13 @@ theorem padding_bounds (rows unit : ℕ) (hu : 0 < unit) (hur : unit ≤ rows) :
       rw [Nat.mod_eq_of_lt hsmall]
       have : rows % unit + (unit - rows % unit) = unit := by omega
       rw [this, Nat.mod_self]
-  exact ⟨by unfold paddedRows; omega, by unfold paddedRows; omega,
-    by unfold paddedRows; omega, Nat.dvd_of_mod_eq_zero hd⟩
+  exact ⟨by unfold paddedRows; omega, by unfold paddedRows; omega, Nat.dvd_of_mod_eq_zero hd⟩
+
+theorem padding_bounds (rows unit : ℕ) (hu : 0 < unit) (hur : unit ≤ rows) :
+    rows ≤ paddedRows rows unit ∧ paddedRows rows unit < rows + unit ∧
+    paddedRows rows unit ≤ 2 * rows ∧ unit ∣ paddedRows rows unit := by
+  obtain ⟨hle, hlt, hd⟩ := paddedRows_bounds rows unit hu
+  exact ⟨hle, hlt, by omega, hd⟩
 
 /-- Reservation counts allocate enough actual bits, with less than one chunk
 of waste per range. -/

@@ -1,0 +1,24 @@
+{
+  "baseline": "a4235b3d77f019bb72844c774e28a97c12d1dbd3",
+  "reason": "Retired the native Gaussian line machine and its fixed-point word library after the resampling interface stopped linking to its accumulators; retired the native row padding machine after its one arithmetic lemma moved to Compact/Layout.",
+  "total_files": 16,
+  "total_lines": 5034,
+  "files": [
+    "IntegerMultBounds/Compact/PowerTwoDigits.lean",
+    "IntegerMultBounds/Machine/BinaryMultiply.lean",
+    "IntegerMultBounds/Machine/ColumnTransducer.lean",
+    "IntegerMultBounds/Machine/CompactRowPaddingRound.lean",
+    "IntegerMultBounds/Machine/FixedMul.lean",
+    "IntegerMultBounds/Machine/FixedMulValue.lean",
+    "IntegerMultBounds/Machine/Gather.lean",
+    "IntegerMultBounds/Machine/GaussianLine.lean",
+    "IntegerMultBounds/Machine/GaussianLineValue.lean",
+    "IntegerMultBounds/Machine/Negate.lean",
+    "IntegerMultBounds/Machine/RecordTape.lean",
+    "IntegerMultBounds/Machine/RulerAdvance.lean",
+    "IntegerMultBounds/Machine/RulerCopy.lean",
+    "IntegerMultBounds/Machine/SignExtendAdd.lean",
+    "IntegerMultBounds/Machine/TwosComplement.lean",
+    "IntegerMultBounds/Resampling/NeumannWords.lean"
+  ]
+}

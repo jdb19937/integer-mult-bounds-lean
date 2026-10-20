@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.CompactGadgetReservationCapacity
-public import IntegerMultBounds.Machine.RadixRangePadding
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Linarith
 
 /-! Literal suffix geometry of the existing compact reservations. Temp/control
 front fields and their shared dirty back field retain every unused address bit. -/
@@ -77,18 +78,7 @@ theorem bits_decomposition (s : Shape) (n : ℕ) (hn : n ≤ s.axes) (f : Front)
   have hw := carved_le s n hn
   cases f <;> simp only [prefixBits,gapBits,afterBits,bits] <;> omega
 
-/-- Exact volume equality used to feed the actual field-swap/rotation machine;
-both dirty compact fields and every slack/payload coordinate are included. -/
-theorem rectangle_volume (s : Shape) (n rows : ℕ) (hn : n ≤ s.axes) (f : Front) :
-    RadixRangePadding.volume (s.prefixRange rows f) (2^(s.width n))
-      (s.gap n f) (s.suffix n) = rows*s.recordWidth := by
-  have he := bits_decomposition s n hn f
-  unfold RadixRangePadding.volume prefixRange gap suffix recordWidth
-  calc
-    _ = rows*(2^(s.prefixBits f+s.width n+s.gapBits n f+s.width n+s.afterBits n)*s.payload) := by
-      simp only [pow_add]
-      ring
-    _ = _ := by rw [he]
+-- `rectangle_volume` (the field-swap rectangle volume) was unused; restore from a4235b3d.
 
 theorem gap_pos (s : Shape) (n : ℕ) (f : Front) : 0 < s.gap n f := by
   unfold gap
