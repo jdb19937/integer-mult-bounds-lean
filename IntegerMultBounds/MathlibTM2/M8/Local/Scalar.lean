@@ -437,12 +437,12 @@ theorem list_sum_range (f : ℕ → ZMod 2) (n : ℕ) : ((List.range n).map f).s
     rw [List.range_succ, List.map_append, List.sum_append, ih, sum_range_succ]
     simp
 
-/-- **The PR97 local word.** On arbitrary contents, the word adds every source into the target of
-the same triple and leaves sources and side slots unchanged. -/
-theorem word_run_target (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :
-    Circuit.run (dag.word targets) c (.y t) = c (.y t) + c (.x t) := by
-  rw [dag.word_run_y dag_valid targets c t, list_sum_range]
-  refine congrArg (c (.y t) + ·) ?_
+/-- Over the roots read into target `t`, the root values sum to the source of `t`. -/
+theorem roots_sum (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :
+    ((List.range dag.rootCount).map fun j =>
+      ((targets j).count t : ZMod 2) * dag.val (fun n => c (.x n)) (dag.rootNode j)).sum =
+      c (.x t) := by
+  rw [list_sum_range]
   have hval : ∀ j ∈ range rootCount, ((targets j).count t : ZMod 2) *
       dag.val (fun n => c (.x n)) (dag.rootNode j) =
       ∑ s ∈ range leafCount, c (.x s) * (((targets j).count t : ZMod 2) *
@@ -457,6 +457,12 @@ theorem word_run_target (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :
   simp_rw [← mul_sum]
   rw [sum_congr rfl fun s hs => by rw [weight (mem_range.mp hs) ht]]
   simp [mem_range.mpr ht]
+
+/-- **The PR97 local word.** On arbitrary contents, the word adds every source into the target of
+the same triple and leaves sources and side slots unchanged. -/
+theorem word_run_target (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :
+    Circuit.run (dag.word targets) c (.y t) = c (.y t) + c (.x t) := by
+  rw [dag.word_run_y dag_valid targets c t, roots_sum c ht]
 
 /-- The read increment of the compiled operations on the sources, at a target: its source. -/
 theorem readDelta_target (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :

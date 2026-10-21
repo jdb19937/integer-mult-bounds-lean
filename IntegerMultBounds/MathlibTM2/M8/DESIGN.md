@@ -757,6 +757,32 @@ chunk before choosing.
     histogram, so B1's rows are regenerated there at `a = 1236/10⁷`.
 - **B3 the design-B word.** The schedule as checked data against the DAG (late copies, V gates,
   phase 1, readout order), the reordering lemma and scalar correctness over `𝔽₂`.
+  Done. The schedule is not an op list: it is the compiler's own output under three choices.
+  - *Serving order* (`Dag.rank`, default `0`, so the plain `dag` is unchanged). A node's slot
+    keeps the use of rank `0` (the last late user, else the first free use) and its copies follow
+    by upstream's starting dimensions. With it, `Dag.compile` reproduces upstream's history on
+    all 28866 slots (`designbword.py`). Late copies need no reordering: per wire a late copy sits
+    where the compiler puts it, between the pivot's addition and its next gate.
+  - *V leaves* (`VLeaves`): `vop` turns a leaf's copies into source gates on their own slots.
+    `opsB` computes the compiled contents on clean input (`opsB_root`), and its source gates move
+    to the front (`run_opsB_front`).
+  - *Phases* (`Phase`): an addition of `n` is in phase one by `Φ n`, a copy by `Ψ n` (copies and
+    additions differ at 2000 nodes, linked donors). Five local conditions (`PhaseHyp`), checked
+    per node and per deferred use, give through a compiler invariant that the split is sorted,
+    that phase two leaves the centres alone and phase one the deferred slots.
+  - *The word* (`WordB`): `readout s` adds slot `s` into the targets of its `𝔽₂` garbage
+    coefficients `cov s T`, defined semantically; all readouts add the pass's garbage
+    (`run_readouts`). `wordB` is `RDₙ ++ Vₑ ++ OPS₁ ++ CR ++ RD_d ++ V_d ++ OPS₂ ++ OR ++ (…)⁻¹`
+    for a plan `BPlan`; under the plan's four conditions it runs as the canonical
+    `RD ++ OPS ++ RR ++ OPS⁻¹` (`wordB_run`, by `Commute`'s block swaps, permutations and the
+    sorted split), which adds the root values.
+  - *Data*: `DataB` (phase bits and serving order per node, the 11565 deferred uses in readout
+    order, 6258 early and 5116 deferred V uses), checks `ChecksB` (`KernelB`), `WitnessB`
+    (`dagB`, `phaseHypB`), `ScalarB` (`planB`; `wordPR97B_target`: every target gains its
+    source, `wordPR97B_other`). Every module checks under 1.6 GB.
+  - For B4 and B5: the readout targets of a slot are `cov`'s support, so B4 needs a computed
+    sweep for them; the per-wire orders are the frame chains of section 16 (y: readouts at `0`,
+    centre reads, deferred readouts in readout order, the output read).
 - **B4 deferred, late and V frames.** Suffix intersections, the `σ` recursion with its 24
   exceptions, their nondegeneracy and dims, and the nested y and X chains.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`

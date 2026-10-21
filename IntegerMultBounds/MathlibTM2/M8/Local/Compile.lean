@@ -46,6 +46,9 @@ structure Dag where
   rootNode : ℕ → ℕ
   /-- A donor's link: its operand `o` serves argument `pos` of the later node `t`. -/
   link : ℕ → Option (Bool × ℕ × Bool)
+  /-- The order in which a node serves its uses: by rank, stably. The first free use keeps the
+  node's slot; the others get copies. -/
+  rank : ℕ → Use → ℕ := fun _ _ => 0
 
 namespace Dag
 variable (D : Dag)
@@ -70,8 +73,9 @@ def gateUses (y : ℕ) : List Use :=
 def rootUses (y : ℕ) : List Use :=
   ((List.range D.rootCount).filter fun r => D.rootNode r = y).map Use.root
 
-/-- All uses of `y`. -/
-def uses (y : ℕ) : List Use := D.gateUses y ++ D.rootUses y
+/-- All uses of `y`, in serving order. -/
+def uses (y : ℕ) : List Use :=
+  (D.gateUses y ++ D.rootUses y).mergeSort fun a b => decide (D.rank y a ≤ D.rank y b)
 
 /-- The free uses of `y`: those that no donor links. -/
 def freeUses (y : ℕ) : List Use := (D.uses y).filter fun u => !D.linkedB u
@@ -425,11 +429,11 @@ theorem gate_not_mem_rootUses (y t : ℕ) (pos : Bool) : Use.gate t pos ∉ D.ro
 
 theorem mem_uses_gate (y t : ℕ) (pos : Bool) :
     Use.gate t pos ∈ D.uses y ↔ t < D.N ∧ D.v ≤ t ∧ D.arg t pos = y := by
-  rw [uses, List.mem_append, mem_gateUses]
+  rw [uses, List.mem_mergeSort, List.mem_append, mem_gateUses]
   simp [gate_not_mem_rootUses]
 
 theorem mem_uses_root (y r : ℕ) : Use.root r ∈ D.uses y ↔ r < D.rootCount ∧ D.rootNode r = y := by
-  rw [uses, List.mem_append, mem_rootUses]
+  rw [uses, List.mem_mergeSort, List.mem_append, mem_rootUses]
   simp [root_not_mem_gateUses]
 
 theorem useNode_of_mem_uses {y : ℕ} {u : Use} (h : u ∈ D.uses y) : D.useNode u = y := by
@@ -462,7 +466,7 @@ theorem rootUses_nodup (y : ℕ) : (D.rootUses y).Nodup :=
   List.Nodup.map (fun _ _ h => by cases h; rfl) (List.Nodup.filter _ List.nodup_range)
 
 theorem uses_nodup (y : ℕ) : (D.uses y).Nodup := by
-  rw [uses, List.nodup_append]
+  rw [uses, (List.mergeSort_perm _ _).nodup_iff, List.nodup_append]
   refine ⟨D.gateUses_nodup y, D.rootUses_nodup y, ?_⟩
   intro a ha b hb heq
   subst heq
