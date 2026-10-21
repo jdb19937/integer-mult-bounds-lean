@@ -730,6 +730,9 @@ chunk before choosing.
 **Milestones** (one forked agent each):
 - **B1 moments.** `stage2designb.py` emits the design-B histogram rows. `Stage2Moments` checks
   them at `a = 1240/10⁷`, `q_τ = 1 − 1/10⁸`. This step is independent of the geometry and small.
+  Done: `Stage2HistogramB` (46 rows, `stage2cert.py --designb`) and `Stage2MomentsB`
+  (`tau_momentB`, `linear_momentB`, `rank_massB`, `histogramB_lt`), with the certificate
+  generic in the saving (`moment_le_at`). B6 makes `Stage2Moments` an instance of it.
 - **B2 root-complement frames.** `W(X)`, nesting, the one-centre theorem (positive definiteness,
   the pair-graph rank) and the node frames `U_n` with the lift bit. The checks of the two-centre
   ranks, with one chunk measured first.
