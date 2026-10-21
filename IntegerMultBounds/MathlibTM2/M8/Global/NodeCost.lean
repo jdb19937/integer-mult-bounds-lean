@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.Global.NodeRun
+public import IntegerMultBounds.MathlibTM2.M8.Global.FrameMoments
 public import IntegerMultBounds.MathlibTM2.M8.Local.SlotCount
 public import IntegerMultBounds.MathlibTM2.M8.Local.Checks.Donors
 
@@ -117,12 +118,6 @@ theorem rank_one_sub_uFrame (S T : V) : (1 - uFrame S T).rank = 528 := by
   omega
 
 /-! ### Costs along the wires -/
-
-theorem rank_neg {d : ℕ} (A : Mat d) : (-A).rank = A.rank := by
-  have h : ∀ B : Mat d, (-B).rank ≤ B.rank := fun B => by
-    rw [← neg_one_mul]
-    exact Matrix.rank_mul_le_right _ _
-  exact le_antisymm (h A) (by simpa using h (-A))
 
 theorem moveRank_le_rank {d : ℕ} (A B : Mat d) : moveRank A B ≤ (A - B).rank := by
   unfold moveRank

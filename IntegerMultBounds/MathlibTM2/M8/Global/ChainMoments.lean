@@ -25,26 +25,6 @@ variable {d : ℕ}
 
 /-! ### Ranks of differences -/
 
-theorem moveRank_eq (A B : Mat d) : moveRank A B = (A - B).rank := by
-  unfold moveRank
-  split_ifs with h1 h2
-  · subst h1; simp
-  · rw [← neg_sub, rank_neg]
-  · rfl
-
-theorem eq_zero_of_rank_eq_zero {E : Mat d} (h : E.rank = 0) : E = 0 := by
-  rw [Matrix.rank, Submodule.finrank_eq_zero, LinearMap.range_eq_bot] at h
-  ext i j
-  have := congrFun (LinearMap.congr_fun h (Pi.single j 1)) i
-  simpa [Matrix.mulVecLin_apply, Matrix.mulVec_single] using this
-
-theorem rank_sub_comm (A B : Mat d) : (A - B).rank = (B - A).rank := by
-  rw [← neg_sub, rank_neg]
-
-theorem stepMoment_eq {M : Type} [AddCommMonoid M] (φ : ℕ → M) (A B : Mat d) :
-    stepMoment φ A B = if A = B then 0 else φ (A - B).rank := by
-  rw [stepMoment, moveRank_eq]
-
 theorem stepMoment_comm {M : Type} [AddCommMonoid M] (φ : ℕ → M) (A B : Mat d) :
     stepMoment φ A B = stepMoment φ B A := by
   rw [stepMoment_eq, stepMoment_eq, rank_sub_comm]
@@ -62,9 +42,6 @@ theorem stepMoment_compl {M : Type} [AddCommMonoid M] (φ : ℕ → M) (A B : Ma
 /-! ### Chain algebra -/
 
 variable {M : Type} [AddCommMonoid M]
-
-theorem chainMoment_cons_cons (φ : ℕ → M) (a b : Mat d) (l : List (Mat d)) :
-    chainMoment φ (a :: b :: l) = stepMoment φ a b + chainMoment φ (b :: l) := rfl
 
 theorem chainMoment_append (φ : ℕ → M) : ∀ (l₁ : List (Mat d)) (a b : Mat d) (l₂ : List (Mat d)),
     chainMoment φ (l₁ ++ a :: b :: l₂) =

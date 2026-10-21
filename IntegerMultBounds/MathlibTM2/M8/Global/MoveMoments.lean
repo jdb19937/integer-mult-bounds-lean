@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.Global.NodeCost
+public import IntegerMultBounds.MathlibTM2.M8.Global.FrameMoments
 
 /-!
 # Moments of the move ranks
@@ -36,14 +37,6 @@ theorem edgeMoment_append (φ : ℕ → M) : ∀ (a b : List (FStep ι d)),
   | [], _ => by simp [edgeMoment]
   | s :: a, b => by
     cases s <;> simp [edgeMoment, edgeMoment_append φ a b, add_assoc]
-
-/-- One step of a frame sequence: no move between equal frames. -/
-def stepMoment (φ : ℕ → M) (A B : Mat d) : M := if A = B then 0 else φ (moveRank A B)
-
-/-- The moment of the moves along a frame sequence. -/
-def chainMoment (φ : ℕ → M) : List (Mat d) → M
-  | a :: b :: l => stepMoment φ a b + chainMoment φ (b :: l)
-  | _ => 0
 
 omit [DecidableEq ι] in
 theorem edgeMoment_move (φ : ℕ → M) (i : ι) (A B : Mat d) :

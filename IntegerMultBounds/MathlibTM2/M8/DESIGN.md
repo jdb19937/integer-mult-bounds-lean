@@ -803,6 +803,17 @@ chunk before choosing.
   Kernel cost measured at about 0.2–0.4 s per frame with `r ≈ 8`. One-centre children enter
   through sub-mask bases.
 
+  Computed-bank checkpoint: `stage2framebank.py` reconstructs the pinned schedule,
+  shares equal modular spans (with every resulting span rechecked exactly), and emits 15,100
+  root records and 14,121 distinct computed sections of the wire chains. `RootBankCheck`
+  validates each normalized integer inverse once and the generators in batches of 16;
+  `RootBank` proves idempotence, ranks, height bounds and nesting generically. The largest
+  sampled frame (rank 22, 977 generators) checks in 80 seconds at 852 MiB, versus over
+  6 GiB before splitting. All bank checks and all 14,121 computed-chain checks pass,
+  and `Computed/Facts` links their integer rank steps to exact frame moments.
+  These computed sections do not yet discharge the intervening plain/one-centre steps or
+  identify the full chains with B3's framed word; those are still part of B4/B5.
+
   Left for B5: emit the frame data on B3's word and the chain theorems per wire.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
