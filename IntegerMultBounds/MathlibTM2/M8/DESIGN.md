@@ -736,6 +736,25 @@ chunk before choosing.
 - **B2 root-complement frames.** `W(X)`, nesting, the one-centre theorem (positive definiteness,
   the pair-graph rank) and the node frames `U_n` with the lift bit. The checks of the two-centre
   ranks, with one chunk measured first.
+  Done, without the two-centre ranks: the 10576 nodes that reach two centres keep their plain
+  frames. The lifted set stays up-closed (a two-centre node's predecessors reach both centres
+  too), and the saving drops only to `a* = 1.23686·10⁻⁴` (σ by the rule, frame `0` at its 21
+  degenerate slots), certified at `a = 1236/10⁷` with slack `6·10⁻⁹`: `κ = 4208802659/2⁴⁶ ≈
+  2^-14.0292` against `2^-14.0246`. So no frame needs a computed rank or Gram determinant.
+  - `Frames/LiftFrame`: `liftFrame c M r = (S or 1) − frameOf {c,u,w : M}`. With
+    `w_c = 1 + 7 e_c` (`G`-orthogonal to the star, `G(w_c, w_c) = −14`) the star and the line of
+    `w_c` are complementary (`starFrame_add_centreLine`). Nesting (`liftFrame_nest`), hyperplanes
+    (`liftFrame_hyper`), the star (`liftFrame_star`), orthogonal supports (`frameOf_lift`),
+    rank `23 − dimC c M` or `22 − dimC c M` (`liftFrame_rank`), heights `2 · 10²⁰⁰`
+    (`liftFrame_bounded`, by Cramer with the integer column `w_c`).
+  - `scripts/pr97/stage2lift.py`: the lift records (centre, pair mask, centre bit) of the 45884
+    lifted nodes, reached along slot sources exactly as upstream's reach (checked against it),
+    `Local/Data/Lift*` (4.7 MB) and the checks `Local/Checks/Lift*` (`liftOk`, `liftRootOk` in
+    `Local/LiftKernel`): about 4 minutes and 1.3 GB for the heaviest chunk.
+  - `Frames/DesignB`: `frameB n`, with `frameB_src` (the source of every argument),
+    `frameB_out`, `frameB_centre`, `nodeFrame_le_frameB`, `frameB_rank`, `frameB_bounded`.
+  - B1's rows (`a = 1240/10⁷`) are the full-lift histogram; B5's tables give the one-centre
+    histogram, so B1's rows are regenerated there at `a = 1236/10⁷`.
 - **B3 the design-B word.** The schedule as checked data against the DAG (late copies, V gates,
   phase 1, readout order), the reordering lemma and scalar correctness over `𝔽₂`.
 - **B4 deferred, late and V frames.** Suffix intersections, the `σ` recursion with its 24
