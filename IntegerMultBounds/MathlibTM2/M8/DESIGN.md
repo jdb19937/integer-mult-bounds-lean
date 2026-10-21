@@ -811,8 +811,8 @@ chunk before choosing.
   sampled frame (rank 22, 977 generators) checks in 80 seconds at 852 MiB, versus over
   6 GiB before splitting. All bank checks and all 14,121 computed-chain checks pass,
   and `Computed/Facts` links their integer rank steps to exact frame moments.
-  These computed sections do not yet discharge the intervening plain/one-centre steps or
-  identify the full chains with B3's framed word; those are still part of B4/B5.
+  This original checkpoint covers only the computed sections. The complete signed bank
+  below now discharges the intervening plain/one-centre geometry as well.
 
   Mixed-chain support: `SignedCheck` describes positive spans, root complements and
   endpoints uniformly, with exact span/orthogonality checks and batch composition.
@@ -820,11 +820,24 @@ chunk before choosing.
   links every checked mixed chain to its exact projector moments, omitting equal-rank
   steps. The latter checks at 1,288 MiB peak RSS. `SelfCheck` avoids redundant residual
   checks for new bank entries whose generators are exactly their own basis.
-  Complete mixed-chain data and its connection to B3 remain uncertified.
+  `SignedExtra` adds 22,077 spans to the checked prefix. `SignedFull/Facts` now certifies
+  all 32,408 complete mixed chains, their nesting and their exact projector moments.
+  All finite checks pass; the largest sampled check modules use 1,265 MiB (mixed chains)
+  and 1,002 MiB (new inverse bank); the facts module uses 1,761 MiB. A fresh pinned
+  reconstruction reproduces every generated module byte for byte.
 
-  Left for B5: emit the frame data on B3's word and the chain theorems per wire.
+  `designbframes.py` replays B3's compiler, maps upstream slots by their creation uses,
+  and matches all 32,408 wire chains after compressing adjacent repeated frame labels.
+  It found a necessary order correction: 150 fallback-zero readouts must precede the
+  nonzero deferred readouts. Keeping the old order introduces backward frame moves on
+  319 target wires. `ScalarB.wordWithReadoutOrder_*` proves scalar correctness for any
+  readout key with the source schedule fixed, and `StageB` now accepts that key separately.
+  This replay is untrusted; the corresponding Lean alignment theorem remains to be proved.
+
+  Left for B5: instantiate the signed frame assignment and prove the replayed alignment in Lean.
   `Global/StageB` now constructs the first stage from B3's actual word, with separate
-  frame assignments for readouts, sources, side operations and output reads. Its
+  frame assignments for readouts, sources, side operations and output reads, with an
+  independent readout ordering. Its
   `stage_run`, `stage_target` and `stage_other` theorems reuse `ScalarB`: scalar correctness
   is independent of the supplied frames. `Global/CentreBlocks` proves the temporary
   implementation for arbitrary centre slots, so the new slot allocation is supported.

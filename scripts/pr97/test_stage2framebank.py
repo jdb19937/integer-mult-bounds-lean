@@ -54,6 +54,30 @@ class FrameBankTests(unittest.TestCase):
         self.assertEqual([row[2] for row in result['computedRuns']], [[0, 1], [0, 1]])
         self.assertEqual(result, bank.compact_bank(json.loads(json.dumps(original))))
 
+    def test_extension_rejects_nonbasis_generators(self):
+        a, b = triple(0, 1, 2), triple(0, 1, 3)
+        result = {'source': {'upstream': bank.df.dbm.UPSTREAM, 'sha256': bank.df.dbm.PINS},
+                  'records': [{'basis': [a], 'generators': [a, b]}]}
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(AssertionError):
+                bank.emit_bank(result, directory, bank_name='SignedExtra', self_basis=True)
+
+    def test_extension_preserves_non_power_of_two_lookup_layout(self):
+        codes = [triple(0, 1, i) for i in range(2, 7)]
+        result = {'source': {'upstream': bank.df.dbm.UPSTREAM, 'sha256': bank.df.dbm.PINS},
+                  'records': [{'basis': [a], 'generators': [a]} for a in codes]}
+        with tempfile.TemporaryDirectory() as directory:
+            bank.emit_bank(result, directory, per_module=2, bank_name='SignedExtra', self_basis=True)
+            root = Path(directory) / 'IntegerMultBounds/MathlibTM2/M8/Frames/SignedExtra'
+            text = (root / 'Data.lean').read_text()
+            self.assertIn('def bankWidth : Nat := 8', text)
+            self.assertIn('def bankSize : Nat := 5', text)
+            self.assertEqual(len(list((root / 'Data').glob('Bank*.lean'))), 3)
+            self.assertEqual(text.count('(bank002)'), 2)
+            check = (root / 'Checks/Bank000.lean').read_text()
+            self.assertIn('Record.check_self', check)
+            self.assertNotIn('generatorCheck', check)
+
     def test_emission_rejects_unpinned_provenance(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises(AssertionError):

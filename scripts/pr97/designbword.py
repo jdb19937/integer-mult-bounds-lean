@@ -108,7 +108,7 @@ def list_defs(name, doc, us, piece=128):
     return text
 
 
-def main(pr97_dir, data_path, lean_root):
+def main(pr97_dir, data_path, lean_root=None):
     Wraw = sd.read(pr97_dir, 'witness_23.json.gz')
     Draw = sd.read(pr97_dir, 'deferred_23.json.gz')
     wsha = sd.PINS['witness_23.json.gz']
@@ -415,6 +415,14 @@ def main(pr97_dir, data_path, lean_root):
             st[d] ^= st[s]
         assert all(st[('y', T)] == init[('y', T)] ^ init[('x', T)] for T in range(v))
         assert all(st[k] == init[k] for k in st if k[0] != 'y')
+
+    if lean_root is None:
+        # Reuse this compiler and its history checks when attaching frame data.
+        return dict(nodeMap=sorted(new.items()), slotMap=sorted(up2lean.items()),
+                    ops=vops, side=side, rootSlots=[pend[('root', j)] for j in range(len(roots))],
+                    deferred=defS,
+                    earlySources=[pend[u] for u in ve], lateSources=[pend[u] for u in vl],
+                    first=first, rest=rest)
 
     # emit
     base = os.path.join(lean_root, 'IntegerMultBounds', 'MathlibTM2', 'M8', 'Local')

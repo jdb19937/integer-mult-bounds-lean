@@ -2,6 +2,7 @@
 """Emit the shared computed-root bank for the pinned design-B schedule.
 
 Usage: stage2framebank.py PR97_DIR OUTPUT_JSON [--multi-nodes] [--lean-root REPO_ROOT]
+       [--signed-output SIGNED_JSON] [--signed-lean-root REPO_ROOT]
 
 The schedule and witness are SHA-256 checked by stage2designb.read. Bases are
 untrusted: Lean's RootCheck.basisOk must validate every emitted record. A basis
@@ -9,6 +10,9 @@ is shared by all frames that select the same independent root vectors. Its
 generators include every represented root and every adjacent computed basis
 needed by a chain; the exact residual check therefore certifies these spans
 once, independently of how often the frame occurs in the schedule.
+
+The signed extension reuses this prefix, checks each additional inverse once,
+and checks exact span inclusion or orthogonality along every complete chain.
 """
 import argparse
 import json
@@ -208,6 +212,7 @@ def main():
     parser.add_argument('--multi-nodes', action='store_true')
     parser.add_argument('--lean-root', type=Path, help='also emit the Lean data and kernel checks')
     parser.add_argument('--signed-output', type=Path, help='also reconstruct the complete signed wire chains')
+    parser.add_argument('--signed-lean-root', type=Path, help='emit the extended bank and complete signed chain checks')
     args = parser.parse_args()
     graph, schedule, frames = reconstruct(args.source, args.multi_nodes)
     result = compact_bank(collect(graph, schedule, frames))
@@ -217,9 +222,12 @@ def main():
     print('records', len(result['records']), 'occurrences', len(result['occurrences']),
           'computed runs', len(result['computedRuns']), 'edges', len(result['edges']),
           'bytes', args.output.stat().st_size, flush=True)
-    if args.signed_output is not None:
+    if args.signed_output is not None or args.signed_lean_root is not None:
         signed = collect_signed(graph, schedule, frames, result)
-        args.signed_output.write_text(json.dumps(signed, separators=(',', ':')) + '\n')
+        if args.signed_output is not None:
+            args.signed_output.write_text(json.dumps(signed, separators=(',', ':')) + '\n')
+        if args.signed_lean_root is not None:
+            emit_signed(signed, args.signed_lean_root)
         print('complete signed chains', len(signed['fullChains']), 'additional spans',
               len(signed['records']) - signed['parentCount'], flush=True)
     if args.lean_root is not None:
@@ -227,13 +235,14 @@ def main():
         emit_runs(result, args.lean_root)
 
 
-def emit_bank(result, destination, per_module=64, batch_size=16):
+def emit_bank(result, destination, per_module=64, batch_size=16,
+              bank_name="Computed", self_basis=False):
     """Emit narrow data/check modules and one balanced lookup bank."""
     import hashlib
     assert result['source']['upstream'] == df.dbm.UPSTREAM
     assert result['source']['sha256'] == df.dbm.PINS
-    prefix = 'IntegerMultBounds.MathlibTM2.M8.Frames.Computed'
-    directory = Path(destination) / 'IntegerMultBounds/MathlibTM2/M8/Frames/Computed'
+    prefix = f'IntegerMultBounds.MathlibTM2.M8.Frames.{bank_name}'
+    directory = Path(destination) / 'IntegerMultBounds/MathlibTM2/M8/Frames' / bank_name
     (directory / 'Data').mkdir(parents=True, exist_ok=True)
     (directory / 'Checks').mkdir(parents=True, exist_ok=True)
     snapshot = hashlib.sha256(json.dumps(result, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
@@ -242,7 +251,7 @@ def emit_bank(result, destination, per_module=64, batch_size=16):
             f'schedule SHA-256 {df.dbm.PINS["deferred_23.json.gz"]}.\n'
             f'Canonical frame-bank SHA-256 {snapshot}.\n'
             'All frame data and inverse witnesses are untrusted until their kernel checks pass. -/\n')
-    namespace = 'IntegerMultBounds.MathlibTM2.M8.Frames.Computed'
+    namespace = prefix
     opening = f'\n{note}\n@[expose] public section\nnamespace {namespace}\nopen RootBank Local\n'
     closing = f'\nend {namespace}\n'
 
@@ -258,38 +267,49 @@ def emit_bank(result, destination, per_module=64, batch_size=16):
     assert per_module > 0 and per_module & (per_module - 1) == 0
     width = max(per_module, width)
     data_modules, check_modules, chunk_names, chunk_facts = [], [], [], []
-    for start in range(0, width, per_module):
+    for start in range(0, count if self_basis else width, per_module):
         number = start // per_module
         module = f'Bank{number:03d}'
         data_modules.append(f'{prefix}.Data.{module}')
         check_modules.append(f'{prefix}.Checks.{module}')
         data = ['module', 'public import IntegerMultBounds.MathlibTM2.M8.Frames.RootBankCheck', opening]
-        checks = ['module', f'public import {prefix}.Data.{module}', opening]
+        checks = ['module', f'public import {prefix}.Data.{module}']
+        if self_basis:
+            checks.append('public import IntegerMultBounds.MathlibTM2.M8.Frames.SelfCheck')
+        checks.append(opening)
         leaves, facts = [], []
         for index in range(start, min(start + per_module, count)):
             record = result['records'][index]
             scale, inverse = inverse_witness(record['basis'])
             name = f'entry{index:05d}'
-            chunks = [record['generators'][i:i + batch_size]
-                      for i in range(0, len(record['generators']), batch_size)]
-            names = []
-            for j, values in enumerate(chunks):
-                part = f'{name}g{j:03d}'
-                names.append(part)
-                data.append(f'def {part} : List Nat := {values}')
-            parts = '[' + ', '.join(names) + ']'
-            data.append(f'def {name} : RootBank.Record :=\n'
-                        f'  ⟨{record["basis"]}, {parts}.flatten, {scale}, {inverse}⟩')
-            checks.append(f'theorem {name}_matrix : {name}.matrixCheck = true := by decide +kernel')
-            gen_facts = []
-            for part in names:
-                fact = f'{part}_checked'
-                gen_facts.append(fact)
-                checks.append(f'theorem {fact} : {name}.generatorCheck {part} = true := by decide +kernel')
-            checks.append(f'theorem {name}_checked : {name}.check = true :=\n'
-                          f'  RootBank.Record.check_of_chunks {name} {parts} rfl {name}_matrix (by\n'
-                          '    simp only [List.map_cons, List.map_nil, List.all_cons, List.all_nil, id_eq, '
-                          + ', '.join(gen_facts) + ', Bool.true_and])')
+            if self_basis:
+                assert record['generators'] == record['basis']
+                data.append(f'def {name} : RootBank.Record :=\n'
+                            f'  ⟨{record["basis"]}, {record["basis"]}, {scale}, {inverse}⟩')
+                checks.append(f'theorem {name}_matrix : {name}.matrixCheck = true := by decide +kernel')
+                checks.append(f'theorem {name}_checked : {name}.check = true :=\n'
+                              f'  RootBank.Record.check_self {name} {name}_matrix rfl')
+            else:
+                chunks = [record['generators'][i:i + batch_size]
+                          for i in range(0, len(record['generators']), batch_size)]
+                names = []
+                for j, values in enumerate(chunks):
+                    part = f'{name}g{j:03d}'
+                    names.append(part)
+                    data.append(f'def {part} : List Nat := {values}')
+                parts = '[' + ', '.join(names) + ']'
+                data.append(f'def {name} : RootBank.Record :=\n'
+                            f'  ⟨{record["basis"]}, {parts}.flatten, {scale}, {inverse}⟩')
+                checks.append(f'theorem {name}_matrix : {name}.matrixCheck = true := by decide +kernel')
+                gen_facts = []
+                for part in names:
+                    fact = f'{part}_checked'
+                    gen_facts.append(fact)
+                    checks.append(f'theorem {fact} : {name}.generatorCheck {part} = true := by decide +kernel')
+                checks.append(f'theorem {name}_checked : {name}.check = true :=\n'
+                              f'  RootBank.Record.check_of_chunks {name} {parts} rfl {name}_matrix (by\n'
+                              '    simp only [List.map_cons, List.map_nil, List.all_cons, List.all_nil, id_eq, '
+                              + ', '.join(gen_facts) + ', Bool.true_and])')
             leaves.append(f'.leaf {name}')
             facts.append(f'{name}_checked')
         if len(leaves) < per_module:
@@ -308,6 +328,8 @@ def emit_bank(result, destination, per_module=64, batch_size=16):
         (directory / 'Checks' / f'{module}.lean').write_text('\n\n'.join(checks) + closing)
         if number % 32 == 0:
             print('emitted records', min(start + per_module, count), 'of', count, flush=True)
+    if self_basis:
+        chunk_names += [chunk_names[-1]] * (width // per_module - len(chunk_names))
     data = ['module'] + [f'public import {m}' for m in data_modules] + [opening]
     data.append(f'def bank : Tree RootBank.Record := {tree(chunk_names)}')
     data.append(f'def bankWidth : Nat := {width}')
@@ -409,6 +431,106 @@ def emit_runs(result, destination, per_module=128):
                     '    (List.all_eq_true.mp runs_checked ids h)')
     (directory / 'Facts.lean').write_text('\n\n'.join(semantic) + closing)
     print('emitted', len(runs), 'distinct computed chain sections', flush=True)
+
+
+def emit_signed(result, destination, per_module=64):
+    """Extend the checked prefix and certify every complete signed wire chain."""
+    parent = result['parentCount']
+    assert 0 < parent < len(result['records'])
+    extra = {'source': result['source'], 'records': result['records'][parent:]}
+    emit_bank(extra, destination, bank_name='SignedExtra', self_basis=True)
+    prefix = 'IntegerMultBounds.MathlibTM2.M8.Frames.SignedFull'
+    directory = Path(destination) / 'IntegerMultBounds/MathlibTM2/M8/Frames/SignedFull'
+    (directory / 'Chains').mkdir(parents=True, exist_ok=True)
+    (directory / 'Checks').mkdir(parents=True, exist_ok=True)
+    import hashlib
+    # Construction metadata does not change this bank/chain artifact.
+    snapshot_fields = ['source', 'records', 'parentCount', 'fullChains', 'sigma',
+                       'nodeFrames', 'auxHistogram', 'dataHistogram', 'histogram']
+    snapshot_data = {key: result[key] for key in snapshot_fields}
+    snapshot = hashlib.sha256(json.dumps(snapshot_data, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    opening = (f'/-! Generated by scripts/pr97/stage2framebank.py.\n'
+               f'Upstream {df.dbm.UPSTREAM}; canonical signed snapshot {snapshot}.\n'
+               f'Witness {df.dbm.PINS["witness_23.json.gz"]};\n'
+               f'schedule {df.dbm.PINS["deferred_23.json.gz"]}. -/\n'
+               f'@[expose] public section\nnamespace {prefix}\n')
+    closing = f'\nend {prefix}\n'
+    def write(name, imports, body):
+        (directory / name).write_text('module\n\n' + '\n'.join('public import ' + m for m in imports)
+                                     + '\n\n' + opening + '\n\n'.join(body) + closing)
+    write('Data.lean', ['IntegerMultBounds.MathlibTM2.M8.Frames.Computed.Data',
+                        'IntegerMultBounds.MathlibTM2.M8.Frames.SignedExtra.Data',
+                        'IntegerMultBounds.MathlibTM2.M8.Frames.SignedCheck'], [
+        f'def parentSize : Nat := {parent}',
+        f'def bankSize : Nat := {len(result["records"])}',
+        'noncomputable def bankEntry (i : Nat) : RootBank.Record :=\n'
+        '  if i < parentSize then Computed.bankEntry i else SignedExtra.bankEntry (i - parentSize)'])
+    write('BankChecks.lean', [prefix + '.Data',
+        'IntegerMultBounds.MathlibTM2.M8.Frames.Computed.Checks',
+        'IntegerMultBounds.MathlibTM2.M8.Frames.SignedExtra.Checks'], [
+        'theorem bankEntry_checked (i : Nat) : (bankEntry i).check = true := by\n'
+        '  unfold bankEntry\n  split_ifs\n'
+        '  · exact Computed.bankEntry_checked i\n'
+        '  · exact SignedExtra.bankEntry_checked (i - parentSize)',
+        f'theorem parentSize_eq : parentSize = Computed.bankSize := by decide +kernel'])
+    tags = ['.zero', '.one', '.positive', '.negative']
+    def frame(value):
+        tag, i = value
+        return tags[tag] + (f' {i}' if tag >= 2 else '')
+    # Keep wire ordering and one declaration per wire for later executable linkage.
+    chains = result['fullChains']
+    parts, modules = [], []
+    for start in range(0, len(chains), per_module):
+        number = start // per_module
+        module = f'Chains{number:03d}'
+        modules.append(module)
+        data, checks, names, facts = [], [], [], []
+        for i in range(start, min(start + per_module, len(chains))):
+            kind, wire, values = chains[i]
+            name = f'chain{i:05d}'
+            names.append(name)
+            facts.append(name + '_checked')
+            data.append(f'/-- {kind} wire {wire}. -/\ndef {name} : List Signed.Frame := ['
+                        + ', '.join(frame(v) for v in values) + ']')
+            checks.append(f'theorem {name}_checked : Signed.chainCheck bankEntry bankSize {name} = true := by decide +kernel')
+        part = f'chains{number:03d}'
+        parts.append(part)
+        data.append(f'def {part} : List (List Signed.Frame) := [' + ', '.join(names) + ']')
+        checks.append(f'theorem {part}_checked : Signed.chainsCheck bankEntry bankSize {part} = true := by\n'
+                      f'  simp only [Signed.chainsCheck, {part}, List.all_cons, List.all_nil, '
+                      + ', '.join(facts) + ', Bool.true_and]')
+        write(f'Chains/{module}.lean', [prefix + '.Data'], data)
+        write(f'Checks/{module}.lean', [prefix + '.Chains.' + module], checks)
+    groups = [parts[i:i + 32] for i in range(0, len(parts), 32)]
+    group_names = [f'chainGroup{i:03d}' for i in range(len(groups))]
+    data, checks = [], []
+    for name, group in zip(group_names, groups):
+        data.append(f'def {name} : List (List Signed.Frame) := [' + ', '.join(group) + '].flatten')
+        checks.append(f'theorem {name}_checked : Signed.chainsCheck bankEntry bankSize {name} = true := by\n'
+                      f'  apply Signed.chainsCheck_flatten bankEntry bankSize [' + ', '.join(group) + ']\n'
+                      '  simp only [List.map_cons, List.map_nil, List.all_cons, List.all_nil, id_eq, '
+                      + ', '.join(p + '_checked' for p in group) + ', Bool.true_and]')
+    data += ['def chainChunks : List (List (List Signed.Frame)) := [' + ', '.join(group_names) + ']',
+             'def chains : List (List Signed.Frame) := chainChunks.flatten']
+    write('Chains.lean', [prefix + '.Chains.' + m for m in modules], data)
+    checks.append('theorem chains_checked : Signed.chainsCheck bankEntry bankSize chains = true := by\n'
+        '  apply Signed.chainsCheck_flatten bankEntry bankSize chainChunks\n'
+        '  simp only [chainChunks, List.map_cons, List.map_nil, List.all_cons, List.all_nil, id_eq, '
+        + ', '.join(p + '_checked' for p in group_names) + ', Bool.true_and]')
+    write('ChainChecks.lean', [prefix + '.Chains'] + [prefix + '.Checks.' + m for m in modules], checks)
+    write('Facts.lean', [prefix + '.BankChecks', prefix + '.ChainChecks',
+          'IntegerMultBounds.MathlibTM2.M8.Frames.SignedMoves'], [
+        'theorem chain_pairwise (frames : List Signed.Frame) (h : frames ∈ chains) :\n'
+        '    (frames.map (Signed.Frame.eval bankEntry)).Pairwise Nested :=\n'
+        '  Signed.chainCheck_pairwise bankEntry bankSize (fun i _ => bankEntry_checked i) frames\n'
+        '    (List.all_eq_true.mp chains_checked frames h)',
+        'theorem chain_moment {M : Type} [AddCommMonoid M] (φ : Nat → M)\n'
+        '    (frames : List Signed.Frame) (h : frames ∈ chains) :\n'
+        '    Global.chainMoment φ (frames.map (Signed.Frame.eval bankEntry)) =\n'
+        '      ((Signed.rankSteps bankEntry frames).map φ).sum :=\n'
+        '  Signed.chainsCheck_moment φ bankEntry bankSize (fun i _ => bankEntry_checked i)\n'
+        '    chains chains_checked frames h'])
+    print('emitted', len(chains), 'complete signed chains', flush=True)
 
 
 def collect_signed(graph, schedule, frames, seed):

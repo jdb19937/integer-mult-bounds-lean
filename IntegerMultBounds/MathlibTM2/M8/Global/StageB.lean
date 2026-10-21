@@ -15,6 +15,7 @@ open IntegerMultBounds.MathlibTM2.M8.Local IntegerMultBounds.MathlibTM2.M8.Frame
 open Classical
 
 structure FrameAssignment where
+  readoutOrder : List ℕ := planB.keyD
   sigma : ℕ → LMat
   source : Op → LMat
   side : Op → LMat
@@ -24,7 +25,7 @@ def centreSlots (c : Fin 23) : ℕ := dagB.compile.pend (.root (3 * leafCount + 
 def centreTargets (c : Fin 23) : List ℕ := targets (3 * leafCount + c)
 
 def nowSlots : List ℕ := (List.range dagB.compile.next).filter fun s => !planB.isDef s
-def lateSlots : List ℕ := keyed planB.keyD ((List.range dagB.compile.next).filter planB.isDef)
+def lateSlots (keyD : List ℕ) : List ℕ := keyed keyD ((List.range dagB.compile.next).filter planB.isDef)
 def outputRoots : List ℕ := (List.range dagB.rootCount).filter fun j => !planB.cen j
 
 def readBlocks (F : FrameAssignment) (ss : List ℕ) : List (List (FGate LW 23)) :=
@@ -42,7 +43,7 @@ def preBlocks (F : FrameAssignment) : List (List (FGate LW 23)) :=
     opBlocks (dagB.opsFirst planB) F.side
 
 def postBlocks (F : FrameAssignment) : List (List (FGate LW 23)) :=
-  readBlocks F lateSlots ++ opBlocks (dagB.vLate planB) F.source ++
+  readBlocks F (lateSlots F.readoutOrder) ++ opBlocks (dagB.vLate planB) F.source ++
     opBlocks (dagB.opsRest planB) F.side ++ outBlocks F ++
     opBlocks (dagB.vNow planB ++ dagB.vLate planB ++ dagB.opsFirst planB ++
       dagB.opsRest planB).reverse (fun _ => 1)
@@ -56,8 +57,8 @@ def preProgram : Circuit.Program Reg (ZMod 2) :=
   dagB.rdNow targets leafCount planB ++ (dagB.vNow planB).map opGate ++
     (dagB.opsFirst planB).map opGate
 
-def postProgram : Circuit.Program Reg (ZMod 2) :=
-  dagB.rdLate targets leafCount planB ++ (dagB.vLate planB).map opGate ++
+def postProgram (keyD : List ℕ) : Circuit.Program Reg (ZMod 2) :=
+  dagB.rdLate targets leafCount (planWithReadoutOrder keyD) ++ (dagB.vLate planB).map opGate ++
     (dagB.opsRest planB).map opGate ++ dagB.outReads targets planB ++
     ((dagB.vNow planB ++ dagB.vLate planB ++ dagB.opsFirst planB ++
       dagB.opsRest planB).map opGate).reverse
@@ -87,9 +88,10 @@ theorem preBlocks_gates (F : FrameAssignment) :
     preProgram, List.map_append, Dag.rdNow, nowSlots]
 
 theorem postBlocks_gates (F : FrameAssignment) :
-    (postBlocks F).flatMap gatesOf = postProgram.map gL := by
+    (postBlocks F).flatMap gatesOf = (postProgram F.readoutOrder).map gL := by
   simp only [postBlocks, List.flatMap_append, readBlocks_gates, opBlocks_gates,
-    outBlocks_gates, postProgram, List.map_append, List.map_reverse, Dag.rdLate, lateSlots]
+    outBlocks_gates, postProgram, List.map_append, List.map_reverse, Dag.rdLate, lateSlots, planWithReadoutOrder]
+  rfl
 
 theorem centre_indices :
     (List.range dagB.rootCount).filter planB.cen =
@@ -119,27 +121,33 @@ theorem centreReads_gates :
   simp only [Dag.centreReads, Dag.rootReadsAt, centre_indices, List.flatMap_map]
   rfl
 
-theorem word_split : wordPR97B = preProgram ++
-    (List.finRange 23).flatMap (centreReadsAt centreSlots centreTargets) ++ postProgram := by
-  simp only [wordPR97B, Dag.wordB, preProgram, postProgram, centreReads_gates, List.append_assoc]
+theorem word_split (keyD : List ℕ) : wordWithReadoutOrder keyD = preProgram ++
+    (List.finRange 23).flatMap (centreReadsAt centreSlots centreTargets) ++ postProgram keyD := by
+  simp only [wordWithReadoutOrder, Dag.wordB, preProgram, postProgram]
+  rw [show dagB.centreReads targets (planWithReadoutOrder keyD) =
+    (List.finRange 23).flatMap (centreReadsAt centreSlots centreTargets) from centreReads_gates]
+  simp only [Dag.rdNow, Dag.vNow, Dag.vLate, Dag.opsFirst, Dag.opsRest, Dag.outReads,
+    planWithReadoutOrder, BPlan.isDef, List.append_assoc]
+  rfl
+
 
 theorem stage_run (F : FrameAssignment) (d : LW → ZMod 2)
     (hz : ∀ c, d (.inr c) = 0) :
-    regs (Circuit.run (gatesOf (stage F)) d) = Circuit.run wordPR97B (regs d) := by
+    regs (Circuit.run (gatesOf (stage F)) d) = Circuit.run (wordWithReadoutOrder F.readoutOrder) (regs d) := by
   rw [stage, gatesOf_flatten, blocks, List.flatMap_append, List.flatMap_append,
     preBlocks_gates, postBlocks_gates, word_split]
   exact run_with_centres centreSlots centreTargets (List.finRange 23) (List.nodup_finRange 23)
-    preProgram postProgram d (fun c _ => hz c)
+    preProgram (postProgram F.readoutOrder) d (fun c _ => hz c)
 
 theorem stage_target (F : FrameAssignment) (d : LW → ZMod 2)
     (hz : ∀ c, d (.inr c) = 0) {t : ℕ} (ht : t < leafCount) :
     Circuit.run (gatesOf (stage F)) d (.inl (.y t)) = d (.inl (.y t)) + d (.inl (.x t)) := by
-  exact (congrFun (stage_run F d hz) (.y t)).trans (wordPR97B_target (regs d) ht)
+  exact (congrFun (stage_run F d hz) (.y t)).trans (wordWithReadoutOrder_target F.readoutOrder (regs d) ht)
 
 theorem stage_other (F : FrameAssignment) (d : LW → ZMod 2)
     (hz : ∀ c, d (.inr c) = 0) (r : Reg) (hr : r.isY = false) :
     Circuit.run (gatesOf (stage F)) d (.inl r) = d (.inl r) := by
-  exact (congrFun (stage_run F d hz) r).trans (wordPR97B_other (regs d) r hr)
+  exact (congrFun (stage_run F d hz) r).trans (wordWithReadoutOrder_other F.readoutOrder (regs d) r hr)
 
 end
 end IntegerMultBounds.MathlibTM2.M8.Global.DesignB

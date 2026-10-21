@@ -162,6 +162,32 @@ theorem wordPR97B_run (c : Reg → ZMod 2) :
   dagB.wordB_run targets leafCount planB dagB_valid targets_lt
     (Dag.sideB_pairwise (Dag.phase_sorted dagB_valid phaseHypB)) planB_first planB_rest planB_cen c
 
+/-- Readouts may be reordered without changing the source-gate schedule. -/
+def planWithReadoutOrder (keyD : List ℕ) : BPlan := { planB with keyD := keyD }
+
+def wordWithReadoutOrder (keyD : List ℕ) : Circuit.Program Reg (ZMod 2) :=
+  dagB.wordB targets leafCount (planWithReadoutOrder keyD)
+
+theorem wordWithReadoutOrder_run (keyD : List ℕ) (c : Reg → ZMod 2) :
+    Circuit.run (wordWithReadoutOrder keyD) c =
+      c + dagB.readDelta targets (Circuit.run dagB.opsGatesB (part Reg.isX c)) :=
+  dagB.wordB_run targets leafCount (planWithReadoutOrder keyD) dagB_valid targets_lt
+    (Dag.sideB_pairwise (Dag.phase_sorted dagB_valid phaseHypB)) planB_first planB_rest planB_cen c
+
+theorem wordWithReadoutOrder_target (keyD : List ℕ) (c : Reg → ZMod 2)
+    {t : ℕ} (ht : t < leafCount) :
+    Circuit.run (wordWithReadoutOrder keyD) c (.y t) = c (.y t) + c (.x t) := by
+  rw [wordWithReadoutOrder_run, Pi.add_apply, Dag.readDelta_y, ← roots_sum c ht]
+  refine congrArg (c (.y t) + ·) (congrArg List.sum (List.map_congr_left fun j hj => ?_))
+  have h := dagB.opsB_root dagB_valid c (List.mem_range.mp hj)
+  rw [dagB_val] at h
+  exact congrArg _ h
+
+theorem wordWithReadoutOrder_other (keyD : List ℕ) (c : Reg → ZMod 2)
+    (r : Reg) (hr : r.isY = false) :
+    Circuit.run (wordWithReadoutOrder keyD) c r = c r := by
+  rw [wordWithReadoutOrder_run, Pi.add_apply, Dag.readDelta_off_y _ _ _ r hr, add_zero]
+
 /-- **The design-B word** adds every source into the target of the same triple. -/
 theorem wordPR97B_target (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :
     Circuit.run wordPR97B c (.y t) = c (.y t) + c (.x t) := by
