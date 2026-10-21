@@ -48,7 +48,7 @@ def midView (b n : ℕ) (v : Descriptor) : Descriptor :=
   RevMachine.sub prime b n (n % N.width) (N.width * (n / N.width)) v
 
 /-- The role view of the middle view. -/
-def roleView (b n : ℕ) (v : Descriptor) : Descriptor := role (midView N b n v) N.roleCount
+abbrev roleView (b n : ℕ) (v : Descriptor) : Descriptor := role (midView N b n v) N.roleCount
 
 /-- The node's data: a blank `io`, bits on every wire. -/
 def NodeInv {v : Descriptor} (data : RecursiveMixedSchedule.Data (tapes N) v) : Prop :=
@@ -216,22 +216,31 @@ variable (N) in
 def mergeB : Graph.Block (CommonBank.count (tapes N)) prime :=
   seqB (NodeBank.ops (NodeRows.tempOps N blank)) (seqB (NodeRows.merge N) (seqB Blocks.restore (mergeCountersB N)))
 
-/-- **The node's split.** -/
-theorem split_runs {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b) (hw : v.width = n * b)
-    (hn : N.width ≤ n) (hd : N.roleCount ∣ v.rows) (x : Fin (volume prime v) → Fin 4) (hx : Bits x) :
-    ∃ data : RecursiveMixedSchedule.Data (tapes N) (roleView N b n v), NodeInv N data ∧
-      Runs (splitB N) (bank (childRoles N (RecursiveShiftRoleBank.source x)) (hdr v) fs p node scalar
-          (leafC b N.width n 0) st)
-        (bank (roles data) (hdr (roleView N b n v)) fs p
-          (RecursiveViewFrame.savedStack (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node))
-          scalar (nodeC N b (n / N.width)) st) (splitCost (N := N) v b n) := by
+variable (N) in
+theorem mid_dvd {v : Descriptor} {b n : ℕ} (hd : N.roleCount ∣ v.rows) : N.roleCount ∣ (midView N b n v).rows := hd
+
+variable (N) in
+/-- The node's data after the split: the rows on the contract roles, the zero bit on the
+temporaries. -/
+def splitData {v : Descriptor} {b n : ℕ} (hw : v.width = n * b) (hd : N.roleCount ∣ v.rows)
+    (x : Fin (volume prime v) → Fin 4) : RecursiveMixedSchedule.Data (tapes N) (roleView N b n v) :=
+  M8.Machine.RoleOps.run (NodeRows.tempOps N zeroBit)
+    (roleData (wires N) (Equiv.refl _) (mid_dvd N hd) (fun i => x (Fin.cast (mid_volume N hw) i)))
+
+/-- **The node's split**, with its data. -/
+theorem split_runs_data {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b) (hw : v.width = n * b)
+    (hn : N.width ≤ n) (hd : N.roleCount ∣ v.rows) (x : Fin (volume prime v) → Fin 4) :
+    Runs (splitB N) (bank (childRoles N (RecursiveShiftRoleBank.source x)) (hdr v) fs p node scalar
+        (leafC b N.width n 0) st)
+      (bank (roles (splitData N hw hd x)) (hdr (roleView N b n v)) fs p
+        (RecursiveViewFrame.savedStack (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node))
+        scalar (nodeC N b (n / N.width)) st) (splitCost (N := N) v b n) := by
   set mv := midView N b n v
   have hvol : volume prime mv = volume prime v := mid_volume N hw
   set x' : Fin (volume prime mv) → Fin 4 := fun i => x (Fin.cast hvol i)
-  have hx' : Bits x' := fun i => hx _
   have hd' : N.roleCount ∣ mv.rows := hd
   set data := M8.Machine.RoleOps.run (NodeRows.tempOps N zeroBit) (roleData (wires N) (Equiv.refl _) hd' x')
-  refine ⟨data, init_inv hd' x' hx', ?_⟩
+  change Runs _ _ (bank (roles data) _ _ _ _ _ _ _) _
   -- counters
   have h₁ := splitCounters_runs (N := N) (rr := childRoles N (RecursiveShiftRoleBank.source x)) (hs := hdr v)
     (fs := fs) (p := p) (node := node) (scalar := scalar) (st := st) (b := b) hn
@@ -301,6 +310,17 @@ theorem split_runs {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b)
   simp only [mv] at L₁
   exact runs_mono L₁ (by unfold splitCost; omega)
 
+/-- **The node's split.** -/
+theorem split_runs {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b) (hw : v.width = n * b)
+    (hn : N.width ≤ n) (hd : N.roleCount ∣ v.rows) (x : Fin (volume prime v) → Fin 4) (hx : Bits x) :
+    ∃ data : RecursiveMixedSchedule.Data (tapes N) (roleView N b n v), NodeInv N data ∧
+      Runs (splitB N) (bank (childRoles N (RecursiveShiftRoleBank.source x)) (hdr v) fs p node scalar
+          (leafC b N.width n 0) st)
+        (bank (roles data) (hdr (roleView N b n v)) fs p
+          (RecursiveViewFrame.savedStack (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node))
+          scalar (nodeC N b (n / N.width)) st) (splitCost (N := N) v b n) :=
+  ⟨_, init_inv (v := midView N b n v) hd _ (fun i => hx _), split_runs_data hpos hb hw hn hd x⟩
+
 def mergeCountersCost (b n m : ℕ) : ℕ :=
   (2*(bits (n / m)).length+4) + (2*(bits (n / m - 1)).length+4) +
     (BinaryDescriptorDivMod.linearConstant (bits b) * (n * b + 1) + 2 * b + 6) +
@@ -352,6 +372,57 @@ def mergeCost (v : Descriptor) (b n : ℕ) : ℕ :=
       RecursiveRowsClean.bound N.roleCount (volume prime (midView N b n v)) + 1) +
     RecursiveViewFrame.restoreCost (hdr v) (hdr (midView N b n v)) + mergeCountersCost b n N.width + 3
 
+theorem merge_world {v : Descriptor} (data : RecursiveMixedSchedule.Data (tapes N) v) (j : Fin N.roleCount) :
+    M8.Machine.RoleOps.run (NodeRows.tempOps N blank) data (wires N (Fin.natAdd 1 j)) = data (wires N (Fin.natAdd 1 j)) := by
+  have hk : ¬ ∃ k ∈ List.finRange N.tempCount, tempSlot N k = wires N (Fin.natAdd 1 j) := by
+    rintro ⟨k, -, hk⟩
+    simp only [wires, Fin.addCases_right] at hk
+    have := NodeBank.wireSlot_injective N hk
+    simp at this
+  rw [NodeRows.tempOps, NodeRows.run_fills, ite_eq_right hk]
+
+/-- **The node's merge**, of a given merged array `x'` of the middle view. -/
+theorem merge_runs_data {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b) (hw : v.width = n * b)
+    (hd : N.roleCount ∣ v.rows) (data : RecursiveMixedSchedule.Data (tapes N) (roleView N b n v))
+    (hfree : NodeFree node) (x' : Fin (volume prime (midView N b n v)) → Fin 4)
+    (hx' : roleData (wires N) (NodeBank.mergeRoute N) (mid_dvd N hd) x' =
+      M8.Machine.RoleOps.run (NodeRows.tempOps N blank) data) :
+    Runs (mergeB N) (bank (roles data) (hdr (roleView N b n v)) fs p
+        (RecursiveViewFrame.savedStack (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node))
+        scalar (nodeC N b (n / N.width)) st)
+      (bank (childRoles N (RecursiveShiftRoleBank.source (fun i => x' (Fin.cast (mid_volume N hw).symm i))))
+        (hdr v) fs p node scalar (leafC b N.width n 0) st)
+      (mergeCost (N := N) v b n) := by
+  have hvol : volume prime v = volume prime (midView N b n v) := (mid_volume N hw).symm
+  have hd' : N.roleCount ∣ (midView N b n v).rows := hd
+  -- clear the temporaries
+  have h₁ := NodeBank.ops_runs (NodeRows.tempOps N blank) (Routines.hdr_headers (roleView N b n v))
+    (roleView_positive N hpos hd) data fs p
+    (RecursiveViewFrame.savedStack (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node)) scalar
+    (nodeC N b (n / N.width)) st
+  -- the row merge
+  have hfree' : RecursiveViewFrame.Free (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node) :=
+    RecursiveRowsNode.free_of_available _ _ (RecursiveRowsNode.saved_available _ _ hfree)
+  have hexit := fun R => RecursiveRowsNode.exit_hoare (u := Shared50RecursiveBank.AuxCount K - 1) (NodeBank.mergeRoute N)
+    (wires N) (NodeBank.wires_injective N) (hdr (midView N b n v)) (hdr (roleView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node)
+    R hfree' (midView N b n v) (roleCount_pos N hpos hd) (Routines.hdr_headers (midView N b n v)) (mid_positive N hpos) hd' x'
+  have h₂ := NodeBank.role_runs hexit fs p scalar (nodeC N b (n / N.width)) st
+  rw [hx'] at h₂
+  -- restore the headers
+  have h₃ := Blocks.restore_runs (roles (sourceData (wires N) x')) (hdr (midView N b n v)) fs p node scalar
+    (nodeC N b (n / N.width)) st (hdr v) (Family.nodeFree_free hfree _)
+  -- the counters
+  have h₄ := mergeCounters_runs (N := N) (rr := roles (sourceData (wires N) x')) (fs := fs) (p := p) (node := node)
+    (scalar := scalar) (st := st) hb hw
+  set x : Fin (volume prime v) → Fin 4 := fun i => x' (Fin.cast hvol i)
+  have hrx : roles (sourceData (wires N) x') = childRoles N (RecursiveShiftRoleBank.source x) := by
+    rw [NodePark.source_roles, source_cast]
+  rw [hrx] at h₂ h₃ h₄
+  have L₃ := seq_runs (Blocks.adapt_leading _ _) (Blocks.seq_leading _ _) h₃ h₄
+  have L₂ := seq_runs (NodeBank.roleBlock_leading _) (Blocks.seq_leading _ _) h₂ L₃
+  have L₁ := seq_runs (NodeBank.roleBlock_leading _) (Blocks.seq_leading _ _) h₁ L₂
+  exact runs_mono L₁ (by unfold mergeCost; omega)
+
 /-- **The node's merge.** -/
 theorem merge_runs {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b) (hw : v.width = n * b)
     (hd : N.roleCount ∣ v.rows) (data : RecursiveMixedSchedule.Data (tapes N) (roleView N b n v))
@@ -362,57 +433,16 @@ theorem merge_runs {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b)
           scalar (nodeC N b (n / N.width)) st)
         (bank (childRoles N (RecursiveShiftRoleBank.source x)) (hdr v) fs p node scalar (leafC b N.width n 0) st)
         (mergeCost (N := N) v b n) := by
-  set mv := midView N b n v
-  have hvol : volume prime v = volume prime mv := (mid_volume N hw).symm
-  have hd' : N.roleCount ∣ mv.rows := hd
-  -- clear the temporaries
-  have h₁ := NodeBank.ops_runs (NodeRows.tempOps N blank) (Routines.hdr_headers (roleView N b n v))
-    (roleView_positive N hpos hd) data fs p
-    (RecursiveViewFrame.savedStack (hdr mv) (RecursiveViewFrame.savedStack (hdr v) node)) scalar
-    (nodeC N b (n / N.width)) st
-  set data₁ := M8.Machine.RoleOps.run (NodeRows.tempOps N blank) data
   obtain ⟨hio₁, ht₁⟩ := NodeRows.run_tempOps N blank data
-  have hworld : ∀ j, data₁ (wires N (Fin.natAdd 1 j)) = data (wires N (Fin.natAdd 1 j)) := by
-    intro j
-    have hk : ¬ ∃ k ∈ List.finRange N.tempCount, tempSlot N k = wires N (Fin.natAdd 1 j) := by
-      rintro ⟨k, -, hk⟩
-      simp only [wires, Fin.addCases_right] at hk
-      have := NodeBank.wireSlot_injective N hk
-      simp at this
-    simp only [data₁]
-    rw [NodeRows.tempOps, NodeRows.run_fills, ite_eq_right hk]
-  have hio₁' : NodeRows.NodeData N data₁ := by
-    exact hio₁.trans hinv.1
-  obtain ⟨x', hx', hcells⟩ := NodeRows.roleData_surjective N (v := mv) hd' data₁ hio₁' ht₁
-  -- the row merge
-  have hfree' : RecursiveViewFrame.Free (hdr mv) (RecursiveViewFrame.savedStack (hdr v) node) :=
-    RecursiveRowsNode.free_of_available _ _ (RecursiveRowsNode.saved_available _ _ hfree)
-  have hexit := fun R => RecursiveRowsNode.exit_hoare (u := Shared50RecursiveBank.AuxCount K - 1) (NodeBank.mergeRoute N)
-    (wires N) (NodeBank.wires_injective N) (hdr mv) (hdr (roleView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node)
-    R hfree' mv (roleCount_pos N hpos hd) (Routines.hdr_headers mv) (mid_positive N hpos) hd' x'
-  have h₂ := NodeBank.role_runs hexit fs p scalar (nodeC N b (n / N.width)) st
-  rw [hx'] at h₂
-  -- restore the headers
-  have h₃ := Blocks.restore_runs (roles (sourceData (wires N) x')) (hdr mv) fs p node scalar
-    (nodeC N b (n / N.width)) st (hdr v) (Family.nodeFree_free hfree _)
-  -- the counters
-  have h₄ := mergeCounters_runs (N := N) (rr := roles (sourceData (wires N) x')) (fs := fs) (p := p) (node := node)
-    (scalar := scalar) (st := st) hb hw
-  set x : Fin (volume prime v) → Fin 4 := fun i => x' (Fin.cast hvol i)
-  have hrx : roles (sourceData (wires N) x') = childRoles N (RecursiveShiftRoleBank.source x) := by
-    rw [NodePark.source_roles, source_cast]
-  rw [hrx] at h₂ h₃ h₄
-  refine ⟨x, fun i => ?_, ?_⟩
-  · obtain ⟨j, z, hz⟩ := hcells (Fin.cast hvol i)
-    have hne : wires N (Fin.natAdd 1 j) ≠ io N := by
-      simp only [wires, Fin.addCases_right]; exact NodeBank.wireSlot_ne_io N _
-    rw [show x i = x' (Fin.cast hvol i) from rfl, hz, hworld]
-    exact hinv.2 _ hne z
-  have L₃ := seq_runs (Blocks.adapt_leading _ _) (Blocks.seq_leading _ _) h₃ h₄
-  have L₂ := seq_runs (NodeBank.roleBlock_leading _) (Blocks.seq_leading _ _) h₂ L₃
-  have L₁ := seq_runs (NodeBank.roleBlock_leading _) (Blocks.seq_leading _ _) h₁ L₂
-  simp only [mv] at L₁
-  exact runs_mono L₁ (by unfold mergeCost; omega)
+  have hio₁' : NodeRows.NodeData N (M8.Machine.RoleOps.run (NodeRows.tempOps N blank) data) := hio₁.trans hinv.1
+  obtain ⟨x', hx', hcells⟩ := NodeRows.roleData_surjective N (v := midView N b n v) hd _ hio₁' ht₁
+  refine ⟨_, fun i => ?_, merge_runs_data hpos hb hw hd data hfree x' hx'⟩
+  obtain ⟨j, z, hz⟩ := hcells (Fin.cast (mid_volume N hw).symm i)
+  have hne : wires N (Fin.natAdd 1 j) ≠ io N := by
+    simp only [wires, Fin.addCases_right]; exact NodeBank.wireSlot_ne_io N _
+  show ∃ y, x' (Fin.cast _ i) = _
+  rw [hz, merge_world]
+  exact hinv.2 _ hne z
 
 end
 end IntegerMultBounds.MathlibTM2.M8.RevMachine.NodeSplit

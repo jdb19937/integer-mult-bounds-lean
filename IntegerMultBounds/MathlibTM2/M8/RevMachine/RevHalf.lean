@@ -339,6 +339,50 @@ theorem dvd_child {W d D rows : ℕ} (hD : d + 1 ≤ D) (h : W ^ D ∣ rows) : W
   · have h' : W ^ d * W ∣ rows := (pow_succ W d ▸ pow_dvd_pow W hD).trans h
     exact Nat.dvd_div_of_mul_dvd (by rwa [Nat.mul_comm] at h')
 
+/-- The frame of a block call of rank `r` on wire `w` at site `i`. -/
+def childFrame {b₀ : ℕ} (σ : Frame (pcs N) capacity) (hok : Ok N b₀ σ) (hm : N.width ≤ σ.n) (i : Graph.Site (pcs N))
+    (w : N.World ⊕ N.Temp) (r : ℕ) (data : RecursiveMixedSchedule.Data (tapes N) (roleView N σ.b σ.n σ.v)) :
+    Frame (pcs N) capacity :=
+  let E := RecursiveCallProtocol.entered (NodePark.parked N w) (wireSlot N w) (io N) (volume prime (roleView N σ.b σ.n σ.v))
+    (bank (roles data) (hdr (roleView N σ.b σ.n σ.v)) σ.f σ.p
+      (RecursiveViewFrame.savedStack (hdr (midView N σ.b σ.n σ.v)) (RecursiveViewFrame.savedStack (hdr σ.v) σ.node))
+      σ.scalar (nodeC N σ.b (σ.n / N.width)) σ.st)
+  { v := NodeCall.childView (N := N) σ.b (σ.n / N.width) r (roleView N σ.b σ.n σ.v)
+    n := r * (σ.n / N.width)
+    b := σ.b
+    hpos := Family.sub_positive (NodeSplit.roleView_positive N σ.hpos (rows_dvd hok hm))
+    hb := σ.hb
+    hw := rfl
+    f := E.tape (RecursiveCallBank.controlSlot 2)
+    p := E.head (RecursiveCallBank.controlSlot 2)
+    node := RecursiveViewFrame.savedStack (hdr (midView N σ.b σ.n σ.v)) (RecursiveViewFrame.savedStack (hdr σ.v) σ.node)
+    scalar := σ.scalar
+    st := RecursiveChildCallSetup.savedStacks (hdr (roleView N σ.b σ.n σ.v)) σ.st (Graph.returnCode (pcs N) capacity i)
+    hfree := RecursiveRowsNode.saved_available _ _ (RecursiveRowsNode.saved_available _ _ σ.hfree)
+    ret := .recover i
+    g := σ.st.tape 1
+    q := σ.st.head 1
+    hcode := ⟨(RevNode.savedStacks_pc (hdr (roleView N σ.b σ.n σ.v)) σ.st _).1,
+      (RevNode.savedStacks_pc (hdr (roleView N σ.b σ.n σ.v)) σ.st _).2, fun j _ => hok.pc _ (by omega)⟩ }
+
+/-- The call's frame is served. -/
+theorem childFrame_ok {b₀ : ℕ} (hRk : ∀ r ∈ Rk N, 1 ≤ r ∧ r < N.width) (σ : Frame (pcs N) capacity)
+    (hok : Ok N b₀ σ) (hm : N.width ≤ σ.n) (i : Graph.Site (pcs N)) (w : N.World ⊕ N.Temp) (r : ℕ)
+    (hi : (pcs N)[i] = .call (w, r)) (data : RecursiveMixedSchedule.Data (tapes N) (roleView N σ.b σ.n σ.v)) :
+    Ok N b₀ (childFrame σ hok hm i w r data) := by
+  have hsaved := RecursiveStackAllocation.saved_stacks_available (hdr (roleView N σ.b σ.n σ.v)) σ.st
+    (Graph.returnCode (pcs N) capacity i) hok.desc hok.pc
+  have hdepth := RevNode.depth_child (fun r h => (hRk r h).2) hm (GraphContract.rank_mem Prod.snd (pcs N) i.val i.isLt (w, r) hi)
+  exact
+    { b := hok.b
+      rows := dvd_child hdepth hok.rows
+      pay := NodePark.entered_blank_suffix N (u := 1+(1+K)) w (volume prime (roleView N σ.b σ.n σ.v)) (roles data)
+        (hdr (roleView N σ.b σ.n σ.v)) σ.f σ.p
+        ((RecursiveViewFrame.savedStack (hdr (midView N σ.b σ.n σ.v)) (RecursiveViewFrame.savedStack (hdr σ.v) σ.node)).append
+          (σ.scalar.append (CommonBank.counters (nodeC N σ.b (σ.n / N.width))))) σ.st hok.pay
+      desc := hsaved.1
+      pc := hsaved.2 }
+
 /-- **A block call**: a child frame on the call's role stream, and its recovery. -/
 theorem half_call {b₀ : ℕ} (hRk : ∀ r ∈ Rk N, 1 ≤ r ∧ r < N.width) (σ : Frame (pcs N) capacity)
     (y : Tapes (CommonBank.count (tapes N)) prime) (hok : Ok N b₀ σ) (hm : N.width ≤ σ.n)

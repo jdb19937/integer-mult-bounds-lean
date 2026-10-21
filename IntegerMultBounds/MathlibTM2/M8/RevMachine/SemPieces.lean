@@ -79,6 +79,11 @@ theorem twRun_swapOps (L : List (Fin d × Fin d)) : twMap φ σ (swapOps L) = re
   | nil => rfl
   | cons p L ih => exact ih (revSwap σ p s)
 
+theorem swapAction_eq (L : List (Fin d × Fin d)) (x : Streams d S) :
+    twEdgeAction φ σ (swapOps L) x = fun a => x (Function.invFun (revSwaps σ L) a) := by
+  unfold twEdgeAction
+  rw [twRun_swapOps]
+
 theorem legal_left {p p' : FieldProgram d} (h : ∀ op ∈ specialize (q ^ b) (p ++ p'), AffineFieldProgram.Legal op) :
     ∀ op ∈ specialize (q ^ b) p, AffineFieldProgram.Legal op := fun op hop =>
   h op (by simp only [specialize, List.map_append, List.mem_append] at hop ⊢; exact Or.inl hop)
