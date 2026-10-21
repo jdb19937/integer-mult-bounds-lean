@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.AtomBank
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-!
 # Nonrecursive segments on atom fields
@@ -82,7 +83,7 @@ theorem outer_z (hP : 2 ≤ P) : (outer P d A f).head (zslot P hP) = 0 ∧
 theorem outer_set (j : Fin 6) (o : Option (List Bool)) :
     setTape (outer P d A f) (cs P j) (descriptorTape prime o) (descriptorHead o) =
       outer P (Function.update d (CounterBank.slot j) o) A f := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> simp only [setTape, outer] <;>
+  apply congrArg₂ Tapes.mk <;> funext i <;> simp only [outer] <;>
     by_cases hi : i = cs P j
   · subst hi
     have h : (cs P j).val < 17 := by simp [cs]; omega
@@ -202,14 +203,14 @@ theorem neutral_set (b W : ℕ) (x : Fin 4 → ℕ) :
       (CounterBank.slot 4) (some (bits (x 2)))) (CounterBank.slot 5) (some (bits (x 3))) =
     CounterBank.entries ![b, W, x 0, x 1, x 2, x 3] := by
   funext i
-  fin_cases i <;> simp [neutral, CounterBank.entries, CounterBank.slot, Function.update] <;> rfl
+  fin_cases i <;> simp [neutral, CounterBank.entries, CounterBank.slot, Function.update]
 
 theorem entries_erase (w : Fin 6 → ℕ) :
     Function.update (Function.update (Function.update (Function.update (CounterBank.entries w)
       (CounterBank.slot 2) none) (CounterBank.slot 3) none) (CounterBank.slot 4) none)
       (CounterBank.slot 5) none = neutral (w 0) (w 1) := by
   funext i
-  fin_cases i <;> simp [neutral, CounterBank.entries, CounterBank.slot, Function.update] <;> rfl
+  fin_cases i <;> simp [neutral, CounterBank.entries, CounterBank.slot, Function.update]
 
 /-- Write the counters `T, R, K, M` of a plan. -/
 def setup (P : ℕ) (hP : 2 ≤ P) (pl : Fin 4 → ℕ × Bool) :=
@@ -364,7 +365,7 @@ theorem shift_step_exact (hP : 2 ≤ P) (b W : ℕ) (t k : Fin n) (c : ℚ) (hk 
   have hp := placed_hoare (arrTape a) f hL (by norm_num) tape2_ai _ _ _ _ hl
   have he := erase_hoare (P := P) (arrTape (AtomShiftLoop.shiftArray t k hk hf c a)) f
     (AtomShiftLoop.counters b W (AtomShiftLoop.shiftT t hf (f-1)) (AtomShiftLoop.shiftK k hf (f-1)))
-  simp only [AtomShiftLoop.counters, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at he
+  simp only [AtomShiftLoop.counters, Matrix.cons_val_zero, Matrix.cons_val_one] at he
   exact (hs.seq hp).seq he
 
 theorem rev_first (k : Fin n) (hf : 0 < f) :
@@ -420,7 +421,8 @@ theorem scale_plan (b W : ℕ) (t : Fin n) (c : ℚ) (hf : 0 < f) :
   have htn : t.val * f + f ≤ n * f := by
     have := Nat.mul_le_mul_right f (show t.val + 1 ≤ n from t.isLt); rwa [Nat.succ_mul] at this
   funext j
-  fin_cases j <;> simp [plan, planValue, AtomScaleLoop.counters, hT, Nat.sub_mul] <;> omega
+  fin_cases j <;> simp [plan, planValue, AtomScaleLoop.counters, hT, Nat.sub_mul]
+  omega
 
 theorem scale_step_exact (hP : 2 ≤ P) (b W : ℕ) (t : Fin n) (c : ℚ)
     (hr : Shared50AffineCoefficients.ScaleOccurs c)
@@ -433,7 +435,8 @@ theorem scale_step_exact (hP : 2 ≤ P) (b W : ℕ) (t : Fin n) (c : ℚ)
   have hpl : ∀ j, (if (plan (.scale t c) j).2 then 1 else 0) ≤ (plan (.scale t c) j).1 * f := by
     intro j
     have h1 : 1 ≤ (n - t.val) * f := Nat.mul_pos (by have := t.isLt; omega) hf
-    fin_cases j <;> simp [plan] <;> omega
+    fin_cases j <;> simp [plan]
+    omega
   have hs := setup_hoare (arrTape a) f hP b W _ hpl
   rw [scale_plan b W t c hf] at hs
   have hl := AtomScaleLoop.scale_realizes hr t hf hb0 hW a
@@ -444,7 +447,351 @@ theorem scale_step_exact (hP : 2 ≤ P) (b W : ℕ) (t : Fin n) (c : ℚ)
   simp only [AtomScaleLoop.counters, Matrix.cons_val_zero, Matrix.cons_val_one] at he
   exact (hs.seq hp).seq he
 
+/-! ### Costs -/
+
+theorem advCost_le (f : ℕ) : ∀ c, advCost f c ≤ 6 + 60 * c * (c + 1) * (f + 1)
+  | 0 => by simp [advCost]
+  | c + 1 => by
+    have ih := advCost_le f c
+    have h1 := CounterSteps.bits_length (c * f)
+    have h2 := CounterSteps.bits_length f
+    simp only [advCost]
+    nlinarith
+
+theorem setCost_le (c : ℕ) (e : Bool) :
+    setCost f c e ≤ 87 + 60 * c * (c + 1) * (f + 1) + 20 * (c * f) := by
+  have := advCost_le f c
+  cases e <;> simp only [setCost] <;> omega
+
+/-- The constant of the setup and erasure of one operation on `n` coordinates. -/
+def overhead (n : ℕ) : ℕ := 1000 * (n + 2) ^ 2
+
+theorem setupCost_le (pl : Fin 4 → ℕ × Bool) (hpl : ∀ j, (pl j).1 ≤ n + 1) (hf : 0 < f) :
+    setupCost f pl ≤ 351 + 600 * (n + 2) ^ 2 * f := by
+  have hb (j : Fin 4) : setCost f (pl j).1 (pl j).2 ≤ 87 + 150 * (n + 2) ^ 2 * f := by
+    have h := setCost_le (f := f) (pl j).1 (pl j).2
+    have hc := hpl j
+    have h1 : 60 * (pl j).1 * ((pl j).1 + 1) * (f + 1) ≤ 60 * (n + 1) * (n + 2) * (2 * f) := by
+      apply Nat.mul_le_mul (Nat.mul_le_mul (Nat.mul_le_mul_left _ hc) (by omega)) (by omega)
+    have h2 : 20 * ((pl j).1 * f) ≤ 20 * ((n + 2) * f) := by
+      apply Nat.mul_le_mul_left; apply Nat.mul_le_mul_right; omega
+    nlinarith
+  have := hb 0; have := hb 1; have := hb 2; have := hb 3
+  have hk : 600 * (n + 2) ^ 2 * f = 4 * (150 * (n + 2) ^ 2 * f) := by ring
+  unfold setupCost
+  omega
+
+theorem eraseCost_le (w : Fin 6 → ℕ) (X : ℕ) (h2 : w 2 ≤ X) (h3 : w 3 ≤ X) (h4 : w 4 ≤ X)
+    (h5 : w 5 ≤ X) : eraseCost w ≤ 8 * X + 27 := by
+  have := CounterSteps.bits_length (w 2); have := CounterSteps.bits_length (w 3)
+  have := CounterSteps.bits_length (w 4); have := CounterSteps.bits_length (w 5)
+  unfold eraseCost
+  omega
+
+/-- The loop constant of an operation. -/
+def loopConst : AtomOps.AtomOp n ℚ → ℕ
+  | .scale _ c => AtomScaleLoop.constant c
+  | _ => AtomShiftLoop.constant
+
+/-- The constant of one operation. -/
+def opConst (op : AtomOps.AtomOp n ℚ) : ℕ := loopConst op + overhead n
+
+theorem plan_le (op : AtomOps.AtomOp n ℚ) (j : Fin 4) : (plan op j).1 ≤ n + 1 := by
+  cases op with
+  | scale t c => have := t.isLt; fin_cases j <;> simp [plan] <;> omega
+  | shift t k c => have := t.isLt; have := k.isLt; fin_cases j <;> simp [plan] <;> omega
+  | revShift t k c => have := t.isLt; have := k.isLt; fin_cases j <;> simp [plan] <;> omega
+
+theorem total_le {b W : ℕ} (hb0 : 0 < b) (hW : 0 < W) (hf : 0 < f) (L sc ec : ℕ)
+    (hsc : sc ≤ 351 + 600 * (n + 2) ^ 2 * f) (hec : ec ≤ 8 * (n * f) + 27) :
+    sc + 1 + L * f * ((modulus b)^(n*f)*W) + 1 + ec ≤ (L + overhead n) * f * ((modulus b)^(n*f)*W) := by
+  set V := (modulus b)^(n*f)*W
+  have hV := AtomShiftLoop.count_le_volume hb0 hW (n * f)
+  have hfV : f ≤ f * V := Nat.le_mul_of_pos_right _ (by omega)
+  have hnV : n * f ≤ f * V := by
+    calc n * f ≤ V := by omega
+      _ ≤ f * V := Nat.le_mul_of_pos_left _ hf
+  have h1 : 351 + 600 * (n + 2) ^ 2 * f + 1 + 1 + 8 * (n * f) + 27 ≤ overhead n * (f * V) := by
+    have hq : 1 ≤ f * V := by omega
+    have hn2 : 1 ≤ (n + 2) ^ 2 := Nat.one_le_pow _ _ (by omega)
+    have : 600 * (n + 2) ^ 2 * f ≤ 600 * (n + 2) ^ 2 * (f * V) :=
+      Nat.mul_le_mul_left _ hfV
+    unfold overhead
+    nlinarith
+  calc sc + 1 + L * f * V + 1 + ec ≤ L * f * V + (351 + 600 * (n + 2) ^ 2 * f + 1 + 1 + 8 * (n * f) + 27) := by
+        omega
+    _ ≤ L * f * V + overhead n * (f * V) := by omega
+    _ = (L + overhead n) * f * V := by ring
+
+/-! ### One operation with its semantics -/
+
+/-- Coefficients mapped to another ring. -/
+def mapOp {S : Type*} (g : ℚ → S) : AtomOps.AtomOp n ℚ → AtomOps.AtomOp n S
+  | .scale t c => .scale t (g c)
+  | .shift t k c => .shift t k (g c)
+  | .revShift t k c => .revShift t k (g c)
+
+/-- **One atom operation on the machine.** -/
+theorem step_hoare (hP : 2 ≤ P) {b W : ℕ} (op : AtomOps.AtomOp n ℚ) (hs : Supported op) (hL : len op ≤ P)
+    (hf : 0 < f) (hb0 : 0 < b) (hW : 0 < W) (a : FlatCoordinateStages.Array (n * f) b W) :
+    ∃ a' : FlatCoordinateStages.Array (n * f) b W,
+      HoareTime (step P hP op hs hL).2 (fun v => v = outer P (neutral b W) (arrTape a) f)
+        (fun v => v = outer P (neutral b W) (arrTape a') f) (opConst op * f * ((modulus b)^(n*f)*W)) ∧
+      Transports a a' (OrderedAffine.run (AtomOps.refined (f := f) (mapOp (Swap.Modular.ratMod (modulus b)) op))) := by
+  have hT (x : Fin (n * f)) : x.val ≤ n * f := x.isLt.le
+  cases op with
+  | shift t k c =>
+    obtain ⟨hk, hden⟩ := hs
+    refine ⟨_, (shift_step_exact hP b W t k c hk hden hL hf hb0 hW a).consequence (fun _ h => h)
+      (fun _ h => h) ?_, AtomShiftLoop.shift_transport c t k hk hf a⟩
+    apply total_le hb0 hW hf _ _ _ (setupCost_le _ (plan_le _) hf)
+    apply eraseCost_le _ (n * f) <;> simp [AtomShiftLoop.counters] <;>
+      first | exact hT _ | omega
+  | revShift t k c =>
+    obtain ⟨hk, hden⟩ := hs
+    refine ⟨_, (rev_step_exact hP b W t k c hk hden hL hf hb0 hW a).consequence (fun _ h => h)
+      (fun _ h => h) ?_, AtomShiftLoop.revShift_transport c t k hk hf a⟩
+    apply total_le hb0 hW hf _ _ _ (setupCost_le _ (plan_le _) hf)
+    apply eraseCost_le _ (n * f) <;> simp [AtomShiftLoop.counters] <;>
+      first | exact hT _ | omega
+  | scale t c =>
+    refine ⟨_, (scale_step_exact hP b W t c hs hL hf hb0 hW a).consequence (fun _ h => h)
+      (fun _ h => h) ?_, AtomScaleLoop.scale_transport hs t hf a⟩
+    apply total_le hb0 hW hf _ _ _ (setupCost_le _ (plan_le _) hf)
+    apply eraseCost_le _ (n * f) <;> simp [AtomScaleLoop.counters]
+    omega
+
 end Ops
+
+
+/-! ### Segments -/
+
+section Chain
+
+variable {n : ℕ} {f : ℕ}
+
+/-- A supported atom operation. -/
+abbrev SOp (n : ℕ) := {op : AtomOps.AtomOp n ℚ // Supported op}
+
+/-- The operations in order on the common bank. -/
+def chain (P : ℕ) (hP : 2 ≤ P) : (l : List (SOp n)) → (∀ s ∈ l, len s.1 ≤ P) →
+    (q : ℕ) × Program (22 + P) q prime
+  | [], _ => ⟨1, Machine.skip (22 + P) prime (by omega)⟩
+  | s :: l, h => ⟨_, seq (step P hP s.1 s.2 (h s List.mem_cons_self)).2
+      (chain P hP l (fun x hx => h x (List.mem_cons_of_mem _ hx))).2⟩
+
+def chainConst : List (SOp n) → ℕ
+  | [] => 0
+  | s :: l => opConst s.1 + 1 + chainConst l
+
+theorem run_append {ι R : Type*} [Fintype ι] [LinearOrder ι] [CommRing R] (p q : List (OrderedAffine.Op ι R))
+    (x : ι → R) : OrderedAffine.run (p ++ q) x = OrderedAffine.run q (OrderedAffine.run p x) :=
+  List.foldl_append
+
+theorem chain_hoare (hP : 2 ≤ P) {b W : ℕ} (hf : 0 < f) (hb0 : 0 < b) (hW : 0 < W) :
+    ∀ (l : List (SOp n)) (h : ∀ s ∈ l, len s.1 ≤ P) (a : FlatCoordinateStages.Array (n * f) b W),
+    ∃ a' : FlatCoordinateStages.Array (n * f) b W,
+      HoareTime (chain P hP l h).2 (fun v => v = outer P (neutral b W) (arrTape a) f)
+        (fun v => v = outer P (neutral b W) (arrTape a') f) (chainConst l * f * ((modulus b)^(n*f)*W)) ∧
+      Transports a a' (OrderedAffine.run ((l.map fun s => mapOp (Swap.Modular.ratMod (modulus b)) s.1).flatMap
+        (AtomOps.refined (f := f))))
+  | [], _, a => ⟨a, (Machine.skip_hoare _ _).consequence (fun _ h => h) (fun _ h => h) (by simp),
+      fun _ _ => rfl⟩
+  | s :: l, h, a => by
+    obtain ⟨a1, h1, t1⟩ := step_hoare hP s.1 s.2 (h s List.mem_cons_self) hf hb0 hW a
+    obtain ⟨a', h2, t2⟩ := chain_hoare hP hf hb0 hW l (fun x hx => h x (List.mem_cons_of_mem _ hx)) a1
+    refine ⟨a', (h1.seq h2).consequence (fun _ h => h) (fun _ h => h) ?_, ?_⟩
+    · have hV := AtomShiftLoop.count_le_volume hb0 hW (n * f)
+      have h1 : 1 ≤ f * ((modulus b)^(n*f)*W) := Nat.one_le_iff_ne_zero.mpr
+        (Nat.mul_ne_zero (by omega) (by omega))
+      simp only [chainConst]
+      nlinarith
+    · intro x j
+      rw [List.map_cons, List.flatMap_cons]
+      have := (t1.trans t2) x j
+      rw [Function.comp_apply] at this
+      rw [run_append]
+      exact this
+
+end Chain
+
+/-! ### Field segments -/
+
+section Fields
+
+variable {m : ℕ} {f : ℕ}
+
+/-- The atom operations of a field segment. -/
+def atoms (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) : List (AtomOps.AtomOp (m + m) ℚ) :=
+  ops.flatMap AtomOps.atomExpand
+
+/-- The common bank size of a segment. -/
+def bankSize (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) : ℕ := 2 + ((atoms ops).map len).sum
+
+theorem bankSize_ge (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) : 2 ≤ bankSize ops := by
+  unfold bankSize; omega
+
+theorem len_le (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) (o : AtomOps.AtomOp (m + m) ℚ)
+    (ho : o ∈ atoms ops) : len o ≤ bankSize ops := by
+  have := List.le_sum_of_mem (List.mem_map_of_mem (f := len) ho)
+  unfold bankSize; omega
+
+/-- The supported atom operations of a segment. -/
+def sops (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) (hs : ∀ o ∈ atoms ops, Supported o) :
+    List (SOp (m + m)) :=
+  (atoms ops).attach.map fun x => ⟨x.1, hs x.1 x.2⟩
+
+theorem sops_len (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) (hs : ∀ o ∈ atoms ops, Supported o) :
+    ∀ s ∈ sops ops hs, len s.1 ≤ bankSize ops := by
+  intro s hsm
+  obtain ⟨x, -, rfl⟩ := List.mem_map.mp hsm
+  exact len_le ops x.1 x.2
+
+theorem sops_map {S : Type*} (g : ℚ → S) (ops : List (AffineFieldProgram.Op (Fin m) ℚ))
+    (hs : ∀ o ∈ atoms ops, Supported o) :
+    (sops ops hs).map (fun s => mapOp g s.1) = (atoms ops).map (mapOp g) := by
+  simp [sops, List.map_map, Function.comp_def]
+
+/-- **The segment program**: one fixed program of the field segment for every atom count, width
+and record width. -/
+def segment (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) (hs : ∀ o ∈ atoms ops, Supported o) :=
+  chain (bankSize ops) (bankSize_ge ops) (sops ops hs) (sops_len ops hs)
+
+/-- The constant of a segment. -/
+def segConst (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) : ℕ := ((atoms ops).map fun o => opConst o + 1).sum
+
+theorem chainConst_attach : ∀ (l : List (AtomOps.AtomOp (m + m) ℚ)) (hs : ∀ o ∈ l, Supported o),
+    chainConst (l.attach.map fun x => (⟨x.1, hs x.1 x.2⟩ : SOp (m + m))) =
+      (l.map fun o => opConst o + 1).sum
+  | [], _ => rfl
+  | o :: l, hs => by
+    rw [List.attach_cons, List.map_cons, List.map_map, chainConst, List.map_cons, List.sum_cons,
+      ← chainConst_attach l (fun x hx => hs x (List.mem_cons_of_mem _ hx))]
+    simp only [Function.comp_def, add_assoc]
+
+theorem chainConst_sops (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) (hs : ∀ o ∈ atoms ops, Supported o) :
+    chainConst (sops ops hs) = segConst ops :=
+  chainConst_attach (atoms ops) hs
+
+/-- **A field segment on atom fields, on the machine.** The segment program moves the records of
+the array along the run of the refined atom operations, at cost `C f V` with `C` depending only
+on the segment. -/
+theorem segment_realizes (ops : List (AffineFieldProgram.Op (Fin m) ℚ))
+    (hs : ∀ o ∈ atoms ops, Supported o) {b W : ℕ} (hf : 0 < f) (hb0 : 0 < b) (hW : 0 < W)
+    (a : FlatCoordinateStages.Array ((m + m) * f) b W) :
+    ∃ a' : FlatCoordinateStages.Array ((m + m) * f) b W,
+      HoareTime (segment ops hs).2 (fun v => v = outer (bankSize ops) (neutral b W) (arrTape a) f)
+        (fun v => v = outer (bankSize ops) (neutral b W) (arrTape a') f)
+        (segConst ops * f * ((modulus b)^((m + m)*f)*W)) ∧
+      Transports a a' (OrderedAffine.run (((atoms ops).map (mapOp (Swap.Modular.ratMod (modulus b)))).flatMap
+        (AtomOps.refined (f := f)))) := by
+  obtain ⟨a', h, t⟩ := chain_hoare (bankSize_ge ops) hf hb0 hW (sops ops hs) (sops_len ops hs) a
+  rw [chainConst_sops] at h
+  rw [sops_map] at t
+  exact ⟨a', h, t⟩
+
+/-! ### The twisted semantics -/
+
+/-- Shifts within a field read an earlier coordinate. -/
+def Ordered {R : Type*} : AffineFieldProgram.Op (Fin m) R → Prop
+  | .affineH (.shift i j _) => j < i
+  | .affineD (.shift i j _) => j < i
+  | _ => True
+
+theorem atomExpand_distinct {R : Type*} [CommRing R] (op : AffineFieldProgram.Op (Fin m) R)
+    (h : Ordered op) : ∀ a ∈ AtomOps.atomExpand op, AtomOps.Distinct a := by
+  intro a ha
+  cases op with
+  | affineH op =>
+    cases op with
+    | scale i c => simp only [AtomOps.atomExpand, List.mem_singleton] at ha; subst ha; trivial
+    | shift i j c =>
+      simp only [AtomOps.atomExpand, List.mem_singleton] at ha; subst ha
+      have : AffineFieldCoordinates.hIndex (d := m) j < AffineFieldCoordinates.hIndex i := h
+      exact this.ne
+  | affineD op =>
+    cases op with
+    | scale i c => simp only [AtomOps.atomExpand, List.mem_singleton] at ha; subst ha; trivial
+    | shift i j c =>
+      simp only [AtomOps.atomExpand, List.mem_singleton] at ha; subst ha
+      have : AffineFieldCoordinates.dIndex (d := m) j < AffineFieldCoordinates.dIndex i := by
+        change m + (j : ℕ) < m + i
+        have : (j : ℕ) < i := h
+        omega
+      exact this.ne
+  | addToD i j =>
+    simp only [AtomOps.atomExpand, List.mem_singleton] at ha; subst ha
+    exact (AffineFieldCoordinates.h_before_d i j).ne
+  | subFromD i j =>
+    simp only [AtomOps.atomExpand, List.mem_cons, List.not_mem_nil, or_false] at ha
+    rcases ha with rfl | rfl
+    · trivial
+    · exact (AffineFieldCoordinates.h_before_d i j).ne
+  | interchange i j => simp [AtomOps.atomExpand] at ha
+
+theorem atomExpand_map {R : Type*} [CommRing R] (g : ℚ → R) (h1 : g 1 = 1) (hneg : g (-1) = -1)
+    (op : AffineFieldProgram.Op (Fin m) ℚ) :
+    (AtomOps.atomExpand op).map (mapOp g) = AtomOps.atomExpand (AffineFieldProgram.mapOp g op) := by
+  cases op with
+  | affineH op => cases op <;> rfl
+  | affineD op => cases op <;> rfl
+  | addToD i j => simp [AtomOps.atomExpand, mapOp, AffineFieldProgram.mapOp, h1]
+  | subFromD i j => simp [AtomOps.atomExpand, mapOp, AffineFieldProgram.mapOp, h1, hneg]
+  | interchange i j => rfl
+
+theorem ratMod_neg_one (q : ℕ) : Swap.Modular.ratMod q (-1) = -1 := by
+  simp [Swap.Modular.ratMod]
+
+/-- **The twisted run of a field segment on the machine.** The segment program moves the record
+of every atom state `s` to the address of the twisted run of the segment, with the coefficients
+reduced mod `q^b` and acting on every atom alike. -/
+theorem segment_twisted (ops : List (AffineFieldProgram.Op (Fin m) ℚ))
+    (hs : ∀ o ∈ atoms ops, Supported o) (hn : ∀ op ∈ ops, AffineFieldCoordinates.Nonrecursive op)
+    (ho : ∀ op ∈ ops, Ordered op) {b W : ℕ} (hf : 0 < f) (hb0 : 0 < b) (hW : 0 < W)
+    (a : FlatCoordinateStages.Array ((m + m) * f) b W) :
+    ∃ a' : FlatCoordinateStages.Array ((m + m) * f) b W,
+      HoareTime (segment ops hs).2 (fun v => v = outer (bankSize ops) (neutral b W) (arrTape a) f)
+        (fun v => v = outer (bankSize ops) (neutral b W) (arrTape a') f)
+        (segConst ops * f * ((modulus b)^((m + m)*f)*W)) ∧
+      ∀ (s : Swap.Shear.State (Fin m) (Fin f → ZMod (modulus b))) (j : Fin W),
+        a' (FlatCoordinateLayout.index (AtomOps.refine (AffineFieldCoordinates.embed
+          (TwistedProgram.twRun (TwistedExchange.atomRev f)
+            ((ops.map (AffineFieldProgram.mapOp (Swap.Modular.ratMod (modulus b)))).map
+              (AffineFieldProgram.mapOp AtomOps.scalar)) s))) j) =
+        a (FlatCoordinateLayout.index (AtomOps.refine (AffineFieldCoordinates.embed s)) j) := by
+  obtain ⟨a', h, t⟩ := segment_realizes ops hs hf hb0 hW a
+  refine ⟨a', h, fun s j => ?_⟩
+  set g := Swap.Modular.ratMod (modulus b)
+  set opsZ := ops.map (AffineFieldProgram.mapOp g)
+  have hmap : (atoms ops).map (mapOp g) = opsZ.flatMap AtomOps.atomExpand := by
+    rw [atoms, List.map_flatMap, List.flatMap_map]
+    congr 1
+    funext op
+    exact atomExpand_map g (Swap.Modular.ratMod_one (m := modulus b)) (ratMod_neg_one _) op
+  rw [hmap] at t
+  have hnZ : ∀ op ∈ opsZ, AffineFieldCoordinates.Nonrecursive op := by
+    intro op hop
+    obtain ⟨o, ho', rfl⟩ := List.mem_map.mp hop
+    have := hn o ho'
+    cases o <;> trivial
+  have hoZ : ∀ op ∈ opsZ, Ordered op := by
+    intro op hop
+    obtain ⟨o, ho', rfl⟩ := List.mem_map.mp hop
+    have := ho o ho'
+    cases o with
+    | affineH o => cases o <;> exact this
+    | affineD o => cases o <;> exact this
+    | _ => trivial
+  have hd : ∀ o ∈ opsZ.flatMap AtomOps.atomExpand, AtomOps.Distinct o := by
+    intro o hom
+    obtain ⟨op, hop, hom⟩ := List.mem_flatMap.mp hom
+    exact atomExpand_distinct op (hoZ op hop) o hom
+  have hr := AtomOps.refined_atomRun _ hd (AffineFieldCoordinates.embed s)
+  rw [AtomOps.atom_segment_run opsZ hnZ s] at hr
+  rw [← hr]
+  exact t _ j
+
+end Fields
 
 end
 end IntegerMultBounds.MathlibTM2.M8.AtomSegment

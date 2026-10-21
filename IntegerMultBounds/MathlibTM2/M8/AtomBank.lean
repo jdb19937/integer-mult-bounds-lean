@@ -63,7 +63,7 @@ theorem slotVal_lt {L ai P i : ℕ} (hL : L ≤ P) (hi : i < L) : slotVal L ai i
 def slot (L ai P : ℕ) (hL : L ≤ P) : Fin L → Fin (22 + P) :=
   fun i => ⟨slotVal L ai i.val, slotVal_lt hL i.isLt⟩
 
-theorem slot_injective {L ai P : ℕ} (hL : L ≤ P) (ha : 17 ≤ ai) (ha' : ai + 2 < L) :
+theorem slot_injective {L ai P : ℕ} (hL : L ≤ P) (_ha : 17 ≤ ai) (_ha' : ai + 2 < L) :
     Function.Injective (slot L ai P hL) := by
   intro i j h
   have h' := congrArg Fin.val h
@@ -80,7 +80,7 @@ def place (L ai P : ℕ) (hL : L ≤ P) (ha : 17 ≤ ai) (ha' : ai + 2 < L) :
     Fin (L + (22 + P - L)) ≃ Fin (22 + P) :=
   InjectivePlacement.placement (slot L ai P hL) (slot_injective hL ha ha') (size hL)
 
-theorem outer_slot {L ai P : ℕ} (hL : L ≤ P) (ha : 17 ≤ ai) (ha' : ai + 2 < L)
+theorem outer_slot {L ai P : ℕ} (hL : L ≤ P) (_ha : 17 ≤ ai) (_ha' : ai + 2 < L)
     (d : Fin 17 → Option (List Bool)) (A : ℤ → Fin (prime + 4)) (f : ℕ) (i : Fin L) :
     (outer P d A f).head (slot L ai P hL i) = (opBank L ai d A f).head i ∧
     (outer P d A f).tape (slot L ai P hL i) = (opBank L ai d A f).tape i := by
@@ -178,12 +178,12 @@ theorem shift_opBank {D b W : ℕ} (w : Fin 6 → ℕ) (a : FlatCoordinateStages
   have h10 : FlatPaddedShiftFromCounters.prefixTapes = 10 := rfl
   unfold LevelLoop.bank CountedLoopReuseAlphabet.bank
   apply congrArg₂ Tapes.mk <;> funext i
-  · simp only [AtomShiftLoop.shiftBank, CounterBank.counters, opBank, Tapes.append, CounterAdvance.addCases_val, payload_head,
+  · simp only [AtomShiftLoop.shiftBank, CounterBank.counters, Tapes.append, CounterAdvance.addCases_val, payload_head,
       CounterDimensions.bank, PrefixWidthCopies.blankBank, SharedBank.empty,
       CountedLoopReuseAlphabet.controls]
     have hi := i.isLt
     split_ifs <;> first | rfl | omega
-  · simp only [AtomShiftLoop.shiftBank, CounterBank.counters, opBank, Tapes.append, CounterAdvance.addCases_val, payload_tape,
+  · simp only [AtomShiftLoop.shiftBank, CounterBank.counters, Tapes.append, CounterAdvance.addCases_val, payload_tape,
       CounterDimensions.bank, PrefixWidthCopies.blankBank, SharedBank.empty,
       CountedLoopReuseAlphabet.controls, Fin.ext_iff, Fin.val_zero]
     have hi := i.isLt
@@ -230,46 +230,46 @@ theorem scale_opBank (r : ℚ) {D b W : ℕ} (w : Fin 6 → ℕ) (a : FlatCoordi
   apply congrArg₂ Tapes.mk <;> funext i <;> refine Fin.addCases (fun x => ?_) (fun c => ?_) i
   · refine Fin.addCases (fun y => ?_) (fun e => ?_) x
     · refine Fin.addCases (fun u => ?_) (fun z => ?_) y
-      · simp only [AtomScaleLoop.scaleBank, CounterBank.counters, CounterDimensions.bank, opBank,
+      · simp only [AtomScaleLoop.scaleBank, CounterBank.counters, CounterDimensions.bank,
           Tapes.append, Fin.addCases_left, Fin.val_castAdd, u.isLt, dite_true]
       · refine Fin.addCases (fun p => ?_) (fun k => ?_) z
         · have hp := p.isLt
-          simp only [AtomScaleLoop.scaleBank, opBank, Tapes.append, Fin.addCases_left,
+          simp only [AtomScaleLoop.scaleBank, Tapes.append, Fin.addCases_left,
             Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd, SharedBank.empty, scaleIndex]
           split_ifs <;> first | rfl | omega
         · have hk := k.isLt
-          simp only [AtomScaleLoop.scaleBank, opBank, Tapes.append, Fin.addCases_left,
-            Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd, work_tape,
+          simp only [AtomScaleLoop.scaleBank, Tapes.append, Fin.addCases_left,
+            Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd,
             FlatPaddedScaleFromCounters.work_head, scaleIndex]
           split_ifs <;> first | rfl | omega
     · have he := e.isLt
-      simp only [AtomScaleLoop.scaleBank, opBank, Tapes.append, Fin.addCases_left,
+      simp only [AtomScaleLoop.scaleBank, Tapes.append, Fin.addCases_left,
         Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd, SharedBank.empty, scaleIndex]
       split_ifs <;> first | rfl | omega
   · fin_cases c <;>
-      simp only [opBank, Tapes.append, CountedLoopReuseAlphabet.controls, scaleIndex, Fin.addCases_right,
-        Fin.val_natAdd, Fin.zero_eta, Fin.mk_one, Fin.isValue] <;> split_ifs <;> first | rfl | omega | simp_all
+      simp only [CountedLoopReuseAlphabet.controls, scaleIndex, Fin.addCases_right,
+        Fin.val_natAdd, Fin.zero_eta, Fin.mk_one, Fin.isValue] <;> split_ifs <;> first | rfl | omega
   · refine Fin.addCases (fun y => ?_) (fun e => ?_) x
     · refine Fin.addCases (fun u => ?_) (fun z => ?_) y
-      · simp only [AtomScaleLoop.scaleBank, CounterBank.counters, CounterDimensions.bank, opBank,
+      · simp only [AtomScaleLoop.scaleBank, CounterBank.counters, CounterDimensions.bank,
           Tapes.append, Fin.addCases_left, Fin.val_castAdd, u.isLt, dite_true]
       · refine Fin.addCases (fun p => ?_) (fun k => ?_) z
         · have hp := p.isLt
-          simp only [AtomScaleLoop.scaleBank, opBank, Tapes.append, Fin.addCases_left,
+          simp only [AtomScaleLoop.scaleBank, Tapes.append, Fin.addCases_left,
             Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd, SharedBank.empty, scaleIndex]
           split_ifs <;> first | rfl | omega
         · have hk := k.isLt
-          simp only [AtomScaleLoop.scaleBank, opBank, Tapes.append, Fin.addCases_left,
+          simp only [AtomScaleLoop.scaleBank, Tapes.append, Fin.addCases_left,
             Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd, work_tape,
-            FlatPaddedScaleFromCounters.work_head, scaleIndex]
+            scaleIndex]
           split_ifs <;> first | rfl | omega
     · have he := e.isLt
-      simp only [AtomScaleLoop.scaleBank, opBank, Tapes.append, Fin.addCases_left,
+      simp only [AtomScaleLoop.scaleBank, Tapes.append, Fin.addCases_left,
         Fin.addCases_right, Fin.val_castAdd, Fin.val_natAdd, SharedBank.empty, scaleIndex]
       split_ifs <;> first | rfl | omega
   · fin_cases c <;>
-      simp only [opBank, Tapes.append, CountedLoopReuseAlphabet.controls, scaleIndex, Fin.addCases_right,
-        Fin.val_natAdd, Fin.zero_eta, Fin.mk_one, Fin.isValue] <;> split_ifs <;> first | rfl | omega | simp_all
+      simp only [CountedLoopReuseAlphabet.controls, scaleIndex, Fin.addCases_right,
+        Fin.val_natAdd, Fin.zero_eta, Fin.mk_one, Fin.isValue] <;> split_ifs <;> first | rfl | omega
 
 end
 end IntegerMultBounds.MathlibTM2.M8.AtomBank

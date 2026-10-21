@@ -113,12 +113,12 @@ theorem adv_hoare {i c k : Fin t} (hic : i ≠ c) (hik : i ≠ k) (hck : c ≠ k
       simp only [BinaryDescriptorAdvance.input, BinaryDescriptorAdvance.bank,
         CountedLoopReuseAlphabet.bank, CountedLoopReuseAlphabet.controls, BinaryDescriptorIncrement.bank]
       apply congrArg₂ Tapes.mk <;> funext j <;> fin_cases j
-      · simp [slots, Tapes.append, addCases_val, hh]
-      · simp [slots, Tapes.append, addCases_val, hch]
-      · simp [slots, Tapes.append, addCases_val, hkh]
-      · simp [slots, Tapes.append, addCases_val, hs, BinaryDescriptorStackRoundtrip.descriptor_encoded]
-      · simp [slots, Tapes.append, addCases_val, hc]
-      · simp [slots, Tapes.append, addCases_val, hk, binary_encoded])
+      · simp [slots, addCases_val, hh]
+      · simp [slots, addCases_val, hch]
+      · simp [slots, addCases_val, hkh]
+      · simp [slots, addCases_val, hs, BinaryDescriptorStackRoundtrip.descriptor_encoded]
+      · simp [slots, addCases_val, hc]
+      · simp [slots, addCases_val, hk, binary_encoded])
   apply h.consequence (fun _ h => h) ?_ le_rfl
   rintro w ⟨z, rfl, rfl⟩
   rw [advance_bits]
