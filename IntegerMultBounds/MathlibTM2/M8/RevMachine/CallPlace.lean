@@ -119,6 +119,11 @@ theorem bank40 (hs : Fin 6 → List Bool) (st : Tapes 2 prime) (i : Fin 40) :
     | (simp [Tapes.append, Headers.bank, Enter.base, Enter.rest, descriptorHead, descriptorTape]; done)
     | rfl
 
+theorem bank40_st (hs : Fin 6 → List Bool) (st : Tapes 2 prime) (i : Fin 2) :
+    (RecursiveChildCallSetup.bank hs st).head (Fin.natAdd 38 i) = st.head i ∧
+      (RecursiveChildCallSetup.bank hs st).tape (Fin.natAdd 38 i) = st.tape i := by
+  simp [RecursiveChildCallSetup.bank, Tapes.append]
+
 theorem bank_ret (roles : Tapes T prime) (hs : Fin 6 → List Bool) (f : ℤ → Fin (prime+4)) (p : ℤ)
     (node scalar : Tapes 1 prime) (c : Fin K → Option ℕ) (st : Tapes 2 prime) (i : Fin 2) :
     (bank roles hs f p node scalar c st).head (ret i) = st.head i ∧
