@@ -785,6 +785,25 @@ chunk before choosing.
     centre reads, deferred readouts in readout order, the output read).
 - **B4 deferred, late and V frames.** Suffix intersections, the `σ` recursion with its 24
   exceptions, their nondegeneracy and dims, and the nested y and X chains.
+  In progress. `scripts/pr97/stage2defer.py` replays the schedule with checked frames, with
+  every chain nesting verified and `F₂` garbage targets:
+  - one-centre unions only (all `liftFrame`): `a* = 1.0575·10⁻⁴`, `κ ≈ 2^-14.255`;
+  - multi-centre unions with B2's node frames (`--multi`): `a* = 1.2178·10⁻⁴`,
+    `κ = 4144106186/2⁴⁶ ≈ 2^-14.0516`;
+  - with multi-centre node frames too (`--multi-nodes`): the B0 target `4222422970/2⁴⁶`.
+  The σ frames at degenerate slots fall back to `0`, so no exception bases are needed.
+
+  So most of the gain needs computed frames: about 8671 σ, 3542 V and 420 late frames.
+  - `Frames/RootCheck`: the kernel check `basisOk B gens`. It runs an untrusted fraction-free
+    Gauss–Jordan, then checks `Γ N = d·1` and a zero Euclidean residual for each generator.
+  - `Frames/RootFrame`: its soundness, `rootFrame B = 1 − proj G [B]` with its rank, height and
+    nesting, and the relations to hyperplanes, stars, `liftFrame`, plain frames and sub-masks
+    (`liftFrame_eq_of_dim`).
+
+  Kernel cost measured at about 0.2–0.4 s per frame with `r ≈ 8`. One-centre children enter
+  through sub-mask bases.
+
+  Left for B5: emit the frame data on B3's word and the chain theorems per wire.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.
