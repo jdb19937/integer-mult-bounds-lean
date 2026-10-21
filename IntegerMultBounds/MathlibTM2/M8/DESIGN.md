@@ -814,6 +814,14 @@ chunk before choosing.
   These computed sections do not yet discharge the intervening plain/one-centre steps or
   identify the full chains with B3's framed word; those are still part of B4/B5.
 
+  Mixed-chain support: `SignedCheck` describes positive spans, root complements and
+  endpoints uniformly, with exact span/orthogonality checks and batch composition.
+  `SignedFrames` proves their ranks and nesting; `SignedMoves.chainMoment_rankSteps`
+  links every checked mixed chain to its exact projector moments, omitting equal-rank
+  steps. The latter checks at 1,288 MiB peak RSS. `SelfCheck` avoids redundant residual
+  checks for new bank entries whose generators are exactly their own basis.
+  Complete mixed-chain data and its connection to B3 remain uncertified.
+
   Left for B5: emit the frame data on B3's word and the chain theorems per wire.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks

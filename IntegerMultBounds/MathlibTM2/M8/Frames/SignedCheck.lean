@@ -51,4 +51,15 @@ def chainCheck (bank : Nat → RootBank.Record) (size : Nat) : List Frame → Bo
       | [] => true
       | next :: _ => frame.nestedCheck bank next && chainCheck bank size frames
 
+/-- Independent wire chains can be checked in small batches. -/
+def chainsCheck (bank : Nat → RootBank.Record) (size : Nat) (chains : List (List Frame)) : Bool :=
+  chains.all (chainCheck bank size)
+
+theorem chainsCheck_flatten (bank : Nat → RootBank.Record) (size : Nat)
+    (chunks : List (List (List Frame)))
+    (h : (chunks.map (chainsCheck bank size)).all id = true) :
+    chainsCheck bank size chunks.flatten = true := by
+  simp only [chainsCheck, List.all_flatten, List.all_map] at *
+  exact h
+
 end IntegerMultBounds.MathlibTM2.M8.Frames.Signed
