@@ -154,12 +154,14 @@ theorem edgeMat_edges97 : ∀ U ∈ edges97, EdgeMat U := by
   exact Rev.edgeMat_of_valid framedNode gInit tempZero isFrame_gInit valid_node
 
 theorem exists_basis97 :
-    ∃ g : Matrix (Fin 529) (Fin 529) ℕ, (g.map (Nat.cast : ℕ → ℚ)).det ≠ 0 ∧
+    ∃ g : Matrix (Fin 529) (Fin 529) ℕ,
+      (∀ a b, g a b ≤ GenericBasis.degreeBound 529 fun j : Fin edges97.length => (edges97.get j).rank) ∧
+      (g.map (Nat.cast : ℕ → ℚ)).det ≠ 0 ∧
       ∀ j : Fin edges97.length, GenericBasis.Generic
         (g.map (Nat.cast : ℕ → ℚ) * edges97.get j * (g.map (Nat.cast : ℕ → ℚ))⁻¹) (edges97.get j).rank := by
-  obtain ⟨g, -, hdet, hgen⟩ := GenericBasis.exists_generic_basis_of_idempotent (fun j => edges97.get j)
+  obtain ⟨g, hg, hdet, hgen⟩ := GenericBasis.exists_generic_basis_of_idempotent (fun j => edges97.get j)
     (fun j => (edgeMat_edges97 _ (List.get_mem _ _)).idem)
-  exact ⟨g, hdet, hgen⟩
+  exact ⟨g, hg, hdet, hgen⟩
 
 /-- The basis of the stage-2 node: every frame change generic. -/
 irreducible_def basis97 : Mat 529 := (Classical.choose exists_basis97).map (Nat.cast : ℕ → ℚ)
@@ -169,7 +171,7 @@ irreducible_def basis97' : Mat 529 := basis97⁻¹
 
 theorem basis97_det : IsUnit basis97.det := by
   rw [basis97_def]
-  exact isUnit_iff_ne_zero.mpr (Classical.choose_spec exists_basis97).1
+  exact isUnit_iff_ne_zero.mpr (Classical.choose_spec exists_basis97).2.1
 
 theorem basis97_inv : basis97 * basis97' = 1 := by
   rw [basis97'_def]; exact Matrix.mul_nonsing_inv _ basis97_det
@@ -181,7 +183,7 @@ theorem generic97 {U : Mat 529} (hU : U ∈ edges97) :
     GenericBasis.Generic (basis97 * U * basis97') (basis97 * U * basis97').rank := by
   obtain ⟨j, rfl⟩ := List.mem_iff_get.mp hU
   rw [Rev.rank_conj basis97_inv basis97_inv']
-  have := (Classical.choose_spec exists_basis97).2 j
+  have := (Classical.choose_spec exists_basis97).2.2 j
   rwa [← basis97_def, ← basis97'_def] at this
 
 section Generic
