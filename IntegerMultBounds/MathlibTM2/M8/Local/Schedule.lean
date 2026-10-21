@@ -229,6 +229,16 @@ theorem srcNode_arg_le (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.Frame
     cases he
     exact hLe.link n o k pos hlink
 
+/-- The compiler only needs nesting from the sources it actually reads. Linked
+uses may read a donor whose frame differs from the raw argument's frame. -/
+structure SourceFrameOrder (Le : ℕ → ℕ → Prop) : Prop where
+  refl : ∀ n, Le n n
+  source : ∀ k, D.v ≤ k → k < D.N → ∀ pos, Le (D.srcNode (.gate k pos)) k
+
+theorem FrameOrder.toSourceFrameOrder {Le : ℕ → ℕ → Prop}
+    (h : D.FrameOrder Le) (hv : D.Valid) : D.SourceFrameOrder Le :=
+  ⟨h.refl, fun _ hk hkN pos => D.srcNode_arg_le hv h hk hkN pos⟩
+
 /-! ### The frame invariant -/
 
 /-- After the nodes below `k`: pending slots were last touched at their sources, fresh slots
@@ -257,7 +267,7 @@ theorem contents_zero (st : State) (s : ℕ) : st.contents (fun _ => 0) s = 0 :=
   simp [State.contents, runOps_zero st.ops _ rfl]
 
 /-- The serve step keeps the frame invariant, given the state before it. -/
-theorem finv_serve (_hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) {k piv : ℕ}
+theorem finv_serve_source (_hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) {k piv : ℕ}
     {st : State} (hpiv : piv < st.next)
     (hcur : lastNode st.ops piv = some k)
     (hlast : ∀ u, D.Pending (k + 1) u → u ∉ D.freeUses k →
@@ -301,7 +311,7 @@ theorem finv_serve (_hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrd
     · intro h; have := (List.mem_range'_1.mp h).1; omega
 
 /-- **One compiler step** keeps the frame invariant. -/
-theorem finv_step (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) {k : ℕ}
+theorem finv_step_source (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) {k : ℕ}
     (hk : k < D.N) {st : State} (hi : D.Inv (fun _ => 0) k st) (hf : D.FInv Le k st) :
     D.FInv Le (k + 1) (D.step st k) := by
   unfold step
@@ -312,7 +322,7 @@ theorem finv_step (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder
       simp [hst1, lastNode_append]
     have hold : ∀ u, D.Pending (k + 1) u → u ∉ D.freeUses k → D.Pending k u := fun u hu hf =>
       (D.pending_old hv hu hf (by rw [D.linkUse_none_of_lt hv hleaf]; simp)).1
-    refine D.finv_serve (st := st1) (piv := st.next) hv hLe (by simp [hst1]) ?_ ?_ ?_ ?_
+    refine D.finv_serve_source (st := st1) (piv := st.next) hv hLe (by simp [hst1]) ?_ ?_ ?_ ?_
     · rw [hl1]; simp [touchOp, Op.slots, Op.node]
     · intro u hu hfr
       have hp := hold u hu hfr
@@ -346,8 +356,8 @@ theorem finv_step (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder
       exact ⟨fun h => hn false (hi.inj _ _ hu hpa h), fun h => hn true (hi.inj _ _ hu hpb h)⟩
     have hla := hf.last _ hpa
     have hlb := hf.last _ hpb
-    have hsa := D.srcNode_arg_le hv hLe hvk hk false
-    have hsb := D.srcNode_arg_le hv hLe hvk hk true
+    have hsa := hLe.source k hvk hk false
+    have hsb := hLe.source k hvk hk true
     have hlta := hi.slot_lt _ hpa
     have hltb := hi.slot_lt _ hpb
     -- the addition of two slots holding the arguments
@@ -375,7 +385,7 @@ theorem finv_step (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder
       have hold : ∀ u, D.Pending (k + 1) u → u ∉ D.freeUses k →
           D.Pending k u ∧ ∀ pos, u ≠ .gate k pos := fun u hu hf =>
         D.pending_old hv hu hf (by rw [hnl]; simp)
-      refine D.finv_serve (st := st1) (piv := sa) hv hLe hlta ?_ ?_ ?_ ?_
+      refine D.finv_serve_source (st := st1) (piv := sa) hv hLe hlta ?_ ?_ ?_ ?_
       · rw [hl1]; simp [touchOp, Op.slots, Op.node]
       · intro u hu hfr
         obtain ⟨hp, hnk⟩ := hold u hu hfr
@@ -426,7 +436,7 @@ theorem finv_step (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder
         rcases hpo with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> rw [h1, h2]
         · exact hab
         · exact Ne.symm hab
-      refine D.finv_serve (st := st2) (piv := piv) hv hLe
+      refine D.finv_serve_source (st := st2) (piv := piv) hv hLe
         (by simp only [hst2, State.assign_next, hst1]; exact hpivlt) ?_ ?_ ?_ ?_
       · rw [hl2]; simp [touchOp, Op.slots, Op.node]
       · intro u hu hfr
@@ -454,16 +464,20 @@ theorem finv_step (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder
       · simp only [hst2, State.assign_ops, hst1]
         exact hmono_add piv oth hpo
 
-theorem finv_compileTo (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) :
+theorem finv_compileTo_source (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) :
     ∀ k, k ≤ D.N → D.FInv Le k (D.compileTo k) := by
   intro k
   induction k with
   | zero => intro _; exact D.finv_start Le
   | succ k ih =>
     intro hk
-    have h := D.finv_step hv hLe (by omega) (D.inv_compileTo hv _ k (by omega)) (ih (by omega))
+    have h := D.finv_step_source hv hLe (by omega) (D.inv_compileTo hv _ k (by omega)) (ih (by omega))
     simpa only [compileTo, List.range_succ, List.foldl_append, List.foldl_cons, List.foldl_nil]
       using h
+
+theorem finv_compileTo (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) :
+    ∀ k, k ≤ D.N → D.FInv Le k (D.compileTo k) :=
+  D.finv_compileTo_source hv (FrameOrder.toSourceFrameOrder D hLe hv)
 
 /-- A step appends operations of its own node; sources only at leaves. -/
 theorem step_ops (st : State) (k : ℕ) :
@@ -551,34 +565,53 @@ theorem root_slot_lt (hv : D.Valid) {r : ℕ} (hr : r < D.rootCount) :
   (D.inv_compile hv fun _ => 0).slot_lt _ (D.root_pending hv hr)
 
 /-- **The compiled operations are monotone.** -/
-theorem compile_mono (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) :
+theorem compile_mono_source (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) :
     Mono Le D.compile.ops fun _ => none :=
-  (D.finv_compileTo hv hLe D.N le_rfl).mono
+  (D.finv_compileTo_source hv hLe D.N le_rfl).mono
 
 /-- Every root's slot was last touched at the root's node. -/
-theorem compile_root_last (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) {r : ℕ}
+theorem compile_root_last_source (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) {r : ℕ}
     (hr : r < D.rootCount) :
     lastNode D.compile.ops (D.compile.pend (.root r)) = some (D.rootNode r) := by
   have hu : Use.root r ∈ D.freeUses (D.rootNode r) :=
     D.mem_freeUses.mpr ⟨(D.mem_uses_root _ r).mpr ⟨hr, rfl⟩, D.root_not_linked r⟩
   have hp : D.Pending D.N (.root r) := ⟨trivial, Or.inl ⟨D.rootNode r, hv.root_lt r hr, hu⟩⟩
-  have h := (D.finv_compileTo hv hLe D.N le_rfl).last _ hp
+  have h := (D.finv_compileTo_source hv hLe D.N le_rfl).last _ hp
   rw [D.srcNode_free hu] at h
   exact h
 
 /-- Along each slot, the nodes of the compiled operations form a chain. -/
-theorem compile_chain (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) (s : ℕ) :
+theorem compile_chain_source (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) (s : ℕ) :
     (nodesOf s D.compile.ops).IsChain Le := by
-  have h := mono_chain Le _ _ (D.compile_mono hv hLe) s
+  have h := mono_chain Le _ _ (D.compile_mono_source hv hLe) s
   simpa using h
 
 /-- The last node along a root's slot is the root's node. -/
-theorem compile_root_nodes (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) {r : ℕ}
+theorem compile_root_nodes_source (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.SourceFrameOrder Le) {r : ℕ}
     (hr : r < D.rootCount) :
     (nodesOf (D.compile.pend (.root r)) D.compile.ops).getLast? = some (D.rootNode r) := by
-  have h := D.compile_root_last hv hLe hr
+  have h := D.compile_root_last_source hv hLe hr
   rw [lastNode, nodesOf_getLast, Option.or_none] at h
   exact h
+
+/-- Compatibility with the stronger raw-edge frame order. -/
+theorem compile_mono (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) :
+    Mono Le D.compile.ops fun _ => none :=
+  D.compile_mono_source hv (FrameOrder.toSourceFrameOrder D hLe hv)
+
+theorem compile_root_last (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) {r : ℕ}
+    (hr : r < D.rootCount) :
+    lastNode D.compile.ops (D.compile.pend (.root r)) = some (D.rootNode r) :=
+  D.compile_root_last_source hv (FrameOrder.toSourceFrameOrder D hLe hv) hr
+
+theorem compile_chain (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) (s : ℕ) :
+    (nodesOf s D.compile.ops).IsChain Le :=
+  D.compile_chain_source hv (FrameOrder.toSourceFrameOrder D hLe hv) s
+
+theorem compile_root_nodes (hv : D.Valid) {Le : ℕ → ℕ → Prop} (hLe : D.FrameOrder Le) {r : ℕ}
+    (hr : r < D.rootCount) :
+    (nodesOf (D.compile.pend (.root r)) D.compile.ops).getLast? = some (D.rootNode r) :=
+  D.compile_root_nodes_source hv (FrameOrder.toSourceFrameOrder D hLe hv) hr
 
 end Dag
 

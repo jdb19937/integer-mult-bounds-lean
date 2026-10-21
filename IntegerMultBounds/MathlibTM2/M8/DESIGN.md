@@ -848,6 +848,23 @@ chunk before choosing.
   instantiates both stages with these labels and the corrected readout order, proves
   source-to-target semantics, idempotence and height bounds for their supplied frames.
   The concrete module checks at 1,655 MiB; all 66 assignment modules reproduce byte for byte.
+  `Local/Schedule.SourceFrameOrder` weakens compiler alignment to actual donor sources;
+  the old raw-edge interface adapts to it. `Local/SourceNodes` extracts the checked donor
+  identification without importing old node costs. `Frames/DesignBSchedule` now proves
+  `frameB_compile_chain` for B2's node frames and the actual `dagB.compile`. This is a
+  structural compiler theorem, not a replay certificate. It does not yet cover the
+  concrete bank's varying late-copy frames; those need per-use alignment.
+  The next compiler invariant must track frames per pending use: additions consume the
+  actual donor source, copies use the target slot's `startLabel`, and the kept slot's
+  current frame advances through the last actual late copy. Reuse the already checked
+  complete-chain edges rather than adding another bank of geometric residual checks.
+  In that invariant, a free copied use retains its own copy frame; the kept head use
+  retains the last actual copy frame (not the unused final suffix frame). A linked use
+  retains its donor's addition frame. Leaf copies are converted by `vop` into independent
+  source gates, so their auxiliary wires retain their own V-start frames rather than a
+  shared pivot's last-copy frame.
+  The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
+  the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
   boundary gauges, global node/cost integration and B6 retune remain.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
