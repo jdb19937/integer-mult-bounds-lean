@@ -71,6 +71,36 @@ theorem centreBlocksAt_run (slots : Fin 23 → ℕ) (reads : Fin 23 → List ℕ
     simp only [List.map_cons, List.flatMap_cons, Circuit.run_append]
     rw [centreBlocksAt_run slots reads cs _ hnd.2 hz', h1]
 
+theorem reads_run_perm {p q : Circuit.Program Reg (ZMod 2)} (hp : ReadsUntouched p)
+    (h : p.Perm q) (d : Reg → ZMod 2) : Circuit.run p d = Circuit.run q d := by
+  have hq : ReadsUntouched q := fun g hg g' hg' =>
+    hp g (h.mem_iff.mpr hg) g' (h.mem_iff.mpr hg')
+  funext r
+  rw [run_readsUntouched p hp, run_readsUntouched q hq]
+  exact congrArg (d r + ·) ((h.map _).sum_eq)
+
+theorem centreReadsAt_untouched (slots : Fin 23 → ℕ) (reads : Fin 23 → List ℕ)
+    (cs : List (Fin 23)) : ReadsUntouched (cs.flatMap (centreReadsAt slots reads)) := by
+  intro g hg g' hg' t ht
+  simp only [List.mem_flatMap, centreReadsAt, List.mem_map] at hg hg'
+  obtain ⟨c, _, T, _, rfl⟩ := hg
+  obtain ⟨c', _, T', _, rfl⟩ := hg'
+  simp [ReversibleFanout.add] at ht
+  rw [ht]
+  simp [ReversibleFanout.add]
+
+theorem centreBlocksAt_reverse_run (slots : Fin 23 → ℕ) (reads : Fin 23 → List ℕ)
+    (cs : List (Fin 23)) (hcs : cs.Nodup) (d : LW → ZMod 2)
+    (hz : ∀ c ∈ cs, d (.inr c) = 0) :
+    regs (Circuit.run ((cs.reverse.map (centreBlockAt slots reads)).flatMap gatesOf) d) =
+      Circuit.run (cs.flatMap (centreReadsAt slots reads)).reverse (regs d) := by
+  rw [show regs (Circuit.run
+    ((cs.reverse.map (centreBlockAt slots reads)).flatMap gatesOf) d) = _ from
+      centreBlocksAt_run slots reads cs.reverse d (List.nodup_reverse.mpr hcs)
+        (fun c hc => hz c (List.mem_reverse.mp hc))]
+  apply reads_run_perm (centreReadsAt_untouched slots reads cs.reverse)
+  exact (List.Perm.flatMap_right _ (List.reverse_perm cs)).trans (List.reverse_perm _).symm
+
 /-- A temporary implementation can replace a block of direct centre reads in any word. -/
 theorem run_with_centres (slots : Fin 23 → ℕ) (reads : Fin 23 → List ℕ)
     (cs : List (Fin 23)) (hcs : cs.Nodup)

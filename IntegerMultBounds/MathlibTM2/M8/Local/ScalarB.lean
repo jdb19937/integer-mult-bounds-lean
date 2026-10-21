@@ -56,6 +56,40 @@ theorem sideB_pairwise (hs : D.Sorted Φ Ψ D.compile.ops) :
   exact h (by simp [side, e, (by simpa using ho : o.isSrc = false)]) hp
     (by simp [side, e', (by simpa using ho' : o'.isSrc = false)]) hp'
 
+/-- Every design-B gate is an executable XOR between distinct registers. -/
+theorem wordB_xor (D : Dag) (targets : ℕ → List ℕ) (nY : ℕ) (pl : BPlan)
+    (hv : D.Valid) : IsXorProg (D.wordB targets nY pl) := by
+  have hops (ops : List Op) (h : ∀ op ∈ ops, op ∈ D.opsB) :
+      IsXorProg (ops.map opGate) := by
+    intro g hg
+    obtain ⟨op, hop, rfl⟩ := List.mem_map.mp hg
+    exact opGate_xor (D.opsB_ok hv op (h op hop)).1
+  have hnow := hops (D.vNow pl) (by
+    intro op h
+    simp only [vNow, keyedOps, List.mem_mergeSort, List.mem_filter, srcB] at h
+    exact h.1.1)
+  have hlate := hops (D.vLate pl) (by
+    intro op h
+    simp only [vLate, keyedOps, List.mem_mergeSort, List.mem_filter, srcB] at h
+    exact h.1.1)
+  have hfirst := hops (D.opsFirst pl) (by
+    intro op h
+    exact (List.mem_filter.mp (List.mem_filter.mp h).1).1)
+  have hrest := hops (D.opsRest pl) (by
+    intro op h
+    exact (List.mem_filter.mp (List.mem_filter.mp h).1).1)
+  have hroots (js : List ℕ) : IsXorProg (D.rootReadsAt targets js) := by
+    intro g hg
+    simp only [rootReadsAt, List.mem_flatMap, List.mem_map] at hg
+    obtain ⟨j, _, T, _, rfl⟩ := hg
+    exact ⟨_, _, by simp, rfl⟩
+  have hreverse : IsXorProg
+      (((D.vNow pl ++ D.vLate pl ++ D.opsFirst pl ++ D.opsRest pl).map opGate).reverse) := by
+    simpa only [List.map_append] using (((hnow.append hlate).append hfirst).append hrest).reverse
+  exact ((((((((D.readouts_xor targets nY _).append hnow).append hfirst).append
+    (hroots _)).append (D.readouts_xor targets nY _)).append hlate).append hrest).append
+      (hroots _)).append hreverse
+
 end Dag
 
 theorem lastNode_some : ∀ {ops : List Op} {cur : ℕ → Option ℕ} {s n : ℕ},
@@ -187,6 +221,30 @@ theorem wordWithReadoutOrder_other (keyD : List ℕ) (c : Reg → ZMod 2)
     (r : Reg) (hr : r.isY = false) :
     Circuit.run (wordWithReadoutOrder keyD) c r = c r := by
   rw [wordWithReadoutOrder_run, Pi.add_apply, Dag.readDelta_off_y _ _ _ r hr, add_zero]
+
+theorem wordWithReadoutOrder_reverse_run (keyD : List ℕ) (c : Reg → ZMod 2) :
+    Circuit.run (wordWithReadoutOrder keyD)
+      (Circuit.run (wordWithReadoutOrder keyD).reverse c) = c := by
+  have h := xor_run_reverse
+    (Dag.wordB_xor dagB targets leafCount (planWithReadoutOrder keyD) dagB_valid).reverse c
+  simpa only [wordWithReadoutOrder, List.reverse_reverse] using h
+
+theorem wordWithReadoutOrder_reverse_other (keyD : List ℕ) (c : Reg → ZMod 2)
+    (r : Reg) (hr : r.isY = false) :
+    Circuit.run (wordWithReadoutOrder keyD).reverse c r = c r := by
+  have h := congrFun (wordWithReadoutOrder_reverse_run keyD c) r
+  rwa [wordWithReadoutOrder_other keyD _ r hr] at h
+
+theorem wordWithReadoutOrder_reverse_target (keyD : List ℕ) (c : Reg → ZMod 2)
+    {t : ℕ} (ht : t < leafCount) :
+    Circuit.run (wordWithReadoutOrder keyD).reverse c (.y t) = c (.y t) + c (.x t) := by
+  have h := congrFun (wordWithReadoutOrder_reverse_run keyD c) (.y t)
+  rw [wordWithReadoutOrder_target keyD _ ht,
+    wordWithReadoutOrder_reverse_other keyD c (.x t) rfl] at h
+  calc
+    _ = (Circuit.run (wordWithReadoutOrder keyD).reverse c (.y t) + c (.x t)) + c (.x t) := by
+      rw [add_assoc, ← mul_two, show (2 : ZMod 2) = 0 by decide, mul_zero, add_zero]
+    _ = c (.y t) + c (.x t) := by rw [h]
 
 /-- **The design-B word** adds every source into the target of the same triple. -/
 theorem wordPR97B_target (c : Reg → ZMod 2) {t : ℕ} (ht : t < leafCount) :
