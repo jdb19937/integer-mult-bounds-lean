@@ -150,7 +150,7 @@ theorem runs (hspec : FamilySpec capacity) (hτ : Exponents HighCost.K) {b : ℕ
       HighBody.JoinCounters P e (r b e) G B rs ss op oe →
       ∀ ph : Fin 4 → List Bool,
       M8.Machine.ArbitraryWidthPaddedPiecePadding.Headers (joinedDescriptor prime P e (r b e) G B) (padded b e) ph →
-      ∀ (caller : Tapes t prime) (focus : Fin t) (exchange : Fin 7 → Fin t) (movement : Fin 5 → Fin t)
+      ∀ {t : ℕ} (caller : Tapes t prime) (focus : Fin t) (exchange : Fin 7 → Fin t) (movement : Fin 5 → Fin t)
         (padding : Fin (4+15) → Fin t) (V : ℕ), 0 < V →
       Sources caller exchange (exchangeWords hs rs) → Sources caller movement (movementWords ss op oe rs) →
       Sources caller padding (coreWords b ph P e G B) →
@@ -163,7 +163,7 @@ theorem runs (hspec : FamilySpec capacity) (hτ : Exponents HighCost.K) {b : ℕ
           (fun w => w = input capacity
             (setTape caller focus (sourceWord (Shared50RecursiveNodeRows.transpose (one_dvd _) x)) 0)) c := by
   obtain ⟨C, hC⟩ := HighCost.runs capacity hspec hτ hb
-  refine ⟨C, fun P e G B he hP hG hB hs rs ss op oe hv hj ph hph caller focus exchange movement padding V hV
+  refine ⟨C, fun P e G B he hP hG hB hs rs ss op oe hv hj ph hph _ caller focus exchange movement padding V hV
     sx sm sp bx bm bp x hf hh => ?_⟩
   have h1 := fills capacity caller exchange movement padding hs rs ss op oe _ V hV sx sm sp bx bm bp
   obtain ⟨c, hc, h2⟩ := hC P e G B he hP hG hB hs rs ss op oe hv hj ph hph blankTape 0 emptyOne emptyOne emptyTwo
