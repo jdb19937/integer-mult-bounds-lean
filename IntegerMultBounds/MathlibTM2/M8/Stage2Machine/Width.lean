@@ -23,6 +23,7 @@ increment, a power search, a fixed-base power and a constant writer on the bank 
 namespace IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Width
 
 noncomputable section
+set_option linter.unusedSimpArgs false
 open IntegerMultBounds.Machine
 open IntegerMultBounds.Machine.CounterDimensions (descriptorHead descriptorTape)
 open FlatCoordinateSchedule (bits)
@@ -202,7 +203,6 @@ def constant : ℕ := FixedBasePowerUntil.constant 2 + FixedBasePowerDescriptor.
   RecursiveChildQuotientsConstant.cost 1 + RecursiveChildQuotientsConstant.cost K +
   RecursiveChildQuotientsConstant.cost 529 + 10000 * 2000
 
-set_option linter.unusedSimpArgs false in
 /-- **The atom width at runtime.** -/
 theorem runs {e : ℕ} (he : 2 ≤ e) :
     HoareTime (program hq) (fun w => w = bank (words (init e))) (fun w => w = bank (words (final e)))
@@ -336,6 +336,99 @@ theorem runs {e : ℕ} (he : 2 ≤ e) :
     Nat.mul_le_mul_left _ hw
   unfold constant
   nlinarith
+
+/-! ### On a caller's width tape -/
+
+/-- Erase the atom width and the constant. -/
+def cleanup := seq (Straight.prog1 hq (.erase 12)).2 (Straight.prog1 hq (.erase 4)).2
+
+theorem cleans (e : ℕ) :
+    HoareTime (cleanup hq) (fun w => w = bank (words (final e))) (fun w => w = bank (words (init e)))
+      (20000 * (e + 2) + 20000 * 530 + 1) := by
+  have h1 := Straight.run1 hq (.erase 12) (final e) (by simp [Straight.Pre, final])
+  have h2 := Straight.run1 hq (.erase 4) (Straight.exec1 q (.erase 12) (final e))
+    (by simp [Straight.Pre, final, Straight.exec1, Function.update_apply])
+  have hi : Straight.exec1 q (.erase 4) (Straight.exec1 q (.erase 12) (final e)) = init e := by
+    funext i; simp only [Straight.exec1, final, init, Function.update_apply]; fin_cases i <;> simp
+  have c1 : Straight.cost1 q (.erase 12) (final e) ≤ 10000 * (Stage2Width.atomWidth K e + 1) :=
+    (Straight.cost1_le _ _).trans (by simp [Straight.weight, Straight.val, final])
+  have c2 : Straight.cost1 q (.erase 4) (Straight.exec1 q (.erase 12) (final e)) ≤ 10000 * (529 + 1) :=
+    (Straight.cost1_le _ _).trans (by simp [Straight.weight, Straight.val, final, Straight.exec1, Function.update_apply])
+  have hw : Stage2Width.atomWidth K e ≤ e + 2 := by
+    have := Stage2Width.atomWidth_pos K e
+    rcases Nat.lt_or_ge e 2 with h | h
+    · have hs : Nat.size e ≤ 1 := Nat.size_le.mpr (by omega)
+      have : Stage2Width.atomExp K e ≤ 1 := by unfold Stage2Width.atomExp; simp only [K]; omega
+      have : Stage2Width.atomWidth K e ≤ 2 := by
+        unfold Stage2Width.atomWidth; exact (Nat.pow_le_pow_right (by norm_num) this).trans (by norm_num)
+      omega
+    · exact (Stage2Width.atomWidth_le_self (by norm_num) h).trans (by omega)
+  refine (h1.seq h2).consequence (fun _ h => h) (fun w hw' => hw'.trans (by rw [hi])) ?_
+  omega
+
+/-- The atom width program's own bank: blank, the width shared. -/
+def privateIn : Tapes 22 q := bank (words (fun _ => none))
+
+/-- With the atom width and the constant. -/
+def privateOut (e : ℕ) : Tapes 22 q :=
+  bank (words (Function.update (Function.update (fun _ => none) 4 (some 529)) 12 (some (Stage2Width.atomWidth K e))))
+
+/-- The atom width program on the caller's width tape. -/
+def shared {l : ℕ} (focus : Fin l) := Placement.placed (program hq) (SharedPlacementAlphabet.sharedPlacement focus 3)
+
+/-- Its cleanup on the caller's width tape. -/
+def sharedCleanup {l : ℕ} (focus : Fin l) :=
+  Placement.placed (cleanup hq) (SharedPlacementAlphabet.sharedPlacement focus 3)
+
+theorem strip (s : State) :
+    SharedPlacementAlphabet.setTape (bank (q := q) (words s)) 3 (fun _ => blank) 0 =
+      bank (words (Function.update s 3 none)) := by
+  rw [Straight.words_update, Option.map_none, Headers.bank_update]; rfl
+
+theorem init_strip (e : ℕ) : SharedPlacementAlphabet.setTape (bank (q := q) (words (init e))) 3 (fun _ => blank) 0 =
+    privateIn := by
+  rw [strip (init e)]; unfold privateIn init; simp
+
+theorem final_strip (e : ℕ) : SharedPlacementAlphabet.setTape (bank (q := q) (words (final e))) 3 (fun _ => blank) 0 =
+    privateOut e := by
+  rw [strip (final e)]
+  unfold privateOut final init
+  congr 2
+  funext i; simp only [Function.update_apply]; fin_cases i <;> simp
+
+theorem bank_three (e : ℕ) (s : State) (hs : s 3 = some e) :
+    (bank (q := q) (words s)).tape 3 = RadixZeroFill.encodedBinary (bits e) ∧ (bank (q := q) (words s)).head 3 = 1 := by
+  simp [bank, words, hs, descriptorHead, descriptorTape]
+
+/-- **The atom width on the caller's width tape.** -/
+theorem shared_runs {l : ℕ} (caller : Tapes l q) (focus : Fin l) {e : ℕ} (he : 2 ≤ e)
+    (ht : caller.tape focus = RadixZeroFill.encodedBinary (bits e)) (hh : caller.head focus = 1) :
+    HoareTime (shared hq focus) (fun w => w = caller.append privateIn)
+      (fun w => w = caller.append (privateOut e)) (100 * constant * (e + 1)) := by
+  have h3 := bank_three (q := q) e (init e) (by simp [init])
+  have h3' := bank_three (q := q) e (final e) (by simp [final, init])
+  have h := SharedPlacementAlphabet.shared_hoare (runs hq he) caller focus 3 (fun _ => blank) 0
+    (ht.trans h3.1.symm) (hh.trans h3.2.symm)
+  rw [init_strip, final_strip, h3'.1, h3'.2, ← ht, ← hh, SharedPlacementAlphabet.setTape_self] at h
+  exact h
+
+theorem shared_cleans {l : ℕ} (caller : Tapes l q) (focus : Fin l) {e : ℕ}
+    (ht : caller.tape focus = RadixZeroFill.encodedBinary (bits e)) (hh : caller.head focus = 1) :
+    HoareTime (sharedCleanup hq focus) (fun w => w = caller.append (privateOut e))
+      (fun w => w = caller.append privateIn) (20000 * (e + 2) + 20000 * 530 + 1) := by
+  have h3 := bank_three (q := q) e (init e) (by simp [init])
+  have h3' := bank_three (q := q) e (final e) (by simp [final, init])
+  have h := SharedPlacementAlphabet.shared_hoare (cleans hq e) caller focus 3 (fun _ => blank) 0
+    (ht.trans h3'.1.symm) (hh.trans h3'.2.symm)
+  rw [init_strip, final_strip, h3.1, h3.2, ← ht, ← hh, SharedPlacementAlphabet.setTape_self] at h
+  exact h
+
+/-- The atom width and the constant on the program's own bank. -/
+theorem out_cells (e : ℕ) :
+    (privateOut (q := q) e).head 12 = 1 ∧
+      (privateOut (q := q) e).tape 12 = RadixZeroFill.encodedBinary (bits (Stage2Width.atomWidth K e)) ∧
+    (privateOut (q := q) e).head 4 = 1 ∧ (privateOut (q := q) e).tape 4 = RadixZeroFill.encodedBinary (bits 529) := by
+  simp [privateOut, bank, words, descriptorHead, descriptorTape, Function.update_apply]
 
 end
 end IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Width
