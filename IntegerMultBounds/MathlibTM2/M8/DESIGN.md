@@ -626,3 +626,125 @@ the stage-2 supplier, `Stage2Machine.Total`, in place of `ArbitraryWidthOriginal
 | layout `ε(1−τ)` | 4.6891e-5 |
 | CRT `(1−ε)(1−τ)` | 4.9916e-5 |
 | resampling `1/2 − δ − ε(1+2^-33)` | 7.8e-3 |
+
+
+## 16. Design-B frames
+
+**Numbers** (`scripts/pr97/stage2designb.py`, on upstream's pinned `deferred_23.json.gz`):
+- The design-B word changes no slot count and no rank mass: `R = 28866`, `W = 108516254`,
+  `s = 57403754177`, so `q₁ = 1409269/1409302` is unchanged.
+- The whole-projector histogram has 46 ranks, the largest `528`. Its saving is
+  `a* = 1.24105·10⁻⁴` (plain: `9.700·10⁻⁵`).
+- The rational τ-moment certificate of `stage2cert.py` holds at `a = 1240/10⁷` below
+  `q_τ = 1 − 1/10⁸`, with slack `9.7·10⁻⁹`.
+- Then `1 − τ₂ = 123879734039/10¹⁵`, `λ = 1 − 12387973/10¹¹`, `λ' = 1 − 12387972/10¹¹`, and
+  `κ = 4222422970/2⁴⁶ ≈ 2^-14.0246`, against `3299646951/2⁴⁶ ≈ 2^-14.380`.
+- The layer margin `ε(1−λ')` still binds. `totKappa = 3840271755209/(10¹⁵·2³⁸)`.
+
+**Where the gain is.** A side slot `u` reads its garbage out at a frame `σ_u` instead of `0`.
+- Its local chain starts at `σ_u`, so the slot's local steps lose `dim σ_u` of rank.
+- Its exterior grows by the same amount: `E₁ = I − (I − σ_u) ⊗ Q` (stage one) and
+  `E₂ = (I−P) ⊗ I + P ⊗ σ_u` (stage two), of rank `m − h + dim σ_u`.
+- The slot's total is still `m`, but rank moves from children of rank at most `22` into children
+  of rank up to `528`.
+- Over the 11565 deferred slots, `Σ dim σ_u = 209688`.
+- The y and X chains are finer (`0`, then the deferred levels, then `t_T^⊥`; `⟨t_S⟩`, then the V
+  frames, then `1`), which costs a little.
+
+**The frames are structural.** Every design-B frame is a root complement
+`W(X) = (span X)^⊥_G` of a finite set `X` of vectors, intersected only through unions of `X`.
+- *Root vectors.* `G t_T` is proportional to the output covector `9 t_T − 3·1`, and
+  `G w_c` to the centre covector `1 − 3 e_c`, with `w_c = 1 + 7 e_c`. So `t_T^⊥ = W{t_T}` and
+  `U_c = W{w_c}`. Nesting is free: `X ⊇ Y ⇒ W(X) ≤ W(Y)`.
+- *Node frames.* For a lifted addition (`j(n) > 0`, 56460 nodes, up-closed along slot
+  successors), upstream's `M_n = span(n) + (U_n ∩ F_j)` equals `U_n = W(R_n)` for every node.
+  Here `R_n` is the root vectors reachable along slot successors (DAG uses and links). So the flag
+  `F` and the lift indices `j` are not needed, only the lift bit.
+  - `span(n) ≤ U_n` holds by support inclusion: `|S ∩ T| = 1` for outputs, `c ∈ S` for centres.
+  - The other 5811 additions keep `span(n)`.
+  - Lifting all of them is valid (`U_n` is nondegenerate on all 5811), but it gives a smaller
+    `a* = 1.2364·10⁻⁴`.
+- *One centre* (45884 lifted nodes):
+  - `span R_n ≤ span(star c)` (outputs) `⊕ ⟨w_c⟩` (the centre). `G` is positive definite on
+    the star and `G(w_c, w_c) = −14`, so `U_n` is nondegenerate. This is a theorem, as in
+    section 5.
+  - `rank R_n = pairRank(E) + [c retained]`, where `E` is the pair graph of the reached output
+    triples relative to `c`. This was checked on all 45884 nodes; the parity forests of
+    `Frames/PairRank` and `MaskRank` apply.
+- *Two centres* (10576 nodes, supports in `{c, c', ·}`): no per-centre formula holds; the
+  deficit is `0..17`. These need computed ranks and Gram determinants. Nondegeneracy was checked
+  on all 10576.
+- *Late copies* (1396 intersections) and *V-leaf starts* (11374) are unions:
+  `C_i = W(⋃_{i' ≥ i} X(ℓ_{i'}))`, and `s_i = N_i ∩ N_{i+1} ∩ ⋯`, a suffix in the `X_S` order.
+  All 11374 V starts equal the suffix intersection; the `⟨t_S⟩` fallback is never taken.
+- *Deferred readouts* follow a reverse recursion over the readout order:
+  `σ_u = F₀(u) ∩ ⋂_{T ∈ targets(u)} t_T^⊥ ∩ ⋂_T σ_{next_T(u)}`, where `next_T(u)` is the next
+  deferred slot reading `y_T`.
+  - Nesting on every `y_T`, `σ_u ≤ F₀(u)` and `σ_u ≤ t_T^⊥` hold by construction.
+  - The rule reproduces upstream's `σ_u` on 11541 slots.
+  - The other 24 are exactly the slots where the rule's frame is `G`-degenerate. There
+    upstream's basis is data: 24 integer bases with entries at most 13.
+  - Falling back to frame `0` there instead gives `a* = 1.24058·10⁻⁴`.
+- The maximal choice `F₀(u) ∩ ⋂ t_T^⊥` breaks nesting on 12543 of 18053 consecutive chain pairs.
+
+So the certificate data are:
+- the design-B schedule: ops with late copies and V gates, the slot holds and starts, phase 1
+  and the readout order;
+- one lift bit per addition;
+- the 24 exception bases.
+Upstream's 15 MB of bases is replaced by computed ranks.
+
+**Kernel cost.** For the general ranks, `X` is replaced by the successors' cobases and the direct
+roots, at most about 70 vectors of entries `≤ 9`. The Hadamard bound `43^23 < 2^127` makes the
+rank mod `2^127 − 1` exact. Gram determinants mod a prime give nondegeneracy. With about 35000
+non-structural frames (10576 two-centre nodes, 11541 deferred frames, 1396 late copies and
+11374 V starts), that is roughly `10⁹` kernel bignum operations. Chunks of 256 frames per module
+make about 140 modules. A complement-basis certificate trades this for data. B2 measures one
+chunk before choosing.
+
+**What changes in Lean.**
+- `Local/Compile`, `Schedule`, `SlotCount`, `SlotMoments` and `Word`. These take the design-B
+  word: late copies, V gates on `X_S`, and readouts after phase 1, ordered by `dim σ_u`. Only the
+  topological order changes, so a generic lemma suffices: a reordering of XOR gates that keeps
+  each slot's order keeps the run. `Scalar.word_run` carries over.
+- `Local/Data` and `Checks`: the schedule records, the lift bit, the dims table and its checks.
+- `Frames`: a new root-complement module for `W(X)`. Its contents are nesting, the one-centre
+  rank and nondegeneracy, and the general rank and Gram checks. A deferred-frame module holds the
+  recursion and the exceptions.
+- `Global/Stage` and `StageFrames`: the first stage with deferred readouts, V gates and late
+  copies; the chains along every local wire.
+- `Global/Node` and `NodeFrames`: the side slots start in the gauge `σ_u ⊗ Q` and exit through
+  the commuting move `D_{I−A} D_T = D_{E₁}`. The exit is a move between commuting, not nested,
+  frames, with `D_A D_B = D_{A+B−2AB}` (section 4). Likewise in stage two.
+- `Global/Lift`: ranks of the gauged exits.
+- `LocalRanks` and `LocalSteps`: the new dims and local-step tables, from a successor of
+  `stage2local.py`.
+- `Stage2Link` and `Rev97Ranks`: `ranks97_lt` now follows from `σ_u ≤ t_T^⊥`, a hyperplane, so
+  every exterior has rank at most `528`.
+- `Stage2Histogram` and `Stage2Moments`: `a = 1240/10⁷` and `q_τ = 1 − 1/10⁸`.
+- The constants `τ*` of `Rev97Ranks` and of `Stage2Machine` (`Bound.tau₂_eq`), and the retune
+  (`scripts/s6/retune.py`).
+- The machine side above the node (`RevMachine`, `Stage2Machine`) is generic in the histogram
+  and does not change.
+
+**Milestones** (one forked agent each):
+- **B1 moments.** `stage2designb.py` emits the design-B histogram rows. `Stage2Moments` checks
+  them at `a = 1240/10⁷`, `q_τ = 1 − 1/10⁸`. This step is independent of the geometry and small.
+- **B2 root-complement frames.** `W(X)`, nesting, the one-centre theorem (positive definiteness,
+  the pair-graph rank) and the node frames `U_n` with the lift bit. The checks of the two-centre
+  ranks, with one chunk measured first.
+- **B3 the design-B word.** The schedule as checked data against the DAG (late copies, V gates,
+  phase 1, readout order), the reordering lemma and scalar correctness over `𝔽₂`.
+- **B4 deferred, late and V frames.** Suffix intersections, the `σ` recursion with its 24
+  exceptions, their nondegeneracy and dims, and the nested y and X chains.
+- **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
+  ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
+  `≤ 528`.
+- **B6 switch and retune.** `τ*`, `Bound.tau₂_eq`, `retune.py` to `κ = 4222422970/2⁴⁶`,
+  `PLAN.md` and `README.md`.
+
+B1 and B2 can run in parallel; B3 is the largest. Risks:
+- the cost of the two-centre and deferred-frame ranks;
+- the reordered word's semantics, which `check_word.py` replays upstream but which needs a
+  structural proof here;
+- the commuting-exit generalization of the node's chain alignment.
