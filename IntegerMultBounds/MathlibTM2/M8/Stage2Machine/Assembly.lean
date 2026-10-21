@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Leaf
 public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Pad
 public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Cost
+public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.ShearRun
 
 /-!
 # The stage-2 core with its family runs and leaf
@@ -87,12 +88,22 @@ theorem nOf_pos {K : ℕ} (hK : 2 ≤ K) {v : Descriptor} (he : 2 ≤ v.width) :
 
 variable [M8.Machine.Net] {k : ℕ} (capacity : Fintype.card (Graph.PC (RevHalf.pcs rev97m).length) ≤ 2^k)
 
-/-- The core's tapes. -/
-abbrev tW := FamilyStep.tF capacity + (LeafCore.core (NodeBank.io rev97m)).tapes
+/-- The core's tapes: the family's, the leaf's and room for the switches and shears. -/
+abbrev tW := FamilyStep.tF capacity + (LeafCore.core (NodeBank.io rev97m)).tapes + (ShearRun.T' + 24)
 
-theorem tF_le : FamilyStep.tF capacity ≤ tW capacity := Nat.le_add_right _ _
+theorem tF_le : FamilyStep.tF capacity ≤ tW capacity := (Nat.le_add_right _ _).trans (Nat.le_add_right _ _)
 
-theorem core_le : (LeafCore.core (NodeBank.io rev97m)).tapes ≤ tW capacity := Nat.le_add_left _ _
+theorem core_le : (LeafCore.core (NodeBank.io rev97m)).tapes ≤ tW capacity :=
+  (Nat.le_add_left _ _).trans (Nat.le_add_right _ _)
+
+theorem count_le : CommonBank.count (NodeBank.tapes rev97m) ≤ FamilyStep.tF capacity :=
+  SharedBankFamily.common_le_tapeCount _
+
+theorem switch_le : CommonBank.count (NodeBank.tapes rev97m) + 22 ≤ tW capacity := by
+  have := count_le capacity; unfold tW; omega
+
+theorem shear_le : CommonBank.count (NodeBank.tapes rev97m) + (ShearRun.T' + 2) ≤ tW capacity := by
+  have := count_le capacity; unfold tW; omega
 
 /-- **The core's bank** at the view `u`, atom width `w` and PC stacks `S`. -/
 def bank (f : ℤ → Fin (prime+4)) (p : ℤ) (node scalar : Tapes 1 prime) (S : Descriptor → Tapes 2 prime)
