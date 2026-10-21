@@ -598,3 +598,31 @@ retired ([record](../../../docs/retired-shared50-machine.md)).
 The facts of the older path in the cone (`Cost/Total`) hold at `τ₉₇`. `tot_kappa_eq` becomes
 `totKappa = 115755209/(10¹²·2³⁸)`.
 
+
+## 15. The stage-2 switch
+
+**Seam.** The cost chain's binary interchange (`M8/Machine/BinaryRadixEqualRun` and the wrappers
+above it, up to `BinaryInterchangeRun`/`BinaryInterchangeBudget`) runs its root descriptor through
+the stage-2 supplier, `Stage2Machine.Total`, in place of `ArbitraryWidthOriginalTotalRun`:
+- `Total.runs` has stage 1's hypotheses. Stage 2's run time is existential per run
+  (`Bound.uniform_bound`), so the paid budget `Total.cost d` is the bound
+  `⌊C V max(1,e)^τ₂⌋₊` itself; `Total.uniform_bound` is immediate.
+- The chain is no longer generic in the network: it runs on `supplierNet`
+  (`Global/SupplierNet`), with the family's program-counter width as an instance
+  (`Total.Capacity`, given at the seam as `supplierCapacity`).
+- The supplier's tape and state counts are sealed (`Total.count`, `Total.states`, by
+  `irreducible_def`). They are large closed numbers; with them unsealed, a consumer at the concrete
+  instance that compares tape counts (`Host/ChunkSwap`) blew the elaborator and the kernel.
+- The private banks are blank outside the caller (`Padded`, `Total.input_pad`), so the sparse
+  header bank of `BinaryRadixEqualShared` carries over by one lemma (`Padded.headerBank_eq`).
+
+**Retune** (`scripts/s6/retune.py`): `Parameters.tau := 1 − 96806834039/10¹⁵` (`Bound.tau₂_eq`),
+`λ = 1 − 9680683/10¹¹`, `λ' = 1 − 9680682/10¹¹`, `κ = 3299646951/2⁴⁶ ≈ 2^-14.380`, and
+`tot_kappa_eq : totKappa = 3001011855209/(10¹⁵·2³⁸)`.
+
+| margin | value |
+| --- | --- |
+| layers `ε(1−λ')` (binding) | 4.6891e-5 |
+| layout `ε(1−τ)` | 4.6891e-5 |
+| CRT `(1−ε)(1−τ)` | 4.9916e-5 |
+| resampling `1/2 − δ − ε(1+2^-33)` | 7.8e-3 |
