@@ -263,7 +263,7 @@ theorem contract (hm : 2 ≤ m) (hW : 0 < W)
     (hq₁ : q₁ < 1) (hqτ0 : 0 ≤ qτ) (hqτ : qτ < 1)
     (hmom₁ : ((ranks rank pieces).map fun r : ℕ => (1 / (W : ℝ)) * ((r : ℝ) / m)).sum ≤ q₁)
     (hmomτ : ((ranks rank pieces).map fun r : ℕ => (1 / (W : ℝ)) * ((r : ℝ) / m) ^ τ).sum ≤ qτ)
-    (hleaf : ∀ σ x₀, S.Entry σ x₀ → S.size σ < m → S.ownCost σ ≤ C * L * S.vol σ)
+    (hleaf : ∀ σ x₀, S.Entry σ x₀ → 1 ≤ S.size σ → S.size σ < m → S.ownCost σ ≤ C * L * S.vol σ)
     (hnode : ∀ σ x₀, S.Entry σ x₀ → m ≤ S.size σ → S.ownCost σ ≤ (C * S.size σ + C * L) * S.vol σ) :
     ∀ n, 1 ≤ n → Contract (ht := ht) S n (C / (1 - q₁) * n + C / (1 - qτ) * ((n : ℝ) ^ τ * L)) := by
   refine family_contract (Contract (ht := ht) S) ?_ m W hm hW (ranks rank pieces) hpos hle hτ hC hL
@@ -271,11 +271,11 @@ theorem contract (hm : 2 ≤ m) (hW : 0 < W)
   · intro n B B' h hB σ x₀ hσ hx
     obtain ⟨z, hz, s, hs, hr⟩ := h σ x₀ hσ hx
     exact ⟨z, hz, s, hs.trans (mul_le_mul_of_nonneg_right hB (Nat.cast_nonneg _)), hr⟩
-  · intro n _ hn σ x₀ hσ hx
+  · intro n hn1 hn σ x₀ hσ hx
     obtain ⟨z, hz, s, hs, hr⟩ := frame_run (ht := ht) S σ x₀ hx (fun _ => 0) (fun h => absurd h (by omega))
     have hlt : ¬ m ≤ S.size σ := by omega
     simp only [hlt, ite_false, add_zero] at hs
-    exact ⟨z, hz, s, hs.trans (hleaf σ x₀ hx (by omega)), hr⟩
+    exact ⟨z, hz, s, hs.trans (hleaf σ x₀ hx (by omega) (by omega)), hr⟩
   · intro n hn T hT σ x₀ hσ hx
     subst hσ
     obtain ⟨z, hz, s, hs, hr⟩ := frame_run (ht := ht) S σ x₀ hx T (fun _ => hT)

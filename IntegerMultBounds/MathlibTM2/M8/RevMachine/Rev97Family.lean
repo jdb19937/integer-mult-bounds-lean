@@ -37,7 +37,7 @@ variable {T k : ℕ} {capacity : Fintype.card (Graph.PC pieces97.length) ≤ 2^k
 
 /-- **The stage-2 PR97 family on the machine.** -/
 theorem rev97_family {C L : ℝ} (hC : 0 ≤ C) (hL : 0 ≤ L)
-    (hleaf : ∀ σ, H.Ok σ → σ.n < 529 → (inv hcore (by norm_num) H).ownCost σ ≤ C * L * volume prime σ.v)
+    (hleaf : ∀ σ, H.Ok σ → 1 ≤ σ.n → σ.n < 529 → (inv hcore (by norm_num) H).ownCost σ ≤ C * L * volume prime σ.v)
     (hnode : ∀ σ, H.Ok σ → 529 ≤ σ.n →
       (inv hcore (by norm_num) H).ownCost σ ≤ (C * σ.n + C * L) * volume prime σ.v) :
     ∀ n, 1 ≤ n → GraphExists.Contract (ht := Family.pcSlot_pos) (inv hcore (by norm_num) H) n

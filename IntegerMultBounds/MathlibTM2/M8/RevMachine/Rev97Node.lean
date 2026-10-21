@@ -91,7 +91,7 @@ abbrev half97 (b₀ : ℕ) {k : ℕ} (capacity : Fintype.card (Graph.PC (pcs rev
 `C/(1-q₁) n + C/(1-q_τ) n^τ* L` of its volume, given the frames' own budgets. -/
 theorem rev97_node [M8.Machine.Net] (b₀ : ℕ) {k : ℕ}
     (capacity : Fintype.card (Graph.PC (pcs rev97m).length) ≤ 2^k) {C L : ℝ} (hC : 0 ≤ C) (hL : 0 ≤ L)
-    (hleaf : ∀ σ, (half97 b₀ capacity).Ok σ → σ.n < 529 →
+    (hleaf : ∀ σ, (half97 b₀ capacity).Ok σ → 1 ≤ σ.n → σ.n < 529 →
       (inv (leafCore rev97m) width97_pos (half97 b₀ capacity)).ownCost σ ≤ C * L * volume prime σ.v)
     (hnode : ∀ σ, (half97 b₀ capacity).Ok σ → 529 ≤ σ.n →
       (inv (leafCore rev97m) width97_pos (half97 b₀ capacity)).ownCost σ ≤ (C * σ.n + C * L) * volume prime σ.v) :
