@@ -47,9 +47,9 @@ abbrev entry (pc : Graph.PC (pcs rev97m).length) (x : Tapes (Family.count (NodeB
 def bound (C L : ℝ) (n : ℕ) : ℝ :=
   C / (1 - Stage2Moments.q₁) * n + C / (1 - Stage2Moments.qτ) * ((n : ℝ) ^ (1 - (Stage2Moments.saving : ℝ)) * L)
 
-/-- **The data semantics of the reversed family** at atom width `b₀`. -/
-def FamilySpec (b₀ : ℕ) : Prop :=
-  ∃ C : ℝ, 0 ≤ C ∧ ∀ L : ℝ, 1 ≤ L → ((bits b₀).length : ℝ) ≤ L →
+/-- **The data semantics of the reversed family**, with one constant for every atom width `b₀`. -/
+def FamilySpec : Prop :=
+  ∃ C : ℝ, 0 ≤ C ∧ ∀ b₀ : ℕ, ∀ L : ℝ, 1 ≤ L → ((bits b₀).length : ℝ) ≤ L →
     ((max 1 b₀ : ℕ) : ℝ) ^ M8.Machine.BudgetBound.tau ≤ L →
     ∀ σ : Frame (pcs rev97m) capacity, Ok rev97m b₀ σ → 1 ≤ σ.n →
     ∀ x : Fin (volume prime σ.v) → ZMod 2, ∃ y : Fin (volume prime σ.v) → ZMod 2,
@@ -94,8 +94,8 @@ abbrev padded (x : Tapes (Family.count (NodeBank.tapes rev97m)) prime) :=
 
 /-- **A root frame halts**: a frame returning to the halt block runs from its entry bank to its
 exit bank, holding the reversed interchange of its bits, and halts there. -/
-theorem root_hoare {b₀ : ℕ} (hspec : FamilySpec capacity b₀) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ L : ℝ, 1 ≤ L → ((bits b₀).length : ℝ) ≤ L →
+theorem root_hoare (hspec : FamilySpec capacity) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ b₀ : ℕ, ∀ L : ℝ, 1 ≤ L → ((bits b₀).length : ℝ) ≤ L →
       ((max 1 b₀ : ℕ) : ℝ) ^ M8.Machine.BudgetBound.tau ≤ L →
       ∀ σ : Frame (pcs rev97m) capacity, Ok rev97m b₀ σ → 1 ≤ σ.n → σ.ret = .halt →
       ∀ x : Fin (volume prime σ.v) → ZMod 2,
@@ -104,9 +104,9 @@ theorem root_hoare {b₀ : ℕ} (hspec : FamilySpec capacity b₀) :
             w = padded capacity (σ.exitAt (rolesOf y) 529))
           ⌊bound C L σ.n * volume prime σ.v⌋₊ := by
   obtain ⟨C, hC, h⟩ := hspec
-  refine ⟨C, hC, fun L hL hℓ hτ σ hok hn hret x w hw => ?_⟩
+  refine ⟨C, hC, fun b₀ L hL hℓ hτ σ hok hn hret x w hw => ?_⟩
   subst hw
-  obtain ⟨y, hy, s, hs, hr⟩ := h L hL hℓ hτ σ hok hn x
+  obtain ⟨y, hy, s, hs, hr⟩ := h b₀ L hL hℓ hτ σ hok hn x
   rw [hret] at hr
   exact ⟨s, _, Nat.le_floor hs, hr, halt_entry capacity _, y, hy, rfl⟩
 

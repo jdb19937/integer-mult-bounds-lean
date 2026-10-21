@@ -49,6 +49,13 @@ theorem Phase.mono {s : ℕ} {M : Program t s prime} {u u' : Descriptor}
     (h : Phase M B u u' P c) (hPQ : ∀ X Y, P X Y → Q X Y) (hc : c ≤ c') : Phase M B u u' Q c' :=
   fun X => (h X).consequence (fun _ h => h) (fun _ ⟨Y, hY, hz⟩ => ⟨Y, hPQ X Y hY, hz⟩) hc
 
+theorem Phase.congr {s : ℕ} {M : Program t s prime} {B' : Descriptor → (ℕ → ZMod 2) → Tapes t prime}
+    {u u' : Descriptor} {P : (ℕ → ZMod 2) → (ℕ → ZMod 2) → Prop} {c : ℕ}
+    (h : Phase M B u u' P c) (hu : ∀ X, B u X = B' u X) (hu' : ∀ X, B u' X = B' u' X) :
+    Phase M B' u u' P c := fun X =>
+  (h X).consequence (fun _ hz => hz.trans (hu X).symm)
+    (fun _ ⟨Y, hY, hz⟩ => ⟨Y, hY, hz.trans (hu' Y)⟩) le_rfl
+
 /-- The nine pieces in order. -/
 def core {s₁ s₂ s₃ s₄ s₅ s₆ s₇ s₈ s₉ : ℕ} (toTop : Program t s₁ prime) (shear₁ : Program t s₂ prime)
     (fam₁ : Program t s₃ prime) (shear₂ : Program t s₄ prime) (fam₂ : Program t s₅ prime)

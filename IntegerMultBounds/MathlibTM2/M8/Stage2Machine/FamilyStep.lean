@@ -105,8 +105,8 @@ theorem revT_of_ext {u : Descriptor} {w n : ℕ} (hw : u.width = n * w) {X : ℕ
 
 /-- **One family step** on the core's bank: the reversed interchange of the array, the bank
 otherwise restored, within the family bound plus the push. -/
-theorem family_step {b₀ : ℕ} (hspec : FamilySpec capacity b₀) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ L : ℝ, 1 ≤ L → ((bits b₀).length : ℝ) ≤ L →
+theorem family_step (hspec : FamilySpec capacity) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ b₀ : ℕ, ∀ L : ℝ, 1 ≤ L → ((bits b₀).length : ℝ) ≤ L →
       ((max 1 b₀ : ℕ) : ℝ) ^ M8.Machine.BudgetBound.tau ≤ L →
       ∀ (u : Descriptor) (n : ℕ), u.Positive → 0 < b₀ → u.width = n * b₀ → 1 ≤ n →
       rev97m.roleCount ^ RevNode.depth rev97m.width (RevHalf.Rk rev97m) n ∣ u.rows →
@@ -116,7 +116,7 @@ theorem family_step {b₀ : ℕ} (hspec : FamilySpec capacity b₀) :
       Core.Phase (program capacity) (bankAt capacity f p node scalar st b₀) u u (RevT prime b₀ n u)
         (k + 1 + ⌊bound C L n * volume prime u⌋₊) := by
   obtain ⟨C, hC, hroot⟩ := FamilyRoot.root_hoare capacity hspec
-  refine ⟨C, hC, fun L hL hℓ hτ u n hpos hb hw hn hrows f p hpay node hfree scalar st hdesc hpc X => ?_⟩
+  refine ⟨C, hC, fun b₀ L hL hℓ hτ u n hpos hb hw hn hrows f p hpay node hfree scalar st hdesc hpc X => ?_⟩
   set code := Graph.rootCode (pcs rev97m) capacity
   have hcode : Family.Coded (pushedStack capacity st)
       (FiniteReturnStack.address capacity (Graph.encoding (pcs rev97m) .halt)) (st.tape 1) (st.head 1) := by
@@ -140,7 +140,7 @@ theorem family_step {b₀ : ℕ} (hspec : FamilySpec capacity b₀) :
         unfold FiniteReturnStack.wordPart
         rw [dite_eq_right_iff.mpr (fun h => absurd h (by omega))]
         exact hpc z (by omega) }
-  have h₂ := hroot L hL hℓ hτ σ hok hn rfl (fun i => X i)
+  have h₂ := hroot b₀ L hL hℓ hτ σ hok hn rfl (fun i => X i)
   have h₁ := FiniteReturnStackAt.push_hoare (a := prime) (pcRaw capacity) code (bankAt capacity f p node scalar st b₀ u X)
   refine (h₁.seq (h₂.consequence (fun z hz => ?_) (fun z hz => ?_) le_rfl)).consequence
     (fun _ h => h) (fun _ h => h) le_rfl
