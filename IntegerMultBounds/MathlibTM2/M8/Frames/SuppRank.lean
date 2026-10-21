@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.M8.Frames.Plain
 public import IntegerMultBounds.MathlibTM2.M8.Frames.PairRank
+public import IntegerMultBounds.MathlibTM2.M8.Frames.MaskRank
 
 /-!
 # The ranks of the support frames
@@ -12,9 +13,9 @@ on the star of `c` (`dropC_injOn`), and sends the triple `{c, u, w}` to the pair
 `e_u + e_w`; so the rank is that of the support's pair graph relative to `c`
 (`suppFrame_rank_pairs`), whose rank `PairRank.pair_rank` counts by a parity forest.
 
-The forest is computed by a breadth-first search on the pair mask (`certOf`) and checked by
-`okB`; when the check passes, the rank is `dimOf c M`, the number of vertices on edges less the
-number of bipartite components (`dim_eq`). Nothing about the search is trusted.
+The forest is the breadth-first layers of the pair mask, checked by `okC`; when the check
+passes, the rank is `dimC c M`, the number of points on edges less the number of bipartite
+components (`MaskRank.dim_eq`, `suppFrame_rank`).
 -/
 
 @[expose] public section
@@ -63,22 +64,16 @@ theorem finrank_dropC {𝒮 : Finset (Finset ℕ)} {c : ℕ} (h : InStar 𝒮 c)
 
 /-! ### Pair graphs of masks -/
 
-/-- `u` and `w` are joined in the pair mask `M` relative to `c`. -/
-def adj (c M : ℕ) (u w : Fin 23) : Bool :=
-  !(u.val == w.val) && !(u.val == c) && !(w.val == c) && M.testBit (pb u.val w.val)
-
-theorem adj_comm (c M : ℕ) (u w : Fin 23) : adj c M u w = adj c M w u := by
-  unfold adj
-  have e : (w.val == u.val) = (u.val == w.val) := by
-    by_cases h : u.val = w.val
-    · simp [h]
-    · simp [h, Ne.symm h]
-  rw [pb_comm u.val w.val, e]
-  cases (u.val == w.val) <;> cases (u.val == c) <;> cases (w.val == c) <;> simp
-
 /-- The edges of a pair mask, each once. -/
-def edges (c M : ℕ) : Finset (Fin 23 × Fin 23) :=
-  Finset.univ.filter fun e => e.1 < e.2 ∧ adj c M e.1 e.2 = true
+abbrev edges (c M : ℕ) : Finset (Fin 23 × Fin 23) := edgesU (upsOf c M)
+
+theorem mem_edges {c M : ℕ} {u w : Fin 23} : (u, w) ∈ edges c M ↔
+    u.val < w.val ∧ u.val ≠ c ∧ w.val ≠ c ∧ M.testBit (pb u w) = true := by
+  rw [edges, edgesU, Finset.mem_filter, upsOf, getD_ups, ite_eq_left_of_eq_true _ _ (eq_true u.isLt), Nat.zero_add, testBit_upper]
+  constructor
+  · rintro ⟨-, h1, h2, -, h3, h4⟩; exact ⟨h2, h1, h3, by rwa [pb_of_lt h2]⟩
+  · rintro ⟨h1, h2, h3, h4⟩
+    exact ⟨Finset.mem_univ _, h2, h1, w.isLt, h3, by rwa [pb_of_lt h1] at h4⟩
 
 theorem dropC_tvec {c u w : ℕ} (hc : c < 23) (hu : u < 23) (hw : w < 23) (huw : u ≠ w)
     (hcu : u ≠ c) (hcw : w ≠ c) :
@@ -94,17 +89,14 @@ theorem image_dropC {s : Supp} (hs : s.Ok) {M : ℕ} (hM : relP s.point s = some
   have hc := (instar hs).1
   have hspec := relP_spec hs hc hM
   ext y
-  simp only [vecs, Finset.coe_image, Set.mem_image, Finset.mem_coe, edges, Finset.coe_filter,
-    Finset.mem_univ, true_and, Set.mem_ofPred_eq]
+  simp only [vecs, Finset.coe_image, Set.mem_image, Finset.mem_coe]
   constructor
   · rintro ⟨_, ⟨S, hS, rfl⟩, rfl⟩
     obtain ⟨u, w, huw, hw, hcu, hcw, rfl, hb⟩ := (hspec S).mp ((mem_suppSet hs).mp hS)
-    refine ⟨(⟨u, by omega⟩, ⟨w, hw⟩), ⟨huw, ?_⟩, ?_⟩
-    · simp [adj, hb, show u ≠ w by omega, hcu, hcw]
-    · exact (dropC_tvec hc (by omega) hw (by omega) hcu hcw).symm
-  · rintro ⟨⟨u, w⟩, ⟨huw, ha⟩, rfl⟩
-    simp only [adj, Bool.and_eq_true, Bool.not_eq_true', beq_eq_false_iff_ne, ne_eq] at ha
-    obtain ⟨⟨⟨_, hcu⟩, hcw⟩, hb⟩ := ha
+    refine ⟨(⟨u, by omega⟩, ⟨w, hw⟩), mem_edges.mpr ⟨huw, hcu, hcw, hb⟩, ?_⟩
+    exact (dropC_tvec hc (by omega) hw (by omega) hcu hcw).symm
+  · rintro ⟨⟨u, w⟩, ha, rfl⟩
+    obtain ⟨huw, hcu, hcw, hb⟩ := mem_edges.mp ha
     refine ⟨tvec {s.point, u.val, w.val}, ⟨{s.point, u.val, w.val}, ?_, rfl⟩, ?_⟩
     · exact (mem_suppSet hs).mpr ((hspec _).mpr ⟨u.val, w.val, huw, w.isLt, hcu, hcw, rfl, hb⟩)
     · exact dropC_tvec hc u.isLt w.isLt (by omega) hcu hcw
@@ -117,181 +109,9 @@ theorem suppFrame_rank_pairs {s : Supp} (hs : s.Ok) {M : ℕ} (hM : relP s.point
 
 end
 
-/-! ### The parity forest of a mask -/
-
-/-- A vertex label: root, parent, sign and depth. -/
-structure Lab where
-  root : Fin 23
-  parent : Fin 23
-  sign : Bool
-  depth : ℕ
-
-/-- The neighbours of `u`, as a mask. -/
-def adjMask (c M : ℕ) (u : Fin 23) : ℕ :=
-  (List.finRange 23).foldl (fun acc w => if adj c M u w then acc ||| (1 <<< w.val) else acc) 0
-
-/-- One layer of the search: the unvisited neighbours of the frontier, labelled. -/
-def expand (A : Fin 23 → ℕ) (frontier vis : ℕ) (r : Fin 23) (dep : ℕ) (lab : Fin 23 → Lab) :
-    ℕ × (Fin 23 → Lab) :=
-  (List.finRange 23).foldl (fun acc w =>
-    if vis.testBit w.val || acc.1.testBit w.val then acc
-    else match (List.finRange 23).find? (fun u => frontier.testBit u.val && (A u).testBit w.val) with
-      | some u => (acc.1 ||| (1 <<< w.val), Function.update acc.2 w ⟨r, u, !(acc.2 u).sign, dep + 1⟩)
-      | none => acc) (0, lab)
-
-/-- The search from `r`, layer by layer. -/
-def bfs (A : Fin 23 → ℕ) (r : Fin 23) : ℕ → ℕ → ℕ → ℕ → (Fin 23 → Lab) → ℕ × (Fin 23 → Lab)
-  | 0, _, vis, _, lab => (vis, lab)
-  | n + 1, F, vis, dep, lab =>
-    let e := expand A F vis r dep lab
-    if e.1 = 0 then (vis, e.2) else bfs A r n e.1 (vis ||| e.1) (dep + 1) e.2
-
-/-- The parity forest: a search from each unvisited vertex on an edge. -/
-def certOf (c M : ℕ) : Fin 23 → Lab :=
-  let A := adjMask c M
-  ((List.finRange 23).foldl (fun (acc : ℕ × (Fin 23 → Lab)) r =>
-    if A r ≠ 0 ∧ ¬ acc.1.testBit r.val then
-      bfs A r 23 (1 <<< r.val) (acc.1 ||| (1 <<< r.val)) 0
-        (Function.update acc.2 r ⟨r, r, false, 0⟩)
-    else acc) (0, fun v => ⟨v, v, false, 0⟩)).2
-
-/-- The checks of a parity forest. -/
-def okB (c M : ℕ) : Bool :=
-  let lab := certOf c M
-  (List.finRange 23).all (fun u => (List.finRange 23).all (fun w =>
-    !adj c M u w || (lab u).root == (lab w).root)) &&
-  (List.finRange 23).all (fun v => (adjMask c M v == 0) ||
-    (let r := (lab v).root
-     !(adjMask c M r == 0) && (lab r).root == r &&
-       (r == v || (adj c M v (lab v).parent && (lab v).sign != (lab (lab v).parent).sign &&
-         (lab (lab v).parent).root == r && Nat.blt (lab (lab v).parent).depth (lab v).depth))))
-
-/-- The root `r` has an odd component. -/
-def oddB (c M : ℕ) (r : Fin 23) : Bool :=
-  let lab := certOf c M
-  (List.finRange 23).any fun u => (List.finRange 23).any fun w =>
-    decide (u < w) && adj c M u w && (lab u).root == r && (lab u).sign == (lab w).sign
-
-/-- The rank of the pair graph: vertices on edges less bipartite components. -/
-def dimOf (c M : ℕ) : ℕ :=
-  ((List.finRange 23).filter fun v => !(adjMask c M v == 0)).length -
-    ((List.finRange 23).filter fun v =>
-      !(adjMask c M v == 0) && (certOf c M v).root == v && !oddB c M v).length
-
-/-! ### Soundness of the checks -/
-
-theorem testBit_adjMask (c M : ℕ) (u w : Fin 23) :
-    (adjMask c M u).testBit w.val = adj c M u w := by
-  have h : ∀ (l : List (Fin 23)) (acc : ℕ), l.Nodup →
-      (l.foldl (fun acc w => if adj c M u w then acc ||| (1 <<< w.val) else acc) acc).testBit w.val =
-        (acc.testBit w.val || (w ∈ l && adj c M u w)) := by
-    intro l
-    induction l with
-    | nil => intro acc _; simp
-    | cons x l ih =>
-      intro acc hnd
-      rw [List.nodup_cons] at hnd
-      rw [List.foldl_cons, ih _ hnd.2]
-      by_cases hx : adj c M u x
-      · simp only [hx, ite_true, Nat.testBit_or, Nat.one_shiftLeft, Nat.testBit_two_pow,
-          List.mem_cons]
-        by_cases hxw : x = w
-        · subst hxw; simp [hx]
-        · have : x.val ≠ w.val := fun h => hxw (Fin.ext h)
-          simp [this, Ne.symm hxw]
-      · simp only [hx, Bool.false_eq_true, ite_false, List.mem_cons]
-        by_cases hxw : x = w
-        · subst hxw; simp [hx, hnd.1]
-        · simp [Ne.symm hxw]
-  rw [adjMask, h _ 0 (List.nodup_finRange 23)]
-  simp
-
-theorem adjMask_ne_zero {c M : ℕ} {u w : Fin 23} (h : adj c M u w = true) : adjMask c M u ≠ 0 := by
-  intro h0
-  have := testBit_adjMask c M u w
-  rw [h0, Nat.zero_testBit, h] at this
-  cases this
-
-theorem adj_ne {c M : ℕ} {u w : Fin 23} (h : adj c M u w = true) : u ≠ w := by
-  intro he; subst he; simp [adj] at h
-
-/-- The parity forest as a certificate. -/
-def certFor (c M : ℕ) : PairRank.Cert (Fin 23) where
-  V := Finset.univ.filter fun v => adjMask c M v ≠ 0
-  root v := (certOf c M v).root
-  parent v := (certOf c M v).parent
-  sign v := (certOf c M v).sign
-  depth v := (certOf c M v).depth
-
-theorem certFor_ok {c M : ℕ} (h : okB c M = true) : (certFor c M).Ok (edges c M) := by
-  simp only [okB, Bool.and_eq_true, List.all_eq_true, List.mem_finRange, true_implies,
-    Bool.or_eq_true, Bool.not_eq_true', beq_iff_eq] at h
-  obtain ⟨hedge, hvert⟩ := h
-  refine ⟨fun e he => ?_, fun v hv => ?_, fun v hv hr => ?_⟩
-  · simp only [edges, Finset.mem_filter, Finset.mem_univ, true_and] at he
-    refine ⟨?_, ?_, ?_⟩
-    · simp only [certFor, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact adjMask_ne_zero he.2
-    · simp only [certFor, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact adjMask_ne_zero (w := e.1) (by rw [adj_comm]; exact he.2)
-    · rcases hedge e.1 e.2 with h1 | h1
-      · rw [he.2] at h1; cases h1
-      · exact h1
-  · simp only [certFor, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
-    rcases hvert v with h1 | h1
-    · exact absurd h1 hv
-    · simp only [beq_eq_false_iff_ne] at h1
-      exact ⟨h1.1.1, h1.1.2⟩
-  · simp only [certFor, Finset.mem_filter, Finset.mem_univ, true_and] at hv hr ⊢
-    rcases hvert v with h1 | h1
-    · exact absurd h1 hv
-    · simp only [bne_iff_ne, ne_eq, Nat.blt_eq] at h1
-      rcases h1.2 with h2 | h2
-      · exact absurd h2 hr
-      · obtain ⟨⟨⟨ha, hs⟩, hroot⟩, hd⟩ := h2
-        refine ⟨?_, hs, hroot, hd⟩
-        rcases lt_or_gt_of_ne (adj_ne ha) with hlt | hlt
-        · left
-          simp only [edges, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨hlt, ha⟩
-        · right
-          simp only [edges, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨hlt, by rw [adj_comm]; exact ha⟩
-
-theorem card_filter_finRange (p : Fin 23 → Bool) :
-    (Finset.univ.filter fun v => p v = true).card = ((List.finRange 23).filter p).length := by
-  rw [← List.toFinset_card_of_nodup ((List.nodup_finRange 23).filter p)]
-  congr 1
-  ext v
-  simp
-
-theorem odd_iff {c M : ℕ} (r : Fin 23) :
-    (certFor c M).Odd (edges c M) r ↔ oddB c M r = true := by
-  simp only [PairRank.Cert.Odd, oddB, List.any_eq_true, List.mem_finRange, true_and,
-    Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq, edges, Finset.mem_filter, Finset.mem_univ,
-    certFor, Prod.exists]
-  constructor
-  · rintro ⟨u, w, ⟨hlt, ha⟩, hr, hs⟩; exact ⟨u, w, ⟨⟨⟨hlt, ha⟩, hr⟩, hs⟩⟩
-  · rintro ⟨u, w, ⟨⟨⟨hlt, ha⟩, hr⟩, hs⟩⟩; exact ⟨u, w, ⟨hlt, ha⟩, hr, hs⟩
-
-/-- **The rank of a mask's pair graph**, when its parity forest checks. -/
-theorem dim_eq {c M : ℕ} (h : okB c M = true) : finrank ℚ (pairSpan (edges c M)) = dimOf c M := by
-  rw [pair_rank (certFor_ok h), dimOf]
-  congr 1
-  · rw [← card_filter_finRange]
-    congr 1
-    ext v
-    simp [certFor]
-  · rw [← card_filter_finRange]
-    congr 1
-    ext v
-    simp only [PairRank.Cert.bipRoots, PairRank.Cert.roots, Finset.mem_filter, odd_iff]
-    simp only [certFor, Finset.mem_filter, Finset.mem_univ, true_and, Bool.and_eq_true,
-      Bool.not_eq_true', beq_eq_false_iff_ne, beq_iff_eq, ne_eq, Bool.not_eq_true]
-
 /-- **The rank of a support frame**, by its checked parity forest. -/
 theorem suppFrame_rank {s : Supp} (hs : s.Ok) {M : ℕ} (hM : relP s.point s = some M)
-    (h : okB s.point M = true) : (suppFrame s).rank = dimOf s.point M := by
+    (h : okC s.point M = true) : (suppFrame s).rank = dimC s.point M := by
   rw [suppFrame_rank_pairs hs hM, dim_eq h]
 
 end IntegerMultBounds.MathlibTM2.M8.Frames
