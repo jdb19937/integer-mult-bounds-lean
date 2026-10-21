@@ -50,8 +50,8 @@ def nodeC (b f : ℕ) : Fin K → Option ℕ :=
 
 /-- The counters of a call of rank `r`: offset, count and rest of the child. -/
 def callC (b r f : ℕ) : Fin K → Option ℕ :=
-  Function.update (Function.update (Function.update (Prepare.rest b N.width) 12 (some ((N.width - r) * f)))
-    13 (some (r * f))) 14 (some 0)
+  Function.update (Function.update (Function.update (Prepare.rest b N.width) 12 (some 0))
+    13 (some (r * f))) 14 (some ((N.width - r) * f))
 
 /-! ### The blocks -/
 
@@ -66,7 +66,7 @@ def recoverPayB (w : N.World ⊕ N.Temp) : Graph.Block (CommonBank.count (tapes 
 /-- The call's counters from the node's. -/
 def countersB (r : ℕ) : Graph.Block (CommonBank.count (tapes N)) prime :=
   seqB (Counters.zero 13) (seqB (Counters.advs 13 5 (by decide) (r - 1)) (seqB (Counters.zero 12)
-    (seqB (Counters.advs 12 5 (by decide) (N.width - r - 1)) (seqB (Counters.zero 14)
+    (seqB (Counters.zero 14) (seqB (Counters.advs 14 5 (by decide) (N.width - r - 1))
       (seqB (Counters.erase 5) (Counters.erase 8))))))
 
 /-- The counters of the child view: width, offset, count, rest. -/
@@ -129,13 +129,13 @@ theorem counters_runs {b f r : ℕ} (hr : 1 ≤ r) (hrm : r < N.width) :
   have h₃ := Counters.zero_runs (roles := rr) (hs := hs) (f := fs) (p := p) (node := node) (scalar := scalar)
     (st := st) (c := c₂) (j := 12) (by simp [c₂, c₁, c₀, nodeC, Prepare.rest])
   set c₃ := Function.update c₂ 12 (some 0)
-  have h₄ := Counters.advs_runs (roles := rr) (hs := hs) (f := fs) (p := p) (node := node) (scalar := scalar)
-    (st := st) (c := c₃) (x := 12) (k := 5) (by decide) (X := 0) (Y := f) (by simp [c₃])
-    (by simp [c₃, c₂, c₁, c₀, nodeC]) (N.width - r - 1)
-  set c₄ := Function.update c₃ 12 (some (0 + (N.width - r - 1 + 1) * f))
-  have h₅ := Counters.zero_runs (roles := rr) (hs := hs) (f := fs) (p := p) (node := node) (scalar := scalar)
-    (st := st) (c := c₄) (j := 14) (by simp [c₄, c₃, c₂, c₁, c₀, nodeC, Prepare.rest])
-  set c₅ := Function.update c₄ 14 (some 0)
+  have h₄ := Counters.zero_runs (roles := rr) (hs := hs) (f := fs) (p := p) (node := node) (scalar := scalar)
+    (st := st) (c := c₃) (j := 14) (by simp [c₃, c₂, c₁, c₀, nodeC, Prepare.rest])
+  set c₄ := Function.update c₃ 14 (some 0)
+  have h₅ := Counters.advs_runs (roles := rr) (hs := hs) (f := fs) (p := p) (node := node) (scalar := scalar)
+    (st := st) (c := c₄) (x := 14) (k := 5) (by decide) (X := 0) (Y := f) (by simp [c₄])
+    (by simp [c₄, c₃, c₂, c₁, c₀, nodeC]) (N.width - r - 1)
+  set c₅ := Function.update c₄ 14 (some (0 + (N.width - r - 1 + 1) * f))
   have h₆ := Counters.erase_runs (roles := rr) (hs := hs) (f := fs) (p := p) (node := node) (scalar := scalar)
     (st := st) (c := c₅) (j := 5) (x := f) (by simp [c₅, c₄, c₃, c₂, c₁, c₀, nodeC])
   set c₆ := Function.update c₅ 5 none
@@ -149,8 +149,8 @@ theorem counters_runs {b f r : ℕ} (hr : 1 ≤ r) (hrm : r < N.width) :
     fin_cases j <;> simp [c₆, c₅, c₄, c₃, c₂, c₁, c₀, nodeC, callC, Prepare.rest, Function.update, e1, e2, Fin.ext_iff, CommonBank.K]
   rw [he] at h₇
   have L₆ := seq_runs (Counters.blk_leading _ _ _) (Counters.blk_leading _ _ _) h₆ h₇
-  have L₅ := seq_runs (Counters.blk_leading _ _ _) (Blocks.seq_leading _ _) h₅ L₆
-  have L₄ := seq_runs (Counters.advs_leading _ _ _ _) (Blocks.seq_leading _ _) h₄ L₅
+  have L₅ := seq_runs (Counters.advs_leading _ _ _ _) (Blocks.seq_leading _ _) h₅ L₆
+  have L₄ := seq_runs (Counters.blk_leading _ _ _) (Blocks.seq_leading _ _) h₄ L₅
   have L₃ := seq_runs (Counters.blk_leading _ _ _) (Blocks.seq_leading _ _) h₃ L₄
   have L₂ := seq_runs (Counters.advs_leading _ _ _ _) (Blocks.seq_leading _ _) h₂ L₃
   have L₁ := seq_runs (Counters.blk_leading _ _ _) (Blocks.seq_leading _ _) h₁ L₂
@@ -174,7 +174,7 @@ theorem width_le_volume (v : Descriptor) (hp : v.Positive) : v.width ≤ volume 
 
 /-- The child view of a call of rank `r`. -/
 def childView (b f r : ℕ) (v : Descriptor) : Descriptor :=
-  RevMachine.sub prime b (N.width * f) ((N.width - r) * f) (r * f) v
+  RevMachine.sub prime b (N.width * f) 0 (r * f) v
 
 /-- The cost of a call's entry. -/
 def enterCost (w : N.World ⊕ N.Temp) (f r k : ℕ) (V : ℕ) : ℕ :=
@@ -222,30 +222,30 @@ theorem enter_runs (w : N.World ⊕ N.Temp) {k : ℕ} (code : FiniteReturnStack.
     (hs := hdr v) (fs := E.tape (controlSlot 2)) (p := E.head (controlSlot 2)) (node := node) (scalar := scalar)
     (st := st) (N := N) (b := b) (f := f) hr hrm
   -- view
-  have hsum : (N.width - r) * f + r * f = N.width * f := by rw [← Nat.add_mul, Nat.sub_add_cancel hrm.le]
-  have hsc : (N.width - r) * f + r * f ≤ N.width * f := hsum.le
-  have he : 0 = N.width * f - (N.width - r) * f - r * f := by omega
+  have hsum : r * f + (N.width - r) * f = N.width * f := by rw [← Nat.add_mul, Nat.add_sub_cancel' hrm.le]
+  have hsc : 0 + r * f ≤ N.width * f := by omega
+  have he : (N.width - r) * f = N.width * f - 0 - r * f := by omega
   have hwv : v.width ≤ volume prime v := width_le_volume v hpos
   have hbw : b ≤ v.width := by rw [hw]; exact Nat.le_mul_of_pos_left _ (Nat.mul_pos (by omega) hf)
   have hmw : N.width * f ≤ v.width := by rw [hw]; exact Nat.le_mul_of_pos_right _ hb
   have hview := Enter.enters_volume (q := prime) Networks.Shared50ModularControl.prime_prime.two_le code st
-    (Routines.hdr_headers v) hpos hb (n := N.width * f) (s := (N.width - r) * f) (c := r * f) (e := 0) hw hsc he
+    (Routines.hdr_headers v) hpos hb (n := N.width * f) (s := 0) (c := r * f) (e := (N.width - r) * f) hw hsc he
     (FlatCoordinateSchedule.bits_value _) (FlatCoordinateSchedule.bits_value _) (FlatCoordinateSchedule.bits_value _)
     (FlatCoordinateSchedule.bits_value _) (FlatCoordinateSchedule.bits_canonical _)
     (FlatCoordinateSchedule.bits_canonical _) (FlatCoordinateSchedule.bits_canonical _)
     (FlatCoordinateSchedule.bits_canonical _) ⟨by omega, by omega, by omega, by omega⟩
-  have hch : Headers.childHeaders (q := prime) v (hdr v) b ((N.width - r) * f) (r * f) 0 = hdr (childView (N := N) b f r v) :=
+  have hch : Headers.childHeaders (q := prime) v (hdr v) b 0 (r * f) ((N.width - r) * f) = hdr (childView (N := N) b f r v) :=
     Routines.hdr_eq (Headers.child_headers (Routines.hdr_headers v) he)
   rw [hch, counters_eq] at hview
   have h₃ := CallPlace.call_runs (T := tapes N) (roles := childRoles N (RecursiveShiftRoleBank.source (data (wireSlot N w))))
     (f := E.tape (controlSlot 2)) (p := E.head (controlSlot 2)) (node := node) (scalar := scalar)
-    (c := callC N b r f) viewAux_injective (cs := ![b, (N.width - r) * f, r * f, 0])
+    (c := callC N b r f) viewAux_injective (cs := ![b, 0, r * f, (N.width - r) * f])
     (by intro j; fin_cases j <;> simp [viewAux, callC, Prepare.rest, Function.update, Fin.ext_iff, CommonBank.K])
     hview
   have h₄₁ := Counters.erase_runs (roles := childRoles N (RecursiveShiftRoleBank.source (data (wireSlot N w))))
     (hs := hdr (childView (N := N) b f r v)) (f := E.tape (controlSlot 2)) (p := E.head (controlSlot 2))
     (node := node) (scalar := scalar) (st := RecursiveChildCallSetup.savedStacks (hdr v) st code)
-    (c := callC N b r f) (j := 12) (x := (N.width - r) * f) (by simp [callC])
+    (c := callC N b r f) (j := 12) (x := 0) (by simp [callC])
   have h₄₂ := Counters.erase_runs (roles := childRoles N (RecursiveShiftRoleBank.source (data (wireSlot N w))))
     (hs := hdr (childView (N := N) b f r v)) (f := E.tape (controlSlot 2)) (p := E.head (controlSlot 2))
     (node := node) (scalar := scalar) (st := RecursiveChildCallSetup.savedStacks (hdr v) st code)
@@ -253,7 +253,8 @@ theorem enter_runs (w : N.World ⊕ N.Temp) {k : ℕ} (code : FiniteReturnStack.
   have h₄₃ := Counters.erase_runs (roles := childRoles N (RecursiveShiftRoleBank.source (data (wireSlot N w))))
     (hs := hdr (childView (N := N) b f r v)) (f := E.tape (controlSlot 2)) (p := E.head (controlSlot 2))
     (node := node) (scalar := scalar) (st := RecursiveChildCallSetup.savedStacks (hdr v) st code)
-    (c := Function.update (Function.update (callC N b r f) 12 none) 13 none) (j := 14) (x := 0) (by simp [callC])
+    (c := Function.update (Function.update (callC N b r f) 12 none) 13 none) (j := 14) (x := (N.width - r) * f)
+    (by simp [callC])
   have hrest : Function.update (Function.update (Function.update (callC N b r f) 12 none) 13 none) 14 none =
       Prepare.rest b N.width := by
     funext j; fin_cases j <;> simp [callC, Prepare.rest, Function.update, Fin.ext_iff, CommonBank.K]

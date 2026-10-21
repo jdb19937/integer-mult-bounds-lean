@@ -317,9 +317,9 @@ theorem call_le (σ : Frame (pcs N) capacity) (hm : N.width ≤ σ.n) (hd : N.ro
     omega
   -- recovery
   have hsum : (N.width - c.2) * f + c.2 * f = N.width * f := by rw [← Nat.add_mul, Nat.sub_add_cancel hc.le]
-  have he : 0 = N.width * f - (N.width - c.2) * f - c.2 * f := by omega
+  have he : (N.width - c.2) * f = N.width * f - 0 - c.2 * f := by omega
   have hres := Enter.restore_cost_le (q := prime) Networks.Shared50ModularControl.prime_prime.two_le w.rolePos
-    (n := N.width * f) (w := σ.b) (s := (N.width - c.2) * f) (c := c.2 * f) (e := 0) rfl hsum.le he
+    (n := N.width * f) (w := σ.b) (s := 0) (c := c.2 * f) (e := (N.width - c.2) * f) rfl (by omega) he
     (Routines.hdr_headers _)
   rw [Routines.hdr_eq (Headers.child_headers (Routines.hdr_headers (roleView N σ.b σ.n σ.v)) he)] at hres
   have d1 := div_b_le σ hn (x := N.width * f * σ.b) (Nat.mul_le_mul_right _ hmf)

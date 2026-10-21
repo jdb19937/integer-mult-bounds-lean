@@ -361,8 +361,8 @@ theorem half_call {b₀ : ℕ} (hRk : ∀ r ∈ Rk N, 1 ≤ r ∧ r < N.width) (
   have hwv : (roleView N σ.b σ.n σ.v).width = (N.width * f) * σ.b := rfl
   set E := RecursiveCallProtocol.entered (NodePark.parked N w) (wireSlot N w) (io N) (volume prime (roleView N σ.b σ.n σ.v))
     (bank (roles data) (hdr (roleView N σ.b σ.n σ.v)) σ.f σ.p node₂ σ.scalar (nodeC N σ.b f) σ.st)
-  have hsc : (N.width - r) * f + r * f ≤ N.width * f := by
-    rw [← Nat.add_mul, Nat.sub_add_cancel hrr.2.le]
+  have hsc : 0 + r * f ≤ N.width * f := by
+    rw [zero_add]; exact Nat.mul_le_mul_right _ hrr.2.le
   have hvτ : volume prime (NodeCall.childView (N := N) σ.b f r (roleView N σ.b σ.n σ.v)) = volume prime (roleView N σ.b σ.n σ.v) :=
     RevMachine.sub_volume _ _ _ _ _ (roleView N σ.b σ.n σ.v) hwv hsc
   have hsaved := RecursiveStackAllocation.saved_stacks_available (hdr (roleView N σ.b σ.n σ.v)) σ.st code hok.desc hok.pc
