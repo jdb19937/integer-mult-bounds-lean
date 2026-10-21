@@ -227,6 +227,7 @@ theorem markFrom_live {ι : Type*} (nodes : List (Node ι)) (offset : ℕ) (root
     let marked := DisjointPruning.markFrom (offset+1) nodes roots
     by_cases ha : offset ∈ marked
     · have he : DisjointPruning.markFrom offset (node::nodes) roots = marked ∪ DisjointPruning.parents node := by
+        rw [DisjointPruning.markFrom_cons]
         change (if offset ∈ marked then marked ∪ DisjointPruning.parents node else marked) = _
         rw [ite_eq_left ha]
       rw [he] at hp ⊢
@@ -247,6 +248,7 @@ theorem markFrom_live {ι : Type*} (nodes : List (Node ι)) (offset : ℕ) (root
         simp only [gatePortsFrom, ite_eq_left (Finset.mem_union_left _ ha)]
         exact List.mem_append_left _ hport
     · have he : DisjointPruning.markFrom offset (node::nodes) roots = marked := by
+        rw [DisjointPruning.markFrom_cons]
         change (if offset ∈ marked then marked ∪ DisjointPruning.parents node else marked) = _
         rw [ite_eq_right ha]
       rw [he] at hp ⊢

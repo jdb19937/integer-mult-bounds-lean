@@ -31,7 +31,7 @@ theorem markFrom_property (offset : ℕ) (nodes : List (Node ι)) (roots : Finse
     have ht := ih (offset + 1) (fun j hj p hmem h => by
       have h' := hp (j + 1) (by simp; omega) p (by simpa using hmem)
       exact h' (by simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using h))
-    simp only [markFrom]
+    simp only [markFrom_cons]
     split_ifs with hm
     · intro i hi
       rcases Finset.mem_union.mp hi with hi | hi

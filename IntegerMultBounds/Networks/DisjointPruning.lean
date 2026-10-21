@@ -26,7 +26,20 @@ def markFrom (offset : ℕ) : List (Node ι) → Finset ℕ → Finset ℕ
   | [], roots => roots
   | node :: nodes, roots =>
     let marked := markFrom (offset + 1) nodes roots
-    if offset ∈ marked then marked ∪ parents node else marked
+    if offset ∈ marked then parents node ∪ marked else marked
+
+/-- Present the backwards step in set-theoretic order. The implementation
+inserts the at most two parents into the accumulated set, so evaluation does
+not rebuild the whole marked set at every active node. -/
+theorem markFrom_cons (offset : ℕ) (node : Node ι) (nodes : List (Node ι))
+    (roots : Finset ℕ) :
+    markFrom offset (node :: nodes) roots =
+      let marked := markFrom (offset + 1) nodes roots
+      if offset ∈ marked then marked ∪ parents node else marked := by
+  simp only [markFrom]
+  split_ifs
+  · exact Finset.union_comm _ _
+  · rfl
 
 def mark (nodes : List (Node ι)) (roots : Finset ℕ) : Finset ℕ :=
   markFrom 0 nodes roots
@@ -42,7 +55,7 @@ theorem roots_subset_markFrom (offset : ℕ) (nodes : List (Node ι)) (roots : F
   induction nodes generalizing offset with
   | nil => exact Finset.Subset.refl _
   | cons node nodes ih =>
-    simp only [markFrom]
+    simp only [markFrom_cons]
     split_ifs
     · exact (ih _).trans Finset.subset_union_left
     · exact ih _
@@ -97,7 +110,7 @@ theorem markFrom_closed (prior : List (Finset ι)) (nodes : List (Node ι))
     simp only [List.length_append, List.length_singleton] at hi
     change (prior.length ∈ markFrom prior.length (node :: nodes) roots →
       parents node ⊆ markFrom prior.length (node :: nodes) roots) ∧ _
-    simp only [markFrom]
+    simp only [markFrom_cons]
     split_ifs with ha
     · constructor
       · intro _; exact Finset.subset_union_right

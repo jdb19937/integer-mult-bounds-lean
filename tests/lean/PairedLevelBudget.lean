@@ -1,7 +1,7 @@
 module
 
 import IntegerMultBounds.Networks.PairedInitialBudget
-import IntegerMultBounds.Networks.DisjointSharingBudget
+import IntegerMultBounds.Networks.DisjointPruningBudget
 
 /-! Regression for one complete paired recursion (seven vertices to four).
 Run with scripts/check-lean-safe.py. No generated DAG or witness rows are used.
@@ -29,14 +29,18 @@ theorem allocated : additionCount graph.nodes = 108 := by decide +kernel
 
 theorem recursive_boundary : cut = 57 := by decide +kernel
 
-theorem cut_le : cut ≤ graph.nodes.length := by decide +kernel
+theorem cut_le : cut ≤ graph.nodes.length := by
+  rw [recursive_boundary]
+  decide +kernel
 
 /-- The recursively constructed prefix contributes thirty live additions. -/
 theorem recursive_live : additionCountFrom 0 (mark graph.nodes roots) (graph.nodes.take cut) = 30 := by
+  rw [recursive_boundary]
   decide +kernel
 
 /-- Reconstruction contributes sixty more, including reuse and discarded singles. -/
 theorem reconstruction_live : additionCountFrom cut (mark graph.nodes roots) (graph.nodes.drop cut) = 60 := by
+  rw [recursive_boundary]
   decide +kernel
 
 theorem live_additions : additionCountFrom 0 (mark graph.nodes roots) graph.nodes = 90 := by
@@ -53,7 +57,7 @@ theorem compiled_bounds :
     (compile graph.nodes (PairedInitialGraph.outputRefs points)).program.length ≤ 201 := by
   have h := PairedInitialGraph.compile_bounds_of_active points List.pairwise_lt_range 90
     live_additions.le
-  norm_num [points, pairs] at h
-  exact h
+  have hlength : (pairs points).length = 21 := by decide +kernel
+  simpa only [graph, hlength, Nat.reduceAdd, Nat.reduceMul] using h
 
 end IntegerMultBounds.Networks.PairedLevelBudgetTest
