@@ -112,9 +112,9 @@ def advance : Graph.Block (CommonBank.count t) prime :=
     ((Routines.slot_injective 22).comp advanceRoute_inj) (Nat.add_comm _ _)
 
 /-- **One leaf fewer**: the offset becomes the remaining leaves; the offsets are erased. -/
-theorem advance_runs {r s cc e : ℕ} (hsr : s ≤ r) (hcr : cc ≤ r) (her : e ≤ r)
+theorem advance_runs {n r s cc e : ℕ} (hrn : r ≤ n) (hsr : s ≤ n) (hcr : cc ≤ n) (her : e ≤ n)
     (h11 : c 11 = some r) (h12 : c 12 = some s) (h13 : c 13 = some cc) (h14 : c 14 = some e) :
-    ∃ B ≤ 20 * r + 40, Runs advance (bank roles hs f p node scalar c st)
+    ∃ B ≤ 20 * n + 40, Runs advance (bank roles hs f p node scalar c st)
       (bank roles hs f p node scalar (Function.update (Function.update (Function.update
         (Function.update c 11 (some s)) 12 none) 13 none) 14 none) st) B := by
   set d := fun i => (sel advanceRoute i).value hs c
