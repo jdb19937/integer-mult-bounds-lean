@@ -28,6 +28,9 @@ namespace IntegerMultBounds.MathlibTM2.M8.Local
 /-- The phase bits and serving order of every node (width 65536). -/
 def bdata : Tree (Nat × List Use) := .node (.node (.node (.node ((bdata00)) ((bdata01))) (.node ((bdata02)) ((bdata03)))) (.node (.node ((bdata04)) ((bdata05))) (.node ((bdata06)) ((bdata07))))) (.node (.node (.node ((bdata08)) ((bdata09))) (.node ((bdata10)) ((bdata11)))) (.node (.node ((bdata12)) ((bdata13))) (.node ((bdata14)) ((bdata15)))))
 
+/-- The next fresh slot before each node; final count in padding. -/
+def bnext : Tree Nat := .node (.node (.node (.node ((bnext00)) ((bnext01))) (.node ((bnext02)) ((bnext03)))) (.node (.node ((bnext04)) ((bnext05))) (.node ((bnext06)) ((bnext07))))) (.node (.node (.node ((bnext08)) ((bnext09))) (.node ((bnext10)) ((bnext11)))) (.node (.node ((bnext12)) ((bnext13))) (.node ((bnext14)) ((bnext15)))))
+
 theorem bdata_get_00 (i : ℕ) (hi : i < 4096) :
     bdata.get 65536 (4096 * 0 + i) = bdata00.get 4096 i := by
   unfold bdata

@@ -7,7 +7,8 @@ PR97_DIR is upstream's `references/partial-gauge/pr97/` at
 `463113d675af7410ac91d53a4fed51ec6494eb9a` (pins in `stage2designb.py`); DATA_JSON is
 `generate.py`'s output for the same witness. The design-B schedule (`deferred_23.json.gz`) is
 read as a plan for the Lean compiler of `M8/Local/Compile.lean`:
-* the serving order of every node that copies: the use that keeps the node's slot (the last late
+* the complete free-use order of every node, with the default order filled in;
+  at nodes that copy, the use that keeps the node's slot (the last late
   user of a late copy, the first free use otherwise), then the copies in the order of their
   starting frame dimensions (stable), as upstream's ledger expands them;
 * the phase bits: an addition in the first phase (`Φ`, bit 0) when upstream's phase one runs it,
@@ -19,9 +20,11 @@ compiled ones (equal histories), checks the local phase conditions of `M8/Local/
 the conditions of `Dag.wordB_run`, and replays the design-B word over F2 on random contents.
 
 Writes, under LEAN_ROOT/IntegerMultBounds/MathlibTM2/M8/Local/:
-* DataB/BDataKK.lean (16 subtrees of 4096 entries `(phase bits, serving order)`), DataB/BData.lean
+* DataB/BDataKK.lean (16 subtrees of phase bits, complete serving orders, and allocation
+  counts), DataB/BData.lean
   (the tree of width 65536 and the use lists);
-* ChecksB/NodesKK.lean, ChecksB/Deferred.lean (`decide +kernel` checks).
+* ChecksB/NodesKK.lean, ChecksB/Deferred.lean, ChecksB/OrderKK.lean, and
+  ChecksB/RootOrder.lean (`decide +kernel` checks).
 """
 import gzip
 import hashlib
@@ -40,7 +43,7 @@ sys.set_int_max_str_digits(0)
 H = 23
 WIDTH = 65536
 SUB = 4096
-LEAFS = 256
+LEAFS = 128
 DCHUNK = 3000
 
 HEADER = '''module
@@ -106,6 +109,28 @@ def list_defs(name, doc, us, piece=128):
 
     text += '%sdef %s : List Use :=\n  %s\n\n' % (doc, name, join(names))
     return text
+
+
+def order_checks(kk, dsha, wsha):
+    """Bound kernel memory by freeing each 1024-node check separately."""
+    text = HEADER.format(imports='public import IntegerMultBounds.MathlibTM2.M8.Local.KernelOrderB',
+                         dsha=dsha, wsha=wsha)
+    expressions = []
+    for j in range(4):
+        expr = top(['bdata%02d_%02d' % (kk, i) for i in range(8 * j, 8 * (j + 1))])
+        expressions.append(expr)
+        text += ('theorem border%02d_%d :\n'
+                 '    Tree.all bOrderOk (fun _ => true) nodeCount (%s) %d 1024 = true := by\n'
+                 '  unfold bOrderOk\n'
+                 '  decide +kernel\n\n') % (kk, j, expr, 4096 * kk + 1024 * j)
+    terms = ['Tree.all bOrderOk (fun _ => true) nodeCount (%s) %d 1024' %
+             (expr, 4096 * kk + 1024 * j) for j, expr in enumerate(expressions)]
+    text += ('theorem border%02d :\n'
+             '    Tree.all bOrderOk (fun _ => true) nodeCount bdata%02d (4096 * %d) 4096 = true := by\n'
+             '  change ((%s && %s) && (%s && %s)) = true\n'
+             '  rw [border%02d_0, border%02d_1, border%02d_2, border%02d_3]\n'
+             '  rfl\n') % (kk, kk, kk, *terms, kk, kk, kk, kk)
+    return text + FOOTER
 
 
 def main(pr97_dir, data_path, lean_root=None):
@@ -227,8 +252,14 @@ def main(pr97_dir, data_path, lean_root=None):
         us = sorted(gate_uses[y] + root_uses[y], key=lambda u: rank(y, u))
         return [u for u in us if u not in linked]
 
+    # Store all free uses, including the default orders. This gives Lean a
+    # complete local lookup table without changing any compiled operation.
+    full_orders = {n: free_uses(n) for n in range(N)}
+    assert all(len(us) == len(set(us)) and us for us in full_orders.values())
+
     # Dag.compile with the serving orders
     nxt = 0
+    slot_counts = []
     pend = {}
     ops = []
     creat = {}
@@ -245,6 +276,7 @@ def main(pr97_dir, data_path, lean_root=None):
             nxt += 1
 
     for n in range(N):
+        slot_counts.append(nxt)
         if n < v:
             s = nxt
             nxt += 1
@@ -266,6 +298,7 @@ def main(pr97_dir, data_path, lean_root=None):
                 ops.append(('add', sa, sb, n))
                 serve(n, sa, free_uses(n))
     R = nxt
+    slot_counts += [R] * (WIDTH - len(slot_counts))
     assert R == Draw['R']
 
     # upstream slot -> compiled slot, by the use each was created for; equal histories
@@ -430,7 +463,7 @@ def main(pr97_dir, data_path, lean_root=None):
     for n in range(WIDTH):
         if n < N:
             bits = int(Phi[n]) + 2 * int(Psi[n])
-            vals.append('(%d, %s)' % (bits, lean_uses(orders.get(n, []))))
+            vals.append('(%d, %s)' % (bits, lean_uses(full_orders[n])))
         else:
             vals.append('(0, [])')
     for kk in range(16):
@@ -445,12 +478,21 @@ def main(pr97_dir, data_path, lean_root=None):
         text += 'def bdata%02d : Tree (Nat × List Use) := %s\n\n' % (kk, top(subs))
         text += ('theorem bdata%02d_perfect : bdata%02d.Perfect 4096 :=\n'
                  '  Tree.perfect_of_perfectB _ _ (by decide +kernel)\n') % (kk, kk)
+        counts = []
+        for i in range(SUB // LEAFS):
+            name = 'bnext%02d_%02d' % (kk, i)
+            counts.append(name)
+            text += 'def %s : Tree Nat :=\n  %s\n\n' % (
+                name, tree_text([str(x) for x in slot_counts[SUB * kk + LEAFS * i:SUB * kk + LEAFS * (i + 1)]]))
+        text += 'def bnext%02d : Tree Nat := %s\n\n' % (kk, top(counts))
         write(os.path.join(base, 'DataB', 'BData%02d.lean' % kk), text + FOOTER)
     imports = '\n'.join('public import IntegerMultBounds.MathlibTM2.M8.Local.DataB.BData%02d' % kk
                         for kk in range(16))
     text = HEADER.format(imports=imports, dsha=dsha, wsha=wsha)
     text += ('/-- The phase bits and serving order of every node (width 65536). -/\n'
              'def bdata : Tree (Nat × List Use) := %s\n\n') % top(['(bdata%02d)' % kk for kk in range(16)])
+    text += ('/-- The next fresh slot before each node; final count in padding. -/\n'
+             'def bnext : Tree Nat := %s\n\n') % top(['(bnext%02d)' % kk for kk in range(16)])
     for kk in range(16):
         text += ('theorem bdata_get_%02d (i : ℕ) (hi : i < 4096) :\n'
                  '    bdata.get 65536 (4096 * %d + i) = bdata%02d.get 4096 i := by\n'
@@ -480,6 +522,13 @@ def main(pr97_dir, data_path, lean_root=None):
                  '  decide +kernel\n\n') % (i, i)
     text += 'theorem centresOk : (List.range\' (3 * leafCount) 23).all centreOk = true := by\n  decide +kernel\n'
     write(os.path.join(base, 'ChecksB', 'Deferred.lean'), text + FOOTER)
+    for kk in range(16):
+        write(os.path.join(base, 'ChecksB', 'Order%02d.lean' % kk), order_checks(kk, dsha, wsha))
+    text = HEADER.format(imports='public import IntegerMultBounds.MathlibTM2.M8.Local.KernelOrderB',
+                         dsha=dsha, wsha=wsha)
+    text += ('theorem rootOrders : Tree.all rootOrderOk (fun _ => true) rootCount roots 0 rootWidth = true := by\n'
+             '  decide +kernel\n')
+    write(os.path.join(base, 'ChecksB', 'RootOrder.lean'), text + FOOTER)
     print(json.dumps(dict(R=R, ops=len(ops), first=len(first), rest=len(rest), deferred=len(dl),
                           early_v=len(ve), late_v=len(vl), orders=len(orders),
                           phase_add=sum(Phi), phase_copy=sum(Psi), word=len(word),

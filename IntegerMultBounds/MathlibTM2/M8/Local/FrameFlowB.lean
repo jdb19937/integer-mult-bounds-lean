@@ -173,23 +173,24 @@ theorem serve_use_frame (D : Dag) (label : Op → α) (node piv : Nat) (us : Lis
 theorem step_internal_shape (D : Dag) (node : Nat) (hn : D.v ≤ node) (st : State) :
     ∃ (piv oth : Nat) (st' : State),
       (piv = st.pend (.gate node false) ∨ piv = st.pend (.gate node true)) ∧
+      (oth = st.pend (.gate node false) ∨ oth = st.pend (.gate node true)) ∧
       st'.ops = st.ops ++ [Op.add piv oth node] ∧ st'.next = st.next ∧
       D.step st node = State.serve node piv st' (D.freeUses node) := by
   cases hl : D.link node with
   | none =>
     refine ⟨_, _, { st with ops := st.ops ++ [Op.add (st.pend (.gate node false))
-      (st.pend (.gate node true)) node] }, Or.inl rfl, rfl, rfl, ?_⟩
+      (st.pend (.gate node true)) node] }, Or.inl rfl, Or.inr rfl, rfl, rfl, ?_⟩
     simp only [Dag.step, Nat.not_lt.mpr hn, ite_false, hl]
   | some l =>
     obtain ⟨o, t, pos⟩ := l
     cases o
     · refine ⟨_, _, ({ st with ops := st.ops ++ [Op.add (st.pend (.gate node true))
         (st.pend (.gate node false)) node] }.assign (st.pend (.gate node false)) (.gate t pos)),
-        Or.inr rfl, rfl, rfl, ?_⟩
+        Or.inr rfl, Or.inl rfl, rfl, rfl, ?_⟩
       simp only [Dag.step, Nat.not_lt.mpr hn, ite_false, hl, Bool.false_eq_true]
     · refine ⟨_, _, ({ st with ops := st.ops ++ [Op.add (st.pend (.gate node false))
         (st.pend (.gate node true)) node] }.assign (st.pend (.gate node true)) (.gate t pos)),
-        Or.inl rfl, rfl, rfl, ?_⟩
+        Or.inl rfl, Or.inr rfl, rfl, rfl, ?_⟩
       simp only [Dag.step, Nat.not_lt.mpr hn, ite_false, hl, ite_true]
 
 /-- Serving other uses never changes an existing use's slot. -/
@@ -341,5 +342,111 @@ theorem pending_birth_frame (D : Dag) (hv : D.Valid) (label : Op → α)
         omega
       rw [step_pending_frame D hv label k (by omega) u hu hs]
       exact ih (by omega) (D.pending_old hv hu hf hl).1 hs
+
+/-- Rest uses receive successive fresh slots in their serving order. -/
+theorem serveRest_pend_index (node piv : Nat) :
+    ∀ (us : List Use) (st : State) (_hnd : us.Nodup) (i : Nat) (hi : i < us.length),
+      (State.serveRest node piv st us).pend us[i] = st.next + i
+  | [], _, _, _, hi => by simp at hi
+  | v :: us, st, hnd, 0, hi => by
+    rw [List.nodup_cons] at hnd
+    change (State.serveRest node piv
+      { st.assign st.next v with next := st.next + 1, ops := st.ops ++ [Op.copy piv st.next node] } us).pend v = st.next + 0
+    rw [serveRest_pend_other node piv v us _ hnd.1]
+    simp [State.assign]
+  | v :: us, st, hnd, i + 1, hi => by
+    have hi' : i < us.length := by simpa using hi
+    have hnd' := (List.nodup_cons.mp hnd).2
+    change (State.serveRest node piv
+      { st.assign st.next v with next := st.next + 1, ops := st.ops ++ [Op.copy piv st.next node] } us).pend us[i] = st.next + (i + 1)
+    rw [serveRest_pend_index node piv us _ hnd' i hi']
+    simp [Nat.add_comm, Nat.add_left_comm]
+
+/-- The first use keeps the pivot; subsequent uses receive consecutive fresh slots. -/
+theorem serve_pend_index (node piv : Nat) (us : List Use) (st : State)
+    (hnd : us.Nodup) (i : Nat) (hi : i < us.length) :
+    (State.serve node piv st us).pend us[i] = if i = 0 then piv else st.next + (i - 1) := by
+  cases us with
+  | nil => simp at hi
+  | cons v us =>
+    cases i with
+    | zero =>
+      change (State.serveRest node piv (st.assign piv v) us).pend v = _
+      rw [serveRest_pend_other node piv v us _ (List.nodup_cons.mp hnd).1]
+      simp [State.assign]
+    | succ i =>
+      have hi' : i < us.length := by simpa using hi
+      change (State.serveRest node piv (st.assign piv v) us).pend us[i] = _
+      rw [serveRest_pend_index node piv us _ (List.nodup_cons.mp hnd).2 i (by simpa using hi)]
+      simp
+
+/-- A pending use was created at an earlier actual source, including linked donors. -/
+theorem pending_src_lt (D : Dag) (hv : D.Valid) {k : Nat} {u : Use}
+    (hu : D.Pending k u) : D.srcNode u < k := by
+  rcases hu.2 with ⟨n, hn, hfree⟩ | ⟨n, hn, hlink⟩
+  · rw [D.srcNode_free hfree]
+    exact hn
+  · have hN : n < D.N := by
+      obtain ⟨o, t, pos, hl, he⟩ := D.linkUse_eq.mp hlink
+      have h := hv.link_user n o t pos hl
+      omega
+    rw [D.srcNode_linked hv hN hlink]
+    exact hn
+
+/-- A complete duplicate-free serving table is exactly the compiler's sorted order. -/
+theorem freeUses_eq_order (D : Dag) (n : Nat) (us : List Use) (hnd : us.Nodup)
+    (hmem : ∀ u, u ∈ D.freeUses n ↔ u ∈ us)
+    (hrank : ∀ u, D.rank n u = us.idxOf u) : D.freeUses n = us := by
+  have hperm := (List.perm_ext_iff_of_nodup (D.freeUses_nodup n) hnd).mpr hmem
+  have hsort : (D.freeUses n).Pairwise (fun a b => D.rank n a ≤ D.rank n b) := by
+    have h := List.pairwise_mergeSort
+      (fun a b c h1 h2 => by simp only [decide_eq_true_eq] at *; omega)
+      (fun a b => by simp only [Bool.or_eq_true, decide_eq_true_eq]; omega)
+      (le := fun a b : Use => decide (D.rank n a ≤ D.rank n b)) (D.gateUses n ++ D.rootUses n)
+    exact (h.filter (fun u => !D.linkedB u)).imp (fun h => of_decide_eq_true h)
+  have hus : us.Pairwise (fun a b => D.rank n a ≤ D.rank n b) := by
+    rw [List.pairwise_iff_getElem]
+    intro i j hi hj hij
+    rw [hrank, hrank, hnd.idxOf_getElem i hi, hnd.idxOf_getElem j hj]
+    omega
+  apply List.Perm.eq_of_pairwise _ hsort hus hperm
+  intro a b ha hb hab hba
+  rw [hrank, hrank] at hab hba
+  exact (List.idxOf_inj ((hmem a).mp ha)).mp (by omega)
+
+/-- An untouched raw slot is untouched for every frame assignment after V conversion. -/
+theorem untouched_of_last_node_none (s : Nat) :
+    ∀ (ops : List Op) (cur : Nat → Option Nat),
+      (ops.foldl touchOp cur) s = none →
+      cur s = none ∧ ∀ op ∈ ops, s ∉ op.slots
+  | [], _, h => ⟨h, by simp⟩
+  | op :: ops, cur, h => by
+    obtain ⟨hc, ht⟩ := untouched_of_last_node_none s ops (touchOp cur op) h
+    have hs : s ∉ op.slots := by
+      intro hs
+      simp [touchOp, hs] at hc
+    refine ⟨?_, ?_⟩
+    · simpa only [touchOp, ite_eq_right hs] using hc
+    · intro q hq
+      rcases List.mem_cons.mp hq with rfl | hq
+      · exact hs
+      · exact ht q hq
+
+theorem last_vop_none (D : Dag) (label : Op → α) (ops : List Op) (s : Nat)
+    (hs : lastNode ops s = none) : last label (ops.map D.vop) s = none := by
+  have hu := (untouched_of_last_node_none s ops (fun _ => none) hs).2
+  have h := last_append_untouched label [] (ops.map D.vop) s (by
+    intro op hop hmem
+    obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hop
+    exact hu q hq (D.vop_slots q s hmem))
+  simpa only [List.nil_append, last, List.foldl_nil] using h
+
+/-- Fresh compiler slots have no frame, independently of the chosen labels. -/
+theorem compileTo_frame_fresh (D : Dag) (hv : D.Valid) (label : Op → α)
+    (k : Nat) (hk : k ≤ D.N) (s : Nat) (hs : (D.compileTo k).next ≤ s) :
+    last label ((D.compileTo k).ops.map D.vop) s = none := by
+  apply last_vop_none D label
+  exact (D.finv_compileTo_source hv
+    (Le := fun _ _ => True) ⟨fun _ => trivial, fun _ _ _ _ => trivial⟩ k hk).fresh s hs
 
 end IntegerMultBounds.MathlibTM2.M8.Local.FrameFlow

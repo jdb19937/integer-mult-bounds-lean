@@ -184,7 +184,7 @@ theorem internal_step_use_frames (n : Nat) (hn : leafCount ≤ n) (st : State)
         FrameFlow.last opFrame ((dagB.step st n).ops.map dagB.vop) ((dagB.step st n).pend u) =
           some (if (dagB.step st n).pend u = p then copyEnd n (dagB.freeUses n) st
             else frameOfLabel (AssignmentB.startLabel ((dagB.step st n).pend u))) := by
-  obtain ⟨p, o, st', hp, hops, hnext, hstep⟩ := FrameFlow.step_internal_shape dagB n hn st
+  obtain ⟨p, o, st', hp, _ho, hops, hnext, hstep⟩ := FrameFlow.step_internal_shape dagB n hn st
   have hplt : p < st'.next := by
     rw [hnext]
     rcases hp with rfl | rfl
@@ -283,6 +283,87 @@ theorem compiled_internal_use_frames (n : Nat) (hn : leafCount ≤ n) (hN : n < 
   obtain ⟨hl, hr, _⟩ := compiler_argument_slots n hn hN
   rw [compile_step]
   exact internal_step_use_frames n hn _ hl hr
+
+/-- Explicit frame of a free use, indexed by its serving order. -/
+def freeUseLabel (n i : Nat) : Signed.Frame :=
+  let next := (dagB.compileTo n).next
+  if n < leafCount then AssignmentB.startLabel (next + i)
+  else if i = 0 then
+    if (dagB.freeUses n).length ≤ 1 then AssignmentB.nodeLabel n
+    else AssignmentB.startLabel (next + ((dagB.freeUses n).length - 1) - 1)
+  else AssignmentB.startLabel (next + (i - 1))
+
+/-- Concrete birth frames require only the allocation count and serving index. -/
+theorem compiled_free_use_frame (n : Nat) (hN : n < nodeCount)
+    (i : Nat) (hi : i < (dagB.freeUses n).length) :
+    FrameFlow.last opFrame ((dagB.compileTo (n + 1)).ops.map dagB.vop)
+      ((dagB.compileTo (n + 1)).pend (dagB.freeUses n)[i]) =
+        some (frameOfLabel (freeUseLabel n i)) := by
+  let st := dagB.compileTo n
+  have hu : (dagB.freeUses n)[i] ∈ dagB.freeUses n := List.getElem_mem hi
+  by_cases hn : n < leafCount
+  · have h := compiled_leaf_use_frame n hn _ hu
+    have hs : (dagB.compileTo (n + 1)).pend (dagB.freeUses n)[i] = st.next + i := by
+      rw [compile_step]
+      unfold Dag.step
+      rw [ite_eq_left (show n < dagB.v from hn), FrameFlow.serve_pend_index _ _ _ _ (dagB.freeUses_nodup n) i hi]
+      split_ifs <;> simp_all [st]
+      omega
+    simpa only [hs, freeUseLabel, ite_eq_left hn] using h
+  · have hn' : leafCount ≤ n := Nat.le_of_not_gt hn
+    obtain ⟨p, o, st', hp, _ho, hops, hnext, hstep⟩ := FrameFlow.step_internal_shape dagB n hn' st
+    obtain ⟨hl, hr, _⟩ := compiler_argument_slots n hn' hN
+    have hplt : p < st'.next := by
+      rw [hnext]
+      rcases hp with rfl | rfl
+      · exact hl
+      · exact hr
+    have hcur : FrameFlow.last opFrame (st'.ops.map dagB.vop) p =
+        some (frameOfLabel (AssignmentB.nodeLabel n)) := by
+      rw [hops]
+      exact after_add_frame st.ops p o n
+    have hf := served_internal_use_frame n p hn' (dagB.freeUses n) st'
+      (dagB.freeUses_nodup n) hplt hcur _ hu
+    have hs := FrameFlow.serve_pend_index n p (dagB.freeUses n) st'
+      (dagB.freeUses_nodup n) i hi
+    rw [compile_step]
+    change FrameFlow.last opFrame ((dagB.step st n).ops.map dagB.vop)
+      ((dagB.step st n).pend (dagB.freeUses n)[i]) = _
+    rw [hstep, hf, hs]
+    by_cases hi0 : i = 0
+    · simp only [hi0, ite_true, copyEnd_eq, hnext, freeUseLabel, ite_eq_right hn]
+      split_ifs <;> rfl
+    · have hne : st'.next + (i - 1) ≠ p := by omega
+      simp only [hi0, ite_false, hne, freeUseLabel, ite_eq_right hn]
+      rw [hnext]
+
+/-- Every pending free use has its explicit birth label at every later prefix. -/
+theorem pending_free_use_frame (n k : Nat) (hk : k ≤ nodeCount)
+    (i : Nat) (hi : i < (dagB.freeUses n).length)
+    (hu : dagB.Pending k (dagB.freeUses n)[i]) :
+    FrameFlow.last opFrame ((dagB.compileTo k).ops.map dagB.vop)
+      ((dagB.compileTo k).pend (dagB.freeUses n)[i]) =
+        some (frameOfLabel (freeUseLabel n i)) := by
+  have hs := dagB.srcNode_free (List.getElem_mem hi)
+  have hlt := FrameFlow.pending_src_lt dagB dagB_valid hu
+  rw [hs] at hlt
+  rw [FrameFlow.pending_birth_frame dagB dagB_valid opFrame k hk _ hu
+    (by simpa only [hs] using hlt), hs]
+  exact compiled_free_use_frame n (by omega) i hi
+
+/-- Linked uses retain the donor's addition frame until they are consumed. -/
+theorem pending_linked_use_frame (n k : Nat) (hk : k ≤ nodeCount)
+    (o : Bool) (t : Nat) (pos : Bool) (hlink : dagB.link n = some (o, t, pos))
+    (hu : dagB.Pending k (.gate t pos)) :
+    FrameFlow.last opFrame ((dagB.compileTo k).ops.map dagB.vop)
+      ((dagB.compileTo k).pend (.gate t pos)) =
+        some (frameOfLabel (AssignmentB.nodeLabel n)) := by
+  obtain ⟨hn, hN⟩ := dagB_valid.link_donor n o t pos hlink
+  have hs := dagB.srcNode_linked dagB_valid hN
+    (dagB.linkUse_eq.mpr ⟨o, t, pos, hlink, rfl⟩)
+  rw [FrameFlow.pending_birth_frame dagB dagB_valid opFrame k hk _ hu
+    (FrameFlow.pending_src_lt dagB dagB_valid hu), hs]
+  exact compiled_linked_use_frame n hn hN o t pos hlink
 
 end
 end IntegerMultBounds.MathlibTM2.M8.Global.DesignB

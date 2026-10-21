@@ -854,15 +854,10 @@ chunk before choosing.
   `frameB_compile_chain` for B2's node frames and the actual `dagB.compile`. This is a
   structural compiler theorem, not a replay certificate. It does not yet cover the
   concrete bank's varying late-copy frames; those need per-use alignment.
-  The next compiler invariant must track frames per pending use: additions consume the
-  actual donor source, copies use the target slot's `startLabel`, and the kept slot's
-  current frame advances through the last actual late copy. Reuse the already checked
-  complete-chain edges rather than adding another bank of geometric residual checks.
-  In that invariant, a free copied use retains its own copy frame; the kept head use
-  retains the last actual copy frame (not the unused final suffix frame). A linked use
-  retains its donor's addition frame. Leaf copies are converted by `vop` into independent
-  source gates, so their auxiliary wires retain their own V-start frames rather than a
-  shared pivot's last-copy frame.
+  The per-use invariant tracks actual donor additions, each copied slot's `startLabel`,
+  and the kept slot's last actual copy frame. Leaf copies become independent V sources.
+  Reuse the already checked complete-chain edges rather than adding another bank of
+  geometric residual checks.
   `Local/FrameFlow` now tracks arbitrary operation labels and proves wire chains from
   operation monotonicity, allowing different copy frames within one node. `FrameFlowB`
   handles V-leaf copies as independent sources and proves `pending_birth_frame`: every
@@ -875,8 +870,22 @@ chunk before choosing.
   internal use ends at the last allocated copy's start frame, or its node frame when
   no copy was made. These three modules check at 846, 918 and 1,663 MiB respectively
   (about 1.5, 1.5 and 2.9 seconds); the guarded target build peaks at 2.2 GiB.
-  Still needed: instantiate the birth-frame invariant at concrete argument uses and
-  establish the complete-chain edge correspondence, including boundary/readout phases.
+  `Local/WitnessOrderB` now identifies complete stored serving orders with the actual
+  compiler's sorted free uses, using membership checks at each consumer and generic
+  list permutation/sorting lemmas. The deterministic emitter fills default orders and
+  caches the next-slot counts; local recurrence checks prove these are exactly
+  `(dagB.compileTo n).next`. Each 4,096-node check is split into four independent
+  1,024-node declarations. No check evaluates a compiler prefix.
+  `Global/ArgumentFramesB.argument_frame` and `root_frame` instantiate the birth invariant
+  with direct labels from those tables, including linked donors and kept internal uses.
+  `Local/FrameCompile.compileTo_mono` proves whole-compiler monotonicity for arbitrary
+  operation frames from incoming-use edges and each node's copy chain; the concrete
+  `compiler_aux_chain` connects those two remaining geometric conditions to actual
+  framed compiler gates. ArgumentFramesB checks at 1,662 MiB / 1.8 seconds, FrameCompile
+  at 908 MiB / 1.2 seconds. All 51 emitted modules reproduce byte for byte; seven Python
+  framebank tests and the guarded build including the public theorem pass.
+  Still needed: discharge the direct incoming-frame and copy-chain geometric conditions
+  from the already checked complete chains, then handle boundary/readout phases.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
