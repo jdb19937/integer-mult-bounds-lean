@@ -37,8 +37,8 @@ variable {T k : ℕ} {capacity : Fintype.card (Graph.PC pieces97.length) ≤ 2^k
 
 /-- **The stage-2 PR97 family on the machine.** -/
 theorem rev97_family {C L : ℝ} (hC : 0 ≤ C) (hL : 0 ≤ L)
-    (hleaf : ∀ σ, σ.n < 529 → (inv hcore (by norm_num) H).ownCost σ ≤ C * L * volume prime σ.v)
-    (hnode : ∀ σ, 529 ≤ σ.n →
+    (hleaf : ∀ σ, H.Ok σ → σ.n < 529 → (inv hcore (by norm_num) H).ownCost σ ≤ C * L * volume prime σ.v)
+    (hnode : ∀ σ, H.Ok σ → 529 ≤ σ.n →
       (inv hcore (by norm_num) H).ownCost σ ≤ (C * σ.n + C * L) * volume prime σ.v) :
     ∀ n, 1 ≤ n → GraphExists.Contract (ht := Family.pcSlot_pos) (inv hcore (by norm_num) H) n
       (C / (1 - q₁) * n + C / (1 - qτ) * ((n : ℝ) ^ (1 - (saving : ℝ)) * L)) := by
@@ -46,7 +46,7 @@ theorem rev97_family {C L : ℝ} (hC : 0 ≤ C) (hL : 0 ≤ L)
   refine GraphExists.contract (ht := Family.pcSlot_pos) (inv hcore (by norm_num) H) (by norm_num)
     (by norm_num [roleCount]) (fun r h => ranks97_pos (hr ▸ h)) (fun r h => ranks97_lt (hr ▸ h))
     (by norm_num [saving]) hC hL (by exact_mod_cast q₁_lt_one) (by exact_mod_cast qτ_nonneg)
-    (by exact_mod_cast qτ_lt_one) ?_ ?_ hleaf hnode
+    (by exact_mod_cast qτ_lt_one) ?_ ?_ (fun σ _ hx => hleaf σ hx.1) (fun σ _ hx => hnode σ hx.1)
   · rw [hr]; exact_mod_cast moment₁_ranks97
   · rw [hr]; exact_mod_cast momentτ_ranks97
 

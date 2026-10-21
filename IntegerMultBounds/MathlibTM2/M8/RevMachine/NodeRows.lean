@@ -34,12 +34,13 @@ open NodeBank (tapes io wires wireSlot tempSlot roleBlock role_runs)
 
 theorem roleArray_surjective {c : ℕ} {v : Descriptor} (hd : c ∣ v.rows)
     (g : Fin c → Fin (volume prime (role v c)) → Fin 4) :
-    ∃ x : Fin (volume prime v) → Fin 4, ∀ j, RecursiveRowsSerialization.roleArray hd x j = g j := by
+    ∃ x : Fin (volume prime v) → Fin 4, (∀ j, RecursiveRowsSerialization.roleArray hd x j = g j) ∧
+      ∀ i, ∃ j z, x i = g j z := by
   refine ⟨fun idx =>
     let ik := finProdFinEquiv.symm (Fin.cast (RecursiveInterchangeRows.volume_split prime c v hd) idx)
     let jk := finProdFinEquiv.symm ik.2
     g jk.1 (Fin.cast (RecursiveInterchangeRows.role_volume prime c v).symm (finProdFinEquiv (ik.1, jk.2))),
-    fun j => ?_⟩
+    fun j => ?_, fun i => ⟨_, _, rfl⟩⟩
   funext z
   have he := finProdFinEquiv.apply_symm_apply
     (Fin.cast (RecursiveInterchangeRows.role_volume prime c v) z)
@@ -60,10 +61,14 @@ def TempsBlank {v : Descriptor} (data : RecursiveRowsSerialization.Data (tapes N
 theorem roleData_surjective {v : Descriptor} (hd : N.roleCount ∣ v.rows)
     (data : RecursiveRowsSerialization.Data (tapes N) (role v N.roleCount))
     (hio : NodeData N data) (ht : TempsBlank N data) :
-    ∃ x : Fin (volume prime v) → Fin 4, roleData (wires N) (NodeBank.mergeRoute N) hd x = data := by
-  obtain ⟨x, hx⟩ := roleArray_surjective hd
+    ∃ x : Fin (volume prime v) → Fin 4, roleData (wires N) (NodeBank.mergeRoute N) hd x = data ∧
+      ∀ i, ∃ j z, x i = data (wires N (Fin.natAdd 1 j)) z := by
+  obtain ⟨x, hx, hc⟩ := roleArray_surjective hd
     (fun j => data (wires N (Fin.natAdd 1 (NodeBank.mergeRoute N j))))
-  refine ⟨x, funext fun i => ?_⟩
+  refine ⟨x, funext fun i => ?_, fun i => ?_⟩
+  rotate_left
+  · obtain ⟨j, z, h⟩ := hc i
+    exact ⟨_, z, h⟩
   unfold roleData putData
   split_ifs with h
   · have hc := h.choose_spec

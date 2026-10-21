@@ -303,22 +303,24 @@ variable {pieces capacity}
 /-- **The node half**: shapes of the node's banks and the node's block runs between them. -/
 structure NodeHalf (N : NodeBlocks T k Seg Call) (m W : ℕ) (rank : Call → ℕ)
     (Good : Descriptor → Tapes T prime → Prop) where
+  /-- The frames the family serves. -/
+  Ok : Frame pieces capacity → Prop
   Node : Frame pieces capacity → ℕ → Tapes (count T) prime → Prop
   cSplit : Frame pieces capacity → ℕ
   cMerge : Frame pieces capacity → ℕ
   cSeg : Frame pieces capacity → Seg → ℕ
   cCall : Frame pieces capacity → Call → ℕ
-  split : ∀ σ roles, m ≤ σ.n → Good σ.v roles →
+  split : ∀ σ roles, Ok σ → m ≤ σ.n → Good σ.v roles →
     ∃ y, Node σ 0 y ∧ Runs N.split (σ.at roles (leafC σ.b m σ.n 0)) y (cSplit σ)
-  seg : ∀ σ y, m ≤ σ.n → ∀ (i : Graph.Site pieces) (s : Seg), pieces[i] = .seg s → Node σ i.val y →
+  seg : ∀ σ y, Ok σ → m ≤ σ.n → ∀ (i : Graph.Site pieces) (s : Seg), pieces[i] = .seg s → Node σ i.val y →
     ∃ y', Node σ (i.val+1) y' ∧ Runs (N.segment s) y y' (cSeg σ s)
-  call : ∀ σ y, m ≤ σ.n → ∀ (i : Graph.Site pieces) (c : Call), pieces[i] = .call c → Node σ i.val y →
-    ∃ τ : Frame pieces capacity, τ.n = rank c * (σ.n / m) ∧
+  call : ∀ σ y, Ok σ → m ≤ σ.n → ∀ (i : Graph.Site pieces) (c : Call), pieces[i] = .call c → Node σ i.val y →
+    ∃ τ : Frame pieces capacity, Ok τ ∧ τ.n = rank c * (σ.n / m) ∧
       (volume prime τ.v : ℝ) = volume prime σ.v / W ∧ τ.ret = .recover i ∧ τ.b = σ.b ∧
       ∃ roles, Good τ.v roles ∧ ∃ E R, E + R ≤ cCall σ c ∧
         Runs (N.enter c (Graph.returnCode pieces capacity i)) y (τ.at roles (Prepare.rest τ.b m)) E ∧
         ∀ roles', Good τ.v roles' → ∃ y', Node σ (i.val+1) y' ∧ Runs (N.recover c) (τ.exitAt roles' m) y' R
-  merge : ∀ σ y, m ≤ σ.n → Node σ pieces.length y →
+  merge : ∀ σ y, Ok σ → m ≤ σ.n → Node σ pieces.length y →
     ∃ roles, Good σ.v roles ∧ Runs N.merge y (σ.at roles (leafC σ.b m σ.n 0)) (cMerge σ)
 
 end Assembly
@@ -346,7 +348,7 @@ def inv {core : Graph.Block (count T) prime} {Good : Descriptor → Tapes T prim
   vol σ := volume prime σ.v
   ret σ := σ.ret
   leaves σ := σ.n % m
-  Entry σ x₀ := ∃ roles, Good σ.v roles ∧ x₀ = σ.at roles (Prepare.rest σ.b m)
+  Entry σ x₀ := H.Ok σ ∧ ∃ roles, Good σ.v roles ∧ x₀ = σ.at roles (Prepare.rest σ.b m)
   Leaf σ _ i y := ∃ roles, Good σ.v roles ∧ y = σ.at roles (leafC σ.b m σ.n (σ.n % m - i))
   Node σ _ i y := H.Node σ i y
   Done σ _ y := ∃ roles, Good σ.v roles ∧ y = σ.at roles (leafC σ.b m σ.n 0)
@@ -361,7 +363,7 @@ def inv {core : Graph.Block (count T) prime} {Good : Descriptor → Tapes T prim
   cSeg := H.cSeg
   cCall := H.cCall
   prepare σ x₀ := by
-    rintro ⟨roles, hg, rfl⟩
+    rintro ⟨-, roles, hg, rfl⟩
     exact ⟨_, ⟨roles, hg, by rw [Nat.sub_zero]; rfl⟩, prepare_runs σ.hb hm σ.hw⟩
   test_leaf σ x₀ i y _ hi := by
     rintro ⟨roles, hg, rfl⟩
@@ -382,16 +384,16 @@ def inv {core : Graph.Block (count T) prime} {Good : Descriptor → Tapes T prim
       (le_trans (Nat.sub_le _ _) (Nat.mod_le _ _)) σ.hfree hg
     rw [show σ.n % m - i - 1 = σ.n % m - (i + 1) by omega] at h
     exact ⟨_, ⟨roles', hg', rfl⟩, h⟩
-  split σ x₀ y _ hm' := by
+  split σ x₀ y hx hm' := by
     rintro ⟨roles, hg, rfl⟩
     rw [Nat.sub_self]
-    exact H.split σ roles hm' hg
-  seg σ x₀ y _ hm' i s hi hy := H.seg σ y hm' i s hi hy
-  call σ x₀ y _ hm' i c hi hy := by
-    obtain ⟨τ, hn, hv, hr, -, roles, hg, E, R, hER, he, hrec⟩ := H.call σ y hm' i c hi hy
-    exact ⟨τ, _, hn, hv, hr, ⟨roles, hg, rfl⟩, E, R, hER, he, fun z ⟨roles', hg', hz⟩ => hz ▸ hrec roles' hg'⟩
-  merge σ x₀ y _ hm' hy := by
-    obtain ⟨roles, hg, h⟩ := H.merge σ y hm' hy
+    exact H.split σ roles hx.1 hm' hg
+  seg σ x₀ y hx hm' i s hi hy := H.seg σ y hx.1 hm' i s hi hy
+  call σ x₀ y hx hm' i c hi hy := by
+    obtain ⟨τ, hok, hn, hv, hr, -, roles, hg, E, R, hER, he, hrec⟩ := H.call σ y hx.1 hm' i c hi hy
+    exact ⟨τ, _, hn, hv, hr, ⟨hok, roles, hg, rfl⟩, E, R, hER, he, fun z ⟨roles', hg', hz⟩ => hz ▸ hrec roles' hg'⟩
+  merge σ x₀ y hx hm' hy := by
+    obtain ⟨roles, hg, h⟩ := H.merge σ y hx.1 hm' hy
     exact ⟨_, ⟨roles, hg, rfl⟩, h⟩
   done_leaf σ x₀ y _ _ := by
     rintro ⟨roles, hg, rfl⟩
