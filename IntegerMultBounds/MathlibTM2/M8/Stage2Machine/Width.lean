@@ -23,7 +23,6 @@ increment, a power search, a fixed-base power and a constant writer on the bank 
 namespace IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Width
 
 noncomputable section
-set_option linter.unusedSimpArgs false
 open IntegerMultBounds.Machine
 open IntegerMultBounds.Machine.CounterDimensions (descriptorHead descriptorTape)
 open FlatCoordinateSchedule (bits)
@@ -57,9 +56,9 @@ theorem inc_step {s : State} {j : Fin 22} {v : ℕ} (hs : s j = some v) :
   rw [hv] at h
   refine placed_bank _ _ _ ?_ ?_ ?_ h
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [words, hs, descriptorHead, descriptorTape, BinaryDescriptorIncrement.bank, encoded_descriptor]
+      simp [words, hs, descriptorHead, descriptorTape, encoded_descriptor]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [words, descriptorHead, descriptorTape, BinaryDescriptorIncrement.bank, encoded_descriptor]
+      simp [words, descriptorHead, descriptorTape, encoded_descriptor]
   · intro k hk
     have : k ≠ j := fun h => hk 0 (by simp [h])
     simp [words, Function.update_of_ne this]
@@ -77,9 +76,9 @@ theorem const_step {s : State} {j : Fin 22} (n : ℕ) (hs : s j = none) :
       (by rw [RecursiveChildQuotientsConstant.bits_value])
   refine placed_bank _ _ _ ?_ ?_ ?_ h
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [words, hs, descriptorHead, descriptorTape, FiniteReturnStack.bank]
+      simp [words, hs, descriptorHead, descriptorTape]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [words, descriptorHead, descriptorTape, FiniteReturnStack.bank, encoded_descriptor, hv]
+      simp [words, descriptorHead, descriptorTape, encoded_descriptor, hv]
   · intro k hk
     have : k ≠ j := fun h => hk 0 (by simp [h])
     simp [words, Function.update_of_ne this]
@@ -109,11 +108,11 @@ theorem until_step {s : State} (B : ℕ) (hB : 2 ≤ B) {D : ℕ} (hD : s 4 = so
   refine placed_bank _ _ _ ?_ ?_ ?_ h
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [untilSlots, words, hD, h5, h6, h13, h14, h15, h16, h17, h18, descriptorHead, descriptorTape,
-        FixedBasePowerUntil.input, SharedPlacementAlphabet.setTape, SharedBank.empty, encoded_descriptor]
+        SharedBank.empty, encoded_descriptor]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [untilSlots, words, hD, h5, h6, h13, h14, h15, h16, h17, h18, descriptorHead, descriptorTape,
-        FixedBasePowerUntil.output, FixedBasePowerUntil.input, SharedPlacementAlphabet.setTape, SharedBank.empty,
-        encoded_descriptor, hp, hk, Function.update_apply]
+      simp [untilSlots, words, hD, h13, h14, h15, h16, h17, h18, descriptorHead, descriptorTape,
+        FixedBasePowerUntil.input, SharedPlacementAlphabet.setTape, SharedBank.empty,
+        encoded_descriptor, hp, hk]
   · intro k hk'
     have h5' : k ≠ 5 := fun h => hk' 5 (by simp [untilSlots, h])
     have h6' : k ≠ 6 := fun h => hk' 7 (by simp [untilSlots, h])
@@ -149,8 +148,8 @@ theorem pow_step {s : State} (B : ℕ) (hB : 2 ≤ B) {k : ℕ} (hk : s 10 = som
       simp [powSlots, words, hk, h12, h13, h14, h15, h16, h17, h18, descriptorHead, descriptorTape, encoded_binary]
   · rw [FixedBasePowerDescriptor.output, pow_input]
     apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [powSlots, words, hk, h12, h13, h14, h15, h16, h17, h18, descriptorHead, descriptorTape,
-        SharedPlacementAlphabet.setTape, encoded_binary, hp, Function.update_apply]
+      simp [powSlots, words, hk, h13, h14, h15, h16, h17, h18, descriptorHead, descriptorTape,
+        encoded_binary, hp]
   · intro j hj
     have : j ≠ 12 := fun h => hj 5 (by simp [powSlots, h])
     simp [words, Function.update_of_ne this]
@@ -237,51 +236,49 @@ theorem runs {e : ℕ} (he : 2 ≤ e) :
   let s17 := Straight.exec1 q (.erase 11) s16
   let s18 := Function.update s17 4 (some 529)
   have e1 : s1 = Function.update s0 4 (some e) := by
-    simp [s1, s0, Straight.exec1, init, Function.update_apply]
-  have h1 := Straight.run1 hq (.copy 3 4 copy_ne) s0 (by simp [Straight.Pre, s0, init, Function.update_apply])
+    simp [s1, s0, Straight.exec1, init]
+  have h1 := Straight.run1 hq (.copy 3 4 copy_ne) s0 (by simp [Straight.Pre, s0, init])
   have h2 := inc_step (q := q) (s := s1) (j := 4) (v := e) (by rw [e1]; simp)
   have h3 := until_step (q := q) (s := s2) 2 le_rfl (D := e + 1) (by simp [s2])
-    (by simp [s2, e1, s0, init, Function.update_apply]) (by simp [s2, e1, s0, init, Function.update_apply])
-    (by simp [s2, e1, s0, init, Function.update_apply]) (by simp [s2, e1, s0, init, Function.update_apply])
-    (by simp [s2, e1, s0, init, Function.update_apply]) (by simp [s2, e1, s0, init, Function.update_apply])
-    (by simp [s2, e1, s0, init, Function.update_apply]) (by simp [s2, e1, s0, init, Function.update_apply])
-  have h4 := Straight.run1 hq (.erase 4) s3 (by simp [Straight.Pre, s3, s2, Function.update_apply])
-  have h5 := Straight.run1 hq (.erase 5) s4 (by simp [Straight.Pre, s4, s3, Straight.exec1, Function.update_apply])
+    (by simp [s2, e1, s0, init]) (by simp [s2, e1, s0, init])
+    (by simp [s2, e1, s0, init]) (by simp [s2, e1, s0, init])
+    (by simp [s2, e1, s0, init]) (by simp [s2, e1, s0, init])
+    (by simp [s2, e1, s0, init]) (by simp [s2, e1, s0, init])
+  have h4 := Straight.run1 hq (.erase 4) s3 (by simp [Straight.Pre, s3, s2])
+  have h5 := Straight.run1 hq (.erase 5) s4 (by simp [Straight.Pre, s4, s3, Straight.exec1])
   have h6 := const_step (q := q) (s := s5) (j := 7) 1
-    (by simp [s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
+    (by simp [s5, s4, s3, s2, e1, s0, init, Straight.exec1])
   have h7 := const_step (q := q) (s := s6) (j := 8) K
-    (by simp [s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
+    (by simp [s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
   have h8 := Straight.run1 hq (.diff 6 7 9 diff_inj) s7
-    (by simp [Straight.Pre, Straight.val, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1,
-      Function.update_apply]; omega)
+    (by simp [Straight.Pre, Straight.val, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1]; omega)
   have h9 := Straight.run1 hq (.div 9 8 10 11 div_inj) s8
-    (by simp [Straight.Pre, Straight.val, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1,
-      Function.update_apply])
+    (by simp [Straight.Pre, Straight.val, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
   have e9 : s9 10 = some ((sz - 1) / K) := by
-    simp [s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Straight.val, Function.update_apply]
+    simp [s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Straight.val]
   have h10 := inc_step (q := q) (s := s9) (j := 10) e9
   have h11 := pow_step (q := q) (s := s10) 2 le_rfl (k := a) (by simp [s10])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
-    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
+    (by simp [s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
   have h12 := Straight.run1 hq (.erase 6) s11 (by simp [Straight.Pre, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2,
-    Straight.exec1, Function.update_apply])
+    Straight.exec1])
   have h13 := Straight.run1 hq (.erase 7) s12 (by simp [Straight.Pre, s12, s11, s10, s9, s8, s7, s6,
-    Straight.exec1, Function.update_apply])
+    Straight.exec1])
   have h14 := Straight.run1 hq (.erase 8) s13 (by simp [Straight.Pre, s13, s12, s11, s10, s9, s8, s7,
-    Straight.exec1, Function.update_apply])
+    Straight.exec1])
   have h15 := Straight.run1 hq (.erase 9) s14 (by simp [Straight.Pre, s14, s13, s12, s11, s10, s9, s8,
-    Straight.exec1, Function.update_apply])
+    Straight.exec1])
   have h16 := Straight.run1 hq (.erase 10) s15 (by simp [Straight.Pre, s15, s14, s13, s12, s11, s10,
-    Straight.exec1, Function.update_apply])
+    Straight.exec1])
   have h17 := Straight.run1 hq (.erase 11) s16 (by simp [Straight.Pre, s16, s15, s14, s13, s12, s11, s10, s9,
-    Straight.exec1, Function.update_apply])
+    Straight.exec1])
   have h18 := const_step (q := q) (s := s17) (j := 4) 529
-    (by simp [s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, Straight.exec1, Function.update_apply])
+    (by simp [s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, Straight.exec1])
   have hfin : s18 = final e := by
     funext i
     simp only [s18, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, final, init,
@@ -296,37 +293,37 @@ theorem runs {e : ℕ} (he : 2 ≤ e) :
   have hK : K = 1000 := rfl
   have c1 : Straight.cost1 q (.copy 3 4 copy_ne) s0 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s0, init] ; omega)
   have c4 : Straight.cost1 q (.erase 4) s3 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s3, s2, e1, s0, init] ; omega)
   have c5 : Straight.cost1 q (.erase 5) s4 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c8 : Straight.cost1 q (.diff 6 7 9 diff_inj) s7 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c9 : Straight.cost1 q (.div 9 8 10 11 div_inj) s8 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c12 : Straight.cost1 q (.erase 6) s11 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c13 : Straight.cost1 q (.erase 7) s12 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c14 : Straight.cost1 q (.erase 8) s13 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1])
   have c15 : Straight.cost1 q (.erase 9) s14 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c16 : Straight.cost1 q (.erase 10) s15 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have c17 : Straight.cost1 q (.erase 11) s16 ≤ 10000 * (3 * (e + 1) + K + 1) :=
     (Straight.cost1_le _ _).trans (by
-      simp [Straight.weight, Straight.val, s17, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1, Function.update_apply] <;> omega)
+      simp [Straight.weight, Straight.val, s16, s15, s14, s13, s12, s11, s10, s9, s8, s7, s6, s5, s4, s3, s2, e1, s0, init, Straight.exec1] ; omega)
   have l2 := Straight.length_le e
   have l10 := Straight.length_le ((sz - 1) / K)
   have hdiv : (sz - 1) / K ≤ sz := (Nat.div_le_self _ _).trans (Nat.sub_le _ _)
@@ -347,13 +344,13 @@ theorem cleans (e : ℕ) :
       (20000 * (e + 2) + 20000 * 530 + 1) := by
   have h1 := Straight.run1 hq (.erase 12) (final e) (by simp [Straight.Pre, final])
   have h2 := Straight.run1 hq (.erase 4) (Straight.exec1 q (.erase 12) (final e))
-    (by simp [Straight.Pre, final, Straight.exec1, Function.update_apply])
+    (by simp [Straight.Pre, final, Straight.exec1])
   have hi : Straight.exec1 q (.erase 4) (Straight.exec1 q (.erase 12) (final e)) = init e := by
     funext i; simp only [Straight.exec1, final, init, Function.update_apply]; fin_cases i <;> simp
   have c1 : Straight.cost1 q (.erase 12) (final e) ≤ 10000 * (Stage2Width.atomWidth K e + 1) :=
     (Straight.cost1_le _ _).trans (by simp [Straight.weight, Straight.val, final])
   have c2 : Straight.cost1 q (.erase 4) (Straight.exec1 q (.erase 12) (final e)) ≤ 10000 * (529 + 1) :=
-    (Straight.cost1_le _ _).trans (by simp [Straight.weight, Straight.val, final, Straight.exec1, Function.update_apply])
+    (Straight.cost1_le _ _).trans (by simp [Straight.weight, Straight.val, final, Straight.exec1])
   have hw : Stage2Width.atomWidth K e ≤ e + 2 := by
     have := Stage2Width.atomWidth_pos K e
     rcases Nat.lt_or_ge e 2 with h | h

@@ -61,7 +61,7 @@ def words (w : ℕ) (v : Descriptor) : Fin 15 → List Bool :=
 
 theorem childRoles_blank : NodePark.childRoles rev97m blankTape = SharedBank.empty (NodeBank.tapes rev97m) prime := by
   unfold NodePark.childRoles
-  apply congrArg₂ Tapes.mk <;> funext i <;> simp [SharedPlacementAlphabet.setTape, SharedBank.empty, Function.update_apply]
+  apply congrArg₂ Tapes.mk <;> funext i <;> simp [SharedBank.empty, Function.update_apply]
 
 /-- **The common bank of the core** holds the fifteen descriptors. -/
 theorem common_sparse (w : ℕ) (v : Descriptor) :
