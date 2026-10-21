@@ -474,8 +474,14 @@ PR97's plain-frame node (section 5).
   `d ← d + K σ(h)` and every interchange to `h_i ← σ(d_j)`, `d_j ← σ(h_i)`; so the reversed
   exchange over `S` is `twisted_rev_factor`. `TwistedProgram.lean`: the twisted semantics
   `twRun` of the unchanged field operations is the conjugated ordinary run (`twRun_eq`) when the
-  coefficients are scalars, and `revOps_twRun` runs the reversed exchange program. Remaining:
-  the coordinate stages with atomwise carries and a reversed head read.
+  coefficients are scalars, and `revOps_twRun` runs the reversed exchange program.
+- Machine side (done 2026-10-20): an atom operation is one ordinary operation per atom level on
+  `2 m f` coordinates (`AtomOps`). A padded shift with a three-field prefix
+  (`Machine/FlatPaddedShift`) and the scaling stage run from runtime counters
+  (`FlatPaddedShiftFromCounters`, `FlatPaddedScaleFromCounters`), so one fixed program serves every
+  `f`. `LevelLoop`, `AtomShiftLoop` and `AtomScaleLoop` loop over the levels; `AtomSegment.segment`
+  runs a whole nonrecursive segment at `segConst ops · f · V` (`segment_realizes`), with the
+  twisted semantics (`segment_twisted`). The loop count `f - 1` is still a supplied input.
 - Each lower-triangular factor expands to unit scalings and additions from earlier to later
   fields.
 - A cross-bank update `D_{i,t} += k H_{j,f−1−t}` reads an earlier head atom. So the
