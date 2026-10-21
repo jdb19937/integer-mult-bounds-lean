@@ -82,6 +82,24 @@ theorem cost_le {τ A A' C' : ℝ} (hτ : 1 / 2 ≤ τ) (hA : 0 ≤ A) {e r : �
   have h3 : 826 * U + 5 ≤ 1657 * V * (e : ℝ) ^ τ := by nlinarith
   nlinarith
 
+/-- **Below the threshold**: a stage-1 cost at the larger exponent `τ₁` is a constant times the
+stage-2 bound at `τ₂ ≤ τ₁`, since the width is bounded. -/
+theorem small_le {τ₁ τ₂ C₀ : ℝ} (hτ : τ₂ ≤ τ₁) (hC₀ : 0 ≤ C₀) {E e : ℕ} (he : e < E)
+    {V c : ℝ} (hV : 0 ≤ V) (hc : c ≤ C₀ * V * ((max 1 e : ℕ) : ℝ) ^ τ₁) :
+    c ≤ C₀ * (E : ℝ) ^ (τ₁ - τ₂) * V * ((max 1 e : ℕ) : ℝ) ^ τ₂ := by
+  have hm : (1 : ℝ) ≤ ((max 1 e : ℕ) : ℝ) := by exact_mod_cast le_max_left 1 e
+  have hmE : ((max 1 e : ℕ) : ℝ) ≤ E := by exact_mod_cast max_le (by omega) he.le
+  have hsplit : ((max 1 e : ℕ) : ℝ) ^ τ₁ = ((max 1 e : ℕ) : ℝ) ^ (τ₁ - τ₂) * ((max 1 e : ℕ) : ℝ) ^ τ₂ := by
+    rw [← Real.rpow_add (by linarith)]; ring_nf
+  have hle : ((max 1 e : ℕ) : ℝ) ^ (τ₁ - τ₂) ≤ (E : ℝ) ^ (τ₁ - τ₂) :=
+    Real.rpow_le_rpow (by linarith) hmE (by linarith)
+  have hpos : 0 ≤ ((max 1 e : ℕ) : ℝ) ^ τ₂ := Real.rpow_nonneg (by linarith) _
+  rw [hsplit] at hc
+  have : C₀ * V * (((max 1 e : ℕ) : ℝ) ^ (τ₁ - τ₂) * ((max 1 e : ℕ) : ℝ) ^ τ₂) ≤
+      C₀ * V * ((E : ℝ) ^ (τ₁ - τ₂) * ((max 1 e : ℕ) : ℝ) ^ τ₂) :=
+    mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hle hpos) (mul_nonneg hC₀ hV)
+  nlinarith
+
 variable [M8.Machine.Net] {k : ℕ} (capacity : Fintype.card (Graph.PC (RevHalf.pcs rev97m).length) ≤ 2^k)
 
 /-- **The stage-2 high body at its rows.** -/
