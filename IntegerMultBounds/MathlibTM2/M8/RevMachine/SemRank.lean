@@ -34,7 +34,7 @@ section Digits
 
 variable {Q : ℕ}
 
-theorem digit_mod (hQ : 0 < Q) {x K j : ℕ} (hj : j < K) : x % Q ^ K / Q ^ j % Q = x / Q ^ j % Q := by
+theorem digit_mod (_hQ : 0 < Q) {x K j : ℕ} (hj : j < K) : x % Q ^ K / Q ^ j % Q = x / Q ^ j % Q := by
   have hK : Q ^ K = Q ^ j * Q ^ (K - j) := by rw [← pow_add]; congr 1; omega
   rw [hK, Nat.mod_mul_right_div_self, Nat.mod_mod_of_dvd _ (dvd_pow_self Q (by omega))]
 
@@ -47,7 +47,7 @@ theorem digit_high (hQ : 0 < Q) {X Y K j : ℕ} (hY : Y < Q ^ K) (hj : K ≤ j) 
 theorem digit_div {x K j : ℕ} : x / Q ^ K / Q ^ j % Q = x / Q ^ (K + j) % Q := by
   rw [Nat.div_div_eq_div_mul, ← pow_add]
 
-theorem pack_lt_pow (hQ : 0 < Q) {X Y c N : ℕ} (hc : c ≤ N) (hX : X < Q ^ c) (hY : Y < Q ^ (N - c)) :
+theorem pack_lt_pow (_hQ : 0 < Q) {X Y c N : ℕ} (hc : c ≤ N) (hX : X < Q ^ c) (hY : Y < Q ^ (N - c)) :
     X * Q ^ (N - c) + Y < Q ^ N := by
   have h1 : X * Q ^ (N - c) + Y < (X + 1) * Q ^ (N - c) := by nlinarith
   have h2 : (X + 1) * Q ^ (N - c) ≤ Q ^ c * Q ^ (N - c) := Nat.mul_le_mul_right _ hX

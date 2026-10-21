@@ -319,7 +319,7 @@ theorem split_runs {v : Descriptor} {b n : ℕ} (hpos : v.Positive) (hb : 0 < b)
         (bank (roles data) (hdr (roleView N b n v)) fs p
           (RecursiveViewFrame.savedStack (hdr (midView N b n v)) (RecursiveViewFrame.savedStack (hdr v) node))
           scalar (nodeC N b (n / N.width)) st) (splitCost (N := N) v b n) :=
-  ⟨_, init_inv (v := midView N b n v) hd _ (fun i => hx _), split_runs_data hpos hb hw hn hd x⟩
+  ⟨_, init_inv (v := midView N b n v) hd _ (fun _ => hx _), split_runs_data hpos hb hw hn hd x⟩
 
 def mergeCountersCost (b n m : ℕ) : ℕ :=
   (2*(bits (n / m)).length+4) + (2*(bits (n / m - 1)).length+4) +

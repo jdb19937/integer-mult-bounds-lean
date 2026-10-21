@@ -248,7 +248,7 @@ theorem merge_revT (hd : rev97m.roleCount ∣ v.rows) (Ym : Fin (volume prime (m
       wireSlot rev97m (.inl (rev97m.roleEquiv (NodeBank.mergeRoute rev97m j))) := by simp [wires]
   rw [hwire, hrep x (.inl _) s, run97_identity _ (fun t => funext fun _ => rfl)] at c2
   have hroute : rev97m.route (rev97m.roleEquiv (NodeBank.mergeRoute rev97m j)) = rev97m.roleEquiv j := by
-    simp only [NodeBank.mergeRoute, Equiv.trans_apply, Equiv.coe_fn_mk, Equiv.apply_symm_apply]
+    simp only [NodeBank.mergeRoute, Equiv.trans_apply, Equiv.apply_symm_apply]
     exact rev97m.route_involutive _
   rw [hroute] at c2
   simp only [init, Equiv.symm_apply_apply] at c2

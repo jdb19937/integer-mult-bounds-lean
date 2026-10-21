@@ -67,7 +67,7 @@ theorem split_sem {b₀ : ℕ} (σ : Frame (pcs rev97m) capacity) (hok : Ok rev9
 
 /-- **The merge**: the reversed interchange of the middle view. -/
 theorem merge_sem {b₀ : ℕ} (σ : Frame (pcs rev97m) capacity) (YL : Fin (volume prime σ.v) → ZMod 2)
-    (y : Tapes (CommonBank.count (tapes rev97m)) prime) (hok : Ok rev97m b₀ σ) (hm : rev97m.width ≤ σ.n)
+    (y : Tapes (CommonBank.count (tapes rev97m)) prime) (_hok : Ok rev97m b₀ σ) (_hm : rev97m.width ≤ σ.n)
     (hy : NodeSem σ YL (pcs rev97m).length y) :
     ∃ Y : Fin (volume prime σ.v) → ZMod 2,
       RevT prime σ.b (rev97m.width * (σ.n / rev97m.width)) (midView rev97m σ.b σ.n σ.v) (ext YL) (ext Y) ∧
@@ -115,7 +115,7 @@ theorem mem_gate {g : Circuit.Gate (rev97m.World ⊕ rev97m.Temp) (ZMod 2)}
 
 /-- **A nonrecursive piece** keeps the data. -/
 theorem seg_sem {b₀ : ℕ} (σ : Frame (pcs rev97m) capacity) (YL : Fin (volume prime σ.v) → ZMod 2)
-    (y : Tapes (CommonBank.count (tapes rev97m)) prime) (hok : Ok rev97m b₀ σ) (hm : rev97m.width ≤ σ.n)
+    (y : Tapes (CommonBank.count (tapes rev97m)) prime) (_hok : Ok rev97m b₀ σ) (hm : rev97m.width ≤ σ.n)
     (i : Graph.Site (pcs rev97m)) (s : Schedule.Seg (rev97m.World ⊕ rev97m.Temp) rev97m.width)
     (hi : (pcs rev97m)[i] = .seg s) (hy : NodeSem σ YL i.val y) :
     ∃ y', NodeSem σ YL (i.val + 1) y' ∧ Runs (RevNode.segB rev97m s) y y' (RevHalf.segCost rev97m σ s) := by
@@ -133,7 +133,7 @@ theorem seg_sem {b₀ : ℕ} (σ : Frame (pcs rev97m) capacity) (YL : Fin (volum
     have hn : ∀ op ∈ ops, AffineFieldCoordinates.Nonrecursive op := by
       intro op hop
       have := hfree op hop
-      cases op <;> first | trivial | simp [AffineFieldProgram.isInterchange] at this
+      cases op <;> trivial
     have hf : 0 < σ.n / rev97m.width := Nat.div_pos hm (by have := rev97m.two_le_width; omega)
     have hw : (roleView rev97m σ.b σ.n σ.v).width = (rev97m.width * (σ.n / rev97m.width)) * σ.b := rfl
     set l := AtomRoleSegment.sops ops hfits
