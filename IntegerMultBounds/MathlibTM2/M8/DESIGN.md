@@ -863,6 +863,20 @@ chunk before choosing.
   retains its donor's addition frame. Leaf copies are converted by `vop` into independent
   source gates, so their auxiliary wires retain their own V-start frames rather than a
   shared pivot's last-copy frame.
+  `Local/FrameFlow` now tracks arbitrary operation labels and proves wire chains from
+  operation monotonicity, allowing different copy frames within one node. `FrameFlowB`
+  handles V-leaf copies as independent sources and proves `pending_birth_frame`: every
+  pending use retains its frame from the prefix immediately after its actual source.
+  This is a whole-prefix structural invariant, derived from the existing raw-node
+  invariant and the fact that V-leaf conversion only removes slot touches. Slot assignments
+  likewise remain fixed after creation, even after consumption. `Global/CopyFramesB`
+  connects these traces to actual `opBlocks` and `fseq`, and identifies concrete birth
+  frames for free leaf uses, internal copied/kept uses, and linked donor uses. The kept
+  internal use ends at the last allocated copy's start frame, or its node frame when
+  no copy was made. These three modules check at 846, 918 and 1,663 MiB respectively
+  (about 1.5, 1.5 and 2.9 seconds); the guarded target build peaks at 2.2 GiB.
+  Still needed: instantiate the birth-frame invariant at concrete argument uses and
+  establish the complete-chain edge correspondence, including boundary/readout phases.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
