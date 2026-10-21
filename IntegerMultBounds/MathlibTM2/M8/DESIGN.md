@@ -823,6 +823,12 @@ chunk before choosing.
   Complete mixed-chain data and its connection to B3 remain uncertified.
 
   Left for B5: emit the frame data on B3's word and the chain theorems per wire.
+  `Global/StageB` now constructs the first stage from B3's actual word, with separate
+  frame assignments for readouts, sources, side operations and output reads. Its
+  `stage_run`, `stage_target` and `stage_other` theorems reuse `ScalarB`: scalar correctness
+  is independent of the supplied frames. `Global/CentreBlocks` proves the temporary
+  implementation for arbitrary centre slots, so the new slot allocation is supported.
+  The signed assignment, wire-chain alignment and second/global stages remain.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.
