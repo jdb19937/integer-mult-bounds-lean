@@ -18,7 +18,7 @@ whose costs the parameters are intended to satisfy.
 namespace IntegerMultBounds.Parameters
 noncomputable section
 
-def tau : ℝ := 1 - 3734039 / 10 ^ 12
+def tau : ℝ := 1 - 96806834039 / 10 ^ 15
 def sigma : ℝ := 1 - 418 / 10 ^ 12
 def epsilon : ℝ := 1999 / 10000
 def spacing : ℝ := 1 / 5

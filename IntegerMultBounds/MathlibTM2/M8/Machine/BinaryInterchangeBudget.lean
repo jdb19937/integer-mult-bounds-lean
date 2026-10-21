@@ -3,7 +3,6 @@ module
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryInterchangeRun
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryAdjacentWidthRun
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualShared
-public import IntegerMultBounds.MathlibTM2.M8.Machine.BudgetBound
 
 /-! Uniform certified time bound for the concrete width-selecting binary
 interchange, including both physical comparisons and the selected branch. -/
@@ -12,10 +11,10 @@ interchange, including both physical comparisons and the selected branch. -/
 
 namespace IntegerMultBounds.MathlibTM2.M8.Machine.BinaryInterchangeRun
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.Networks
-variable [Net]
+variable [Stage2Machine.Total.Capacity]
 noncomputable section
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem short_canonical_budget (hs : Fin 5 → List Bool)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) (j : Fin 5) :
     ∀ i, GrowingCounterData.Canonical (shortWords hs j i) := by
@@ -25,7 +24,7 @@ private theorem short_canonical_budget (hs : Fin 5 → List Bool)
   · exact hc 2
   · exact hc j
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem short_values_h (P G B h d : ℕ) (hs : Fin 5 → List Bool)
     (hv : ∀ i, Counter.value (hs i) = values P G B h d i) :
     ∀ i, Counter.value (shortWords hs 3 i) = BinaryAdjacentWidthHeadersShared.values P G B h i := by
@@ -34,7 +33,7 @@ private theorem short_values_h (P G B h d : ℕ) (hs : Fin 5 → List Bool)
   · exact hv 1
   · exact hv 2
   · exact hv 3
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem short_values_d (P G B h d : ℕ) (hs : Fin 5 → List Bool)
     (hv : ∀ i, Counter.value (hs i) = values P G B h d i) :
     ∀ i, Counter.value (shortWords hs 4 i) = BinaryAdjacentWidthHeadersShared.values P G B d i := by
@@ -44,7 +43,7 @@ private theorem short_values_d (P G B h d : ℕ) (hs : Fin 5 → List Bool)
   · exact hv 2
   · exact hv 4
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem original_volume_bounds (P G B h d : ℕ)
     (hP : 0 < P) (hG : 0 < G) (hB : 0 < B) :
     0 < BinaryAdjacentWidthInterchange.volume P (2^h) G (2^d) B ∧
@@ -65,12 +64,13 @@ private theorem original_volume_bounds (P G B h d : ℕ)
   exact ⟨hhp.trans hhb,(Nat.le_of_lt (show h < 2^h from Nat.lt_two_pow_self)).trans hhb,
     (Nat.le_of_lt (show d < 2^d from Nat.lt_two_pow_self)).trans hdb⟩
 
+omit [Stage2Machine.Total.Capacity] in
 private theorem width_factor_mono (u h d : ℕ) (hu : u ≤ max h d) :
-    ((max 1 u : ℕ) : ℝ)^BudgetBound.tau ≤
-      ((max 1 (max h d) : ℕ) : ℝ)^BudgetBound.tau := by
+    ((max 1 u : ℕ) : ℝ)^Stage2Machine.Total.tau ≤
+      ((max 1 (max h d) : ℕ) : ℝ)^Stage2Machine.Total.tau := by
   apply Real.rpow_le_rpow (Nat.cast_nonneg _)
   · exact_mod_cast max_le_max_left 1 hu
-  · exact BudgetBound.exponent_range.1.le
+  · exact Stage2Machine.Total.tau_range.1.le
 
 /-- The actual finite-control program's cost is uniformly bounded in the
 original rectangular binary volume, for all adjacent widths including zero. -/
@@ -80,13 +80,13 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B h d : ℕ) (hs : Fin 5
     (∀ i, GrowingCounterData.Canonical (hs i)) →
     (cost P G B h d hs : ℝ) ≤
       C*(BinaryAdjacentWidthInterchange.volume P (2^h) G (2^d) B : ℝ)*
-        ((max 1 (max h d) : ℕ) : ℝ)^BudgetBound.tau := by
+        ((max 1 (max h d) : ℕ) : ℝ)^Stage2Machine.Total.tau := by
   obtain ⟨E,hE,hEq⟩ := BinaryRadixEqualShared.uniform_bound
   obtain ⟨A,hA,hAdj⟩ := BinaryAdjacentWidthRun.uniform_bound
   refine ⟨E+A+44,by linarith,?_⟩
   intro P G B h d hs hP hG hB hhd hdh hv hc
   let V := BinaryAdjacentWidthInterchange.volume P (2^h) G (2^d) B
-  let F := ((max 1 (max h d) : ℕ) : ℝ)^BudgetBound.tau
+  let F := ((max 1 (max h d) : ℕ) : ℝ)^Stage2Machine.Total.tau
   obtain ⟨hV,hhV,hdV⟩ := original_volume_bounds P G B h d hP hG hB
   have hsel := BinaryAdjacentWidthSelector.cost_volume (hs 3) (hs 4) (hc 3) (hc 4) V hV
     (by rw [hv]; exact hhV) (by rw [hv]; exact hdV)
@@ -94,7 +94,7 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B h d : ℕ) (hs : Fin 5
   have hselR' := (Nat.cast_le (α := ℝ)).mpr hselR
   simp only [Nat.cast_mul,Nat.cast_ofNat] at hselR'
   have hF : 1 ≤ F := Real.one_le_rpow (by exact_mod_cast le_max_left 1 (max h d))
-    BudgetBound.exponent_range.1.le
+    Stage2Machine.Total.tau_range.1.le
   have hlin := mul_le_mul_of_nonneg_left hF (Nat.cast_nonneg (α := ℝ) V)
   have hchosen : (BinaryAdjacentWidthSelectorDispatch.chosen h d
       (BinaryRadixEqualShared.cost P G B h (shortWords hs 3))

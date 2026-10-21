@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Supplier
 public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Spec
-public import IntegerMultBounds.Machine.BinaryRadixEqualShared
+public import IntegerMultBounds.MathlibTM2.M8.Global.SupplierNet
 
 /-!
 # The stage-2 supplier's bound

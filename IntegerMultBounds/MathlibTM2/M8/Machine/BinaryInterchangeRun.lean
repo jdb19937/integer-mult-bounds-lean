@@ -11,7 +11,7 @@ public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualShared
 
 namespace IntegerMultBounds.MathlibTM2.M8.Machine.BinaryInterchangeRun
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.Networks
-variable [Net]
+variable [Stage2Machine.Total.Capacity]
 noncomputable section
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open SharedPlacementAlphabet (setTape)
@@ -34,19 +34,15 @@ def slot (i : Fin t) : Fin (bankCount t+1) := Fin.castAdd 1 (Fin.castAdd 22
   (Fin.castAdd 17 (Fin.castAdd 1 (Fin.castAdd BinaryRadixEqualShared.count (prefixSlot i)))))
 def flag : Fin (bankCount t+1) := Fin.natAdd (bankCount t) 0
 
-theorem slot_injective : Function.Injective (slot (t := t)) := by
-  intro i j h
-  apply Fin.ext
-  have hv := congrArg Fin.val h
-  simp only [slot,prefixSlot,Fin.val_castAdd] at hv
-  exact hv
+theorem slot_injective : Function.Injective (slot (t := t)) := fun i j h => by
+  simpa only [slot,prefixSlot,Fin.castAdd_inj] using h
 
 theorem slot_ne_flag (i : Fin t) : slot i ≠ flag := by
   intro h
-  have hv := congrArg Fin.val h
-  simp only [slot,prefixSlot,flag,Fin.val_castAdd,Fin.val_natAdd,Fin.val_zero,Nat.add_zero] at hv
-  have hroom : t ≤ bankCount t := by unfold bankCount; omega
-  omega
+  have h1 : (slot i).val < bankCount t := Fin.castAdd_lt 1 _
+  have h2 : (flag (t := t)).val = bankCount t := rfl
+  rw [h, h2] at h1
+  exact Nat.lt_irrefl _ h1
 
 theorem input_cells (caller : Tapes t prime) (i : Fin t) :
     (input caller).head (slot i) = caller.head i ∧ (input caller).tape (slot i) = caller.tape i := by
@@ -82,7 +78,7 @@ def cost (P G B h d : ℕ) (hs : Fin 5 → List Bool) :=
       (BinaryAdjacentWidthRun.cost P G B d (shortWords hs 4))
       (BinaryAdjacentWidthRun.cost P G B h (shortWords hs 3))
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem short_sources (caller : Tapes t prime) (focus : Fin 5 → Fin t)
     (hs : Fin 5 → List Bool)
     (ht : ∀ i, caller.tape (focus i) = RadixZeroFill.encodedBinary (hs i))
@@ -100,7 +96,7 @@ private theorem short_sources (caller : Tapes t prime) (focus : Fin 5 → Fin t)
     · exact hh 2
     · exact hh j
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem short_canonical (hs : Fin 5 → List Bool)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) (j : Fin 5) :
     ∀ i, GrowingCounterData.Canonical (shortWords hs j i) := by
@@ -110,7 +106,7 @@ private theorem short_canonical (hs : Fin 5 → List Bool)
   · exact hc 2
   · exact hc j
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem prefix_sources (caller : Tapes t prime) (focus : Fin 4 → Fin t)
     (hs : Fin 4 → List Bool) (hsrc : Sources caller focus hs) :
     Sources (BinaryAdjacentWidthPrefixShared.input caller) (fun i => prefixSlot (focus i)) hs := by

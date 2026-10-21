@@ -1,22 +1,19 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthOriginalTotalRun
+public import IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Total
 public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixRootEncoding
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixRangeRuntimeBudget
-public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthElementary
 public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthHighExchangeShared
-public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthHighPrepareShared
-public import IntegerMultBounds.MathlibTM2.M8.Machine.BudgetBound
 
 /-! Complete equal-width binary H/D interchange through radix padding. Every
-conversion, root header, recursive branch, crop and erasure is physically run. -/
+conversion, root header, recursive branch, crop and erasure is physically run. The root
+descriptor runs through the stage-2 supplier (`Stage2Machine.Total`). -/
 
 @[expose] public section
 
 namespace IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualRun
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.Networks
-variable [Net]
 noncomputable section
 open Networks
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
@@ -25,15 +22,13 @@ open RadixRangeDescriptors (exponent)
 open BinaryRadixRangePrepareAlphabet (word prepared)
 open BinaryRadixRootHeadersShared (preparedWords)
 open SharedPlacementAlphabet (setTape)
-open IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthHighExchangeJoin (exchangeCount movementCount)
-open IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthHighRun (paddingCount)
+open IntegerMultBounds.MathlibTM2.M8.Stage2Machine (Total.Capacity)
+variable [Total.Capacity]
 
-def extendPrivate {states : ℕ} (M : Program 26 states prime) :=
-  extend (extend (extend (extend (extend (extend (extend (extend (extend M 16) 19) 17) 12) 1)
-    exchangeCount) movementCount) paddingCount) ArbitraryWidthElementary.tapeCount
+def extendPrivate {states : ℕ} (M : Program 26 states prime) := Stage2Machine.Total.extendPrivate M
 
 def input (source : ℤ → Fin (prime+4)) (hs : Fin 4 → List Bool) :=
-  ArbitraryWidthOriginalTotalRun.input (BinaryRadixRootHeadersShared.input
+  Stage2Machine.Total.input (BinaryRadixRootHeadersShared.input
     (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs))
 
 def headers : Fin 6 → Fin 26 := Fin.natAdd 20
@@ -43,32 +38,26 @@ def prepareProgram := extendPrivate (extend (extend
   (BinaryRadixRangePrepareAlphabet.program (a := prime) prime) 1) 6)
 def rootProgram := extendPrivate (BinaryRadixRootHeadersShared.program (a := prime)
   BinaryRadixRootHeadersShared.preparedSources)
-def runProgram := ArbitraryWidthOriginalTotalRun.program headers source
+def runProgram := Stage2Machine.Total.program headers source
 def eraseProgram := extendPrivate (BinaryRadixRootHeadersShared.cleanup (a := prime) (t := 19))
 def finishProgram := extendPrivate (extend (extend
   (BinaryRadixRangePrepareAlphabet.finishProgram (a := prime)) 1) 6)
-def program := seq (seq (seq (seq prepareProgram rootProgram) (ArbitraryWidthOriginalTotalRun.program headers source)) eraseProgram) finishProgram
+def program := seq (seq (seq (seq prepareProgram rootProgram) runProgram) eraseProgram) finishProgram
 
-def cost (P G B u : ℕ) (hs : Fin 4 → List Bool) :=
+def cost (P G B u : ℕ) (_hs : Fin 4 → List Bool) :=
   BinaryRadixRangePrepare.prepareConstant prime*RadixRangePadding.volume P (2^u) G B+1+
     80*RadixRangePadding.volume P (2^u) G B+1+
-    ArbitraryWidthOriginalTotalRun.cost (originalDescriptor P (exponent prime u) G B)
-      (BinaryRadixRootHeadersShared.words (preparedWords prime u hs))+1+
+    Stage2Machine.Total.cost (originalDescriptor P (exponent prime u) G B)+1+
     54*RadixRangePadding.volume P (2^u) G B+1+
     BinaryRadixRangePrepare.finishConstant prime*RadixRangePadding.volume P (2^u) G B
 
 private theorem private_hoare {states budget : ℕ} {M : Program 26 states prime}
     {v w : Tapes 26 prime} (h : HoareTime M (fun z => z = v) (fun z => z = w) budget) :
-    HoareTime (extendPrivate M) (fun z => z = ArbitraryWidthOriginalTotalRun.input v)
-      (fun z => z = ArbitraryWidthOriginalTotalRun.input w) budget :=
-  hoare_extend_eq (hoare_extend_eq (hoare_extend_eq (hoare_extend_eq (hoare_extend_eq
-    (hoare_extend_eq (hoare_extend_eq (hoare_extend_eq (hoare_extend_eq h
-    (FixedHeaderBankCopy.empty 16)) ArbitraryWidthHighPrepareShared.privateInput)
-    (FixedHeaderBankCopy.empty 17)) (FixedHeaderBankCopy.empty 12)) ArbitraryWidthZeroHeaderShared.empty)
-    (SharedBank.empty exchangeCount prime)) (SharedBank.empty movementCount prime))
-    (SharedBank.empty paddingCount prime)) (FixedHeaderBankCopy.empty ArbitraryWidthElementary.tapeCount)
+    HoareTime (extendPrivate M) (fun z => z = Stage2Machine.Total.input v)
+      (fun z => z = Stage2Machine.Total.input w) budget :=
+  Stage2Machine.Total.private_hoare h
 
-omit [Net] in
+omit [Total.Capacity] in
 private theorem five_hoare {t a s1 s2 s3 s4 s5 b1 b2 b3 b4 b5 : ℕ}
     {M1 : Program t s1 a} {M2 : Program t s2 a} {M3 : Program t s3 a}
     {M4 : Program t s4 a} {M5 : Program t s5 a} {p0 p1 p2 p3 p4 p5 : TapePred t a}
@@ -77,7 +66,7 @@ private theorem five_hoare {t a s1 s2 s3 s4 s5 b1 b2 b3 b4 b5 : ℕ}
     HoareTime (seq (seq (seq (seq M1 M2) M3) M4) M5) p0 p5
       (b1+1+b2+1+b3+1+b4+1+b5) := (((h1.seq h2).seq h3).seq h4).seq h5
 
-omit [Net] in
+omit [Total.Capacity] in
 private theorem changed_root (u : ℕ) (hs : Fin 4 → List Bool) (s s' : ℤ → Fin (prime+4)) :
     setTape (BinaryRadixRootHeadersShared.output (prepared prime u s (fun _ => blank) hs)
       (preparedWords prime u hs)) source s' 0 =
@@ -121,7 +110,7 @@ theorem runs (P G B u : ℕ) (hs : Fin 4 → List Bool)
     rw [BinaryRadixRootEncoding.pad_bits]
   have hp : (originalDescriptor P (exponent prime u) G B).Positive :=
     ⟨hP,by change 0 < 1; decide,by change 0 < 1; decide,hG,hB⟩
-  have h3 := ArbitraryWidthOriginalTotalRun.runs caller headers source
+  have h3 := Stage2Machine.Total.runs caller headers source
     (originalDescriptor P (exponent prime u) G B) (BinaryRadixRootHeadersShared.words (preparedWords prime u hs))
     hp (BinaryRadixRootHeadersShared.prepared_headers prime P G B u hs hv hc)
     (fun i => (BinaryRadixRootHeadersShared.header_cells _ _ i).2)
@@ -142,8 +131,7 @@ theorem runs (P G B u : ℕ) (hs : Fin 4 → List Bool)
   exact five_hoare h1 h2 h3 h4 h5
 
 theorem cost_eq_combined (P G B u : ℕ) (hs : Fin 4 → List Bool) :
-    cost P G B u hs = BinaryRadixRangeRuntimeBudget.combinedCost P G B u
-      (BinaryRadixRootHeadersShared.words (preparedWords prime u hs)) := by
+    cost P G B u hs = BinaryRadixRangeRuntimeBudget.combinedCost P G B u := by
   simp only [cost,BinaryRadixRangeRuntimeBudget.combinedCost,
     BinaryRadixRangeRuntimeBudget.overheadCoefficient,BinaryRadixRangeRuntimeBudget.originalVolume,
     BinaryRadixRangeRuntimeBudget.rootCost,BinaryRadixRangeRuntimeBudget.rootDescriptor,Nat.add_mul]
@@ -156,13 +144,12 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
     (∀ i, Counter.value (hs i) = BinaryRadixRangePrepare.values P G B u i) →
     (∀ i, GrowingCounterData.Canonical (hs i)) →
     (cost P G B u hs : ℝ) ≤ C*(RadixRangePadding.volume P (2^u) G B : ℝ)*
-      ((max 1 u : ℕ) : ℝ)^BudgetBound.tau := by
+      ((max 1 u : ℕ) : ℝ)^Stage2Machine.Total.tau := by
   obtain ⟨C,hC,hbound⟩ := BinaryRadixRangeRuntimeBudget.uniform_bound
   refine ⟨C,hC,?_⟩
-  intro P G B u hs hP hG hB hv hc
+  intro P G B u hs hP hG hB _ _
   rw [cost_eq_combined]
-  exact hbound P G B u _ hP hG hB
-    (BinaryRadixRootHeadersShared.prepared_headers prime P G B u hs hv hc)
+  exact hbound P G B u hP hG hB
 
 end
 end IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualRun

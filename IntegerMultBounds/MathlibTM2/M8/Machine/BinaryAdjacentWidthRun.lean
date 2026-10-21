@@ -4,7 +4,6 @@ public import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualShared
-public import IntegerMultBounds.MathlibTM2.M8.Machine.BudgetBound
 
 /-! Actual adjacent binary-width interchange, with physically constructed
 prefix and movement headers and blank private workspace at both endpoints. -/
@@ -13,7 +12,7 @@ prefix and movement headers and blank private workspace at both endpoints. -/
 
 namespace IntegerMultBounds.MathlibTM2.M8.Machine.BinaryAdjacentWidthRun
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.Networks
-variable [Net]
+variable [Stage2Machine.Total.Capacity]
 noncomputable section
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open SharedPlacementAlphabet (setTape)
@@ -48,7 +47,7 @@ def cost (P G B u : ℕ) (hs : Fin 4 → List Bool) :=
   BinaryAdjacentWidthPrefixShared.coefficient*volume P G B u + BinaryRadixEqualShared.cost (P*2) G B u (BinaryAdjacentWidthPrefixShared.equalWords P G B hs) +
     BinaryAdjacentWidthMovementShared.constructedCoefficient*volume P G B u + 210*volume P G B u + 3
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem equal_values (P G B u : ℕ) (hs : Fin 4 → List Bool)
     (hv : ∀ i, Counter.value (hs i) = values P G B u i) :
     ∀ i, Counter.value (BinaryAdjacentWidthPrefixShared.equalWords P G B hs i) = BinaryRadixRangePrepare.values (P*2) G B u i := by
@@ -57,7 +56,7 @@ private theorem equal_values (P G B u : ℕ) (hs : Fin 4 → List Bool)
   · exact hv 1
   · exact hv 2
   · exact hv 3
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem equal_canonical (P G B : ℕ) (hs : Fin 4 → List Bool)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
     ∀ i, GrowingCounterData.Canonical (BinaryAdjacentWidthPrefixShared.equalWords P G B hs i) := by
@@ -67,14 +66,14 @@ private theorem equal_canonical (P G B : ℕ) (hs : Fin 4 → List Bool)
   · exact hc 2
   · exact hc 3
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem prefix_setTape (caller : Tapes t prime) (P G B : ℕ)
     (hs : Fin 4 → List Bool) (payload : Fin t) (word : ℤ → Fin (prime+4)) :
     setTape (BinaryAdjacentWidthPrefixShared.output caller P G B hs) (prefixSlot payload) word 0 =
       BinaryAdjacentWidthPrefixShared.output (setTape caller payload word 0) P G B hs := by
   simp only [BinaryAdjacentWidthPrefixShared.output,prefixSlot,SharedPlacementAlphabet.setTape_append_left]
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 private theorem source_changed (caller : Tapes t prime) (focus : Fin 4 → Fin t)
     (payload : Fin t) (hs : Fin 4 → List Bool) (hsrc : Sources caller focus hs)
     (hh : caller.head payload = 0) (word : ℤ → Fin (prime+4)) :
@@ -228,7 +227,7 @@ def afterUnmoveBits {P N G B : ℕ}
     (RecursiveInterchangeRows.pack (RecursiveInterchangeRows.pack
       (RecursiveInterchangeRows.pack pq.1 se.1) pq.2) se.2))
 
-omit [Net] in
+omit [Stage2Machine.Total.Capacity] in
 theorem afterUnmoveBits_encoded {P N G B : ℕ}
     (y : Fin (BinaryAdjacentWidthInterchange.volume P N G (2*N) B) → Bool) :
     (fun i => bitSymbol (a := prime) (afterUnmoveBits y i)) =
@@ -277,7 +276,7 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
     (∀ i, Counter.value (hs i) = values P G B u i) →
     (∀ i, GrowingCounterData.Canonical (hs i)) →
     (cost P G B u hs : ℝ) ≤ C*(volume P G B u : ℝ)*
-      ((max 1 u : ℕ) : ℝ)^BudgetBound.tau := by
+      ((max 1 u : ℕ) : ℝ)^Stage2Machine.Total.tau := by
   obtain ⟨C,hC,hbound⟩ := BinaryRadixEqualShared.uniform_bound
   let L := BinaryAdjacentWidthPrefixShared.coefficient +
     BinaryAdjacentWidthMovementShared.constructedCoefficient + 213
@@ -291,8 +290,8 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
   rw [he] at hb
   have hVnat := (BinaryAdjacentWidthHeadersShared.volume_bounds P G B u hP hG hB).1
   have hV : 1 ≤ (volume P G B u : ℝ) := by exact_mod_cast hVnat
-  have hp : 1 ≤ ((max 1 u : ℕ) : ℝ)^BudgetBound.tau := Real.one_le_rpow
-    (by exact_mod_cast le_max_left 1 u) BudgetBound.exponent_range.1.le
+  have hp : 1 ≤ ((max 1 u : ℕ) : ℝ)^Stage2Machine.Total.tau := Real.one_le_rpow
+    (by exact_mod_cast le_max_left 1 u) Stage2Machine.Total.tau_range.1.le
   have hlin := mul_le_mul_of_nonneg_left hp (Nat.cast_nonneg (α := ℝ) (volume P G B u))
   have hL := Nat.cast_nonneg (α := ℝ) L
   have hh := mul_le_mul_of_nonneg_left hlin hL

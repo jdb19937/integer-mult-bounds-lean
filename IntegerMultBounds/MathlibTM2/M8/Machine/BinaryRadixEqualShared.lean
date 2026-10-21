@@ -1,13 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualRun
-public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthOriginalTotalRun
 public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
-public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
-public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthElementary
-public import IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthOriginalZeroBranch
-public import IntegerMultBounds.MathlibTM2.M8.Machine.BudgetBound
 
 /-! Equal binary interchange on a shared caller tape. The sole four original
 headers are physically copied into the blank private bank and erased again. -/
@@ -16,82 +11,52 @@ headers are physically copied into the blank private bank and erased again. -/
 
 namespace IntegerMultBounds.MathlibTM2.M8.Machine.BinaryRadixEqualShared
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.Networks
-variable [Net]
 noncomputable section
 open Networks
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
-open IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthHighExchangeJoin (exchangeCount movementCount)
-open IntegerMultBounds.MathlibTM2.M8.Machine.ArbitraryWidthHighRun (paddingCount)
-open ArbitraryWidthExecutionPrivateHeadersAppend (leftSlots append_empty left_injective)
 open FixedHeaderSparseBankCopy (headerBank)
 open SharedPlacementAlphabet (setTape)
 open BinaryAdjacentWidthHeadersShared (Sources)
+open IntegerMultBounds.MathlibTM2.M8.Stage2Machine (Padded Total.Capacity)
+open IntegerMultBounds.MathlibTM2.M8.Stage2Machine.Total (tau tau_range empty_blank)
+variable [Total.Capacity]
 variable {t : ℕ}
 
-abbrev count := ArbitraryWidthOriginalZeroBranch.count 26
+abbrev count := Stage2Machine.Total.count 26
+
+omit [Total.Capacity] in
+/-- The root headers' banks pad the prepared bank. -/
+theorem root_pad : Padded (BinaryRadixRootHeadersShared.input (a := prime) (t := 19))
+    (fun i => Fin.castAdd 6 (Fin.castAdd 1 i)) :=
+  (Padded.append (FixedHeaderBankCopy.empty 1) empty_blank).comp
+    (Padded.append (FixedHeaderBankCopy.empty 6) empty_blank)
 
 def liftBank (v : Tapes 19 prime) : Tapes count prime :=
-  (((((((((((v).append (SharedBank.empty 1 prime)).append (SharedBank.empty 6 prime)).append (SharedBank.empty 16 prime)).append (SharedBank.empty 19 prime)).append (SharedBank.empty 17 prime)).append (SharedBank.empty 12 prime)).append (SharedBank.empty 1 prime)).append (SharedBank.empty exchangeCount prime)).append (SharedBank.empty movementCount prime)).append (SharedBank.empty paddingCount prime)).append (SharedBank.empty ArbitraryWidthElementary.tapeCount prime)
+  Stage2Machine.Total.input (BinaryRadixRootHeadersShared.input v)
 
-def liftSlot (i : Fin 19) : Fin count :=
-  Fin.castAdd ArbitraryWidthElementary.tapeCount (Fin.castAdd paddingCount (Fin.castAdd movementCount (Fin.castAdd exchangeCount (Fin.castAdd 1 (Fin.castAdd 12 (Fin.castAdd 17 (Fin.castAdd 19 (Fin.castAdd 16 (Fin.castAdd 6 (Fin.castAdd 1 (i)))))))))))
+def liftSlot (i : Fin 19) : Fin count := Stage2Machine.Total.slot (Fin.castAdd 6 (Fin.castAdd 1 i))
+
+theorem lift_pad : Padded liftBank liftSlot := root_pad.comp Stage2Machine.Total.input_pad
 
 def lowDestination : Fin 4 → Fin 19 := ![2,3,4,5]
 def destination (i : Fin 4) := liftSlot (lowDestination i)
 def sourceSlot := liftSlot 0
 
-omit [Net] in
+omit [Total.Capacity] in
 theorem lowDestination_injective : Function.Injective lowDestination := by
   intro i j h
   fin_cases i <;> fin_cases j <;> first | rfl | norm_num [lowDestination] at h
 
-theorem liftSlot_injective : Function.Injective liftSlot := by
-  intro i j h
-  apply Fin.ext
-  have hv := congrArg Fin.val h
-  simp only [liftSlot,Fin.val_castAdd] at hv
-  exact hv
+theorem liftSlot_injective : Function.Injective liftSlot := lift_pad.inj
 
 theorem destination_injective : Function.Injective destination :=
   liftSlot_injective.comp lowDestination_injective
 
 theorem liftBank_sparse (hs : Fin 4 → List Bool) :
-    liftBank (headerBank lowDestination hs) = headerBank destination hs := by
-  have hi0 := left_injective (r := 1) (lowDestination) (lowDestination_injective)
-  have he0 := append_empty (a := prime) (r := 1) (lowDestination) (lowDestination_injective) hs
-  have hi1 := left_injective (r := 6) (leftSlots (r := 1) (lowDestination)) (hi0)
-  have he1 := (congrArg (fun v => v.append (SharedBank.empty 6 prime)) he0).trans
-    (append_empty (leftSlots (r := 1) (lowDestination)) (hi0) hs)
-  have hi2 := left_injective (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))) (hi1)
-  have he2 := (congrArg (fun v => v.append (SharedBank.empty 16 prime)) he1).trans
-    (append_empty (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))) (hi1) hs)
-  have hi3 := left_injective (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))) (hi2)
-  have he3 := (congrArg (fun v => v.append (SharedBank.empty 19 prime)) he2).trans
-    (append_empty (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))) (hi2) hs)
-  have hi4 := left_injective (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))) (hi3)
-  have he4 := (congrArg (fun v => v.append (SharedBank.empty 17 prime)) he3).trans
-    (append_empty (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))) (hi3) hs)
-  have hi5 := left_injective (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))))) (hi4)
-  have he5 := (congrArg (fun v => v.append (SharedBank.empty 12 prime)) he4).trans
-    (append_empty (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))))) (hi4) hs)
-  have hi6 := left_injective (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))))) (hi5)
-  have he6 := (congrArg (fun v => v.append (SharedBank.empty 1 prime)) he5).trans
-    (append_empty (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))))) (hi5) hs)
-  have hi7 := left_injective (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))))))) (hi6)
-  have he7 := (congrArg (fun v => v.append (SharedBank.empty exchangeCount prime)) he6).trans
-    (append_empty (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))))))) (hi6) hs)
-  have hi8 := left_injective (r := movementCount) (leftSlots (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))))))) (hi7)
-  have he8 := (congrArg (fun v => v.append (SharedBank.empty movementCount prime)) he7).trans
-    (append_empty (leftSlots (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))))))) (hi7) hs)
-  have hi9 := left_injective (r := paddingCount) (leftSlots (r := movementCount) (leftSlots (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))))))))) (hi8)
-  have he9 := (congrArg (fun v => v.append (SharedBank.empty paddingCount prime)) he8).trans
-    (append_empty (leftSlots (r := movementCount) (leftSlots (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination)))))))))) (hi8) hs)
-  have hi10 := left_injective (r := ArbitraryWidthElementary.tapeCount) (leftSlots (r := paddingCount) (leftSlots (r := movementCount) (leftSlots (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))))))))) (hi9)
-  have he10 := (congrArg (fun v => v.append (SharedBank.empty ArbitraryWidthElementary.tapeCount prime)) he9).trans
-    (append_empty (leftSlots (r := paddingCount) (leftSlots (r := movementCount) (leftSlots (r := exchangeCount) (leftSlots (r := 1) (leftSlots (r := 12) (leftSlots (r := 17) (leftSlots (r := 19) (leftSlots (r := 16) (leftSlots (r := 6) (leftSlots (r := 1) (lowDestination))))))))))) (hi9) hs)
-  exact he10
+    liftBank (headerBank lowDestination hs) = headerBank destination hs :=
+  lift_pad.headerBank_eq lowDestination lowDestination_injective hs
 
-omit [Net] in
+omit [Total.Capacity] in
 theorem low_sparse (hs : Fin 4 → List Bool) :
     BinaryRadixRangePrepareAlphabet.input (a := prime) (fun _ => blank) (fun _ => blank) hs =
       headerBank lowDestination hs := by
@@ -109,9 +74,8 @@ theorem private_bank (hs : Fin 4 → List Bool) :
   rw [bank,low_sparse,liftBank_sparse]
 
 theorem liftBank_cells (v : Tapes 19 prime) (i : Fin 19) :
-    (liftBank v).head (liftSlot i) = v.head i ∧ (liftBank v).tape (liftSlot i) = v.tape i := by
-  simp only [liftBank,liftSlot,Tapes.append,Fin.addCases_left]
-  exact ⟨trivial,trivial⟩
+    (liftBank v).head (liftSlot i) = v.head i ∧ (liftBank v).tape (liftSlot i) = v.tape i :=
+  ⟨lift_pad.head v i, lift_pad.tape v i⟩
 
 theorem bank_source (source : ℤ → Fin (prime+4)) (hs : Fin 4 → List Bool) :
     (bank source hs).head sourceSlot = 0 ∧ (bank source hs).tape sourceSlot = source :=
@@ -122,12 +86,8 @@ theorem bank_set_source (source spare : ℤ → Fin (prime+4)) (hs : Fin 4 → L
   have hl : setTape (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs) 0 spare 0 =
       BinaryRadixRangePrepareAlphabet.input spare (fun _ => blank) hs := by
     apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-  have h : setTape (liftBank (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs))
-      (liftSlot 0) spare 0 =
-      liftBank (setTape (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs) 0 spare 0) := by
-    simp only [liftBank,liftSlot,SharedPlacementAlphabet.setTape_append_left]
-  rw [hl] at h
-  exact h
+  rw [bank, bank, ← hl]
+  exact (lift_pad.set _ 0 spare 0).symm
 
 theorem destination_room : 4 ≤ count := by
   have h := Fintype.card_le_of_injective destination destination_injective
@@ -138,7 +98,7 @@ def copyProgram (focus : Fin 4 → Fin t) := FixedHeaderSparseBankCopy.program
 def eraseProgram := FixedHeaderSparseBankCopy.cleanup
   (a := prime) (by omega : 0 < t+4) destination destination_injective destination_room
 
-omit [Net] in
+omit [Total.Capacity] in
 theorem header_bounds (P G B u : ℕ) (hs : Fin 4 → List Bool)
     (hP : 0 < P) (hG : 0 < G) (hB : 0 < B)
     (hv : ∀ i, Counter.value (hs i) = BinaryRadixRangePrepare.values P G B u i) :
@@ -229,15 +189,15 @@ theorem uniform_bound : ∃ C : ℝ, 0 < C ∧ ∀ (P G B u : ℕ) (hs : Fin 4 �
     (∀ i, Counter.value (hs i) = BinaryRadixRangePrepare.values P G B u i) →
     (∀ i, GrowingCounterData.Canonical (hs i)) →
     (cost P G B u hs : ℝ) ≤ C*(RadixRangePadding.volume P (2^u) G B : ℝ)*
-      ((max 1 u : ℕ) : ℝ)^BudgetBound.tau := by
+      ((max 1 u : ℕ) : ℝ)^Stage2Machine.Total.tau := by
   obtain ⟨C,hC,hbound⟩ := BinaryRadixEqualRun.uniform_bound
   refine ⟨C+78,by linarith,?_⟩
   intro P G B u hs hP hG hB hv hc
   have hb := hbound P G B u hs hP hG hB hv hc
   have hVnat := (header_bounds P G B u hs hP hG hB hv).1
   have hV : 1 ≤ (RadixRangePadding.volume P (2^u) G B : ℝ) := by exact_mod_cast hVnat
-  have hp : 1 ≤ ((max 1 u : ℕ) : ℝ)^BudgetBound.tau := Real.one_le_rpow
-    (by exact_mod_cast le_max_left 1 u) BudgetBound.exponent_range.1.le
+  have hp : 1 ≤ ((max 1 u : ℕ) : ℝ)^Stage2Machine.Total.tau := Real.one_le_rpow
+    (by exact_mod_cast le_max_left 1 u) Stage2Machine.Total.tau_range.1.le
   have hlin := mul_le_mul_of_nonneg_left hp
     (show 0 ≤ (RadixRangePadding.volume P (2^u) G B : ℝ) by positivity)
   unfold cost
