@@ -27,7 +27,7 @@ open RevMachine
 open RevMachine.Family (Frame NodeFree)
 open RevMachine.RevHalf (pcs Ok)
 open FamilyRoot (ext rolesOf machine entry padded bound FamilySpec impl)
-open Core (Step)
+open Core (Phase)
 
 variable [M8.Machine.Net] {k : ℕ} (capacity : Fintype.card (Graph.PC (pcs rev97m).length) ≤ 2^k)
 
@@ -113,7 +113,7 @@ theorem family_step {b₀ : ℕ} (hspec : FamilySpec capacity b₀) :
       ∀ (f : ℤ → Fin (prime+4)) (p : ℤ), (∀ z, p ≤ z → f z = blank) →
       ∀ (node : Tapes 1 prime), NodeFree node → ∀ (scalar : Tapes 1 prime) (st : Tapes 2 prime),
       RecursiveStackAllocation.Available 0 st → RecursiveStackAllocation.Available 1 st →
-      Core.Step (program capacity) (bankAt capacity f p node scalar st b₀) u u (RevT prime b₀ n u)
+      Core.Phase (program capacity) (bankAt capacity f p node scalar st b₀) u u (RevT prime b₀ n u)
         (k + 1 + ⌊bound C L n * volume prime u⌋₊) := by
   obtain ⟨C, hC, hroot⟩ := FamilyRoot.root_hoare capacity hspec
   refine ⟨C, hC, fun L hL hℓ hτ u n hpos hb hw hn hrows f p hpay node hfree scalar st hdesc hpc X => ?_⟩
