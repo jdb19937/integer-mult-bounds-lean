@@ -36,42 +36,54 @@ noncomputable section
 
 section Loops
 
+/-- The form of a level family: the kind of its selections and of its counter steps. A family's
+machines depend on its form and action only. -/
+inductive Form where
+  | cross
+  | within (g : RecursiveAffineDimensions.Group)
+  | rev
+
+/-- The machine of a form's refined operations. -/
+def fmachine (F : Form) (act : RecursiveViewedAction.Action t) :
+    SharedBankSkeleton.Skeleton (count t (5+2)) prime :=
+  match F with
+  | .cross => AtomView.machine (u := 2) (RuntimeCross.program AtomStep.hq) act
+  | .within g => AtomView.machine (u := 2) (RuntimeWithin.program AtomStep.hq g) act
+  | .rev => AtomView.machine (u := 2) (RuntimeCross.program AtomStep.hq) act
+
+/-- The tapes of a form's refined operations. -/
+def ftapes (F : Form) (act : RecursiveViewedAction.Action t) : ℕ := (fmachine F act).tapes
+
+theorem ftapes_ge (F : Form) (act : RecursiveViewedAction.Action t) :
+    count t (5+2) + 2 ≤ ftapes F act := by
+  cases F <;> simp [ftapes, fmachine, AtomView.machine, SharedBankSkeleton.compose,
+    AtomView.viewSkeleton] <;> omega
+
+/-- The level loop of a form: one fixed program for every atom count and every position. -/
+def fprogram : (F : Form) → (act : RecursiveViewedAction.Action t) →
+    (q : ℕ) × Program (ftapes F act + 2) q prime
+  | .cross, act => ⟨_, LevelLoop.program (seq (fmachine .cross act).program
+      (AtomRoleSteps.crossSteps _ (ftapes_ge .cross act))) (fmachine .cross act).program⟩
+  | .within g, act => ⟨_, LevelLoop.program (seq (fmachine (.within g) act).program
+      (AtomRoleSteps.withinSteps _ (ftapes_ge (.within g) act))) (fmachine (.within g) act).program⟩
+  | .rev, act => ⟨_, LevelLoop.program (seq (fmachine .rev act).program
+      (AtomRoleSteps.revSteps _ (ftapes_ge .rev act))) (fmachine .rev act).program⟩
+
 variable {f N : ℕ}
 
-/-- The machine of a family's refined operations. -/
-def kmachine (K : Kind f N) (act : RecursiveViewedAction.Action t) :=
-  AtomStep.machine (u := 2) (K.sel 0) act
-
-/-- The tapes of a family's refined operations. -/
-def ktapes (K : Kind f N) (act : RecursiveViewedAction.Action t) : ℕ := (kmachine K act).tapes
-
-/-- The level loop of a family. -/
-def kprogram : (K : Kind f N) → (act : RecursiveViewedAction.Action t) →
-    (q : ℕ) × Program (ktapes K act + 2) q prime
-  | .cross i₀ j₀ hi hj, act =>
-    ⟨_, LevelLoop.program (seq (AtomStep.machine (u := 2) (crossFamily f i₀ j₀ hi hj 0) act).program
-      (AtomRoleSteps.crossSteps _ (tapes_ge (u := 2) (crossFamily f i₀ j₀ hi hj 0) act)))
-      (AtomStep.machine (u := 2) (crossFamily f i₀ j₀ hi hj 0) act).program⟩
-  | .within g j₀ i₀ hji hi, act =>
-    ⟨_, LevelLoop.program (seq (AtomStep.machine (u := 2) (withinFamily f g j₀ i₀ hji hi 0) act).program
-      (AtomRoleSteps.withinSteps _ (tapes_ge (u := 2) (withinFamily f g j₀ i₀ hji hi 0) act)))
-      (AtomStep.machine (u := 2) (withinFamily f g j₀ i₀ hji hi 0) act).program⟩
-  | .rev i₀ j₀ hi0 hi hj, act =>
-    ⟨_, LevelLoop.program (seq (AtomStep.machine (u := 2) (revFamily f i₀ j₀ hi0 hi hj 0) act).program
-      (AtomRoleSteps.revSteps _ (tapes_ge (u := 2) (revFamily f i₀ j₀ hi0 hi hj 0) act)))
-      (AtomStep.machine (u := 2) (revFamily f i₀ j₀ hi0 hi hj 0) act).program⟩
-
-theorem ktapes_ge (K : Kind f N) (act : RecursiveViewedAction.Action t) :
-    count t (5+2) + 2 ≤ ktapes K act :=
-  AtomRoleOp.tapes_ge (u := 2) (K.sel 0) act
+/-- The form of a level family. -/
+def kform : Kind f N → Form
+  | .cross .. => .cross
+  | .within g .. => .within g
+  | .rev .. => .rev
 
 theorem kloop_hoare {b : ℕ} (hb0 : 0 < b) (K : Kind f N) (act : RecursiveViewedAction.Action t)
     (v : Descriptor) (hw : v.width = N*b) (hp : v.Positive) (hs : Fin 6 → List Bool)
     (hv : RecursiveDimensionBank.Headers v hs) (aux : Tapes 2 prime) (hf : 0 < f)
     (data : RecursiveViewedAction.Data t v) :
-    HoareTime (kprogram K act).2
-      (fun x => x = LevelLoop.bank (levelBank (ktapes K act) hs aux data (words b (K.sel 0))) f)
-      (fun x => x = LevelLoop.bank (levelBank (ktapes K act) hs aux (datas K.sel act v hw data f)
+    HoareTime (fprogram (kform K) act).2
+      (fun x => x = LevelLoop.bank (levelBank (ftapes (kform K) act) hs aux data (words b (K.sel 0))) f)
+      (fun x => x = LevelLoop.bank (levelBank (ftapes (kform K) act) hs aux (datas K.sel act v hw data f)
         (words b (K.sel (f-1)))) f)
       (loopCost (N := N) f act (volume prime v)) := by
   cases K with
@@ -173,17 +185,35 @@ def common (T : ℕ) {v : Descriptor} (hs : Fin 6 → List Bool) (f b : ℕ) (da
     Tapes (T+2) prime :=
   LevelLoop.bank (levelBank T hs (fAux f) data (rest b)) f
 
-theorem run_tapes (T : ℕ) (hf : 0 < f) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op) (wire : Fin t)
-    (hle : ktapes (kind hf op hop) (AtomRolePlan.act wire op hop) ≤ T) : count t (5+2) + 2 ≤ T :=
-  (ktapes_ge (kind hf op hop) _).trans hle
+/-- The form of an atom operation's level family; it does not depend on the atom count. -/
+def opForm : (op : AtomOps.AtomOp (m+m) ℚ) → Fits m op → Form
+  | .scale _ _, _ => .cross
+  | .shift tt k _, _ =>
+    if tt.val < m then .within .h else if k.val < m then .cross else .within .d
+  | .revShift _ _ _, _ => .rev
 
-/-- **One atom operation on the common bank.** -/
-def opRun (T : ℕ) (hf : 0 < f) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op) (wire : Fin t)
-    (hle : ktapes (kind hf op hop) (AtomRolePlan.act wire op hop) ≤ T) :=
-  seq (seq (extend (AtomRoleInstall.setup T (run_tapes T hf op hop wire hle) (plan op)) 2)
-    (Placement.placed (kprogram (kind hf op hop) (AtomRolePlan.act wire op hop)).2
+theorem kind_form (hf : 0 < f) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op) :
+    kform (kind hf op hop) = opForm op hop := by
+  cases op with
+  | scale tt c => by_cases h : tt.val < m <;> simp [kind, h, kform, opForm]
+  | shift tt k c =>
+    by_cases ht : tt.val < m
+    · simp [kind, ht, kform, opForm]
+    · by_cases hk : k.val < m <;> simp [kind, ht, hk, kform, opForm]
+  | revShift tt k c => rfl
+
+theorem run_tapes (T : ℕ) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op) (wire : Fin t)
+    (hle : ftapes (opForm op hop) (AtomRolePlan.act wire op hop) ≤ T) : count t (5+2) + 2 ≤ T :=
+  (ftapes_ge (opForm op hop) _).trans hle
+
+/-- **One atom operation on the common bank.** The program depends on the operation and the
+wire only: the atom count and the positions are on the tapes. -/
+def opRun (T : ℕ) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op) (wire : Fin t)
+    (hle : ftapes (opForm op hop) (AtomRolePlan.act wire op hop) ≤ T) :=
+  seq (seq (extend (AtomRoleInstall.setup T (run_tapes T op hop wire hle) (plan op)) 2)
+    (Placement.placed (fprogram (opForm op hop) (AtomRolePlan.act wire op hop)).2
       (AtomRolePad.placement _ T hle)))
-    (extend (AtomRoleInstall.eraseAll T (run_tapes T hf op hop wire hle)) 2)
+    (extend (AtomRoleInstall.eraseAll T (run_tapes T op hop wire hle)) 2)
 
 /-- The cost of one atom operation. -/
 def runCost (f : ℕ) (hf : 0 < f) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op) (wire : Fin t) (V : ℕ) : ℕ :=
@@ -191,19 +221,20 @@ def runCost (f : ℕ) (hf : 0 < f) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m
     AtomRoleInstall.eraseCost (vals ((kind hf op hop).sel (f-1)))
 
 theorem run_hoare {b : ℕ} (hb0 : 0 < b) (T : ℕ) (hf : 0 < f) (op : AtomOps.AtomOp (m+m) ℚ) (hop : Fits m op)
-    (wire : Fin t) (hle : ktapes (kind hf op hop) (AtomRolePlan.act wire op hop) ≤ T)
+    (wire : Fin t) (hle : ftapes (opForm op hop) (AtomRolePlan.act wire op hop) ≤ T)
     (v : Descriptor) (hw : v.width = (m*f)*b) (hp : v.Positive) (hs : Fin 6 → List Bool)
     (hv : RecursiveDimensionBank.Headers v hs) (data : RecursiveViewedAction.Data t v) :
-    HoareTime (opRun T hf op hop wire hle) (fun x => x = common T hs f b data)
+    HoareTime (opRun T op hop wire hle) (fun x => x = common T hs f b data)
       (fun x => x = common T hs f b (datas (kind hf op hop).sel (AtomRolePlan.act wire op hop) v hw data f))
       (runCost f hf op hop wire (volume prime v)) := by
-  have hT := run_tapes T hf op hop wire hle
+  have hT := run_tapes T op hop wire hle
   have h1 := hoare_extend_eq
     (AtomRoleInstall.setup_hoare T hT hs data f b (plan op) (plan_dec hf op hop))
     (CountedLoopReuseAlphabet.controls CountedLoopReuseAlphabet.empty
       (CountedLoopReuseAlphabet.binary (bits (f-1))) 1 1)
   have hL := kloop_hoare hb0 (kind hf op hop) (AtomRolePlan.act wire op hop) v hw hp hs hv (fAux f) hf data
-  have hk := ktapes_ge (kind hf op hop) (AtomRolePlan.act wire op hop)
+  rw [kind_form hf op hop] at hL
+  have hk := ftapes_ge (opForm op hop) (AtomRolePlan.act wire op hop)
   have h2 := AtomRolePad.pad_hoare (k := count t (5+2)) hle (by omega) _ _ _ f hL
   rw [plan_words b hf op hop, words_target] at h2
   have h3 := hoare_extend_eq

@@ -29,7 +29,7 @@ open AtomRoleLoop (datas)
 open AtomRoleOp (execs)
 open AtomRolePlan (Fits kind act coord)
 open AtomRoleSem (castE)
-open AtomRoleRun (ktapes common opRun runCost)
+open AtomRoleRun (ftapes opForm common opRun runCost)
 open AtomRoleCost (opConst)
 variable {t m f : ℕ}
 noncomputable section
@@ -38,16 +38,16 @@ noncomputable section
 abbrev SOp (m : ℕ) := {op : AtomOps.AtomOp (m+m) ℚ // Fits m op}
 
 /-- The tapes of an atom operation's level loop. -/
-def tapesOf (hf : 0 < f) (wire : Fin t) (s : SOp m) : ℕ := ktapes (kind hf s.1 s.2) (act wire s.1 s.2)
+def tapesOf (wire : Fin t) (s : SOp m) : ℕ := ftapes (opForm s.1 s.2) (act wire s.1 s.2)
 
 /-! ### The chain -/
 
-/-- The atom operations in order on the common bank. -/
-def chain (T : ℕ) (hf : 0 < f) (wire : Fin t) : (l : List (SOp m)) → (∀ s ∈ l, tapesOf hf wire s ≤ T) →
+/-- The atom operations in order on the common bank: one fixed program for every atom count. -/
+def chain (T : ℕ) (wire : Fin t) : (l : List (SOp m)) → (∀ s ∈ l, tapesOf wire s ≤ T) →
     (q : ℕ) × Program (T+2) q prime
   | [], _ => ⟨1, skip (T+2) prime (by omega)⟩
-  | s :: l, h => ⟨_, seq (opRun T hf s.1 s.2 wire (h s List.mem_cons_self))
-      (chain T hf wire l (fun x hx => h x (List.mem_cons_of_mem _ hx))).2⟩
+  | s :: l, h => ⟨_, seq (opRun T s.1 s.2 wire (h s List.mem_cons_self))
+      (chain T wire l (fun x hx => h x (List.mem_cons_of_mem _ hx))).2⟩
 
 /-- The role data after the chain. -/
 def chainData {b : ℕ} (hf : 0 < f) (wire : Fin t) (v : Descriptor) (hw : v.width = (m*f)*b) :
@@ -63,8 +63,8 @@ def chainCost (hf : 0 < f) (wire : Fin t) (V : ℕ) : List (SOp m) → ℕ
 theorem chain_hoare {b : ℕ} (hb0 : 0 < b) (T : ℕ) (hf : 0 < f) (wire : Fin t) (v : Descriptor)
     (hw : v.width = (m*f)*b) (hp : v.Positive) (hs : Fin 6 → List Bool)
     (hv : RecursiveDimensionBank.Headers v hs) :
-    ∀ (l : List (SOp m)) (h : ∀ s ∈ l, tapesOf hf wire s ≤ T) (data : RecursiveViewedAction.Data t v),
-      HoareTime (chain T hf wire l h).2 (fun x => x = common T hs f b data)
+    ∀ (l : List (SOp m)) (h : ∀ s ∈ l, tapesOf wire s ≤ T) (data : RecursiveViewedAction.Data t v),
+      HoareTime (chain T wire l h).2 (fun x => x = common T hs f b data)
         (fun x => x = common T hs f b (chainData hf wire v hw l data)) (chainCost hf wire (volume prime v) l)
   | [], _, _ => skip_hoare _ _
   | s :: l, h, data =>
@@ -157,10 +157,10 @@ def sops (ops : List (AffineFieldProgram.Op (Fin m) ℚ)) (hs : ∀ o ∈ AtomSe
   (AtomSegment.atoms ops).attach.map fun x => ⟨x.1, hs x.1 x.2⟩
 
 /-- The common bank size of a segment. -/
-def bankSize (hf : 0 < f) (wire : Fin t) (l : List (SOp m)) : ℕ := (l.map (tapesOf hf wire)).sum
+def bankSize (wire : Fin t) (l : List (SOp m)) : ℕ := (l.map (tapesOf wire)).sum
 
-theorem bankSize_ge (hf : 0 < f) (wire : Fin t) (l : List (SOp m)) :
-    ∀ s ∈ l, tapesOf hf wire s ≤ bankSize hf wire l :=
+theorem bankSize_ge (wire : Fin t) (l : List (SOp m)) :
+    ∀ s ∈ l, tapesOf wire s ≤ bankSize wire l :=
   fun _ hs => List.le_sum_of_mem (List.mem_map_of_mem hs)
 
 /-- **A field segment on the recursive role bank.** For a nonrecursive field segment whose atom
@@ -170,10 +170,10 @@ whose atom fields are the twisted run of the segment, keeps every other wire, an
 of the bank, at cost `C f V`. -/
 theorem segment_twisted (ops : List (AffineFieldProgram.Op (Fin m) ℚ))
     (hs : ∀ o ∈ AtomSegment.atoms ops, Fits m o) (hn : ∀ op ∈ ops, AffineFieldCoordinates.Nonrecursive op)
-    {b : ℕ} (hb0 : 0 < b) (hf : 0 < f) (wire : Fin t) (T : ℕ) (hT : ∀ s ∈ sops ops hs, tapesOf hf wire s ≤ T)
+    {b : ℕ} (hb0 : 0 < b) (hf : 0 < f) (wire : Fin t) (T : ℕ) (hT : ∀ s ∈ sops ops hs, tapesOf wire s ≤ T)
     (v : Descriptor) (hw : v.width = (m*f)*b) (hp : v.Positive) (hh : Fin 6 → List Bool)
     (hv : RecursiveDimensionBank.Headers v hh) (data : RecursiveViewedAction.Data t v) :
-    HoareTime (chain T hf wire (sops ops hs) hT).2 (fun x => x = common T hh f b data)
+    HoareTime (chain T wire (sops ops hs) hT).2 (fun x => x = common T hh f b data)
         (fun x => x = common T hh f b (chainData hf wire v hw (sops ops hs) data))
         (chainConst wire (sops ops hs) * f * volume prime v) ∧
       (∀ other, other ≠ wire → chainData hf wire v hw (sops ops hs) data other = data other) ∧
