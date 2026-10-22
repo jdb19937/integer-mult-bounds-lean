@@ -323,10 +323,17 @@ the generic R2 execution theorem already supports this choice, and the existing
 radix/density inequalities remain valid. This is a logical schedule, not yet an
 executed router or a change to the multiplication bound.
 
-R3's remaining work is ordered by dependency:
+`PermutationMatchings` now decomposes every finite coordinate permutation into
+two computable involutions by reflecting each cycle around its least coordinate.
+Orbit membership uses bounded traversal, and the terminating exponent search is
+proved shorter than the coordinate count. `permutationReservoirSchedule_eq`
+composes their eighteen directional shears into the exact address permutation.
+This closes the logical decomposition; it does not price or execute generation.
 
-1. Decompose an arbitrary finite permutation into two involutions, with a
-   computable representation suitable for configuration generation.
+R3's work is ordered by dependency (the first item is now proved):
+
+1. **Done, logical:** computable two-involution decomposition and composition with
+   the reservoir-safe matching schedule.
 2. Split directional shears by residue into R2-compatible sparse target profiles;
    handle the terminal segment explicitly.
 3. Execute reservoir placement and its inverse, accounting for displaced
@@ -341,7 +348,7 @@ R3's remaining work is ordered by dependency:
 
 The older Balanced design's rotation counts and minimal parameter choices are
 historical; use the proved R1 schedule and the reservoir-compatible spacing above.
-Raw descriptor/header generation, permutation decomposition, physical placement
+Raw descriptor/header generation, sparse-profile compilation, physical placement
 and short-record fallback remain R3. Layout/support integration
 remains R4. Completing R2 does not change the current multiplication kappa.
 

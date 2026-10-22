@@ -495,6 +495,28 @@ free generation claim. R3 must also compose matchings, reservoir placement and
 permutation decomposition and supply the short-record fallback. R4 integrates
 the complete router and support contract into multiplication; kappa is unchanged.
 
+## R3 logical schedule checkpoint
+
+`ReservoirPartition` assigns every matching edge to the first of three disjoint
+reservoirs missing both endpoints. Each class fixes its reservoir.
+`MatchingShears` orients edges by coordinate order and implements each class with
+three directional XORs. `ReservoirSchedule` proves their nine-shear composition.
+`ReservoirBudget` constructs three consecutive banks of width `3H`, with
+`H = (n / (64G) + 1)G`; they fit whenever `64G ≤ n`. This harmless extra block
+also covers exact divisibility. Router parameters use `K = 64G`; the generic R2
+execution and density proofs already permit this wider spacing.
+
+`PermutationMatchings` uses bounded orbit traversal and the least orbit coordinate
+to compute cycle reflections. Its exponent search is proved less than the total
+coordinate count. The two reflections are involutions whose composition is the
+original permutation; `permutationReservoirSchedule_eq` proves the resulting
+eighteen-shear address identity.
+
+These theorems do not supply physical reservoir placement, residue-separated R2
+profiles, terminal-coordinate operations, executed configuration generation or
+amortization. Those and the short-record fallback remain mandatory R3 gates.
+In particular, computable Lean functions are not yet a priced tape compiler.
+
 ## Completion gates
 
 R1 ends with packed good-set semantics and priced host calls; R2 supplies exact
