@@ -29,6 +29,11 @@ public import IntegerMultBounds.MathlibTM2.Routing.SourceHeader
 public import IntegerMultBounds.MathlibTM2.Routing.PatternOperands
 public import IntegerMultBounds.MathlibTM2.Routing.HeaderOperands
 public import IntegerMultBounds.MathlibTM2.Routing.HeaderValue
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderCode
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderFields
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderRot
+public import IntegerMultBounds.MathlibTM2.Routing.PlainPatterns
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderOffsets
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

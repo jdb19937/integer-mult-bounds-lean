@@ -189,21 +189,33 @@ it does not assume callback execution as a hypothesis. The checks peak near
 addition of the exact radix-packed source list modulo the compact field. Both
 load and unload are identified on all addresses, without good-set assumptions.
 
+## Checked live-header field-bank execution
+
+`HeaderCode.headerCode_spec` gives the actual field-bank callback invariant:
+all physical counters hold the live index, the metadata header starts/ends empty,
+and descriptors/scratch are preserved. Its reindex proof follows actual counter
+increments without changing their decomposition. The full callback cost is
+`6 W + 6 count + 1 + L (12 W + 38) + 24 + 2 W + 2`, charging construction,
+both interpreted patterns, the gate/carry code pass and header cleanup.
+`HeaderRot.headerRotate_exec` supplies full record-stream execution with both
+input/output callback costs and restoration of every stack except the record stream.
+
+`HeaderFields` structurally enumerates every field above a target and proves both
+contiguity and relative source-window bounds; gaps and spectators remain present,
+and zero-width fields are allowed. `PlainPatterns` completes the Z/Y descriptors.
+`HeaderOffsets` identifies executed A/Z/Y/YZ offsets with actual gadget field digits
+and arbitrary ordered load/unload selectors with actual current address bits.
+The optional zero sentinel remains metadata only; no physical borrowed field is
+initialized or restricted. Parameter instantiation, setup and complete schedule
+composition remain separate obligations.
+
 ## R1 next: complete the priced host program
 
 1. Bind the complete physical field layout, including prefix/suffix spectators,
    to the masked arithmetic rectangle and the actual source-index descriptors.
-2. Compose the checked mixed-control callbacks with the actual live field bank.
-   `ReadPattern` supplies optional source selectors; `PatternCode` and `PatternRot`
-   execute and price AND/XOR callbacks, and `CompactPatterns` proves the exact
-   masked A/YZ offset formulas. `SourceHeader` executes the live-counter copies
-   with exact cost and restoration. `PatternOperands` adapts the callback to an
-   explicit header and target word without asserting a new physical field layout.
-   `HeaderOperands` composes construction, callback and cleanup with complete
-   stack restoration and explicit cost; `HeaderValue` proves the contiguous
-   header's arithmetic value. Still bind these into the real field-bank
-   `CodeSpec`. The optional zero sentinel is
-   metadata only; it never restricts a physical borrowed field.
+2. Instantiate the checked field-bank execution for each instruction and prove
+   that the full masked schedule has the packed good-set endpoint; the callbacks
+   themselves no longer require an assumed execution contract.
 3. Bind the field interchanges with their actual order, width and canonical header
    hypotheses. A different decomposition of index-counter fields must be backed
    by priced counter setup/reset; it is not a record-coordinate move.
