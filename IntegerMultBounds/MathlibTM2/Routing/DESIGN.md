@@ -423,6 +423,37 @@ and clear every metadata bank with charged execution; compose keying, the full
 R1 schedule and exact repair, and audit the all-address primitive and its density
 cost. The prepared key/classifier invariants are not completion of that gate.
 
+## R2 checkpoint: one concrete shared key/route/repair core
+
+`HostEmbedding` transports `SelectiveHost.Valid` and `SetupLayout` through an
+injective register embedding. `RepairPlacement` then embeds the old finite R1
+bank in a larger fixed role bank. Its five physical counters are also the first
+five key counters and all classifier counters; only keying has the sixth row
+counter. All other key/classifier scratch has separate roles. The payload-length
+and key-length counters are distinct from routing's keyed-record-length counter.
+
+The checked placement discharges the key-driver contract, every scan/merge register
+separation, classifier index isolation, sort scratch injection and sort/field
+separation. It also preserves the original routing setup contract and proves the
+swap banks fit. No phase-specific counter bank is substituted at composition.
+
+`RepairPrepared` in `RepairCore.lean` states the simultaneous prepared invariant:
+routing metadata for records of length `keyWidth + B`, the complete key-emitter
+and physical-classifier invariants, original payload/key-length counters and an
+empty accumulator. `repairCore_exec` executes keying, the entire actual R1
+schedule, and `repairAtC` with `badClassifier`. Its result is the exact ideal stream
+on every address and its full register file is restored except for the source
+stream. `R ≤ 2^rb` supplies the complete-key rank bound for the sort. Its real cost
+is the explicit sum of full key-pass, routing-pass and repair-scan costs, including
+the physical exceptional-sort term. The core checks near 2.1 GiB.
+
+This is still a prepared boundary. The final R2 primitive must install and clear
+all routing and extra metadata with actual charged programs, initialize the row
+and payload/key counters, use concrete canonical headers and guard widths, and
+combine the physical density estimate with the complete cost. Descriptor/header
+generation remains the documented later R3 input-compiler obligation; installation
+and cleanup are required here. Do not close R2 on `repairCore_exec` alone.
+
 ## Completion gates
 
 R1 ends with packed good-set semantics and priced host calls; R2 supplies exact

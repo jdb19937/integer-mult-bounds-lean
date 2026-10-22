@@ -322,6 +322,17 @@ executed stream pass with exact cost and full register restoration. It returns
 repair's `keyRecs` representation; `selectiveKey_rank_bound` supplies key uniqueness
 when the row counter fits. Shared placement and metadata setup/composition remain.
 
+The shared-bank core is now checked. `HostEmbedding` transports R1's complete
+host/setup contracts through any injective embedding. `RepairPlacement` supplies
+one fixed finite bank, sharing the first five key counters with routing and the
+classifier while retaining a sixth row counter. It discharges every key-driver,
+repair-scan and radix-sort separation condition. `repairCore_exec` composes the
+actual whole-stream key pass, full R1 schedule and concrete classifier/repair
+pipeline into the exact all-address ideal stream, with their full summed costs.
+Only shared prepared metadata is assumed at this boundary. R2 remains open until
+its complete metadata installation/cleanup and final density-priced theorem are
+executed and audited; the configured core alone does not complete the milestone.
+
 R2 acceptance work, in dependency order:
 
 1. All-address ideal permutation, bad-set invariance and exact partition identities.
@@ -332,10 +343,12 @@ R2 acceptance work, in dependency order:
    loop handle arbitrary ordered sources and complete row/rank keys, with source,
    descriptor, header, scratch and all index counters restored. Instantiate its
    metadata and shared register placement in item 5.
-4. Instantiate the existing executed route/radix-sort/merge/strip pipeline; derive
-   its exceptional-sort cost from the physical density, and prove full restoration.
-5. Concrete register placement, charged metadata setup/cleanup, and composition
-   with keying and R1 into an all-address exact selective-update theorem. Audit
+4. **Shared executed core checked.** `repairCore_exec` instantiates keying, routing,
+   classification and route/radix-sort/merge/strip on one bank, with exact ideal
+   output and full restoration. The exceptional-sort cost is tied to R1's physical
+   bad count. Instantiate the final concrete density choice in item 5.
+5. **Shared placement checked.** Finish charged metadata setup/cleanup around the
+   composed core and the all-address, density-priced selective-update theorem. Audit
    this complete boundary before closing R2; prepared classifier/key assumptions
    do not complete it.
 
