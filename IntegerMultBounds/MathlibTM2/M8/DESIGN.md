@@ -1020,9 +1020,18 @@ chunk before choosing.
   existing key chunks. `Local/KeyOrderChecksB` checks 34,504 entries: the 11,565
   framed readouts, 11,565 deferred slots, 6,258 early sources and 5,116 late sources.
   `Global/KeyOrderB` proves uniqueness for the actual stage readout order and all
-  three plan keys. All 46 new emitted modules reproduce byte for byte. Remaining:
-  prove coverage/permutation and the stable zero-first readout partition, then
-  identify the source/readout orders in the exact traces with their signed chains.
+  three plan keys. `Local/SequenceCheckB` compares lists structurally through an
+  independently indexed sequence. `ReadoutOrderChecksB` now proves that the concrete
+  readout key is exactly the stable partition of the deferred-use slots: 150 zero
+  frames followed by 11,415 nonzero frames. Its checks reference the existing key
+  chunks and prove the allocated-slot bounds; no large list equality is kernel-reduced.
+  `Global/ReadoutOrderB` proves the actual deferred-range permutation and identifies
+  `lateSlots assignment.readoutOrder` with the concrete key itself. It checks at
+  2,246 MiB. `Global/TargetMaskTraceB` rewrites the full target trace using checked
+  mask bits and the zero/nonzero readout partition, retaining repeated frames, and
+  proves the zero-readout segment has only zero frames. It checks at 2,299 MiB.
+  All 72 ordering certificate modules reproduce byte for byte. Remaining: source-key
+  coverage/order and alignment of the exact traces with their signed frame chains.
   The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.

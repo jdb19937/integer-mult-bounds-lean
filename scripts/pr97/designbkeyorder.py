@@ -98,4 +98,89 @@ def emit(result, compiled, destination):
                           *(['List.length_map'] if mapped else []), 'List.length_append', *lengths, 'Nat.reduceAdd', *facts, 'Bool.true_and']) + ']')
         totals.append(f'theorem {phase}_nodup : {expr}.Nodup := nodup_of_indexCheck {index} _ {phase}_indexed')
     write('KeyOrderChecksB.lean', all_imports, totals)
+    emit_readout_sequence(write, prefix, groups, keys, sigma)
     print('key inverse checks:', ', '.join(str(len(k)) for k in keys), 'entries; SHA-256', digest)
+
+
+def emit_readout_sequence(write, prefix, groups, keys, sigma):
+    readouts = groups[0][3]
+    deferred = groups[1][3]
+    refs = [f'.leaf Frames.AssignmentB.readoutOrder{i:03d}' for i in range(len(readouts))]
+    refs += ['.leaf []'] * (128-len(refs))
+    write('DataKeyB/ReadoutSequence.lean', [prefix + '.DataKeyB.Inverse', prefix + '.SequenceCheckB'], [
+        'def readoutChunks : Tree (List Nat) := ' + designbword.top(refs),
+        'def readoutAt (i : Nat) : Nat := ((readoutChunks.get 128 (i / 128))[i % 128]?).getD 0',
+        'def zeroReadout (s : Nat) : Bool := decide (Frames.AssignmentB.sigmaLabel s = Frames.Signed.Frame.zero)',
+        'def slotInRange (s : Nat) : Bool := Nat.blt s 28866',
+        'def zeroKeys : List Nat := (deferredUses.map useSlotB).filter zeroReadout',
+        'def nonzeroKeys : List Nat := (deferredUses.map useSlotB).filter fun s => !zeroReadout s',
+    ])
+    imports, facts, bounds = [], [], []
+    for k in range((len(readouts)+7)//8):
+        name = f'ReadoutSequence{k:02d}'
+        imports.append(prefix + '.ChecksKeyB.' + name)
+        body = []
+        for j in range(8*k, min(8*(k+1), len(readouts))):
+            chunk, start, size = readouts[j]
+            fact = f'readout_sequence{j:03d}'
+            facts.append(fact)
+            bound = f'readout_sequence{j:03d}_bounded'
+            bounds.append(bound)
+            body.append(f'theorem {bound} : {chunk}.all slotInRange = true := by\n  decide +kernel')
+            body.append(f'theorem {fact} : sequenceCheck readoutAt {start} {chunk} = true := by\n  decide +kernel')
+        write(f'ChecksKeyB/{name}.lean', [prefix + '.DataKeyB.ReadoutSequence'], body)
+    totals = ['theorem readout_bounded : Frames.AssignmentB.readoutOrder.all slotInRange = true := by\n'
+              '  simp only [Frames.AssignmentB.readoutOrder, List.all_append, '
+              + ', '.join(bounds) + ', Bool.true_and]']
+    last, _, size = readouts[-1]
+    totals.append(f'theorem readout_final_length : {last}.length = {size} := by\n  decide +kernel')
+    read_lengths = [f'readout{j:03d}_length' for j in range(len(readouts)-1)] + ['readout_final_length']
+    totals.append('theorem readout_sequence : sequenceCheck readoutAt 0 Frames.AssignmentB.readoutOrder = true := by\n'
+                  '  simp only [Frames.AssignmentB.readoutOrder, sequenceCheck_append, List.length_append, '
+                  + ', '.join(read_lengths[:-1] + ['Nat.reduceAdd'] + facts + ['Bool.true_and']) + ']')
+    totals.append(f'theorem readout_length : Frames.AssignmentB.readoutOrder.length = {len(keys[0])} := by\n'
+                  '  simp only [Frames.AssignmentB.readoutOrder, List.length_append, '
+                  + ', '.join(read_lengths + ['Nat.reduceAdd']) + ']')
+    zero_total = sum(sigma[s] == (0, 0) for s in keys[1])
+    zero_start, other_start = 0, zero_total
+    lengths = {'zero': [], 'nonzero': []}
+    checks = {'zero': [], 'nonzero': []}
+    for k in range((len(deferred)+7)//8):
+        name = f'Partition{k:02d}'
+        imports.append(prefix + '.ChecksKeyB.' + name)
+        body = []
+        for j in range(8*k, min(8*(k+1), len(deferred))):
+            chunk, start, size = deferred[j]
+            zero_count = sum(sigma[s] == (0, 0) for s in keys[1][start:start+size])
+            for phase, count, offset, pred in [('zero', zero_count, zero_start, 'zeroReadout'),
+                ('nonzero', size-zero_count, other_start, '(fun s => !zeroReadout s)')]:
+                expr = f'(({chunk}.map useSlotB).filter {pred})'
+                length = f'{phase}{j:03d}_length'
+                check = f'{phase}{j:03d}_sequence'
+                lengths[phase].append(length)
+                checks[phase].append(check)
+                body += [f'theorem {length} : {expr}.length = {count} := by\n  decide +kernel',
+                         f'theorem {check} : sequenceCheck readoutAt {offset} {expr} = true := by\n  decide +kernel']
+            zero_start += zero_count
+            other_start += size-zero_count
+        write(f'ChecksKeyB/{name}.lean', [prefix + '.DataKeyB.ReadoutSequence'], body)
+    assert zero_start == zero_total and other_start == len(keys[0])
+    expansions = ['deferredUses'] + groups[1][4] + ['List.map_append', 'List.filter_append', 'List.length_append']
+    for phase, offset, count in [('zero', 0, zero_total), ('nonzero', zero_total, len(keys[1])-zero_total)]:
+        full = phase + 'Keys'
+        totals.append(f'theorem {phase}_sequence : sequenceCheck readoutAt {offset} {full} = true := by\n'
+                      '  simp only [' + ', '.join([full, *expansions, 'sequenceCheck_append',
+                          *lengths[phase][:-1], 'Nat.reduceAdd', *checks[phase], 'Bool.true_and']) + ']')
+        totals.append(f'theorem {phase}_length : {full}.length = {count} := by\n'
+                      '  simp only [' + ', '.join([full, *expansions, *lengths[phase], 'Nat.reduceAdd']) + ']')
+    totals += [
+        'theorem partition_sequence : sequenceCheck readoutAt 0 (zeroKeys ++ nonzeroKeys) = true := by\n'
+        '  rw [sequenceCheck_append, zero_length, zero_sequence, nonzero_sequence]\n  rfl',
+        'theorem readout_partition : Frames.AssignmentB.readoutOrder = zeroKeys ++ nonzeroKeys := by\n'
+        '  apply sequenceCheck_eq readoutAt _ _ _ readout_sequence partition_sequence\n'
+        '  simp only [readout_length, List.length_append, zero_length, nonzero_length]',
+        'theorem readout_perm_deferred : Frames.AssignmentB.readoutOrder.Perm (deferredUses.map useSlotB) := by\n'
+        '  rw [readout_partition]\n  exact List.filter_append_perm zeroReadout _',
+    ]
+    write('ReadoutOrderChecksB.lean', imports + [prefix + '.KeyOrderChecksB'], totals)
+    print('readout stable partition:', zero_total, 'zero frames,', len(keys[0])-zero_total, 'nonzero frames')
