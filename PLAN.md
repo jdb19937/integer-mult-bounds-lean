@@ -156,7 +156,9 @@ interfaces remain applicable. The full gauged node now has arbitrary-input physi
 semantics, with explicit terminal alignments and complementary-gauge exits. Its exact
 executed move moments are bounded by the complete side and data paths, with exteriors,
 connectors and owned temporaries priced. Source/target costs are bounded by the
-checked full data chains. Finish auxiliary-chain coverage and histogram aggregation,
+checked full data chains. A checked local slot table now identifies every compiler
+argument and root, providing the canonical auxiliary-chain indexing. Finish
+auxiliary-chain coverage and histogram aggregation,
 then continue through supplier replacement and retuning if these fit the existing
 recursive machine. The full design-B target is
 `4222422970/2^46 ≈ 0.0000600042`, about 28% above today's bound; it remains a projection

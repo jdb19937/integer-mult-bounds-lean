@@ -1165,6 +1165,16 @@ chunk before choosing.
   3,436 MiB, and the guarded build including the public root passes. The new cost
   closure passes the standard-axiom audit; all ten Python tests pass. The checked
   endpoint-rank modules reproduce byte for byte without temporary input files.
+- **Checked compiler slots for auxiliary cost coverage.** `Local/SlotAssignment` proves
+  structurally that local free-allocation and donor-link equations determine every
+  pending slot. `Local/CompilerCoverage` propagates per-operation membership through
+  arbitrary compiler prefixes and their frame traces. `designbslots.py` reconstructs
+  64,042 argument-slot pairs and 5,336 root slots from the pinned inputs; the 36
+  generated modules reproduce byte for byte. The local equations pass kernel checks,
+  and `Global/SlotAssignmentB` identifies every actual argument and root slot without
+  evaluating concrete compiler prefixes. All 41 new modules pass the single-file
+  memory guard, at most 1,954 MiB peak RSS. Canonical auxiliary-chain membership checks
+  are next; this does not yet change the public bound.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.
