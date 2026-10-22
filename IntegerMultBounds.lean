@@ -34,6 +34,14 @@ public import IntegerMultBounds.MathlibTM2.Routing.HeaderFields
 public import IntegerMultBounds.MathlibTM2.Routing.HeaderRot
 public import IntegerMultBounds.MathlibTM2.Routing.PlainPatterns
 public import IntegerMultBounds.MathlibTM2.Routing.HeaderOffsets
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedGadget
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedSlot
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedSchedule
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedEndpoint
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedDynamic
+public import IntegerMultBounds.MathlibTM2.Routing.SlotSources
+public import IntegerMultBounds.MathlibTM2.Routing.SelectiveXor
+public import IntegerMultBounds.MathlibTM2.Routing.SelectiveIndex
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

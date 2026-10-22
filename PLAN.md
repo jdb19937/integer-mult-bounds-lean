@@ -205,7 +205,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
-| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Masked self-reading semantics preserve inactive low-bit sources. A fixed host interpreter reads arbitrary source order, restores its descriptor/source and prepares the compact offset with explicit cost. Masked physical decoding and concrete source-controlled record rotations are checked; signed load/unload matches packed arithmetic. Concrete mixed/masked early-pass callbacks and their exact compact offset formulas are checked. Live-header construction, callback execution and cleanup now compose with explicit cost and complete stack restoration; the contiguous-header value is checked. Actual field-bank callbacks and full header-based rotations are checked, with automatic higher-field windows and exact A/Z/Y/YZ/source offsets. The packed physical-layout binding, setup/interchanges and full sequence remain. | 3–5k |
+| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Masked self-reading semantics preserve inactive low-bit sources. A fixed host interpreter reads arbitrary source order, restores its descriptor/source and prepares the compact offset with explicit cost. Masked physical decoding and concrete source-controlled record rotations are checked; signed load/unload matches packed arithmetic. Concrete mixed/masked early-pass callbacks and their exact compact offset formulas are checked. Live-header construction, callback execution and cleanup now compose with explicit cost and complete stack restoration; the contiguous-header value is checked. Actual field-bank callbacks and full header-based rotations are checked, with automatic higher-field windows and exact A/Z/Y/YZ/source offsets. The complete masked instruction schedule and fixed-layout physical rank endpoint are checked, with actual intermediate sources and full spectator restoration. Host setup/interchanges, descriptor transitions, density instantiation and full priced execution remain. | 6–8k |
 | R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
@@ -256,14 +256,25 @@ that field increments preserve its invariant. Its callback cost is
 bounds, including gap/spectator fields. `PlainPatterns` and `HeaderOffsets` identify
 A, Z, Y and YZ with the actual gadget field digits and load/unload with arbitrary
 ordered current address bits.
-R1 remains open: bind the full physical field layout to the masked packed endpoint,
-price setup and interchanges, then compose the complete host execution with all
-scratch and spectators restored. Kappa is
-unchanged. The remaining integration makes **3–5k** total R1 Lean lines a more
-realistic estimate than the initial 2–3k.
+`MaskedGadget` projects the actual masked early schedule to the existing `run_E`
+proof without initializing the physical controls. `MaskedSlot` proves guard and
+complete source-observation preservation, including prefix/suffix spectators and
+inactive low bits. `MaskedSchedule`, `MaskedEndpoint` and `MaskedDynamic` prove the
+full twelve-rotation/twelve-interchange instruction endpoint with actual intermediate
+source reads. `SlotSources` decodes arbitrary ordered physical sources, including an
+arbitrary-width outer spectator word. `SelectiveXor` proves the exact sparse physical
+XOR; `SelectiveIndex.selectiveRunIdx_good` binds that endpoint to one unchanged
+five-field physical layout and restores every borrowed/spectator field, including
+all bits above the layout.
+R1 remains open: instantiate the host programs and metadata transitions for that
+schedule, price setup and interchanges, discharge the guard/density parameters,
+and compose one complete `Exec` theorem and total cost. The current endpoint is
+instruction/rank arithmetic, not yet that full host theorem. Kappa is unchanged.
+With roughly 4.6k routing Lean lines already present and the remaining execution
+integration still open, budget **6–8k** total R1 Lean lines; earlier 3–5k estimates
+were too low.
 
-Estimated routing total: **12–21k additional or substantially revised Lean lines**,
-rounded to 12–22k for planning; excludes generated data and Python. Existing layout,
+Estimated routing total: **15–24k additional or substantially revised Lean lines**; excludes generated data and Python. Existing layout,
 CRT-control, rotation and sorting primitives are reused. R1's logical identity is
 not a tape implementation: source gathering, packed loads, guards, repair and their
 costs must be proved before the router can improve a machine bound. Do not introduce

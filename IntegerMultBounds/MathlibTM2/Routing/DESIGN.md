@@ -209,24 +209,44 @@ The optional zero sentinel remains metadata only; no physical borrowed field is
 initialized or restricted. Parameter instantiation, setup and complete schedule
 composition remain separate obligations.
 
+## Checked complete masked instruction endpoint
+
+`MaskedGadget` defines the actual masked instructions and projects each early pass
+to the existing `CompactGadget.run_E` proof. The physical controls stay arbitrary;
+only offset evaluation sees masked parities. `MaskedSlot` proves range, guard and
+complete source-observation preservation, including prefix/suffix spectators,
+active upper bits and complete inactive digits.
+
+`MaskedSchedule` retains the actual twelve-rotation/twelve-interchange schedule.
+`MaskedEndpoint` proves the fixed-source endpoint using the existing no-carry and
+later-source identities; `MaskedDynamic` proves both loads read the actual current
+source observation and therefore gives the complete dynamic-source endpoint.
+`SlotSources` instantiates arbitrary ordered/repeated physical sources in the prefix,
+target digits, suffix or an arbitrary-width outer spectator word. Active target low
+bits are the only forbidden internal sources.
+
+`SelectiveXor` identifies the whole endpoint with XOR by the exact sparse word of
+actual source bits. `SelectiveIndex.selectiveRunIdx_good` transports the full
+instruction schedule to one fixed physical record-index bank, least significant
+first: b, y, t, u, spectator. It restores all borrowed fields and complete spectators,
+including every bit above the bank. This is a checked instruction/rank theorem;
+it does not yet compose the host programs or charge metadata transitions and setup.
+
 ## R1 next: complete the priced host program
 
-1. Bind the complete physical field layout, including prefix/suffix spectators,
-   to the masked arithmetic rectangle and the actual source-index descriptors.
-2. Instantiate the checked field-bank execution for each instruction and prove
-   that the full masked schedule has the packed good-set endpoint; the callbacks
-   themselves no longer require an assumed execution contract.
-3. Bind the field interchanges with their actual order, width and canonical header
-   hypotheses. A different decomposition of index-counter fields must be backed
-   by priced counter setup/reset; it is not a record-coordinate move.
-4. Charge descriptor/mask/counter setup, every rotation and interchange, and
-   cleanup. Instantiate radix widths and the density inequalities. Compose one
-   host `Exec` theorem and total cost for the complete good-set shear. The current
-   `CompactGadget.prog` has twelve rotations and twelve interchanges: each `E`
-   has five rotations and four swaps, with an additional swap/load/swap and
-   swap/unload/swap. Price this actual schedule rather than the historical
-   ten-rotation count. R2 then
-   supplies all-address repair.
+1. Instantiate the checked field-bank callbacks for each instruction in the fixed
+   layout and bind their executed offsets to `selectiveIdx`. Generate/change the
+   actual descriptors between passes and restore their tapes with explicit cost.
+2. Bind both physical field interchanges to the actual b/t/u index swaps, with
+   their canonical headers and full prepared-bank frame instantiated. Charge
+   counter/header setup and cleanup; the field bank stays fixed throughout.
+3. Compose the executed passes in the exact `CompactGadget.prog` order into one
+   host `Exec` theorem with total cost and clean scratch. Each `E` has five rotations
+   and four swaps, with additional swap/load/swap and swap/unload/swap sequences;
+   the full schedule has twelve rotations and twelve interchanges. Do not use the
+   historical ten-rotation count.
+4. Instantiate guard widths/density arithmetic and attach the physical good-set
+   endpoint to that complete execution. R2 then supplies all-address repair.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)
 for the gadget and matching decomposition, and the pinned
