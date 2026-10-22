@@ -933,9 +933,19 @@ chunk before choosing.
   RootBoundaryB, PhaseFramesB and DataTraceB check at 3,014, 2,244 and 2,338 MiB;
   the guarded integration build including the public theorem passes. The new-module and
   completed-proof axiom audits pass using only the standard axioms. κ remains unchanged.
-  Next: assemble the readout, root and centre blocks into complete stage chains;
-  connect the data-wire source/readout traces to the signed chains, allowing repeated
-  equal frames; then integrate the global node/costs and switch the supplier and retune.
+  `Global/BlockTraceB` identifies auxiliary frames in readout, output, centre and
+  uncompute blocks. `AuxBoundaryB` transfers every reordered phase frame back into the
+  compiler trace and proves the phase exclusions at deferred and centre slots.
+  `AuxStageFramesB.firstStage_aux_chain` now proves the complete auxiliary chain from
+  `sigma` through both phases, readouts, centre/output boundaries and frame-one uncompute.
+  `finalStage_aux_trace` identifies its reversed complemented trace, and
+  `finalStage_aux_chain` proves the complete second-stage chain ending at `1 - sigma`.
+  These are structural list proofs; no compiler prefix or new certificate is evaluated.
+  The three modules check at 1,568, 3,022 and 3,030 MiB. The guarded build including the
+  public theorem and the new-module standard-axiom audit pass. κ remains unchanged.
+  Next: prove complete data-wire chains and temporary traces; connect the data-wire
+  source/readout traces to the signed chains, allowing repeated equal frames; then
+  integrate the global node/costs and switch the supplier and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
