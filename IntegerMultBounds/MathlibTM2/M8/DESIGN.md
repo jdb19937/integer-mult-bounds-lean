@@ -1032,6 +1032,23 @@ chunk before choosing.
   proves the zero-readout segment has only zero frames. It checks at 2,299 MiB.
   All 72 ordering certificate modules reproduce byte for byte. Remaining: source-key
   coverage/order and alignment of the exact traces with their signed frame chains.
+  `Local/ReadoutCoverageChecksB` now certifies that every nonzero allocated readout
+  frame occurs in the concrete key. `Global/ReadoutZeroB` uses it to prove that every
+  immediate target readout has frame zero. `TargetGeometryB` checks the target labels
+  against the existing full signed chains, with the negative endpoint containing the
+  output triple code. Checked masks on 32-slot blocks accelerate filtering; the generic
+  `fastLabels_eq` theorem proves that skipping a block preserves the exact trace.
+  The first target check uses 1,685 MiB rather than over 7 GiB for a direct scan.
+  `Global/TargetLabelTraceB` identifies these labels with the actual late readout trace,
+  retaining zero frames and repeated frames. The target and ordering emitters reproduce
+  250 and 81 modules byte for byte from the pinned reconstruction.
+  All 1,771 target endpoint checks pass. `TargetGeometryB/Facts` proves their
+  chain and hyperplane bounds. `Global/TargetStageFramesB.firstStage_target_chain`
+  connects them to every actual target wire, including the zero prefix and repeated
+  output reads; `finalStage_target_chain` gives the reversed complemented chain.
+  The stage module checks at 3,096 MiB. The sampled target modules, including the one
+  with the most slot lookups, use at most 1,761 MiB. Source coverage/order and source
+  chain alignment remain before the compiler/frame checkpoint is complete.
   The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.

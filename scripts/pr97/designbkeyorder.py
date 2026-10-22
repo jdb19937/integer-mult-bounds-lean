@@ -99,6 +99,7 @@ def emit(result, compiled, destination):
         totals.append(f'theorem {phase}_nodup : {expr}.Nodup := nodup_of_indexCheck {index} _ {phase}_indexed')
     write('KeyOrderChecksB.lean', all_imports, totals)
     emit_readout_sequence(write, prefix, groups, keys, sigma)
+    emit_readout_coverage(write, prefix)
     print('key inverse checks:', ', '.join(str(len(k)) for k in keys), 'entries; SHA-256', digest)
 
 
@@ -184,3 +185,54 @@ def emit_readout_sequence(write, prefix, groups, keys, sigma):
     ]
     write('ReadoutOrderChecksB.lean', imports + [prefix + '.KeyOrderChecksB'], totals)
     print('readout stable partition:', zero_total, 'zero frames,', len(keys[0])-zero_total, 'nonzero frames')
+
+
+def emit_readout_coverage(write, prefix):
+    """Check nonzero-frame coverage and the shape of the existing sigma tree."""
+    def conjunction(items):
+        if len(items) == 1:
+            return items[0]
+        mid = len(items)//2
+        return f'({conjunction(items[:mid])} && {conjunction(items[mid:])})'
+
+    def perfect(items):
+        if len(items) == 1:
+            return items[0]
+        mid = len(items)//2
+        return f'⟨by decide, by decide, {perfect(items[:mid])}, {perfect(items[mid:])}⟩'
+
+    imports, coverage, shapes = [], [], []
+    for k in range(8):
+        name = f'Coverage{k:02d}'
+        imports.append(prefix + '.ChecksKeyB.' + name)
+        body, facts, parts = [], [], []
+        for j in range(64):
+            chunk = f'Frames.AssignmentB.sigma{k:02d}_{j:02d}'
+            fact = f'coverage{k:02d}_{j:02d}'
+            shape = f'sigma{k:02d}_{j:02d}_perfect'
+            facts.append(fact)
+            parts.append(shape)
+            body += [f'theorem {shape} : {chunk}.Perfect 64 :=\n'
+                     f'  Tree.perfect_of_perfectB {chunk} 64 (by decide +kernel)',
+                     f'theorem {fact} : Tree.all nonzeroCovered (fun _ => true) 28866 '
+                     f'{chunk} {4096*k+64*j} 64 = true := by\n  unfold nonzeroCovered\n  decide +kernel']
+        shape = f'sigma{k:02d}_perfect'
+        fact = f'coverage{k:02d}'
+        shapes.append(shape)
+        coverage.append(fact)
+        body += [f'theorem {shape} : Frames.AssignmentB.sigma{k:02d}.Perfect 4096 := by\n'
+                 f'  exact {perfect(parts)}',
+                 f'theorem {fact} : Tree.all nonzeroCovered (fun _ => true) 28866 '
+                 f'Frames.AssignmentB.sigma{k:02d} {4096*k} 4096 = true := by\n'
+                 '  change ' + conjunction([f'Tree.all nonzeroCovered (fun _ => true) 28866 '
+                     f'Frames.AssignmentB.sigma{k:02d}_{j:02d} {4096*k+64*j} 64' for j in range(64)])
+                 + ' = true\n  rw [' + ', '.join(facts) + ']\n  rfl']
+        write(f'ChecksKeyB/{name}.lean', [prefix + '.ReadoutCoverageKernelB'], body)
+    write('ReadoutCoverageChecksB.lean', imports, [
+        'theorem sigmaTable_perfect : Frames.AssignmentB.sigmaTable.Perfect 32768 := by\n'
+        f'  exact {perfect(shapes)}',
+        'theorem nonzero_coverage : Tree.all nonzeroCovered (fun _ => true) 28866 '
+        'Frames.AssignmentB.sigmaTable 0 32768 = true := by\n  change '
+        + conjunction([f'Tree.all nonzeroCovered (fun _ => true) 28866 '
+                       f'Frames.AssignmentB.sigma{k:02d} {4096*k} 4096' for k in range(8)])
+        + ' = true\n  rw [' + ', '.join(coverage) + ']\n  rfl'])
