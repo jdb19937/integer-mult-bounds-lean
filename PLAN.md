@@ -135,7 +135,7 @@ parameter choices and route-specific completion lists are not all prerequisites 
 | M3 | 🟡 | §5.2–5.3, App. A | Compact controls, caller integration, stopped recursion. | Compact integration complete; it is the current theorem. Stopped-recursion integration remains. |
 | M4 | ⬜ | §5.4, §9.7 | Linear child-precision bound; recursive workspace and stock. | Derive constants from the actual finite template and account for simultaneous owned centers and BIT stock; feed M9–M11. |
 | M5 | 🟡 | §6.2, §4 | Balanced prefix (M5a); arbitrary-source routing (M5b). | M5a done (`CompactStageGrowth.prefix_le`). M5b open ([design](IntegerMultBounds/MathlibTM2/Balanced/DESIGN.md)). |
-| M6 | 🟡 | §§3–5 | Selected finite suppliers in the machine. | T16 complex supplier and the PR97 bit supplier are in the proof. Stage 2 (variable-rank children, #104's opposite-bank compiler on plain frames) is the running bit supplier: the moment gaps (`Stage2Moments`), atom adapters (`AtomSegment`, `AtomRoleSegment`), the stopped recurrence (`Rev97Ranks.rev97_closed`), the reversed family with data (`RevMachine.RevSemantics.rev97_family_spec`), the F L F wrapper and width selection (`Stage2Machine.Bound.uniform_bound`), seamed in by `Stage2Machine.Total`. Design-B frames (`1.24e-4` supplier saving) are active: scalar semantics, the full backward-weight recurrence, extensive geometry checks and auxiliary/target frame chains are checked. Source coverage/order and exact source traces are checked; source-chain nesting, boundary transitions and node/cost integration remain. Use the checkpoint below. PR589 bit side checked under upstream's idealization (`M6/Bit*`, outside the root); it does not run on this machine ([design](IntegerMultBounds/MathlibTM2/M6/DESIGN.md)). |
+| M6 | 🟡 | §§3–5 | Selected finite suppliers in the machine. | T16 complex supplier and the PR97 bit supplier are in the proof. Stage 2 (variable-rank children, #104's opposite-bank compiler on plain frames) is the running bit supplier: the moment gaps (`Stage2Moments`), atom adapters (`AtomSegment`, `AtomRoleSegment`), the stopped recurrence (`Rev97Ranks.rev97_closed`), the reversed family with data (`RevMachine.RevSemantics.rev97_family_spec`), the F L F wrapper and width selection (`Stage2Machine.Bound.uniform_bound`), seamed in by `Stage2Machine.Total`. Design-B frames (`1.24e-4` supplier saving) are active: scalar semantics, the full backward-weight recurrence, extensive geometry checks and auxiliary/target frame chains are checked. The complete compiler/frame checkpoint, including source-chain nesting, is checked. Boundary gauges and node/cost integration remain. Use the checkpoint below. PR589 bit side checked under upstream's idealization (`M6/Bit*`, outside the root); it does not run on this machine ([design](IntegerMultBounds/MathlibTM2/M6/DESIGN.md)). |
 | M7 | 🟡 | §§8, 9.2, 9.7 | Faster rounded Gaussian inverse, prime supply, bulk execution. | Prime supply done (`primes_in_window`, `primeSrc_good`). Rounded inverse composed (`rounded_inverse`); chirped forward map approximated (`chirpA_approx`). Tape costs and bulk execution remain ([design](IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md)); align new work with M11's fused, support-local outer contracts before implementing an older schedule. |
 | M8 | ⬜ | §9.1–9.8 | Legacy selected bootstrap and 47 inequalities. | Deferred as a route-specific package. Reuse applicable transfer lemmas; reproducing its seven stages or PR589 supplier is not required for M11. |
 | M9 | ⬜ | New supplier/compiler | Productive mixed jobs compiled into a finite uniform supplier. | Prove arbitrary-input endpoints, ownership, complements, integer batching and chronological execution; instantiate the p3 complex controller at uniform saving `0.002304`. Depends on the supplier closure and precision/stock work in M3–M4. |
@@ -144,14 +144,16 @@ parameter choices and route-specific completion lists are not all prerequisites 
 
 ## Execution order and decision gates
 
-**Current design-B checkpoint (independent of routing).** The structural adjoint,
+**Design-B compiler/frame checkpoint complete (independent of routing).** The structural adjoint,
 pending-use and combined-boundary lemmas are generic in the DAG or operation list;
 they are useful beyond the concrete design-B tables. The full backward-weight
-recurrence, auxiliary/target frame chains, source coverage/order and exact source traces
-are now checked. Connect the remaining source-wire traces to their signed frame chains.
+recurrence, source coverage/order, exact data traces and complete auxiliary/target/source
+frame chains in both stages are now checked.
 Current details are in [M8/DESIGN.md §16](IntegerMultBounds/MathlibTM2/M8/DESIGN.md#16-design-b-frames).
 
-**Then assess the remaining design-B integration.** Continue through boundary transitions,
+**Remaining design-B integration.** The existing lifting/reflection and recursive-supplier
+interfaces remain applicable; next prove the gauged node and link its actual move moments
+to the checked design-B histogram. Continue through boundary transitions,
 node semantics, exact rank/cost linkage, supplier replacement and retuning if these
 fit the existing recursive machine. The full design-B target is
 `4222422970/2^46 ≈ 0.0000600042`, about 28% above today's bound; it remains a projection

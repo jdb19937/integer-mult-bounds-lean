@@ -1063,8 +1063,34 @@ chunk before choosing.
   at 2,001, 2,007 and 2,007 MiB. All 134 key modules reproduce byte for byte, and the
   Python tests pass. Remaining for the compiler/frame checkpoint: connect these source
   labels to the signed chains and prove complete source nesting in both stages.
-  Then assess boundary transitions and global node/cost integration, supplier switching
-  and retuning under the root plan's gate.
+  `Local/SourceListB.srcB_leaf_targets` now extracts each leaf's exact allocation
+  interval. `SourceOrderB.sort_index_eq` recovers key-sublist order from checked inverse
+  indices; a structural insertion sort keeps the short checks reducible by the kernel.
+  `Global/SourceSlotTraceB` identifies these sorted intervals with the actual filtered
+  early and late source keys. `SourceGeometryB` checks all 1,771 source paths using only
+  the existing signed chains and positive bank entries containing the input triple.
+  Every selected entrance also has checked rank one. The generic soundness theorem
+  bounds every source path from the input line to one, and records that the entrance
+  has the same rank as the input line for subsequent cost linkage.
+  `Global/SourceStageFramesB.firstStage_source_chain` and `finalStage_source_chain`
+  prove complete nesting in both actual stages, including frame-one uncompute and
+  repeated frames. SourceSlotTraceB checks at 2,128 MiB and the stage module at
+  2,329 MiB. All 58 emitted source-geometry modules reproduce byte for byte; the
+  guarded build including the public theorem and the Python tests pass.
+
+  The compiler/frame checkpoint is complete: auxiliary, target and source chains,
+  plus both stages' temporary traces, are proved for the actual compiler word.
+  Integration assessment: the existing `Lift`, placement/reflection and recursive
+  supplier interfaces remain applicable. The next work is the gauged design-B node:
+  side-role entrance/exit projectors, semantic boundary cancellation, and an upper bound
+  on its actual move moments by the checked signed-chain histogram. The current local
+  checks allow equal frames and skipped chain entries, so cost linkage must explicitly
+  handle stuttering/refinement rather than assume literal chain-list equality.
+  `Global/Node`, `NodeFrames`, `FrameMoments` and `Stage2Link` provide the existing
+  plain-frame pattern; `Stage2MomentsB` supplies the checked numerical target.
+  No new recursive-machine construction or further design-B optimization is indicated
+  by these interfaces. Boundary/cost proofs, supplier replacement and retuning remain;
+  the public κ is unchanged.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
   boundary gauges, global node/cost integration and B6 retune remain.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`

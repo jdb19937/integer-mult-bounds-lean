@@ -98,6 +98,36 @@ theorem srcB_targets_nodup (D : Dag) (hv : D.Valid) : (D.srcB.map Op.target).Nod
     | add | copy => simp [Op.isSrc] at hb
   | add | copy => simp [Op.isSrc] at ha
 
+/-- Extracting one leaf from disjoint source blocks keeps exactly that block. -/
+theorem sourceBlocks_leaf_targets (blocks : Nat → List Nat) (ns : List Nat) (hnd : ns.Nodup)
+    (n : Nat) :
+    (((ns.flatMap fun i => (blocks i).map (fun s => Op.src s i)).filter
+      fun op => decide (op.node = n)).map Op.target) = if n ∈ ns then blocks n else [] := by
+  have hblock (i : Nat) :
+      (((blocks i).map (fun s => Op.src s i)).filter fun op => decide (op.node = n)).map Op.target =
+        if i = n then blocks i else [] := by
+    by_cases hi : i = n <;> simp [List.filter_map, Op.node, Op.target, hi, Function.comp_def]
+  induction ns with
+  | nil => simp
+  | cons i ns ih =>
+    rw [List.flatMap_cons, List.filter_append, List.map_append, hblock, ih hnd.tail]
+    by_cases hi : i = n
+    · subst i
+      simp [(List.nodup_cons.mp hnd).1]
+    · simp [hi, Ne.symm hi]
+
+/-- One leaf's actual source targets are precisely its fresh allocation interval. -/
+theorem srcB_leaf_targets (D : Dag) (hv : D.Valid) (n : Nat) (hn : n < D.v) :
+    ((D.srcB.filter fun op => decide (op.node = n)).map Op.target) =
+      List.range' (D.compileTo n).next (D.freeUses n).length := by
+  rw [srcB_eq_sourceBlocks D hv]
+  change (((List.range D.v).flatMap fun i =>
+    (List.range' (D.compileTo i).next (D.freeUses i).length).map (fun s => Op.src s i)).filter
+      (fun op => decide (op.node = n))).map Op.target = _
+  simpa only [List.mem_range, ite_eq_left hn] using
+    sourceBlocks_leaf_targets (fun i => List.range' (D.compileTo i).next (D.freeUses i).length)
+      (List.range D.v) List.nodup_range n
+
 end Dag
 end
 end IntegerMultBounds.MathlibTM2.M8.Local

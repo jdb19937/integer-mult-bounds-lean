@@ -9,6 +9,7 @@ import designbword
 import designbcovariance
 import designbkeyorder
 import designbtargetgeometry
+import designbsourcegeometry
 import stage2designb
 
 
@@ -352,6 +353,7 @@ def main():
         designbcovariance.emit(result, compiled, json.loads(args.dag_json.read_text()), args.lean_root)
         designbkeyorder.emit(result, compiled, args.lean_root)
         designbtargetgeometry.emit(result, compiled, json.loads(args.dag_json.read_text()), args.lean_root)
+        designbsourcegeometry.emit(result, args.lean_root)
 
 
 if __name__ == '__main__':
