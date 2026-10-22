@@ -903,8 +903,22 @@ chunk before choosing.
   All 52 new emitted geometry/lookup modules reproduce byte for byte, including a fresh
   reconstruction through the pinned upstream compiler; seven Python framebank tests
   and a guarded build including the public theorem pass. κ remains unchanged.
-  Still needed: assemble the phase/source ordering and centre/output boundaries, and
-  prove the data-wire readout/source traces; then integrate the global node/costs and retune.
+  `Frames/GeometryB/RootKernel.rootOk` now defines the remaining root endpoint check:
+  a path from the explicit root-use label into a known root complement, together with
+  membership of the output triple or centre code in that complement's basis.
+  `RootEndpointFacts` proves the code/vector identities and projector bounds directly
+  from the already certified Gram unit. `GeometryB/RootFacts` proves checker soundness;
+  `Global/RootBoundaryB` connects a passed check to all actual compiler frames on the
+  corresponding output or centre slot. These theorems still take a `rootOk` hypothesis;
+  concrete root witnesses have not yet been emitted or checked.
+  The four endpoint modules check at 1,168, 1,448, 1,662 and 2,614 MiB respectively;
+  the guarded integration build including the public theorem passes.
+  Next: extend `designbgeometry.py` to emit the 5,336 endpoint witnesses and small
+  `decide +kernel` checks. A witness consists only of the existing slot-chain index and
+  a negative bank label containing the endpoint code; the replay's root slots and the
+  full-chain endpoints supply both. Aggregate these checks and discharge the hypotheses
+  of `RootBoundaryB`. Then assemble the phase/source ordering and boundary blocks,
+  prove the data-wire readout/source traces, integrate the global node/costs and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
