@@ -884,8 +884,27 @@ chunk before choosing.
   framed compiler gates. ArgumentFramesB checks at 1,662 MiB / 1.8 seconds, FrameCompile
   at 908 MiB / 1.2 seconds. All 51 emitted modules reproduce byte for byte; seven Python
   framebank tests and the guarded build including the public theorem pass.
-  Still needed: discharge the direct incoming-frame and copy-chain geometric conditions
-  from the already checked complete chains, then handle boundary/readout phases.
+  `Frames/ChainLookup` and `SignedFull/LookupChecks` reuse the existing signed-chain
+  declarations and their geometry proofs through a balanced tree of chunk references.
+  `GeometryB` checks only label equality and ordered-pair membership in those chains;
+  no span inclusion, inverse or orthogonality certificate is regenerated. All 62,271
+  additions and their copy paths pass. `Global/CompilerFramesB.compiler_aux_nested`
+  discharges the two geometric hypotheses and proves unconditional nesting on every
+  actual compiler auxiliary wire; filtering gives the actual first/rest side-block chains.
+  The 16 geometry check modules use at most 3,137 MiB (394 seconds total sequential
+  checking); LookupChecks uses 1,081 MiB, GeometryB/Facts 1,682 MiB, CompilerFramesB
+  1,816 MiB. Each check is split into 1,024-node declarations.
+  `Local/FrameBirth` structurally proves that every allocated slot first appears at its
+  own start frame. `Global/CompilerBoundaryB` uses this and the explicit root-use frame
+  to bound all compiler frames from below by the start and above by each final root frame.
+  `GeometryB/SlotFacts` also checks the readout-to-start edge for all 28,866 slots;
+  `compiler_readout_bound` connects these edges to all actual compiler frames. The cached
+  final allocation count proves the same slot count as the existing supplier.
+  All 52 new emitted geometry/lookup modules reproduce byte for byte, including a fresh
+  reconstruction through the pinned upstream compiler; seven Python framebank tests
+  and a guarded build including the public theorem pass. κ remains unchanged.
+  Still needed: assemble the phase/source ordering and centre/output boundaries, and
+  prove the data-wire readout/source traces; then integrate the global node/costs and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,

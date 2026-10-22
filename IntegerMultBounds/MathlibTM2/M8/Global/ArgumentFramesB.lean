@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.Global.CopyFramesB
+public import IntegerMultBounds.MathlibTM2.M8.Frames.ArgumentLabelsB
 public import IntegerMultBounds.MathlibTM2.M8.Local.WitnessOrderB
 public import IntegerMultBounds.MathlibTM2.M8.Local.FrameCompile
 
@@ -14,17 +15,11 @@ open IntegerMultBounds IntegerMultBounds.Networks Matrix
 open IntegerMultBounds.MathlibTM2.M8.Local IntegerMultBounds.MathlibTM2.M8.Frames
 open Classical
 
-def freeLabel (n i : Nat) : Signed.Frame :=
-  let next := slotsBefore n
-  if n < leafCount then AssignmentB.startLabel (next + i)
-  else if i = 0 then
-    if (bAt n).2.length ≤ 1 then AssignmentB.nodeLabel n
-    else AssignmentB.startLabel (next + ((bAt n).2.length - 1) - 1)
-  else AssignmentB.startLabel (next + (i - 1))
+abbrev freeLabel := AssignmentB.freeUseLabel
 
 theorem freeUseLabel_eq (n : Nat) (hn : n < nodeCount) (i : Nat) :
     freeUseLabel n i = freeLabel n i := by
-  simp only [freeUseLabel, freeLabel, dagB_compileTo_next n (Nat.le_of_lt hn),
+  simp only [freeUseLabel, freeLabel, AssignmentB.freeUseLabel, dagB_compileTo_next n (Nat.le_of_lt hn),
     dagB_freeUses_eq n hn]
 
 theorem pending_free_label (n k : Nat) (hn : n < nodeCount) (hk : k ≤ nodeCount)
@@ -41,11 +36,7 @@ theorem pending_free_label (n k : Nat) (hn : n < nodeCount) (hk : k ≤ nodeCoun
   have hf := pending_free_use_frame n k hk _ hi (by rwa [he])
   rwa [he, freeUseLabel_eq n hn] at hf
 
-def argumentLabel (k : Nat) (pos : Bool) : Signed.Frame :=
-  match (recAt k).donor pos with
-  | some n => AssignmentB.nodeLabel n
-  | none => freeLabel ((recAt k).arg pos)
-      ((bAt ((recAt k).arg pos)).2.idxOf (.gate k pos))
+abbrev argumentLabel := AssignmentB.argumentLabel
 
 /-- The actual frame consumed by an addition is a direct local table lookup. -/
 theorem argument_frame (k : Nat) (hv : leafCount ≤ k) (hk : k < nodeCount) (pos : Bool) :
@@ -57,19 +48,17 @@ theorem argument_frame (k : Nat) (hv : leafCount ≤ k) (hk : k < nodeCount) (po
     have hu : Use.gate k pos ∈ dagB.freeUses ((recAt k).arg pos) := by
       rw [Dag.mem_freeUses, Dag.mem_uses_gate]
       exact ⟨⟨hk, hv, rfl⟩, linkedB_of_donor hd⟩
-    simpa only [argumentLabel, hd, show dagB.arg k pos = (recAt k).arg pos from rfl] using pending_free_label _ k
+    simpa only [argumentLabel, AssignmentB.argumentLabel, records_get, hd, show dagB.arg k pos = (recAt k).arg pos from rfl] using pending_free_label _ k
       ((dagB_valid.arg_lt k hv hk pos).trans hk) (Nat.le_of_lt hk) _ hu hp
   | some n =>
     have hok := donor_ok_at hk pos
     rw [hd] at hok
     obtain ⟨hn, L, hL, ht, hpos⟩ := donorOk_some hok
     have hl : dagB.link n = some (L.operand, k, pos) := by simp [dagB, dag, hL, ht, hpos]
-    simpa only [argumentLabel, hd] using
+    simpa only [argumentLabel, AssignmentB.argumentLabel, records_get, hd] using
       pending_linked_use_frame n k (Nat.le_of_lt hk) L.operand k pos hl hp
 
-def rootLabel (j : Nat) : Signed.Frame :=
-  let n := (roots.get rootWidth j).node
-  freeLabel n ((bAt n).2.idxOf (.root j))
+abbrev rootLabel := AssignmentB.rootLabel
 
 /-- Final read slots retain their explicit free-use labels. -/
 theorem root_frame (j : Nat) (hj : j < rootCount) :
@@ -80,7 +69,7 @@ theorem root_frame (j : Nat) (hj : j < rootCount) :
   rw [Dag.compile]
   have h := pending_free_label (dagB.rootNode j) dagB.N (dagB_valid.root_lt j hj)
     (show dagB.N ≤ nodeCount from le_rfl) (.root j) hu (dagB.root_pending dagB_valid hj)
-  simpa only [rootLabel, show dagB.rootNode j = (roots.get rootWidth j).node from rfl] using h
+  simpa only [rootLabel, AssignmentB.rootLabel, show dagB.rootNode j = (roots.get rootWidth j).node from rfl] using h
 
 theorem opFrame_eq_opLabel : opFrame = FrameFlow.opLabel
     (fun n => frameOfLabel (AssignmentB.nodeLabel n))

@@ -455,7 +455,8 @@ def main(pr97_dir, data_path, lean_root=None):
                     ops=vops, side=side, rootSlots=[pend[('root', j)] for j in range(len(roots))],
                     deferred=defS,
                     earlySources=[pend[u] for u in ve], lateSources=[pend[u] for u in vl],
-                    first=first, rest=rest)
+                    first=first, rest=rest, servingOrders=[full_orders[n] for n in range(N)],
+                    slotsBefore=slot_counts[:N + 1])
 
     # emit
     base = os.path.join(lean_root, 'IntegerMultBounds', 'MathlibTM2', 'M8', 'Local')
