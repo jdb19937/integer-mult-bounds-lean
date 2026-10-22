@@ -57,6 +57,8 @@ public import IntegerMultBounds.MathlibTM2.Routing.SelectiveKeyTarget
 public import IntegerMultBounds.MathlibTM2.Routing.SelectiveKeyPass
 public import IntegerMultBounds.MathlibTM2.Routing.RepairCore
 public import IntegerMultBounds.MathlibTM2.Routing.ExactSelective
+public import IntegerMultBounds.MathlibTM2.Routing.ReservoirBudget
+public import IntegerMultBounds.MathlibTM2.Routing.ReservoirSchedule
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

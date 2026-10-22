@@ -202,7 +202,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 | --- | --- | --- | --- |
 | R1 selective updates | ✅ | Complete selective primitive: arbitrary ordered allowed sources, physical good-set XOR, full source/spectator and borrowed-field restoration, global rank permutation, and executed setup/routing/cleanup with every phase priced. `SelectiveRouter.selectiveRouting_exec` instantiates concrete register placement, canonical header values, logarithmic guard widths and the physical exceptional bound `5 / (128 scale³)`. See [completion audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md). | ~6.5k |
 | R2 exact repair | ✅ | Complete all-address selective primitive. `exactSelective_exec` in `ExactSelective.lean` executes all 34 metadata installations, complete-rank keying, R1 routing, physical classification, exceptional extraction/radix sort/merge/key stripping, and final cleanup on one concrete bank. Every register except the output stream is restored; canonical headers, explicit logarithmic guards and the physical density price the total cost. See [completion audit](IntegerMultBounds/MathlibTM2/Routing/R2-AUDIT.md). | ~2.7k |
-| R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
+| R3 complete router | 🟡 | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
 
 R1 checkpoint: `Routing/Shear` and `PackedShear` prove the logical and packed
@@ -313,8 +313,36 @@ prepared-state, classifier, key-emitter or placement oracle. The
 evidence. The routing directory now has approximately **9.2k** Lean lines, about
 **2.7k** beyond the R1 checkpoint, reusing the existing scan and radix-sort programs.
 
-Raw descriptor/header generation, matching/reservoir scheduling, permutation
-decomposition and short-record fallback remain R3. Layout/support integration
+R3 has a checked logical matching schedule. `ReservoirPartition` splits an
+involution into three classes, each fixing its assigned reservoir; `MatchingShears`
+realizes each class with three admissible XOR shears. `ReservoirSchedule` composes
+the nine shears and proves their targets avoid the borrowed reservoir.
+`ReservoirBudget` constructs three disjoint banks and proves their capacity when
+`n ≥ 64G`. Its router parameters use `K = 64G`, rather than R2's minimal spacing;
+the generic R2 execution theorem already supports this choice, and the existing
+radix/density inequalities remain valid. This is a logical schedule, not yet an
+executed router or a change to the multiplication bound.
+
+R3's remaining work is ordered by dependency:
+
+1. Decompose an arbitrary finite permutation into two involutions, with a
+   computable representation suitable for configuration generation.
+2. Split directional shears by residue into R2-compatible sparse target profiles;
+   handle the terminal segment explicitly.
+3. Execute reservoir placement and its inverse, accounting for displaced
+   coordinates, borrowed-field restoration and every interchange cost.
+4. Execute uniform generation of all raw R2 configuration words: source and mask
+   descriptors, dimensions and canonical headers. Charge generation and cleanup;
+   raw words cannot remain an unpriced input oracle.
+5. Amortize setup for long records and supply the executed short-record fallback,
+   preserving spectators in both regimes.
+6. Compose the full arbitrary-coordinate router and audit its total cost and
+   exact restored-bank contract. R3 remains open until all these gates pass.
+
+The older Balanced design's rotation counts and minimal parameter choices are
+historical; use the proved R1 schedule and the reservoir-compatible spacing above.
+Raw descriptor/header generation, permutation decomposition, physical placement
+and short-record fallback remain R3. Layout/support integration
 remains R4. Completing R2 does not change the current multiplication kappa.
 
 Estimated routing total: **15–24k additional or substantially revised Lean lines**; excludes generated data and Python. Existing layout,
