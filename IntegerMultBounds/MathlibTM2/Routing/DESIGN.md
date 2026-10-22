@@ -393,6 +393,36 @@ move its accumulated keyed stream back and reset every index counter. The
 key/header descriptor and full mask remain configuration inputs whose installation
 and cleanup belong to the final R2 composition.
 
+## R2 checkpoint: executed whole-stream destination keying
+
+`KeyEmission` factors the old concrete key-loop construction around
+`KeyEmissionSpec`, the contract of an executed key emitter. `keyRecord_exec`
+performs key emission, the actual payload transfer, counter increment and source
+peek. `keyRecordLoop_exec` proves the structural loop, including its exit step.
+`keyStream_exec` moves the accumulator back to forward stream order and resets
+all field counters; its final stack bank differs from the initial bank only at
+the source stream. It charges every loop, copy, move and reset.
+
+`SelectiveKeyEmitter` supplies the concrete emitter for all six key fields.
+Only the target digit uses descriptor interpretation and XOR; the other five,
+including the row, use the existing executed field-copy program. The emitter
+shape is independent of all dimensions and source descriptors. Static descriptors
+and all scratch survive every iteration through `KeyPatternInv`.
+
+`selectiveKeyPass_exec` in `SelectiveKeyPass.lean` combines these checked programs
+into the complete executed selective key pass. Its output is exactly
+`keyRecs (fieldsLen (selectiveKeyLen ...)) (selectiveIdealPerm ...) l` and its cost
+is the explicit `selectiveKeyPassCost`. This supplies full stream keying rather
+than only destination arithmetic or a hypothetical key callback. The existing
+`selectiveKey_rank_bound` must be used with the row-width bound before sorting,
+so distinct full ranks are not truncated to equal keys.
+
+The whole-stream key pass checks near 1.2 GiB. R2 remains open: instantiate one
+shared finite placement for keying, routing and classification/repair; install
+and clear every metadata bank with charged execution; compose keying, the full
+R1 schedule and exact repair, and audit the all-address primitive and its density
+cost. The prepared key/classifier invariants are not completion of that gate.
+
 ## Completion gates
 
 R1 ends with packed good-set semantics and priced host calls; R2 supplies exact

@@ -315,8 +315,12 @@ offsets, proves the emitted digits equal the ideal destination, and identifies
 one concrete arbitrary-source descriptor for the sparse target word. `HeaderRead`
 and `PatternKey` execute its live-header read and target-key emission, with setup,
 XOR and cleanup charged. `selectiveKeyTarget_exec` instantiates the actual field
-bank with a fixed cost. The full field-emission/list loop and counter restoration
-remain; this is not yet an executed whole-stream key pass.
+bank with a fixed cost. `KeyEmission` now supplies the actual record loop, payload
+transfer, stream-order restoration and counter reset. `SelectiveKeyEmitter` proves
+the concrete six-digit emitter, and `selectiveKeyPass_exec` supplies the complete
+executed stream pass with exact cost and full register restoration. It returns
+repair's `keyRecs` representation; `selectiveKey_rank_bound` supplies key uniqueness
+when the row counter fits. Shared placement and metadata setup/composition remain.
 
 R2 acceptance work, in dependency order:
 
@@ -324,9 +328,10 @@ R2 acceptance work, in dependency order:
 2. **Classifier execution checked.** `badClassifier_spec` handles the actual
    field bank and the final segment at zero suffix width. Its masks are explicit
    metadata inputs; initialize and clear them in item 5.
-3. **Key arithmetic and target emission checked.** Finish the full field emitter
-   and stream loop for arbitrary ordered source descriptors, including the complete
-   row/rank key and restoration of all source/header scratch and index counters.
+3. **Complete key pass checked.** The full six-field emitter and executed stream
+   loop handle arbitrary ordered sources and complete row/rank keys, with source,
+   descriptor, header, scratch and all index counters restored. Instantiate its
+   metadata and shared register placement in item 5.
 4. Instantiate the existing executed route/radix-sort/merge/strip pipeline; derive
    its exceptional-sort cost from the physical density, and prove full restoration.
 5. Concrete register placement, charged metadata setup/cleanup, and composition
