@@ -100,6 +100,7 @@ def emit(result, compiled, destination):
     write('KeyOrderChecksB.lean', all_imports, totals)
     emit_readout_sequence(write, prefix, groups, keys, sigma)
     emit_readout_coverage(write, prefix)
+    emit_source_sequences(write, prefix, groups, keys)
     print('key inverse checks:', ', '.join(str(len(k)) for k in keys), 'entries; SHA-256', digest)
 
 
@@ -236,3 +237,85 @@ def emit_readout_coverage(write, prefix):
         + conjunction([f'Tree.all nonzeroCovered (fun _ => true) 28866 '
                        f'Frames.AssignmentB.sigma{k:02d} {4096*k} 4096' for k in range(8)])
         + ' = true\n  rw [' + ', '.join(coverage) + ']\n  rfl'])
+
+
+def emit_source_sequences(write, prefix, groups, keys):
+    """Reuse existing key chunks for bounded indexed membership lookups."""
+    def padded_tree(names, width, default):
+        return designbword.tree_text(names + [default] * (width-len(names)))
+
+    data = []
+    for phase, key in [('early', keys[2]), ('late', keys[3])]:
+        chunks = [f'{phase}V_{j:02d}' for j in range((len(key)+127)//128)]
+        data.append(f'def {phase}Chunks : Tree (List Use) := '+padded_tree(chunks, 64, '[]'))
+        data.append(f'def {phase}At (i : Nat) : Nat := useSlotB '
+                    f'((({phase}Chunks.get 64 (i / 128))[i % 128]?).getD (.root 0))')
+    deferred = []
+    for k, start in enumerate(range(0, len(keys[1]), designbword.DCHUNK)):
+        chunks = [f'deferred{k}_{j:02d}' for j in range((min(3000,len(keys[1])-start)+127)//128)]
+        data.append(f'def deferredChunks{k} : Tree (List Use) := '+padded_tree(chunks,32,'[]'))
+        deferred.append(f'deferredChunks{k}')
+    data.append('def deferredChunks : Tree (Tree (List Use)) := '+padded_tree(deferred,4,'.leaf []'))
+    data.append('def deferredAt (i : Nat) : Nat :=\n'
+                '  let us := (deferredChunks.get 4 (i / 3000)).get 32 ((i % 3000) / 128)\n'
+                '  useSlotB ((us[(i % 3000) % 128]?).getD (.root 0))')
+    write('DataKeyB/SourceSequences.lean', [prefix+'.DataKeyB.Inverse',prefix+'.KeyMembershipB'],data)
+    imports, totals = [], []
+    sizes = {'deferred':len(keys[1]),'early':len(keys[2]),'late':len(keys[3])}
+    for phase, _, full, chunks, unfold in groups[1:]:
+        facts, lengths = [], []
+        for k in range((len(chunks)+7)//8):
+            name=f'Sequence{phase.title()}{k:02d}'
+            imports.append(prefix+'.ChecksKeyB.'+name)
+            body=[]
+            for j in range(8*k,min(8*(k+1),len(chunks))):
+                chunk,start,size=chunks[j]
+                fact=f'{phase}{j:03d}_sequence'
+                length=f'{phase}{j:03d}_sequence_length'
+                facts.append(fact);lengths.append(length)
+                body.append(f'theorem {length} : {chunk}.length = {size} := by\n  decide +kernel')
+                body.append(f'theorem {fact} : sequenceCheck {phase}At {start} ({chunk}.map useSlotB) = true := by\n'
+                            '  decide +kernel')
+            write('ChecksKeyB/'+name+'.lean',[prefix+'.DataKeyB.SourceSequences'],body)
+        expansions=[full,*unfold,'List.map_append','sequenceCheck_append','List.length_map','List.length_append',*lengths[:-1],'Nat.reduceAdd',*facts,'Bool.true_and']
+        totals.append(f'theorem {phase}_sequence : sequenceCheck {phase}At 0 ({full}.map useSlotB) = true := by\n'
+                      '  simp only ['+', '.join(expansions)+']')
+        totals.append(f'theorem {phase}_key_length : ({full}.map useSlotB).length = {sizes[phase]} := by\n'
+                      '  simp only ['+', '.join([full,*unfold,'List.map_append','List.length_map','List.length_append',*lengths,'Nat.reduceAdd'])+']')
+    write('SourceSequenceChecksB.lean',imports,totals)
+    emit_source_coverage(write, prefix, groups)
+
+
+def emit_source_coverage(write, prefix, groups):
+    imports, totals = [], []
+    for phase, _, full, chunks, _ in groups[2:]:
+        facts = []
+        for k in range((len(chunks)+7)//8):
+            name=f'Phase{phase.title()}{k:02d}'
+            imports.append(prefix+'.ChecksKeyB.'+name)
+            body=[]
+            for j in range(8*k,min(8*(k+1),len(chunks))):
+                chunk,_,_=chunks[j]
+                fact=f'{phase}{j:03d}_phase'
+                facts.append(fact)
+                body.append(f'theorem {fact} : {chunk}.all (sourcePhaseOk {str(phase=="late").lower()}) = true := by\n'
+                            '  unfold sourcePhaseOk\n  decide +kernel')
+            write('ChecksKeyB/'+name+'.lean',[prefix+'.SourceCoverageKernelB'],body)
+        totals.append(f'theorem {phase}_phase : {full}.all (sourcePhaseOk {str(phase=="late").lower()}) = true := by\n'
+                      '  simp only ['+', '.join([full,'List.all_append',*facts,'Bool.true_and'])+']')
+    for k,start in enumerate(range(0,1771,128)):
+        size=min(128,1771-start)
+        name=f'SourceCoverage{k:02d}'
+        imports.append(prefix+'.ChecksKeyB.'+name)
+        write('ChecksKeyB/'+name+'.lean',[prefix+'.SourceCoverageKernelB'],[
+            f'theorem source_coverage{k:02d} : (List.range\' {start} {size}).all sourceCovered = true := by\n'
+            '  unfold sourceCovered\n  decide +kernel'])
+    proof=['theorem sourceCovered_at (n : Nat) (hn : n < 1771) : sourceCovered n = true := by',
+           '  obtain ⟨k, i, hi, rfl⟩ : ∃ k i, i < 128 ∧ n = 128 * k + i :=',
+           '    ⟨n / 128, n % 128, Nat.mod_lt _ (by decide), (Nat.div_add_mod n 128).symm⟩',
+           '  have hk : k < 14 := by omega', '  interval_cases k']
+    for k in range(14):
+        proof += [f'  · apply List.all_eq_true.mp source_coverage{k:02d} (128 * {k} + i)',
+                  '    apply List.mem_range\'_1.mpr', '    constructor <;> omega']
+    totals.append('\n'.join(proof))
+    write('SourceCoverageChecksB.lean',imports+['Mathlib.Tactic.IntervalCases'],totals)

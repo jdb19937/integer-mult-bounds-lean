@@ -1049,11 +1049,22 @@ chunk before choosing.
   The stage module checks at 3,096 MiB. The sampled target modules, including the one
   with the most slot lookups, use at most 1,761 MiB. Source coverage/order and source
   chain alignment remain before the compiler/frame checkpoint is complete.
-  The source-key and allocation facts
-  above provide direct slots for instantiating the recurrence. Then finish data-wire
-  nesting, integrate the global node/costs and switch the supplier and retune.
-  The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
-  the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
+  `Local/SourceListB.srcB_eq_sourceBlocks` now extracts the exact source list from
+  arbitrary valid compilers: consecutive fresh slots for each leaf, with distinct
+  source targets. `SourceOrderB` recovers sorted operation lists from their complete
+  target keys. `KeyMembershipB` proves both membership and nonmembership from checked
+  inverse positions and indexed sequences. The key emitter reuses the existing chunks
+  for early/late/deferred lookups and certifies every allocated leaf source slot and
+  all 11,374 source entries' phases. `Global/SourceOrderingB` proves that the actual
+  early and late compiler lists are exactly `earlyV.map sourceOpB` and
+  `lateV.map sourceOpB`. `Global/SourceTraceB` rewrites the actual first-stage source
+  trace into those exact ordered labels and the frame-one uncompute, retaining repeats.
+  SourceListB checks at 1,088 MiB; SourceMembershipB, SourceOrderingB and SourceTraceB
+  at 2,001, 2,007 and 2,007 MiB. All 134 key modules reproduce byte for byte, and the
+  Python tests pass. Remaining for the compiler/frame checkpoint: connect these source
+  labels to the signed chains and prove complete source nesting in both stages.
+  Then assess boundary transitions and global node/cost integration, supplier switching
+  and retuning under the root plan's gate.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
   boundary gauges, global node/cost integration and B6 retune remain.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
