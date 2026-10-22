@@ -68,6 +68,18 @@ theorem swap_down {A B : Mat d} (hA : IsFrame A) (hB : IsFrame B) (hAB : A * B =
   rw [two_smul]
   abel
 
+/-- The commuting gauge exit stays one exchange under any frame interpretation. -/
+theorem swap_exit {A C : Mat d} (hA : IsFrame A) (hC : IsFrame C)
+    (hAC : IsFrame (A - C)) (hCA : A * C = C) (s : Addr d R) :
+    I.swap A (I.swap (1 - (A - C)) s) = I.swap (1 - C) s := by
+  have hm : I.ρ A * I.ρ C = I.ρ C := by rw [← I.mul hA hC, hCA]
+  simp only [swap]
+  rw [exchange_exchange, I.sub hAC isFrame_one, I.sub hC hA, I.sub hC isFrame_one,
+    I.one, Matrix.mul_sub, Matrix.mul_one, Matrix.mul_sub, I.idem hA, hm]
+  congr 1
+  rw [two_smul]
+  abel
+
 theorem swap_zero (a : Addr d R) : I.swap 0 a = a := by
   rw [swap, I.zero]; exact exchange_zero a
 
@@ -82,6 +94,7 @@ variable {ι : Type} [DecidableEq ι]
 def fstep (I : Interp d R) : FStep ι d → (ι → Streams d R) → (ι → Streams d R)
   | .up i A B, x => Function.update x i (fun a => x i (I.swap (B - A) a))
   | .down i A B, x => Function.update x i (fun a => x i (I.swap (A - B) a))
+  | .exit i A C, x => Function.update x i (fun a => x i (I.swap (1 - (A - C)) a))
   | .gate g _, x => FramedCircuit.moduleGate g x
   | .reset i, x => Function.update x i 0
   | .relabel _ _, x => x
@@ -131,6 +144,18 @@ theorem fstep_encoded (I : Interp d R) (s : FStep ι d) (fr : ι → Mat d) (z :
       · rw [Function.update_of_ne hw, Function.update_of_ne hw, henc]
     · by_cases hw : w = i
       · subst hw; rw [FStep.frames, Function.update_self]; exact hB
+      · rw [FStep.frames, Function.update_of_ne hw]; exact hfr w
+  | exit i A C =>
+    obtain ⟨hi, hC, hAC, h1C, hCA, _⟩ := hok
+    have hA : IsFrame A := hi ▸ hfr i
+    refine ⟨fun w a => ?_, hz, fun w => ?_⟩
+    · simp only [fstep, FStep.frames, FStep.logic]
+      by_cases hw : w = i
+      · subst hw
+        rw [Function.update_self, Function.update_self, henc, hi, I.swap_exit hA hC hAC hCA]
+      · rw [Function.update_of_ne hw, Function.update_of_ne hw, henc]
+    · by_cases hw : w = i
+      · subst hw; rw [FStep.frames, Function.update_self]; exact h1C
       · rw [FStep.frames, Function.update_of_ne hw]; exact hfr w
   | gate g F =>
     obtain ⟨htouch, dst, src, hne, rfl⟩ := hok

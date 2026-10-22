@@ -40,6 +40,11 @@ structure IsFrame (U : Mat d) : Prop where
   idem : U * U = U
   bound : Height.Bounded U (10 ^ 4000)
 
+theorem isFrame_one {d : ℕ} : IsFrame (1 : Mat d) :=
+  ⟨by simp, fun i j => by
+    rw [Matrix.one_apply]; split_ifs <;> simp [-Nat.reducePow] <;>
+      exact one_le_pow₀ (by norm_num)⟩
+
 /-! ### Partial swaps mod a prime power -/
 
 section Swaps
@@ -134,6 +139,24 @@ theorem swapAt_down {A B : Mat d} (hA : IsFrame A) (hB : IsFrame B) (hAB : A * B
   rw [two_smul]
   abel
 
+/-- A gauged exit from `A` to `1 - C` is one exchange, where `C ≤ A`. -/
+theorem swapAt_exit {A C : Mat d} (hA : IsFrame A) (hC : IsFrame C)
+    (hAC : IsFrame (A - C)) (hCA : A * C = C) (s : Address d (p ^ b)) :
+    swapAt (p ^ b) A (swapAt (p ^ b) (1 - (A - C)) s) = swapAt (p ^ b) (1 - C) s := by
+  have ha := frame_admissible hp hpb b hA
+  have hc := frame_admissible hp hpb b hC
+  have hd := frame_admissible hp hpb b hAC
+  have h1 := frame_admissible hp hpb b (isFrame_one (d := d))
+  have hm : reduce (p ^ b) A * reduce (p ^ b) C = reduce (p ^ b) C := by
+    rw [← Swap.Modular.reduce_mul _ ha hc, hCA]
+  simp only [swapAt]
+  rw [exchange_exchange, reduce_sub _ h1 hd, reduce_sub _ ha hc,
+    reduce_sub _ h1 hc, Swap.Modular.reduce_one, Matrix.mul_sub, Matrix.mul_one,
+    Matrix.mul_sub, reduce_idem hp hpb b hA, hm]
+  congr 1
+  rw [two_smul]
+  abel
+
 end Prime
 
 /-! ### Edge programs -/
@@ -191,6 +214,7 @@ theorem edgeAction_program {p : ℕ} (hp : p.Prime) (hpb : coefficientBound < p)
 inductive FStep (ι : Type) (d : ℕ) where
   | up (i : ι) (A B : Mat d)
   | down (i : ι) (A B : Mat d)
+  | exit (i : ι) (A C : Mat d)
   | gate (g : Circuit.Gate ι (ZMod 2)) (F : Mat d)
   | reset (i : ι)
   | relabel (i : ι) (F : Mat d)
@@ -203,6 +227,7 @@ namespace FStep
 def phys : FStep ι d → List (Step ι (FieldProgram d))
   | .up i A B => [.edge i (Exchange.program (B - A))]
   | .down i A B => [.edge i (Exchange.program (A - B))]
+  | .exit i A C => [.edge i (Exchange.program (1 - (A - C)))]
   | .gate g _ => [.gate g]
   | .reset i => [.reset i]
   | .relabel _ _ => []
@@ -211,6 +236,7 @@ def phys : FStep ι d → List (Step ι (FieldProgram d))
 def frames : FStep ι d → (ι → Mat d) → (ι → Mat d)
   | .up i _ B, fr => Function.update fr i B
   | .down i _ B, fr => Function.update fr i B
+  | .exit i _ C, fr => Function.update fr i (1 - C)
   | .gate _ _, fr => fr
   | .reset _, fr => fr
   | .relabel i F, fr => Function.update fr i F
@@ -225,6 +251,8 @@ def zeros : FStep ι d → (ι → Prop) → (ι → Prop)
 def Ok : FStep ι d → (ι → Mat d) → (ι → Prop) → Prop
   | .up i A B, fr, _ => fr i = A ∧ IsFrame B ∧ A * B = A ∧ B * A = A
   | .down i A B, fr, _ => fr i = A ∧ IsFrame B ∧ A * B = B ∧ B * A = B
+  | .exit i A C, fr, _ => fr i = A ∧ IsFrame C ∧ IsFrame (A - C) ∧ IsFrame (1 - C) ∧
+      A * C = C ∧ C * A = C
   | .gate g F, fr, _ => (∀ w ∈ FramedCircuit.touched g, fr w = F) ∧
       ∃ dst src, dst ≠ src ∧ g = ReversibleFanout.add dst src
   | .reset _, _, _ => True
@@ -313,6 +341,22 @@ theorem step_encoded (s : FStep ι d) (fr : ι → Mat d) (z : ι → Prop)
     · by_cases hw : w = i
       · subst hw; rw [FStep.frames, Function.update_self]; exact hB
       · rw [FStep.frames, Function.update_of_ne hw]; exact hfr w
+  | exit i A C =>
+    obtain ⟨hi, hC, hAC, h1C, hCA, _⟩ := hok
+    have hA : IsFrame A := hi ▸ hfr i
+    have he : EdgeMat (1 - (A - C)) :=
+      edgeMat_sub hAC isFrame_one (by simp) (by simp)
+    refine ⟨fun w a => ?_, hz, fun w => ?_⟩
+    · simp only [FStep.phys, FStep.frames, FStep.logic, Step.run, Step.execute]
+      by_cases hw : w = i
+      · subst hw
+        rw [Function.update_self, Function.update_self, edgeAction_program hp hpb b he hd1 hd]
+        dsimp only
+        rw [henc, hi, swapAt_exit hp hpb b hA hC hAC hCA]
+      · rw [Function.update_of_ne hw, Function.update_of_ne hw, henc]
+    · by_cases hw : w = i
+      · subst hw; rw [FStep.frames, Function.update_self]; exact h1C
+      · rw [FStep.frames, Function.update_of_ne hw]; exact hfr w
   | gate g F =>
     obtain ⟨htouch, dst, src, hne, rfl⟩ := hok
     refine ⟨fun w a => ?_, fun w hw => ?_, hfr⟩
@@ -383,6 +427,7 @@ def edgeRanks : List (FStep ι d) → ℕ
   | [] => 0
   | .up _ A B :: rest => (B - A).rank + edgeRanks rest
   | .down _ A B :: rest => (A - B).rank + edgeRanks rest
+  | .exit _ A C :: rest => (1 - (A - C)).rank + edgeRanks rest
   | _ :: rest => edgeRanks rest
 
 omit [DecidableEq ι] in

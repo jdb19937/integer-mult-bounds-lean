@@ -97,6 +97,9 @@ theorem mem_revPhysOf_edge (G G' : Mat d) : ∀ (L : List (FStep ι d)) (i : ι)
       | down j A B =>
         simp only [revStep, List.mem_singleton, Step.edge.injEq] at h
         exact ⟨A - B, by simp [edgeMats], h.2⟩
+      | exit j A C =>
+        simp only [revStep, List.mem_singleton, Step.edge.injEq] at h
+        exact ⟨1 - (A - C), by simp [edgeMats], h.2⟩
       | gate g F => simp [revStep] at h
       | reset j => simp [revStep] at h
       | relabel j F => simp [revStep] at h

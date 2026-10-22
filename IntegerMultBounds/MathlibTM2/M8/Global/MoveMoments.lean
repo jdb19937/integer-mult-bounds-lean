@@ -29,6 +29,7 @@ def edgeMoment (φ : ℕ → M) : List (FStep ι d) → M
   | [] => 0
   | .up _ A B :: rest => φ (B - A).rank + edgeMoment φ rest
   | .down _ A B :: rest => φ (A - B).rank + edgeMoment φ rest
+  | .exit _ A C :: rest => φ (1 - (A - C)).rank + edgeMoment φ rest
   | _ :: rest => edgeMoment φ rest
 
 omit [DecidableEq ι] in

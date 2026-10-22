@@ -455,11 +455,6 @@ theorem chainOk_node : ChainOk gInit allGates := by
     rw [fseq_wJunk]
     exact List.isChain_singleton _
 
-theorem isFrame_one {d : ℕ} : IsFrame (1 : Mat d) :=
-  ⟨by simp, fun i j => by
-    rw [Matrix.one_apply]; split_ifs <;> simp [-Nat.reducePow] <;>
-      exact one_le_pow₀ (by norm_num)⟩
-
 theorem isFrame_corr (S T : V) : IsFrame (1 - uFrame S T) := by
   rw [uFrame, ← lift2_compl]
   exact lframe_lift2 S (SmallFrame.compl

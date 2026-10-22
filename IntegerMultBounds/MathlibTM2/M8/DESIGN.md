@@ -1091,8 +1091,26 @@ chunk before choosing.
   No new recursive-machine construction or further design-B optimization is indicated
   by these interfaces. Boundary/cost proofs, supplier replacement and retuning remain;
   the public κ is unchanged.
-  These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
-  boundary gauges, global node/cost integration and B6 retune remain.
+  The boundary primitives are now implemented. `Global/FrameMachine.FStep.exit`
+  moves from `A` to `1 - C` in one exchange of `1 - (A - C)`, for nested `C ≤ A`.
+  Its validity checks retain the existing frame/coefficient limits. Ordinary modular
+  execution, arbitrary-ring interpretation, reversed execution, rank counts and move
+  moments all cover this case. This keeps the commuting exit as one whole projector.
+  `Global/GaugedExitB` proves the two lifted exits are valid and have rank
+  `506 + rank σ`; `Global/SideExitB` instantiates them with the actual checked σ frames,
+  including their complements and one-term moment contributions.
+  `AssignmentB/RankFacts` now checks all 28,866 allocated σ ranks are at most 22, so
+  each exterior child has rank at most 528. The nine generated rank-check modules
+  reproduce byte for byte. `Local/WordOrderB`'s operation permutation and `Global/AuxEndpointB` prove that every allocated first-stage
+  side wire actually reaches frame one in uncompute. Generic complementary-gauge
+  cancellation is proved for modular addresses (`swapAt_complement`) and interpreted
+  coordinate rings (`Rev/GaugedBoundary`).
+  The complete public theorem rebuild passes after extending the framed-step language:
+  11,108 modules, 36.8 GiB total peak under the guard. Sampled new/changed modules use
+  at most 2,242 MiB; coefficient bounds and proof limits are unchanged.
+  These concrete stages and exits are not yet the public supplier. Assemble the gauged
+  node, prove its boundary semantics and actual move-moment bound, then replace the
+  supplier and complete the B6 retune. Public κ remains unchanged.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.

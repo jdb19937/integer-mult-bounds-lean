@@ -41,6 +41,10 @@ theorem frames_step (s : FStep ι d) (fr : ι → Mat d) (z : ι → Prop) (hfr 
     by_cases h : w = i
     · subst h; rw [FStep.frames, Function.update_self]; exact hok.2.1
     · rw [FStep.frames, Function.update_of_ne h]; exact hfr w
+  | exit i A C =>
+    by_cases h : w = i
+    · subst h; rw [FStep.frames, Function.update_self]; exact hok.2.2.2.1
+    · rw [FStep.frames, Function.update_of_ne h]; exact hfr w
   | gate g F => exact hfr w
   | reset i => exact hfr w
   | relabel i F =>
@@ -67,6 +71,10 @@ theorem valid_edges : ∀ (L : List (FStep ι d)) (fr : ι → Mat d) (z : ι �
         simp only [FStep.phys, List.mem_singleton, Step.edge.injEq] at h
         obtain ⟨-, rfl⟩ := h
         exact ⟨_, rfl, edgeMat_sub hB (hj ▸ hfr j) hBA hAB⟩
+      | exit j A C =>
+        simp only [FStep.phys, List.mem_singleton, Step.edge.injEq] at h
+        obtain ⟨_, rfl⟩ := h
+        exact ⟨_, rfl, edgeMat_sub hv.1.2.2.1 isFrame_one (by simp) (by simp)⟩
       | gate g F => simp [FStep.phys] at h
       | reset j => simp [FStep.phys] at h
       | relabel j F => simp [FStep.phys] at h
@@ -85,6 +93,7 @@ theorem valid_gates : ∀ (L : List (FStep ι d)) (fr : ι → Mat d) (z : ι �
         subst h
         exact hv.1.2
       | up j A B => simp [FStep.phys] at h
+      | exit j A C => simp [FStep.phys] at h
       | down j A B => simp [FStep.phys] at h
       | reset j => simp [FStep.phys] at h
       | relabel j F => simp [FStep.phys] at h

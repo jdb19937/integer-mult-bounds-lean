@@ -38,6 +38,7 @@ variable {ι : Type} [DecidableEq ι] {d : ℕ}
 def revStep (G G' : Mat d) : FStep ι d → List (Step ι (FieldProgram d))
   | .up i A B => [.edge i (revProgram (G * (B - A) * G'))]
   | .down i A B => [.edge i (revProgram (G * (A - B) * G'))]
+  | .exit i A C => [.edge i (revProgram (G * (1 - (A - C)) * G'))]
   | .gate g _ => [.gate g]
   | .reset i => [.reset i]
   | .relabel _ _ => []
@@ -51,6 +52,7 @@ def edgeMats : List (FStep ι d) → List (Mat d)
   | [] => []
   | .up _ A B :: rest => (B - A) :: edgeMats rest
   | .down _ A B :: rest => (A - B) :: edgeMats rest
+  | .exit _ A C :: rest => (1 - (A - C)) :: edgeMats rest
   | _ :: rest => edgeMats rest
 
 /-- The frame changes of a valid list are edge matrices. -/
@@ -73,6 +75,12 @@ theorem edgeMat_of_valid : ∀ (L : List (FStep ι d)) (fr : ι → Mat d) (z : 
       simp only [edgeMats, List.mem_cons] at hU
       rcases hU with rfl | hU
       · exact edgeMat_sub hB (hi ▸ hfr i) hBA hAB
+      · exact ih U hU
+    | exit i A C =>
+      intro U hU
+      simp only [edgeMats, List.mem_cons] at hU
+      rcases hU with rfl | hU
+      · exact edgeMat_sub hv.1.2.2.1 isFrame_one (by simp) (by simp)
       · exact ih U hU
     | gate g F => exact ih
     | reset i => exact ih
@@ -266,6 +274,15 @@ theorem rev_run {G G' : Mat d} (hB : Basis G G' q b) (hrev : Admissible (q ^ b) 
       · simp only [Function.update_of_ne hw]; rfl
     | down i A B =>
       have h := hL (A - B) (by simp [edgeMats])
+      funext w a
+      simp only [revStep, Step.run, Step.execute, cΦ, fstep]
+      by_cases hw : w = i
+      · subst hw
+        simp only [Function.update_self]
+        exact twEdgeAction_edge hσ hφ hB hrev h.1 h.2 (x w) a
+      · simp only [Function.update_of_ne hw]; rfl
+    | exit i A C =>
+      have h := hL (1 - (A - C)) (by simp [edgeMats])
       funext w a
       simp only [revStep, Step.run, Step.execute, cΦ, fstep]
       by_cases hw : w = i
