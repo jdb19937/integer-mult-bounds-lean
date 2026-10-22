@@ -45,7 +45,7 @@ abbrev entry (pc : Graph.PC (pcs rev97m).length) (x : Tapes (Family.count (NodeB
 
 /-- The family bound. -/
 def bound (C L : ℝ) (n : ℕ) : ℝ :=
-  C / (1 - Stage2Moments.q₁) * n + C / (1 - Stage2Moments.qτ) * ((n : ℝ) ^ (1 - (Stage2Moments.saving : ℝ)) * L)
+  C / (1 - Stage2Moments.q₁) * n + C / (1 - Stage2Moments.qτB) * ((n : ℝ) ^ (1 - (Stage2Moments.savingB : ℝ)) * L)
 
 /-- **The data semantics of the reversed family**, with one constant for every atom width `b₀`. -/
 def FamilySpec : Prop :=

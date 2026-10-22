@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.RevNetwork
+public import IntegerMultBounds.MathlibTM2.M8.Global.NodeRanksB
 public import IntegerMultBounds.MathlibTM2.M8.Rev.Heights
 public import IntegerMultBounds.MathlibTM2.M8.Machine.Coordinates
 
@@ -68,7 +69,7 @@ theorem rank_sum97 : ∑ j : Fin edges97.length, (edges97.get j).rank ≤ 574037
   have h := Fin.sum_univ_fun_getElem edges97 Matrix.rank
   simp only [List.get_eq_getElem]
   rw [h, edges97_def, Rev.edgeMats_rank_sum, ← calls_physOf]
-  exact calls_node_le
+  exact Global.DesignB.calls_node_le
 
 theorem sizes_sum_le (r : ℕ) :
     ∑ i ∈ GenericBasis.sizes (m := 529) r, i.val * (529 + 1) ≤ r * (529 * 530) := by
@@ -190,21 +191,21 @@ def rev97m : RevNetwork where
   control := control97
   route := route
   route_involutive := route_involutive
-  rankSum := calls (physOf framedNode)
+  rankSum := calls (physOf Global.DesignB.framedNode)
   calls_exact := calls_rev97
   legal_mod := fun b i p h => by
     obtain ⟨U, hU, rfl, -⟩ := edge_interchanges h
     exact Rev.revProgram_specialize_legal Shared50ModularControl.prime_prime
       (edge_nums nums97_lt hU) b
   xor_gate := fun g hg =>
-    valid_gates framedNode gInit tempZero valid_node g (Rev.mem_revPhysOf_gate _ _ _ g hg)
+    valid_gates Global.DesignB.framedNode Global.DesignB.gInit tempZero Global.DesignB.valid_node g (Rev.mem_revPhysOf_gate _ _ _ g hg)
   block := fun i p h j k => by
     obtain ⟨U, hU, rfl, -⟩ := edge_interchanges h
     rw [Rev.revProgram_interchanges]
     exact Rev.mem_revProgram_interchange _ (generic97 hU) j k
   run_identity := fun b f stored hz i a => by
     rw [run_inst _ (fun x y : Wire => Classical.propDecidable (x = y))]
-    exact Rev.rev_node_run (TwistedExchange.atomRev_atomRev f)
+    exact Rev.rev_node_runB (TwistedExchange.atomRev_atomRev f)
       (fun c => funext fun x => by simp)
       (basis_of_nums Shared50ModularControl.prime_prime nums97_lt basis97_den basis97_inv
         basis97_inv' b) (rev_admissible_machine b)

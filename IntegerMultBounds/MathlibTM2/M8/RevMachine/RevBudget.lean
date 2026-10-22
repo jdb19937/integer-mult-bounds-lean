@@ -466,7 +466,7 @@ theorem rev97_family [M8.Machine.Net] (b₀ : ℕ) {k : ℕ}
       ∀ n, 1 ≤ n → GraphExists.Contract (ht := Family.pcSlot_pos)
         (inv (Rev97Node.leafCore rev97m) Rev97Node.width97_pos (Rev97Node.half97 b₀ capacity)) n
         (C / (1 - Stage2Moments.q₁) * n +
-          C / (1 - Stage2Moments.qτ) * ((n : ℝ) ^ (1 - (Stage2Moments.saving : ℝ)) * L)) := by
+          C / (1 - Stage2Moments.qτB) * ((n : ℝ) ^ (1 - (Stage2Moments.savingB : ℝ)) * L)) := by
   set K : ℝ := ((ownK rev97m k : ℕ) : ℝ)
   set D : ℝ := |LeafCore.C|
   have hK : 0 ≤ K := Nat.cast_nonneg _

@@ -24,7 +24,7 @@ open RecursiveInterchangeLayout (Descriptor volume)
 open Schedule (schedule Seg Call ranks_schedule97)
 open Family (count Frame LeafCore NodeBlocks NodeHalf inv)
 open Global.Branching97 (roleCount)
-open Stage2Moments (q₁ qτ saving q₁_lt_one qτ_nonneg qτ_lt_one)
+open Stage2Moments (q₁ qτB savingB q₁_lt_one qτB_nonneg qτB_lt_one)
 
 /-- The schedule of the stage-2 PR97 node. -/
 abbrev pieces97 := schedule rev97m.control
@@ -41,12 +41,12 @@ theorem rev97_family {C L : ℝ} (hC : 0 ≤ C) (hL : 0 ≤ L)
     (hnode : ∀ σ, H.Ok σ → 529 ≤ σ.n →
       (inv hcore (by norm_num) H).ownCost σ ≤ (C * σ.n + C * L) * volume prime σ.v) :
     ∀ n, 1 ≤ n → GraphExists.Contract (ht := Family.pcSlot_pos) (inv hcore (by norm_num) H) n
-      (C / (1 - q₁) * n + C / (1 - qτ) * ((n : ℝ) ^ (1 - (saving : ℝ)) * L)) := by
+      (C / (1 - q₁) * n + C / (1 - qτB) * ((n : ℝ) ^ (1 - (savingB : ℝ)) * L)) := by
   have hr := ranks_schedule97
   refine GraphExists.contract (ht := Family.pcSlot_pos) (inv hcore (by norm_num) H) (by norm_num)
     (by norm_num [roleCount]) (fun r h => ranks97_pos (hr ▸ h)) (fun r h => ranks97_lt (hr ▸ h))
-    (by norm_num [saving]) hC hL (by exact_mod_cast q₁_lt_one) (by exact_mod_cast qτ_nonneg)
-    (by exact_mod_cast qτ_lt_one) ?_ ?_ (fun σ _ hx => hleaf σ hx.1) (fun σ _ hx => hnode σ hx.1)
+    (by norm_num [savingB]) hC hL (by exact_mod_cast q₁_lt_one) (by exact_mod_cast qτB_nonneg)
+    (by exact_mod_cast qτB_lt_one) ?_ ?_ (fun σ _ hx => hleaf σ hx.1) (fun σ _ hx => hnode σ hx.1)
   · rw [hr]; exact_mod_cast moment₁_ranks97
   · rw [hr]; exact_mod_cast momentτ_ranks97
 

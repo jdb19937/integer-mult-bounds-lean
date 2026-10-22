@@ -14,7 +14,7 @@ invocation, `W = 2N + 2vR = 108516254`, `L = 2vh(h-1) = 1792252`, rank mass
 
 | bit supplier | `a_b` | κ with T16 (≈ 0.45·a_b) |
 | --- | --- | --- |
-| Shared50 (current) | `2.96·10⁻⁹` | `2^-29.6` |
+| Shared50 | `2.96·10⁻⁹` | `2^-29.6` |
 | stage 1: PR97, rank-one children | `3.734·10⁻⁶` | `2^-19.2` |
 | stage 2: opposite bank, plain frames (section 5) | `9.69·10⁻⁵` | `2^-14.5` |
 | stage 2: opposite bank, upstream's design-B frames | `1.2402·10⁻⁴` | `2^-14.1` |
@@ -630,13 +630,19 @@ the stage-2 supplier, `Stage2Machine.Total`, in place of `ArbitraryWidthOriginal
 
 ## 16. Design-B frames
 
-**Numbers** (`scripts/pr97/stage2designb.py`, on upstream's pinned `deferred_23.json.gz`):
+**Complete and selected (2026-10-22).** The fixed Mathlib multiplier now runs this
+supplier and proves `kappa = 4222422970/2^46 ≈ 2^-14.0246`. The compiler, complete
+frame traces, actual signed histogram, reversed programs, strict ranks and stopped
+recurrence are connected to `Stage2Machine.Total`; the full build and all proof
+and control audits pass. The milestone notes below record the implementation.
+
+**Numbers** (`scripts/pr97/stage2framebank.py` and `designbhist.py`, on the pinned upstream inputs):
 - The design-B word changes no slot count and no rank mass: `R = 28866`, `W = 108516254`,
   `s = 57403754177`, so `q₁ = 1409269/1409302` is unchanged.
 - The whole-projector histogram has 46 ranks, the largest `528`. Its saving is
-  `a* = 1.24105·10⁻⁴` (plain: `9.700·10⁻⁵`).
+  `a* ≈ 1.24086·10⁻⁴` (plain: `9.700·10⁻⁵`).
 - The rational τ-moment certificate of `stage2cert.py` holds at `a = 1240/10⁷` below
-  `q_τ = 1 − 1/10⁸`, with slack `9.7·10⁻⁹`.
+  `q_τ = 1 − 1/10⁸`, with slack `6.208·10⁻⁹`.
 - Then `1 − τ₂ = 123879734039/10¹⁵`, `λ = 1 − 12387973/10¹¹`, `λ' = 1 − 12387972/10¹¹`, and
   `κ = 4222422970/2⁴⁶ ≈ 2^-14.0246`, against `3299646951/2⁴⁶ ≈ 2^-14.380`.
 - The layer margin `ε(1−λ')` still binds. `totKappa = 3840271755209/(10¹⁵·2³⁸)`.
@@ -647,7 +653,7 @@ the stage-2 supplier, `Stage2Machine.Total`, in place of `ArbitraryWidthOriginal
   `E₂ = (I−P) ⊗ I + P ⊗ σ_u` (stage two), of rank `m − h + dim σ_u`.
 - The slot's total is still `m`, but rank moves from children of rank at most `22` into children
   of rank up to `528`.
-- Over the 11565 deferred slots, `Σ dim σ_u = 209688`.
+- Over the 11565 deferred slots, `Σ dim σ_u = 209213`.
 - The y and X chains are finer (`0`, then the deferred levels, then `t_T^⊥`; `⟨t_S⟩`, then the V
   frames, then `1`), which costs a little.
 
@@ -1173,7 +1179,7 @@ chunk before choosing.
   generated modules reproduce byte for byte. The local equations pass kernel checks,
   and `Global/SlotAssignmentB` identifies every actual argument and root slot without
   evaluating concrete compiler prefixes. All 41 new modules pass the single-file
-  memory guard, at most 1,954 MiB peak RSS. This does not yet change the public bound.
+  memory guard, at most 1,954 MiB peak RSS. These indices feed the cost linkage below.
 - **Canonical auxiliary costs.** `designbauxcoverage.py` reuses the existing
   slot-chain map, argument table and root endpoint data: all 64,042 node cases,
   28,866 slot cases and 5,336 roots pass membership checks. Endpoints are checked
@@ -1189,7 +1195,7 @@ chunk before choosing.
   All 39 affected modules pass the single-file guard, at most 3,148 MiB peak RSS.
   Fresh reconstruction of the complete signed snapshot matches the recorded digest
   `606486ea…b4909b`. Its slightly different histogram replaces the preliminary
-  schedule-dimension certificate in the next step; public kappa is unchanged.
+  schedule-dimension certificate in the next step.
 - **Actual histogram and stopped moments.** `designbhist.py` counts auxiliary
   chain steps directly over the physical compiler slot map, so no unproved
   permutation of chain indices is used. Separate checks count source/target chains
@@ -1206,8 +1212,7 @@ chunk before choosing.
   `qτB = 1 - 10^-8`. The closure passes the standard-axiom audit (254,416 declarations).
   All 25 affected modules pass the single-file guard (at most 2,427 MiB peak RSS),
   all 20 generated modules reproduce byte for byte, and all ten Python tests pass.
-  Reversed child programs/rank bounds, supplier replacement and retuning remain;
-  the public multiplication bound is unchanged.
+  These moment premises are used by the selected reversed supplier below.
 - **Reversed execution bridge.** `Rev/FramedRingB` proves the actual gauged node's
   routed interchange for arbitrary stored streams and any permitted common frame
   interpretation over a commutative coordinate ring. It reuses the generic framed
@@ -1216,8 +1221,8 @@ chunk before choosing.
   under the same basis/prime and involutive atom-map hypotheses as the plain node.
   Both modules pass the single-file guard (at most 2,443 MiB); the joint closure
   with `Stage2LinkB` passes the standard-axiom audit (264,701 declarations).
-  The selected recursive supplier is still the plain node. Its concrete choice,
-  strict block-child ranks, family contraction parameters and final retune remain.
+  The selected recursive supplier now uses this bridge; its rank and parameter
+  connections are recorded below.
 - **Strict ranks and the unchanged basis budget.** `Global/RankMoments` proves
   linear telescoping and natural-to-real moment identities structurally.
   `Global/NodeRanksB.rank_lt` proves every actual node exchange has rank below 529:
@@ -1227,25 +1232,24 @@ chunk before choosing.
   bounds the actual total rank by `57403754177`, so the existing generic-basis
   degree and machine-prime estimates can be reused. The closure passes the
   standard-axiom audit (264,712 declarations). All three affected modules
-  pass the single-file guard (at most 3,276 MiB peak RSS). Supplier selection and
-  the final parameter retune remain.
-- **B5 supplier integration.** The actual gauged node and both moment premises are
-  complete above, as is arbitrary-ring/reversed execution. Select it in `RevNetwork`,
-  use the proved strict exchange ranks (the generic child filter supplies positivity),
-  and instantiate the existing
-  recursive family with `savingB` and `qτB`. The width, role set and machine interfaces
-  remain those of the existing supplier.
-- **B6 switch and retune.** `τ*`, `Bound.tau₂_eq`, `retune.py` to `κ = 4222422970/2⁴⁶`,
-  `PLAN.md` and `README.md`.
+  pass the single-file guard (at most 3,276 MiB peak RSS). These are the rank
+  bounds used in the completed supplier selection and retune below.
+- **B5 supplier integration complete.** `RevNetwork` / `Rev97Machine` select the
+  actual gauged node and its reversed execution. `Rev97Ranks` uses its strict
+  ranks, `savingB` and `qτB`; the existing recursive family and F L F wrapper build
+  unchanged in architecture. The obsolete plain-node top-rank argument is removed
+  (restore from `bd16f751`).
+- **B6 retune complete.** `Bound.tau₂_eq` and `Stage2Machine.Total.tau` are
+  `1 - 123879734039/10^15`. `scripts/s6/retune.py` sets the matching outer parameters
+  and `kappa = 4222422970/2^46`. `MathlibTM2.mulInTime`, the unconditional statement
+  and DFT corollary compile at that value. `CompletedProofCheck`, `AxiomAudit`
+  (340,777 declarations) and `CompactControlCheck` (521 contracts) pass with only
+  the standard allowed axioms. All 687 geometry-generator outputs reproduce exactly
+  from the freshly reconstructed pinned inputs.
+  The guarded public build completes 14,447 jobs at 46.4 GiB combined peak RSS.
+  All 21 changed library modules pass individual guarded checks, at most 3,384 MiB.
 
-B1 and B2 can run in parallel; B3 is the largest. Risks:
-- the cost of the two-centre and deferred-frame ranks;
-- the reordered word's semantics, which `check_word.py` replays upstream but which needs a
-  structural proof here;
-- the commuting-exit generalization of the node's chain alignment.
-
-The execution gates in the updated root `PLAN.md` apply: finish this design-B
-compiler/frame checkpoint, then assess the remaining machine integration before
-starting a major new construction. Design-B is an intermediate bound improvement;
-the longer-term M9–M11 target is κ = 0.0023. No further design-B-specific
-optimization is planned, and the public κ remains unchanged until full integration.
+The original risks—deferred covariance, ordering, data paths and commuting exits—are
+resolved for the actual executed node. No new recursive machine was needed. This
+completes the design-B improvement of about 0.356 bits; future bound work follows
+M9–M11 in the root `PLAN.md`, with long-term target `kappa = 0.0023`.

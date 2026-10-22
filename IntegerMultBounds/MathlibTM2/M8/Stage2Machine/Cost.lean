@@ -23,22 +23,22 @@ open Stage2Width (atomWidth tau2)
 open FamilyRoot (bound)
 
 /-- The family's exponent. -/
-abbrev tauS : ℝ := 1 - (Stage2Moments.saving : ℝ)
+abbrev tauS : ℝ := 1 - (Stage2Moments.savingB : ℝ)
 
 theorem one_sub_q₁ : 0 < 1 - (Stage2Moments.q₁ : ℝ) := by
   have := Stage2Moments.q₁_lt_one; have : (Stage2Moments.q₁ : ℝ) < 1 := by exact_mod_cast this
   linarith
 
-theorem one_sub_qτ : 0 < 1 - (Stage2Moments.qτ : ℝ) := by
-  have := Stage2Moments.qτ_lt_one; have : (Stage2Moments.qτ : ℝ) < 1 := by exact_mod_cast this
+theorem one_sub_qτ : 0 < 1 - (Stage2Moments.qτB : ℝ) := by
+  have := Stage2Moments.qτB_lt_one; have : (Stage2Moments.qτB : ℝ) < 1 := by exact_mod_cast this
   linarith
 
 theorem tauS_nonneg : 0 ≤ tauS := by
-  unfold tauS; norm_num [Stage2Moments.saving]
+  unfold tauS; norm_num [Stage2Moments.savingB]
 
 /-- The constant of the core. -/
 def constant (C D : ℝ) : ℝ :=
-  2 * (C / (1 - Stage2Moments.q₁)) + 6 * (2 * (C / (1 - Stage2Moments.qτ))) + 6 * (3 * D) + 8
+  2 * (C / (1 - Stage2Moments.q₁)) + 6 * (2 * (C / (1 - Stage2Moments.qτB))) + 6 * (3 * D) + 8
 
 /-- **The core's cost.** -/
 theorem core_le {K : ℕ} (hK : 2 ≤ K) {τ₁ : ℝ} (hs1 : tauS ≤ τ₁) (hτ₁ : τ₁ ≤ 1)
@@ -57,7 +57,7 @@ theorem core_le {K : ℕ} (hK : 2 ≤ K) {τ₁ : ℝ} (hs1 : tauS ≤ τ₁) (h
   set n := e / w
   set τ₂ := tau2 (K : ℝ)⁻¹ tauS τ₁
   set A := C / (1 - (Stage2Moments.q₁ : ℝ))
-  set B := C / (1 - (Stage2Moments.qτ : ℝ))
+  set B := C / (1 - (Stage2Moments.qτB : ℝ))
   have hA : 0 ≤ A := div_nonneg hC one_sub_q₁.le
   have hB : 0 ≤ B := div_nonneg hC one_sub_qτ.le
   have hw := (Stage2Width.wrapped_le hK tauS_nonneg hs1 hτ₁ hhalf h2 hlin (A := 2 * A) (B := 2 * B)

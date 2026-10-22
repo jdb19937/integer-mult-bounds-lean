@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.M8.Rev.Node
+public import IntegerMultBounds.MathlibTM2.M8.Rev.NodeB
 
 /-!
 # The reversed-network interface and the stage-2 PR97 node
@@ -150,11 +150,11 @@ open Rev (revNumbers revProgram revProgram_interchanges revProgram_specialize_le
 irreducible_def edgeBound : ℕ := 10 ^ 10000
 
 /-- The frame changes of the PR97 framed node. -/
-irreducible_def edges97 : List (Mat 529) := Rev.edgeMats framedNode
+irreducible_def edges97 : List (Mat 529) := Rev.edgeMats Global.DesignB.framedNode
 
 theorem edgeMat_edges97 : ∀ U ∈ edges97, EdgeMat U := by
   rw [edges97_def]
-  exact Rev.edgeMat_of_valid framedNode gInit tempZero isFrame_gInit valid_node
+  exact Rev.edgeMat_of_valid Global.DesignB.framedNode Global.DesignB.gInit tempZero Global.DesignB.isFrame_gInit Global.DesignB.valid_node
 
 theorem exists_basis97 :
     ∃ g : Matrix (Fin 529) (Fin 529) ℕ,
@@ -258,16 +258,16 @@ theorem rev_admissible (b : ℕ) : Admissible (prime97 ^ b) (rev 529 : Mat 529) 
   exact Nat.coprime_one_left _
 
 /-- The control of the stage-2 node. -/
-def control97 : List (Step Wire (FieldProgram 529)) := Rev.revPhysOf basis97 basis97' framedNode
+def control97 : List (Step Wire (FieldProgram 529)) := Rev.revPhysOf basis97 basis97' Global.DesignB.framedNode
 
 theorem edge_interchanges {i : Wire} {p : FieldProgram 529} (h : Step.edge i p ∈ control97) :
     ∃ U ∈ edges97, p = revProgram (basis97 * U * basis97') ∧
       AffineFieldProgram.interchanges p = U.rank := by
-  obtain ⟨U, hU, rfl⟩ := Rev.mem_revPhysOf_edge basis97 basis97' framedNode i p h
+  obtain ⟨U, hU, rfl⟩ := Rev.mem_revPhysOf_edge basis97 basis97' Global.DesignB.framedNode i p h
   exact ⟨U, by rw [edges97_def]; exact hU, rfl,
     by rw [revProgram_interchanges, Rev.rank_conj basis97_inv basis97_inv']⟩
 
-theorem calls_rev97 : calls control97 = calls (physOf framedNode) := by
+theorem calls_rev97 : calls control97 = calls (physOf Global.DesignB.framedNode) := by
   rw [control97, Rev.calls_revPhysOf basis97_inv basis97_inv', calls_physOf]
 
 /-- **The stage-2 PR97 node** as a reversed network. -/
@@ -289,20 +289,20 @@ def rev97 : RevNetwork where
   control := control97
   route := route
   route_involutive := route_involutive
-  rankSum := calls (physOf framedNode)
+  rankSum := calls (physOf Global.DesignB.framedNode)
   calls_exact := calls_rev97
   legal_mod := fun b i p h => by
     obtain ⟨U, hU, rfl, -⟩ := edge_interchanges h
     exact revProgram_specialize_legal prime97_prime (edges97_numbers hU) b
   xor_gate := fun g hg =>
-    valid_gates framedNode gInit tempZero valid_node g (Rev.mem_revPhysOf_gate _ _ _ g hg)
+    valid_gates Global.DesignB.framedNode Global.DesignB.gInit tempZero Global.DesignB.valid_node g (Rev.mem_revPhysOf_gate _ _ _ g hg)
   block := fun i p h j k => by
     obtain ⟨U, hU, rfl, -⟩ := edge_interchanges h
     rw [revProgram_interchanges]
     exact mem_revProgram_interchange _ (generic97 hU) j k
   run_identity := fun b f stored hz i a => by
     rw [run_inst _ (fun x y : Wire => propDecidable (x = y))]
-    exact Rev.rev_node_run (TwistedExchange.atomRev_atomRev f)
+    exact Rev.rev_node_runB (TwistedExchange.atomRev_atomRev f)
       (fun c => funext fun x => by simp) (basis97_basis b) (rev_admissible b)
       (fun U hU => edges97_numbers (by rw [edges97_def]; exact hU)) stored hz i a
 

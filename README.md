@@ -8,19 +8,19 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 3299646951/2^46` (about `2^-14.38`), exposed by `MathlibTM2.mulInTime`, where `n` is the
+`kappa = 4222422970/2^46` (about `2^-14.02`), exposed by `MathlibTM2.mulInTime`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 The running multiplier combines linear direct CRT routing with compact controls
 and full-width chunks above the root `⌈d/2⌉`. It uses rounded synthetic layers on the T16 node (73 slots, 14336 data
 roles, 1,041,408 children, so `log_73 (F/NW) < 999/1000`). Its bit interchange uses
-PR97 stage 2: the opposite-bank compiler on plain frames, variable-rank children,
+PR97 stage 2: the opposite-bank compiler on design-B frames, variable-rank children,
 stopped recursion over atoms, and the F L F wrapper on the generic machine in
 `MathlibTM2/M8`. The atom exponent is `1/1000`; the resulting ordinary bit exponent
-is `tau = 1-96806834039/10^15` (`Stage2Machine.Bound.uniform_bound`). PR97's
+is `tau = 1-123879734039/10^15` (`Stage2Machine.Bound.uniform_bound`). PR97's
 rank-one construction remains the leaf supplier ([stage-one note](docs/pr97-stage1/pr97-stage1.pdf)).
-The parameters are `epsilon = 31/64`, `lambda = 1-9680683/10^11` and
-`lambda' = 1-9680682/10^11`. The public saving is the binding layer margin
+The parameters are `epsilon = 31/64`, `lambda = 1-12387973/10^11` and
+`lambda' = 1-12387972/10^11`. The public saving is the binding layer margin
 `epsilon (1-lambda')`, just below the layout margin `epsilon (1-tau)`, rounded down to `2^-46`.
 Complete input preparation, distribution, transforms,
 output and cleanup are included in the fixed-machine proof. The public saving
@@ -64,17 +64,16 @@ machine and the proof.
 ## Status
 
 The end-to-end Mathlib proof is complete, with no remaining algorithmic or
-runtime assumptions, at `kappa = 3299646951/2^46 ≈ 0.0000468908`.
-Design-B compiler and frame proofs are in progress; design-B is not yet the running
-supplier and has not changed the public bound. Its projected saving is about
-`0.0000600`, roughly 28% above the current result, subject to complete machine integration.
+runtime assumptions, at `kappa = 4222422970/2^46 ≈ 0.00006000424`.
+The running supplier uses the fully checked design-B compiler and frame geometry,
+including its actual cost histogram and reversed execution. This improves the
+saving by about 27.97%, or 0.35576 bits, over the previous plain-frame result.
 
 The long-term direction is an unconditional `kappa = 0.0023`, following the productive
 helper jobs, finite mixed-to-uniform compiler, delayed BIT cover, and outer assembly of
 [upstream PR 4359](https://github.com/CrocSwap/integer-mult-bounds/pull/4359).
 That upstream construction is conditional, and the target is not proved here.
-[PLAN.md](PLAN.md) keeps smaller checked improvements on the path, with a design-B
-completion checkpoint and explicit dependencies for the new construction.
+[PLAN.md](PLAN.md) keeps smaller checked improvements on the path, with design-B completed and explicit dependencies for the new construction.
 
 The superseded native controller and its unused wrappers have been removed.
 The [retirement record](docs/retired-compact-complex.md) lists the deleted

@@ -96,7 +96,7 @@ theorem rev97_node [M8.Machine.Net] (b₀ : ℕ) {k : ℕ}
     (hnode : ∀ σ, (half97 b₀ capacity).Ok σ → 529 ≤ σ.n →
       (inv (leafCore rev97m) width97_pos (half97 b₀ capacity)).ownCost σ ≤ (C * σ.n + C * L) * volume prime σ.v) :
     ∀ n, 1 ≤ n → GraphExists.Contract (ht := Family.pcSlot_pos) (inv (leafCore rev97m) width97_pos (half97 b₀ capacity)) n
-      (C / (1 - Stage2Moments.q₁) * n + C / (1 - Stage2Moments.qτ) * ((n : ℝ) ^ (1 - (Stage2Moments.saving : ℝ)) * L)) :=
+      (C / (1 - Stage2Moments.q₁) * n + C / (1 - Stage2Moments.qτB) * ((n : ℝ) ^ (1 - (Stage2Moments.savingB : ℝ)) * L)) :=
   Rev97Family.rev97_family (leafCore rev97m) (half97 b₀ capacity) hC hL hleaf hnode
 
 end

@@ -29,7 +29,7 @@ open RecursiveInterchangeLayout (Descriptor volume)
 open Family (Frame inv)
 open RevHalf (pcs Ok)
 open RevBudget (ownK Meas own_le coreCost_le)
-open Stage2Moments (q₁ qτ saving q₁_lt_one qτ_nonneg qτ_lt_one)
+open Stage2Moments (q₁ qτB savingB q₁_lt_one qτB_nonneg qτB_lt_one)
 
 variable {k : ℕ}
 
@@ -95,7 +95,7 @@ theorem rev97_family_spec [M8.Machine.Net] (capacity : Fintype.card (Graph.PC (p
       ∀ σ : Frame (pcs rev97m) capacity, Ok rev97m b₀ σ → 1 ≤ σ.n →
       ∀ x : Fin (volume prime σ.v) → ZMod 2, ∃ y : Fin (volume prime σ.v) → ZMod 2,
         RevT prime b₀ σ.n σ.v (ext x) (ext y) ∧
-        ∃ s : ℕ, (s : ℝ) ≤ (C / (1 - q₁) * σ.n + C / (1 - qτ) * ((σ.n : ℝ) ^ (1 - (saving : ℝ)) * L)) *
+        ∃ s : ℕ, (s : ℝ) ≤ (C / (1 - q₁) * σ.n + C / (1 - qτB) * ((σ.n : ℝ) ^ (1 - (savingB : ℝ)) * L)) *
             volume prime σ.v ∧
           run (machine capacity) s
             (Graph.entryConfig (pcs rev97m) capacity (Family.pcSlot (T := NodeBank.tapes rev97m)) Family.pcSlot_pos
@@ -107,11 +107,11 @@ theorem rev97_family_spec [M8.Machine.Net] (capacity : Fintype.card (Graph.PC (p
   obtain ⟨hleaf, hnode⟩ := hb b₀ L hL hℓ hτ
   have hr := Schedule.ranks_schedule97
   have hcon := GraphExists.contract (ht := Family.pcSlot_pos) (semInv (capacity := capacity) b₀)
-    (τ := 1 - (saving : ℝ)) (q₁ := q₁) (qτ := qτ) (C := C) (L := L)
+    (τ := 1 - (savingB : ℝ)) (q₁ := q₁) (qτ := qτB) (C := C) (L := L)
     (show 2 ≤ 529 by norm_num) (show 0 < 108516254 by norm_num)
     (fun r h => ranks97_pos (hr ▸ h)) (fun r h => ranks97_lt (hr ▸ h))
-    (by norm_num [saving]) hC (by linarith) (by exact_mod_cast q₁_lt_one) (by exact_mod_cast qτ_nonneg)
-    (by exact_mod_cast qτ_lt_one) (by rw [hr]; exact_mod_cast moment₁_ranks97)
+    (by norm_num [savingB]) hC (by linarith) (by exact_mod_cast q₁_lt_one) (by exact_mod_cast qτB_nonneg)
+    (by exact_mod_cast qτB_lt_one) (by rw [hr]; exact_mod_cast moment₁_ranks97)
     (by rw [hr]; exact_mod_cast momentτ_ranks97)
     (fun S _ hx h1 h2 => (ownCost_eq b₀ S).le.trans (hleaf S.σ hx.1 h1 h2))
     (fun S _ hx h => (ownCost_eq b₀ S).le.trans (hnode S.σ hx.1 h)) σ.n hn ⟨σ, x⟩

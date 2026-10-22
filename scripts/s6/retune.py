@@ -2,11 +2,11 @@
 """The S6 retune: the cost chain at the stage-2 PR97 exponent.
 
 The supplier seam points at the stage-2 supplier (`M8/Stage2Machine/Total`, the reversed family on
-PR97 plain frames inside the F L F wrapper). This sets the cost chain's exponent and saving:
+PR97 design-B frames inside the F L F wrapper). This sets the cost chain's exponent and saving:
 
-* `Parameters.tau = 1 - 96806834039/10^15` (`Stage2Machine.Total.tau`, `Bound.tau₂_eq`);
-* `CompactInterim.lam = 1 - 9680683/10^11`, `lam' = 1 - 9680682/10^11`, `kappa = 3299646951/2^46`;
-* `Cost.Total.tot_kappa_eq`: `totKappa = 3001011855209/(10^15 * 2^38)`;
+* `Parameters.tau = 1 - 123879734039/10^15` (`Stage2Machine.Total.tau`, `Bound.tau₂_eq`);
+* `CompactInterim.lam = 1 - 12387973/10^11`, `lam' = 1 - 12387972/10^11`, `kappa = 4222422970/2^46`;
+* `Cost.Total.tot_kappa_eq`: `totKappa = 3840271755209/(10^15 * 2^38)`;
 * the stated saving of `mulInTime` and its callers, and their documentation.
 
 The binding margin is the layer margin `ε (1-λ')`, rounded down to `2^-46`. Every replacement
@@ -20,28 +20,32 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DRY = '--dry-run' in sys.argv
 
-KAPPA_OLD, KAPPA_NEW = '127238784', '3299646951'
+KAPPA_OLD, KAPPA_NEW = '3299646951', '4222422970'
 
 EDITS = {
     'IntegerMultBounds/Parameters.lean': [
-        ('def tau : ℝ := 1 - 3734039 / 10 ^ 12', 'def tau : ℝ := 1 - 96806834039 / 10 ^ 15'),
+        ('def tau : ℝ := 1 - 96806834039 / 10 ^ 15', 'def tau : ℝ := 1 - 123879734039 / 10 ^ 15'),
     ],
     'IntegerMultBounds/MathlibTM2/Cost/CompactInterimParameters.lean': [
-        ('def lam : ℝ := 1-3734/(10^9:ℝ)', 'def lam : ℝ := 1-9680683/(10^11:ℝ)'),
-        ("def lam' : ℝ := 1-3733/(10^9:ℝ)", "def lam' : ℝ := 1-9680682/(10^11:ℝ)"),
-        ('rounded down to `2^-46`, about `2^-19.08`.', 'rounded down to `2^-46`, about `2^-14.38`.'),
-        ('def kappa : ℝ := 127238784/(2^46:ℝ)', 'def kappa : ℝ := 3299646951/(2^46:ℝ)'),
+        ('def lam : ℝ := 1-9680683/(10^11:ℝ)', 'def lam : ℝ := 1-12387973/(10^11:ℝ)'),
+        ("def lam' : ℝ := 1-9680682/(10^11:ℝ)", "def lam' : ℝ := 1-12387972/(10^11:ℝ)"),
+        ('about `2^-14.38`.', 'about `2^-14.02`.'),
+        ('def kappa : ℝ := 3299646951/(2^46:ℝ)', 'def kappa : ℝ := 4222422970/(2^46:ℝ)'),
     ],
     'IntegerMultBounds/MathlibTM2/Cost/Total.lean': [
-        ('Exponents: `τ = 1 - 3734039/10¹²`', 'Exponents: `τ = 1 - 96806834039/10¹⁵`'),
-        ('theorem tot_kappa_eq : totKappa = 115755209 / (10 ^ 12 * 2 ^ 38) := by',
-         'theorem tot_kappa_eq : totKappa = 3001011855209 / (10 ^ 15 * 2 ^ 38) := by'),
+        ('Exponents: `τ = 1 - 96806834039/10¹⁵`', 'Exponents: `τ = 1 - 123879734039/10¹⁵`'),
+        ('κ = ε c (1 - τ) = 259 / (10¹¹ · 2³³)', 'κ = ε c (1 - τ) = 3840271755209 / (10¹⁵ · 2³⁸)'),
+        ('theorem tot_kappa_eq : totKappa = 3001011855209 / (10 ^ 15 * 2 ^ 38) := by',
+         'theorem tot_kappa_eq : totKappa = 3840271755209 / (10 ^ 15 * 2 ^ 38) := by'),
     ],
     'IntegerMultBounds/MathlibTM2/Theorem.lean': [
-        ("`ε (1-λ')` rounded down, with `ε = 31/64` and `1-λ' = 3733 · 10^-9` just below\n"
-         "`1-τ = 3734039 · 10^-12`, about `2^-19.08`.",
-         "`ε (1-λ')` rounded down, with `ε = 31/64` and `1-λ' = 9680682 · 10^-11` just below\n"
-         "`1-τ = 96806834039 · 10^-15`, about `2^-14.38`."),
+        ("`ε (1-λ')` rounded down, with `ε = 31/64` and `1-λ' = 9680682 · 10^-11` just below\n"
+         "`1-τ = 96806834039 · 10^-15`, about `2^-14.38`.",
+         "`ε (1-λ')` rounded down, with `ε = 31/64` and `1-λ' = 12387972 · 10^-11` just below\n"
+         "`1-τ = 123879734039 · 10^-15`, about `2^-14.02`."),
+    ],
+    'IntegerMultBounds/Machine/BinaryRadixEqualShared.lean': [
+        ('τ₂ = 1 - 96806834039/10¹⁵', 'τ₂ = 1 - 123879734039/10¹⁵'),
     ],
 }
 

@@ -239,7 +239,7 @@ theorem core_phase (hspec : FamilySpec capacity) {K : ℕ} (hK : 2 ≤ K)
   have hbnd : 0 ≤ bound C ((wOf K v : ℝ) ^ M8.Machine.BudgetBound.tau + Nat.size (wOf K v)) (nOf K v) := by
     unfold bound
     have := Cost.one_sub_q₁; have := Cost.one_sub_qτ
-    have : 0 ≤ ((nOf K v : ℕ) : ℝ) ^ (1 - (Stage2Moments.saving : ℝ)) := Real.rpow_nonneg (Nat.cast_nonneg _) _
+    have : 0 ≤ ((nOf K v : ℕ) : ℝ) ^ (1 - (Stage2Moments.savingB : ℝ)) := Real.rpow_nonneg (Nat.cast_nonneg _) _
     positivity
   have hF' := (Nat.floor_le (mul_nonneg hbnd (Nat.cast_nonneg (volume prime (top prime (rOf K v) v))))).trans
     (le_of_eq (by rw [htop]))
