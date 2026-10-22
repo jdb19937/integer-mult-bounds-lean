@@ -970,7 +970,12 @@ chunk before choosing.
   lists. Its `cov_eq_pullOps` identifies the actual `Dag.cov` with the initial auxiliary
   slot coefficient obtained by pulling back the root weights through `sideB`. This
   structural theorem needs no register-state support assumption or concrete evaluation;
-  it checks at 1,097 MiB. The source-key and allocation facts
+  it checks at 1,097 MiB. `Local/CompilerAdjointB` proves that source erasure
+  preserves auxiliary weights and gives exact backward identities for fresh-copy
+  serving blocks and both linked and unlinked addition steps. Leaf steps preserve
+  auxiliary weights, including through the earlier compiler prefix. This module checks
+  at 1,093 MiB. Composing these block identities with the pending-use allocation
+  invariant to prove the full use recurrence is still required. The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
