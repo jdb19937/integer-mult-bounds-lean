@@ -910,14 +910,21 @@ chunk before choosing.
   from the already certified Gram unit. `GeometryB/RootFacts` proves checker soundness;
   `Global/RootBoundaryB` connects a passed check to all actual compiler frames on the
   corresponding output or centre slot. These theorems still take a `rootOk` hypothesis;
-  concrete root witnesses have not yet been emitted or checked.
+  the concrete witnesses are supplied by the separate `RootChecked` module.
   The four endpoint modules check at 1,168, 1,448, 1,662 and 2,614 MiB respectively;
   the guarded integration build including the public theorem passes.
-  Next: extend `designbgeometry.py` to emit the 5,336 endpoint witnesses and small
-  `decide +kernel` checks. A witness consists only of the existing slot-chain index and
-  a negative bank label containing the endpoint code; the replay's root slots and the
-  full-chain endpoints supply both. Aggregate these checks and discharge the hypotheses
-  of `RootBoundaryB`. Then assemble the phase/source ordering and boundary blocks,
+  `designbgeometry.py` now emits all 5,336 endpoint witnesses from the compiler's
+  `rootSlots` and full-chain endpoints. Each names an existing signed chain and a negative
+  bank label whose basis contains the endpoint code. Eight small check modules, split
+  into 256-root declarations, prove the concrete `rootOk` checks; `RootChecked.rootOk_at`
+  aggregates them. The checks peak at 1,576 MiB (22 seconds total sequential checking),
+  and the aggregator at 1,485 MiB. All 69 emitted geometry modules reproduce byte for byte
+  from fresh downloads at the pinned upstream revision; the seven Python framebank tests pass.
+  Reconstruct with `generate.py SOURCE DAG.json`, then
+  `stage2framebank.py SOURCE BANK.json --multi-nodes --signed-output SIGNED.json`, then
+  `designbgeometry.py SIGNED.json --lean-root . --dag-json DAG.json --pr97-dir SOURCE`.
+  Next: discharge the hypotheses of `RootBoundaryB` using these checks, then assemble
+  the phase/source ordering and boundary blocks,
   prove the data-wire readout/source traces, integrate the global node/costs and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
