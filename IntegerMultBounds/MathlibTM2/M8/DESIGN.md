@@ -909,8 +909,8 @@ chunk before choosing.
   `RootEndpointFacts` proves the code/vector identities and projector bounds directly
   from the already certified Gram unit. `GeometryB/RootFacts` proves checker soundness;
   `Global/RootBoundaryB` connects a passed check to all actual compiler frames on the
-  corresponding output or centre slot. These theorems still take a `rootOk` hypothesis;
-  the concrete witnesses are supplied by the separate `RootChecked` module.
+  corresponding output or centre slot. The concrete `RootChecked.rootOk_at` theorem now
+  discharges both endpoint hypotheses, so the compiler boundary theorems are unconditional.
   The four endpoint modules check at 1,168, 1,448, 1,662 and 2,614 MiB respectively;
   the guarded integration build including the public theorem passes.
   `designbgeometry.py` now emits all 5,336 endpoint witnesses from the compiler's
@@ -923,9 +923,19 @@ chunk before choosing.
   Reconstruct with `generate.py SOURCE DAG.json`, then
   `stage2framebank.py SOURCE BANK.json --multi-nodes --signed-output SIGNED.json`, then
   `designbgeometry.py SIGNED.json --lean-root . --dag-json DAG.json --pr97-dir SOURCE`.
-  Next: discharge the hypotheses of `RootBoundaryB` using these checks, then assemble
-  the phase/source ordering and boundary blocks,
-  prove the data-wire readout/source traces, integrate the global node/costs and retune.
+  `Global/PhaseFramesB.side_phases_trace` proves that splitting the side compiler into
+  its two phases preserves the exact auxiliary trace. Source gates on an auxiliary slot
+  all use its start frame; the first phase avoids deferred slots. Together these prove
+  `forward_aux_chain` across both source phases and both side phases, unconditionally.
+  `Global/DataTraceB.stage_source_trace` identifies the source-wire trace of the actual
+  stage for arbitrary frame assignments: the ordered early sources, late sources and
+  uncompute. Readouts, side operations and centre blocks contribute no source frames.
+  RootBoundaryB, PhaseFramesB and DataTraceB check at 3,014, 2,244 and 2,338 MiB;
+  the guarded integration build including the public theorem passes. The new-module and
+  completed-proof axiom audits pass using only the standard axioms. κ remains unchanged.
+  Next: assemble the readout, root and centre blocks into complete stage chains;
+  connect the data-wire source/readout traces to the signed chains, allowing repeated
+  equal frames; then integrate the global node/costs and switch the supplier and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
