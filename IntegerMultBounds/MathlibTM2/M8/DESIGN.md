@@ -965,7 +965,12 @@ chunk before choosing.
   c(root j) = [T ∈ targets j], b(n) = Σ_{u ∈ freeUses n} c(u), and
   c(gate n pos) = b(n) + [pos is the linked operand] c(linkUse n), over F₂.
   An untrusted Python replay agrees with all 28,866 actual slot covectors; its Lean
-  adjoint soundness theorem remains to be proved. The source-key and allocation facts
+  compiler recurrence soundness theorem remains to be proved.
+  `Local/AdjointB` now proves generic backward observation weights for arbitrary operation
+  lists. Its `cov_eq_pullOps` identifies the actual `Dag.cov` with the initial auxiliary
+  slot coefficient obtained by pulling back the root weights through `sideB`. This
+  structural theorem needs no register-state support assumption or concrete evaluation;
+  it checks at 1,097 MiB. The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
