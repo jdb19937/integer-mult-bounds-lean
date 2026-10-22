@@ -193,18 +193,27 @@ load and unload are identified on all addresses, without good-set assumptions.
 
 1. Bind the complete physical field layout, including prefix/suffix spectators,
    to the masked arithmetic rectangle and the actual source-index descriptors.
-2. Implement and price the masked and mixed-control callbacks for both early
-   passes. Plain source-controlled rotations are now implemented. The temporary-
-   times-control and masked-XOR offsets still need concrete callbacks. A fixed
-   source interpreter with a temporary zero sentinel in its *metadata* source
-   word can supply zero at inactive control positions, restoring the source word
-   afterwards; never initialize or restrict a physical borrowed field for this.
+2. Compose the checked mixed-control callbacks with the actual live field bank.
+   `ReadPattern` supplies optional source selectors; `PatternCode` and `PatternRot`
+   execute and price AND/XOR callbacks, and `CompactPatterns` proves the exact
+   masked A/YZ offset formulas. `SourceHeader` executes the live-counter copies
+   with exact cost and restoration. `PatternOperands` adapts the callback to an
+   explicit header and target word without asserting a new physical field layout.
+   `HeaderOperands` composes construction, callback and cleanup with complete
+   stack restoration and explicit cost; `HeaderValue` proves the contiguous
+   header's arithmetic value. Still bind these into the real field-bank
+   `CodeSpec`. The optional zero sentinel is
+   metadata only; it never restricts a physical borrowed field.
 3. Bind the field interchanges with their actual order, width and canonical header
    hypotheses. A different decomposition of index-counter fields must be backed
    by priced counter setup/reset; it is not a record-coordinate move.
 4. Charge descriptor/mask/counter setup, every rotation and interchange, and
    cleanup. Instantiate radix widths and the density inequalities. Compose one
-   host `Exec` theorem and total cost for the complete good-set shear. R2 then
+   host `Exec` theorem and total cost for the complete good-set shear. The current
+   `CompactGadget.prog` has twelve rotations and twelve interchanges: each `E`
+   has five rotations and four swaps, with an additional swap/load/swap and
+   swap/unload/swap. Price this actual schedule rather than the historical
+   ten-rotation count. R2 then
    supplies all-address repair.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)

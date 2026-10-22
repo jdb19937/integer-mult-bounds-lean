@@ -19,6 +19,16 @@ public import IntegerMultBounds.MathlibTM2.Routing.MaskedBits
 public import IntegerMultBounds.MathlibTM2.Routing.SourceCode
 public import IntegerMultBounds.MathlibTM2.Routing.SourceRot
 public import IntegerMultBounds.MathlibTM2.Routing.SourceRotAlgebra
+public import IntegerMultBounds.MathlibTM2.Routing.ReadPattern
+public import IntegerMultBounds.MathlibTM2.Routing.PatternGate
+public import IntegerMultBounds.MathlibTM2.Routing.PatternCode
+public import IntegerMultBounds.MathlibTM2.Routing.PatternRot
+public import IntegerMultBounds.MathlibTM2.Routing.SparsePattern
+public import IntegerMultBounds.MathlibTM2.Routing.CompactPatterns
+public import IntegerMultBounds.MathlibTM2.Routing.SourceHeader
+public import IntegerMultBounds.MathlibTM2.Routing.PatternOperands
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderOperands
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderValue
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

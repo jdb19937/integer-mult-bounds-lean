@@ -201,7 +201,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
-| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Masked self-reading semantics preserve inactive low-bit sources. A fixed host interpreter reads arbitrary source order, restores its descriptor/source and prepares the compact offset with explicit cost. Masked physical decoding and concrete source-controlled record rotations are checked; signed load/unload matches packed arithmetic. Mixed/masked early-pass callbacks, complete field layout, setup/interchanges and full sequence binding remain. | 3–5k |
+| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Masked self-reading semantics preserve inactive low-bit sources. A fixed host interpreter reads arbitrary source order, restores its descriptor/source and prepares the compact offset with explicit cost. Masked physical decoding and concrete source-controlled record rotations are checked; signed load/unload matches packed arithmetic. Concrete mixed/masked early-pass callbacks and their exact compact offset formulas are checked. Live-header construction, callback execution and cleanup now compose with explicit cost and complete stack restoration; the contiguous-header value is checked. Binding the real field-bank invariant, complete field layout, setup/interchanges and full sequence remain. | 3–5k |
 | R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
@@ -234,7 +234,18 @@ low bits. `SourceCode.sourceCode_spec` binds the actual reader into the live-ind
 callback interface; `SourceRot.sourceRotate_exec` executes complete source-controlled
 record rotations, charging both callback computations. `SourceRotAlgebra` matches
 that executed rank map with the packed modular load/unload on every address.
-R1 remains open: bind the full field layout and mixed/masked early-pass callbacks,
+`ReadPattern`, `PatternGate`, `PatternCode` and `PatternRot` now implement the
+mixed AND/XOR callbacks with optional selectors for inactive zeros. Each callback
+costs `L (12 W + 38) + 24`, including two interpreted reads and cleanup.
+`SparsePattern` and `CompactPatterns` identify the actual descriptor outputs with
+the masked A and YZ compact offsets. `SourceHeader` copies live field counters
+into a metadata header with exact cost and complete register restoration;
+`PatternOperands` permits callback execution on that header without changing the
+physical field bank. `HeaderOperands` composes header construction, concrete
+callback execution and cleanup with full stack restoration and explicit cost;
+`HeaderValue` identifies contiguous copied counters with the actual index window.
+These still need binding into the real field-bank live-index contract.
+R1 remains open: bind the full field layout and the combined-header callbacks,
 price setup and interchanges, then compose the complete host execution with all
 scratch and spectators restored. Kappa is
 unchanged. The remaining integration makes **3–5k** total R1 Lean lines a more
