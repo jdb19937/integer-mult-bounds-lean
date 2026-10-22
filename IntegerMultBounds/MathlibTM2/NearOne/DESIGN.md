@@ -200,8 +200,15 @@ default build does not check them.
      state are restored. `ShortConvExec.coeff_err` links the returned numerators to
      the `2r/2^p` error bound. `unaryCost_le` prices every phase by one packed-product
      bound plus linear stream and header work. `ShortConvCheck` audits the bridge.
-     S2/S3 still need their own table production, window/batch schedules and output
-     cropping; the block primitive does not execute those schedules.
+     `ShortConvBatchProgram.batchProgram_exec` now also packs two raw equal-block
+     streams, runs one product call and clears the packed banks, restoring all other
+     registers, at most `M (rpRecBound + 44rw + 50) + rpFixCost + 20` steps. Its reusable
+     symbol/padding/record counters and header are explicit shared setup inputs;
+     generation and cleanup of that batch setup still need composition.
+     `ShortConvSlice.copySlice_coeffs_exec` copies a coefficient interval with the
+     complete source and scratch restored; `slice_coeff_err` retains the rounding bound.
+     S2/S3 still need table production, window schedules, chirp-specific interval
+     selection/reversal and composition with output arithmetic.
    * **The ring arithmetic of b5** (`Mult/ChirpRing.lean`). Per block, the reversed halved
      computed inputs and the shifted halved kernel are one disk record pair of size `2^l ≥ 7m`
      (`norm_chirpRec_le`); coefficient `4m - 1 - b` of their convolution is the correlation
