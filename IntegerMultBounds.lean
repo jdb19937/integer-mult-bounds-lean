@@ -42,6 +42,12 @@ public import IntegerMultBounds.MathlibTM2.Routing.MaskedDynamic
 public import IntegerMultBounds.MathlibTM2.Routing.SlotSources
 public import IntegerMultBounds.MathlibTM2.Routing.SelectiveXor
 public import IntegerMultBounds.MathlibTM2.Routing.SelectiveIndex
+public import IntegerMultBounds.MathlibTM2.Routing.SelectiveLayout
+public import IntegerMultBounds.MathlibTM2.Routing.SelectivePatterns
+public import IntegerMultBounds.MathlibTM2.Routing.SelectiveRotations
+public import IntegerMultBounds.MathlibTM2.Routing.SelectiveSwaps
+public import IntegerMultBounds.MathlibTM2.Routing.SelectivePrepared
+public import IntegerMultBounds.MathlibTM2.Routing.SelectivePasses
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

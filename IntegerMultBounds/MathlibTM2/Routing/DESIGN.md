@@ -232,21 +232,43 @@ first: b, y, t, u, spectator. It restores all borrowed fields and complete spect
 including every bit above the bank. This is a checked instruction/rank theorem;
 it does not yet compose the host programs or charge metadata transitions and setup.
 
+## Checked complete prepared host execution
+
+`SelectiveLayout` computes the actual source wires and suffix-header widths of the
+fixed bank. `SelectivePatterns` identifies all five concrete descriptor tables with
+the instruction rank offsets. `SelectiveRotations.selectiveRotate_exec` executes
+and prices each rotation, including both live-header callbacks.
+`SelectiveSwaps.selectiveSwap_exec` executes each actual b/t or b/u interchange,
+including symbol/bit conversion, canonical header values, the full register frame
+and the supplier-exponent bound.
+
+`SelectivePrepared` retains one static descriptor bank per offset type and two
+canonical interchange banks. There are no descriptor-specific unrolled programs
+or repeated descriptor transitions; preparation and cleanup of all retained banks
+still belong in the final wrapper and must be charged. The physical field bank
+never changes its decomposition.
+
+`SelectivePasses.selectivePrepared_exec` proves one actual `Exec` of the complete
+schedule, changing only the record stream and restoring every prepared register.
+The composed permutation has the physical good-set endpoint by
+`selectiveProgramPerm_good`. `selectiveCost_sum` checks its actual multiplicities:
+four A rotations, two each of Z/Y/YZ/X, eight b/t swaps and four b/u swaps, plus
+one terminal sequence step. This is a full prepared execution, not an execution
+oracle for individual passes. It still assumes prepared metadata and hence does
+not close R1's setup/cleanup acceptance gate.
+
 ## R1 next: complete the priced host program
 
-1. Instantiate the checked field-bank callbacks for each instruction in the fixed
-   layout and bind their executed offsets to `selectiveIdx`. Generate/change the
-   actual descriptors between passes and restore their tapes with explicit cost.
-2. Bind both physical field interchanges to the actual b/t/u index swaps, with
-   their canonical headers and full prepared-bank frame instantiated. Charge
-   counter/header setup and cleanup; the field bank stays fixed throughout.
-3. Compose the executed passes in the exact `CompactGadget.prog` order into one
-   host `Exec` theorem with total cost and clean scratch. Each `E` has five rotations
-   and four swaps, with additional swap/load/swap and swap/unload/swap sequences;
-   the full schedule has twelve rotations and twelve interchanges. Do not use the
-   historical ten-rotation count.
-4. Instantiate guard widths/density arithmetic and attach the physical good-set
-   endpoint to that complete execution. R2 then supplies all-address repair.
+1. Execute and price preparation of all five retained descriptor banks, the live
+   counter bank, stream/block counters and both canonical interchange headers.
+   Descriptor generation belongs to R3's uniform compiler; R1 must still execute
+   its metadata installation and charge every copy and counter construction.
+2. Execute final cleanup/restoration of that metadata, and compose setup, the
+   checked prepared schedule, and cleanup into one clean-scratch `Exec` theorem
+   with the total cost. No prepared-header or prepared-counter hypothesis may be
+   silently carried across this final boundary.
+3. Instantiate guard widths/density arithmetic and attach the complete execution
+   to its physical good-set endpoint. R2 then supplies all-address repair.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)
 for the gadget and matching decomposition, and the pinned
