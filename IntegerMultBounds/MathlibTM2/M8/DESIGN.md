@@ -1218,9 +1218,21 @@ chunk before choosing.
   with `Stage2LinkB` passes the standard-axiom audit (264,701 declarations).
   The selected recursive supplier is still the plain node. Its concrete choice,
   strict block-child ranks, family contraction parameters and final retune remain.
+- **Strict ranks and the unchanged basis budget.** `Global/RankMoments` proves
+  linear telescoping and natural-to-real moment identities structurally.
+  `Global/NodeRanksB.rank_lt` proves every actual node exchange has rank below 529:
+  source and target local paths telescope to 22 each, a data wire pays at most 528,
+  local side moves have rank at most 23, and the exterior rank is at most
+  `506 + rank sigma ≤ 528`. Owned temporaries are included. Its `calls_node_le`
+  bounds the actual total rank by `57403754177`, so the existing generic-basis
+  degree and machine-prime estimates can be reused. The closure passes the
+  standard-axiom audit (264,712 declarations). All three affected modules
+  pass the single-file guard (at most 3,276 MiB peak RSS). Supplier selection and
+  the final parameter retune remain.
 - **B5 supplier integration.** The actual gauged node and both moment premises are
   complete above, as is arbitrary-ring/reversed execution. Select it in `RevNetwork`,
-  show the block child ranks are positive and `≤ 528`, and instantiate the existing
+  use the proved strict exchange ranks (the generic child filter supplies positivity),
+  and instantiate the existing
   recursive family with `savingB` and `qτB`. The width, role set and machine interfaces
   remain those of the existing supplier.
 - **B6 switch and retune.** `τ*`, `Bound.tau₂_eq`, `retune.py` to `κ = 4222422970/2⁴⁶`,

@@ -51,7 +51,7 @@ private theorem lifted_splice_le (φ : Nat → ℝ) (hφ : ∀ r, 0 ≤ φ r)
   rw [hmx, hmy] at h
   exact h
 
-private theorem padded_fseq_idem (L : List (FGate LW 23))
+theorem padded_fseq_idem (L : List (FGate LW 23))
     (hL : ∀ v ∈ L, v.frame * v.frame = v.frame) (w : LW) (A B : LMat)
     (hA : A * A = A) (hB : B * B = B) :
     ∀ F ∈ (A :: fseq w L) ++ [B], F * F = F := by
