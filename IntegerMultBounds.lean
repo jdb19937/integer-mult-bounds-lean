@@ -9,6 +9,12 @@ public import IntegerMultBounds.MathlibTM2.Routing.SourceGather
 public import IntegerMultBounds.MathlibTM2.Routing.Density
 public import IntegerMultBounds.MathlibTM2.Routing.SelfRead
 public import IntegerMultBounds.MathlibTM2.Routing.SourceBits
+public import IntegerMultBounds.MathlibTM2.Routing.Mask
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedSelfRead
+public import IntegerMultBounds.MathlibTM2.Routing.ReadRow
+public import IntegerMultBounds.MathlibTM2.Routing.ReadRows
+public import IntegerMultBounds.MathlibTM2.Routing.ReadOrdered
+public import IntegerMultBounds.MathlibTM2.Routing.ReadOffset
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

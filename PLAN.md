@@ -200,7 +200,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
-| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Ordered scattered-source gathering has host execution, cleanup and cost. Self-reading upper target bits and their physical source coordinates are proved. Active-target masks, arbitrary source ordering, field moves and full rotation binding remain. | 2–3k |
+| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Masked self-reading semantics preserve inactive low-bit sources. A fixed host interpreter reads arbitrary source order, restores its descriptor/source and prepares the compact offset with explicit cost. Masked physical decoding, header/setup, field moves and full rotation binding remain. | 3–5k |
 | R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
@@ -219,14 +219,23 @@ at the future caller; arbitrary source ordering is not silently supplied by a ma
 `SelfRead` now loads from actual intermediate upper target bits, proves agreement
 with the frozen-source program, and preserves the exceptional set; `SourceBits`
 identifies arbitrary ordered physical upper-bit sources. No copied source field is
-assumed in this extension. The new checks peak below 1.2 GiB. R1 is still open:
-add active-target masks (including unselected digit low bits as sources), bind
-arbitrary source ordering,
-field placement/interchanges, mask setup, all modular rotations and cleanup to a
-complete priced host execution. Kappa is unchanged.
+assumed in this extension.
 
-Estimated routing total: **11–19k additional or substantially revised Lean lines**,
-rounded to 10–20k for planning; excludes generated data and Python. Existing layout,
+`Mask` and `MaskedSelfRead` now prove active-target semantics, source stability
+including inactive digit low bits, global ideal involutivity and exceptional-set
+preservation. `ReadOrdered.readOrdered_exec` supplies a fixed-program interpreter
+of arbitrary ordered source indices with restored source/descriptor and exact cost
+`n (6 W + 8) + 6`. `ReadOffset.readOffset_exec` adds compact spreading and cleanup
+with cost at most `n (6 W + 10) + 8 n G + 16`; `readOffset_value` matches the modular
+load's arithmetic value. These metadata costs still require explicit caller
+amortization. R1 remains open: instantiate masked physical decoding and the source
+header, prepare masks, bind field moves and rotation callbacks, then compose one
+complete priced host execution with all scratch and spectators restored. Kappa is
+unchanged. The remaining integration makes **3–5k** total R1 Lean lines a more
+realistic estimate than the initial 2–3k.
+
+Estimated routing total: **12–21k additional or substantially revised Lean lines**,
+rounded to 12–22k for planning; excludes generated data and Python. Existing layout,
 CRT-control, rotation and sorting primitives are reused. R1's logical identity is
 not a tape implementation: source gathering, packed loads, guards, repair and their
 costs must be proved before the router can improve a machine bound. Do not introduce

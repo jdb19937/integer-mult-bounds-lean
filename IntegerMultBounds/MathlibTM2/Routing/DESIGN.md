@@ -91,28 +91,51 @@ bit at `K*j` is XORed with the specified physical source bit
 `K*sourceDigit + upperBit + 1`. All indices are structural; there is no exhaustive
 address enumeration. The checks peak at 804 MiB and 824 MiB respectively.
 
-This closes the upper-target-source *semantics*, not the host implementation.
-A separate active-target mask is still needed when only some packed digit starts
-are selected: unselected digit low bits may then be sources, and must survive
-each early pass too. The current physical theorem selects every packed digit
-start; the logical `Shear` theorem by itself does not discharge this mask case.
+## Checked active-target masks
 
-**Ordering is a real remaining obligation.** A mask scanner emits sources in
-increasing physical order. It does not implement an arbitrary `Fin n -> coordinate`
-ordering. The general mathematical endpoint accepts arbitrary ordering, but the
-host reader currently proves only increasing order. The next source-order bridge
-must supply and price reordering or an appropriate physical placement. Relabeling
-logical coordinates alone does not implement that placement on a record stream.
+`Mask.lean` makes the active-target mask part of the modular program. `visible`
+retains upper digits at active targets and the complete digit at inactive ones.
+`maskedEarly_endpoint` preserves this source observation after each complete early
+pass. `control_load_digits` proves no carries between loaded control digits on the
+good set. `maskedFrozen_good` proves that two masked passes cancel arbitrary dirty
+controls and implement exactly the active part of the requested source XOR.
 
-For the next host slice, a fixed-tape interpreter of the ordered source descriptor
-can use polynomial work on the small address metadata. The retained untouched
-suffix gives superpolynomial record width in the long-record regime, so this can
-be amortized there; the short-record fallback must be proved separately. This is
-a reason to investigate repeated scans of metadata, not repeated single-bit moves
-of the entire record stream. Charge the actual descriptor scans and prove the
-record-width inequality before using that amortization. `SourceGather` remains the
-linear-time path for increasing descriptors. No descriptor-specific unrolled
-program should substitute for the fixed interpreter required by the uniform router.
+`MaskedSelfRead.lean` reads the actual current `sourceView` for load and unload.
+`maskedSelfRead_good` proves the selective endpoint, so sources can include low bits
+of inactive digits. The ideal is globally involutive, the actual program preserves
+the exceptional set, and `repair_maskedSelfRead` supplies the repair identity.
+This is still address arithmetic. The complete masked physical-coordinate decoder
+and its host field layout must be instantiated at the caller.
+
+## Checked arbitrary-order source interpreter
+
+`ReadRow.lean` scans one descriptor row while saving the source and descriptor bits,
+then restores the source, in exactly `4 W + 4` host steps. `ReadRows.lean` composes
+rows in their given order and restores the entire descriptor and output order.
+Its execution theorem proves that only the output changes; all scan scratch returns
+empty. `ReadOrdered.lean` instantiates rows with singleton masks of arbitrary source
+positions. Repetitions and nonmonotone order are allowed. `readOrdered_exec` charges
+exactly `n (6 W + 8) + 6` host steps for `n` requested bits in a width-`W` source.
+The code is fixed; all source positions are descriptor data.
+
+`ReadOffset.lean` composes that interpreter with spreading to compact digit starts
+and clearing the gathered temporary. `readOffset_exec` charges at most
+`n (6 W + 10) + 8 n G + 16` steps and changes only the compact output register.
+`readOffset_value` identifies that word with the radix-packed source list used by
+the arithmetic gadget. Source, descriptor, compact mask and scratch invariants are
+explicit inputs. The caller must prepare the current source header, supply and
+charge mask setup, consume/clear the output, and instantiate register disjointness.
+The increasing-order reader in `SourceGather` remains available at its lower cost.
+
+The masked-address checks peak near 810 MiB; the new host-reader checks peak
+between 1,184 and 1,211 MiB. The public-root build and full axiom audit pass.
+
+These are polynomial costs on address metadata. Their amortization against long
+records, and the short-record fallback, remain caller/R3 obligations; no per-record
+polynomial computation is silently charged as linear stream work. In particular,
+repeated scans of the small header do not justify repeated elementary bit moves
+of the entire record stream. Descriptor construction belongs to the uniform
+router; no descriptor-specific unrolled program substitutes for this interpreter.
 
 `Density.lean` proves that a complete nonempty source/spectator factor leaves the
 exceptional fraction unchanged, and that a complete address equivalence preserves
@@ -140,20 +163,20 @@ Checks peak at approximately 817 MiB for coordinates, 814 MiB for physical bits,
 
 ## R1 next: complete the priced host program
 
-1. Add the active-target mask, including source reads of unselected digit low
-   bits, building on the checked upper-bit self-read argument. Close source ordering: connect arbitrary source descriptors to an executable
-   arrangement or reorder, while retaining the complete spectator tensor. The
-   ordered mask scan alone is insufficient.
+1. Instantiate the masked physical-coordinate decoder, including sources at
+   inactive digit low bits and arbitrary untouched source/spectator coordinates.
+   Supply the actual source header and ordered descriptor to `readOffset_exec`.
 2. Bind the packed fields to physical record-index fields and implement their
    interchanges. Instantiate actual field order, width and header hypotheses;
    a coordinate equivalence is not a tape program.
-3. Feed the concrete source offset into the modular load/unload rotations. Reuse
-   existing wrap-class automata and `cxRot_exec` where their hypotheses apply;
-   generalize the source code program where they do not. Compose both dirty-control
-   passes with all loads, moves and inverses, proving scratch and spectator frames.
-4. Charge source/mask setup, every rotation and interchange, and cleanup. Instantiate
-   radix widths and the density inequalities. End with one host `Exec` theorem and
-   its cost on the good set. R2 then supplies all-address repair execution.
+3. Use the concrete source-offset interpreter in the modular load/unload code
+   callbacks. Reuse existing wrap-class automata and `cxRot_exec` where their
+   hypotheses apply; generalize the masked control code programs where required.
+   Compose both dirty-control passes with all loads, moves and inverses, proving
+   scratch and spectator frames.
+4. Charge source/header/mask setup, every rotation and interchange, and cleanup.
+   Instantiate radix widths and the density inequalities. End with one host `Exec`
+   theorem and its total cost on the good set. R2 then supplies all-address repair.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)
 for the gadget and matching decomposition, and the pinned
