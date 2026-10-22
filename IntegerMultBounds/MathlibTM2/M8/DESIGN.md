@@ -975,7 +975,19 @@ chunk before choosing.
   serving blocks and both linked and unlinked addition steps. Leaf steps preserve
   auxiliary weights, including through the earlier compiler prefix. This module checks
   at 1,093 MiB. Composing these block identities with the pending-use allocation
-  invariant to prove the full use recurrence is still required. The source-key and allocation facts
+  invariant to prove the full use recurrence is still required.
+  `Local/PendingWeightsB` now constructs the finite pending-use frontier, proves its
+  exact disjoint transition into survivors, free uses and the linked use, and identifies
+  its terminal observation with `rootWeights`. The compiler invariant supplies exact
+  coefficients at live slots and zero contribution at unallocated slots.
+  `Local/ServingWeightsB` identifies the actual serving-slot observation list with the
+  kept pivot followed by consecutive fresh slots, and proves that pulling back internal
+  copies gives the pivot exactly the sum of free-use weights. These modules check at
+  1,105 and 1,087 MiB. The remaining composition should track the frontier
+  observation plus the proposed garbage weights restricted to slots not yet allocated:
+  each reverse step preserves this combined boundary, the terminal boundary is the
+  root observation and the initial boundary is the proposed garbage coefficient vector.
+  The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
