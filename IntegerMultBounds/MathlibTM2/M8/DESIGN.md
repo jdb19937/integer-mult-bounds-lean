@@ -987,6 +987,15 @@ chunk before choosing.
   observation plus the proposed garbage weights restricted to slots not yet allocated:
   each reverse step preserves this combined boundary, the terminal boundary is the
   root observation and the initial boundary is the proposed garbage coefficient vector.
+  `Local/BoundaryWeightsB` defines this combined boundary and proves its initial and
+  terminal equations and the exact splitting of future garbage weights at allocation.
+  `Local/LeafBoundaryWeightsB` now proves its preservation through every leaf step,
+  including backward propagation through the already compiled prefix, when each
+  newly allocated slot has its named use coefficient. It checks at 1,090 MiB.
+  The remaining internal-step proof can split off surviving uses, the kept first
+  free use, and the optional linked use. Fresh-copy pullback gives the pivot b(n);
+  addition sends b(n) to both arguments and retains the linked-use contribution on
+  the other operand. This must still be proved and composed over all nodes.
   The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.

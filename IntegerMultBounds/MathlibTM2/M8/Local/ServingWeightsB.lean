@@ -10,8 +10,8 @@ noncomputable section
 open Classical
 
 /-- Observation weights at rest-use slots are the weights of consecutive fresh slots. -/
-theorem serveRest_observations (n p : Nat) (us : List Use) (st : State)
-    (hnd : us.Nodup) (w : Nat → ZMod 2) :
+theorem serveRest_observations {α : Type*} (n p : Nat) (us : List Use) (st : State)
+    (hnd : us.Nodup) (w : Nat → α) :
     us.map (fun u => w ((State.serveRest n p st us).pend u)) =
       (List.range' st.next us.length).map w := by
   apply List.ext_getElem
@@ -23,8 +23,8 @@ theorem serveRest_observations (n p : Nat) (us : List Use) (st : State)
     simp
 
 /-- The first served use keeps the pivot, and all others observe successive fresh slots. -/
-theorem serve_observations (n p : Nat) (u : Use) (us : List Use) (st : State)
-    (hnd : (u :: us).Nodup) (w : Nat → ZMod 2) :
+theorem serve_observations {α : Type*} (n p : Nat) (u : Use) (us : List Use) (st : State)
+    (hnd : (u :: us).Nodup) (w : Nat → α) :
     (u :: us).map (fun v => w ((State.serve n p st (u :: us)).pend v)) =
       w p :: (List.range' st.next us.length).map w := by
   apply List.ext_getElem
