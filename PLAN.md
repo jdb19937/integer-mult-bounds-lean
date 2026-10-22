@@ -308,14 +308,25 @@ extra classifier column flushes the final segment even at zero suffix width;
 restores every register, and costs at most `34 * targetWidth + 62` steps. Mask
 installation and concrete placement remain in the final setup/composition gate.
 
+The next checked keying slice includes complete row bits. `SelectiveKeyLayout`
+adds a most-significant row counter without changing the five physical field
+offsets, proves the emitted digits equal the ideal destination, and identifies
+`keyedFrom` with repair's exact full-rank `keyRecs`. `SelectiveKeyPattern` gives
+one concrete arbitrary-source descriptor for the sparse target word. `HeaderRead`
+and `PatternKey` execute its live-header read and target-key emission, with setup,
+XOR and cleanup charged. `selectiveKeyTarget_exec` instantiates the actual field
+bank with a fixed cost. The full field-emission/list loop and counter restoration
+remain; this is not yet an executed whole-stream key pass.
+
 R2 acceptance work, in dependency order:
 
 1. All-address ideal permutation, bad-set invariance and exact partition identities.
 2. **Classifier execution checked.** `badClassifier_spec` handles the actual
    field bank and the final segment at zero suffix width. Its masks are explicit
    metadata inputs; initialize and clear them in item 5.
-3. Executed ideal-destination key pass for arbitrary ordered source descriptors;
-   include the complete row/rank key and restore all source/header scratch.
+3. **Key arithmetic and target emission checked.** Finish the full field emitter
+   and stream loop for arbitrary ordered source descriptors, including the complete
+   row/rank key and restoration of all source/header scratch and index counters.
 4. Instantiate the existing executed route/radix-sort/merge/strip pipeline; derive
    its exceptional-sort cost from the physical density, and prove full restoration.
 5. Concrete register placement, charged metadata setup/cleanup, and composition

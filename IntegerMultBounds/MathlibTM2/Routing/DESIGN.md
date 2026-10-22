@@ -362,6 +362,37 @@ installation/cleanup and concrete shared placement belong to R2's final
 composition. Destination keying, including complete row bits, remains next;
 R2 is not complete.
 
+## R2 checkpoint: complete key layout and executed target digit
+
+`SelectiveKeyLayout` appends one high row counter to the existing five-field
+bank. `selectiveKey_digit` proves original digits are unchanged, and
+`selectiveKeyDig_ideal` proves every proposed key digit is the ideal destination
+digit, including its row. `selectiveKeyBits_ideal` and `selectiveKeyedFrom` identify
+the full binary key with the exact `keyRecs` representation required by repair.
+`selectiveKey_rank_bound` proves the complete rank fits when the row counter fits;
+keys from different rows are not silently truncated to their in-row address.
+
+`SelectiveKeyPattern` describes the sparse target word as one executable optional
+source table over the current y/t/u/spectator header. Active targets read their
+specified source, inactive targets request zero. `selectiveKeyPattern_value`
+identifies its interpreted value with the actual `targetWord` used by the ideal
+permutation, with no source-order or source-injectivity assumption.
+
+`headerRead_exec` in `HeaderRead.lean` builds that header from current counters,
+interprets the table and clears the header. `patternKey_exec` in `PatternKey.lean`
+then emits the XOR digit through the existing `xorF`, restoring its full mask,
+all source counters, descriptor and scratch, and clears the source-word temporary.
+`selectiveKeyTarget_exec` instantiates this on the physical five-field bank.
+Its fixed cost is `wy * (6 * W + 25) + 8 * W + 45`, where
+`W = wy + 2 * wc + X`; it includes every header copy, interpreter scan, XOR and
+cleanup. All new modules check at about 1.2 GiB.
+
+This is not yet the full stream key pass. Next compose this target emitter with
+copies of all other fields, including the row, then execute the record loop,
+move its accumulated keyed stream back and reset every index counter. The
+key/header descriptor and full mask remain configuration inputs whose installation
+and cleanup belong to the final R2 composition.
+
 ## Completion gates
 
 R1 ends with packed good-set semantics and priced host calls; R2 supplies exact
