@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.M8.Global.AuxBoundaryB
+public import IntegerMultBounds.MathlibTM2.M8.Global.StageReflectionB
 
 /-! The complete auxiliary chains of both design-B stages. -/
 
@@ -161,31 +162,14 @@ theorem firstStage_aux_chain (s : Nat) (hs : s < dagB.compile.next) :
 /-- The second stage sees each auxiliary trace reversed and complemented. -/
 theorem finalStage_aux_trace (s : Nat) :
     fseq (.inl (.aux s)) finalStage =
-      ((fseq (.inl (.aux s)) firstStage).map (1 - ·)).reverse := by
-  have hc := fseq_reflect (.inl (.aux s))
-    ((List.finRange 23).map (centreBlockAt centreSlots centreTargets)) (by
-      intro B hB
-      obtain ⟨c, _, rfl⟩ := List.mem_map.mp hB
-      rw [centreBlockAt_aux_trace]
-      split_ifs <;> simp)
-  simp only [List.map_reverse, List.map_map, Function.comp_def] at hc
-  simp only [finalStage, secondStage, firstStage, stage, blocks, List.flatten_append,
-    fseq_append, fseq_complB, fseq_reverse, List.map_append, List.reverse_append,
-    List.map_reverse, hc, List.append_assoc]
-
-private theorem nested_complement {A B : LMat} (h : Nested A B) :
-    Nested (1 - B) (1 - A) := by
-  have hc := le_compl (le_of_nested h)
-  exact ⟨hc.2, hc.1⟩
+      ((fseq (.inl (.aux s)) firstStage).map (1 - ·)).reverse :=
+  secondStage_reg_trace assignment (.aux s)
 
 /-- The complete reversed auxiliary chain ends at the complement of its readout frame. -/
 theorem finalStage_aux_chain (s : Nat) (hs : s < dagB.compile.next) :
     (fseq (.inl (.aux s)) finalStage ++ [1 - assignment.sigma s]).Pairwise Nested := by
-  have hr : (assignment.sigma s :: fseq (.inl (.aux s)) firstStage).reverse.Pairwise
-      (fun A B => Nested B A) := List.pairwise_reverse.mpr (firstStage_aux_chain s hs)
-  have hc := List.pairwise_map.mpr (hr.imp fun {A B} h => nested_complement h)
-  simpa only [List.reverse_cons, List.map_append, List.map_singleton, List.map_reverse,
-    finalStage_aux_trace] using hc
+  have h := pairwise_complement_reverse (firstStage_aux_chain s hs)
+  simpa only [List.map_cons, List.reverse_cons, finalStage_aux_trace] using h
 
 end
 end IntegerMultBounds.MathlibTM2.M8.Global.DesignB

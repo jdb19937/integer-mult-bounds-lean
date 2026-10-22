@@ -943,9 +943,31 @@ chunk before choosing.
   These are structural list proofs; no compiler prefix or new certificate is evaluated.
   The three modules check at 1,568, 3,022 and 3,030 MiB. The guarded build including the
   public theorem and the new-module standard-axiom audit pass. κ remains unchanged.
-  Next: prove complete data-wire chains and temporary traces; connect the data-wire
-  source/readout traces to the signed chains, allowing repeated equal frames; then
-  integrate the global node/costs and switch the supplier and retune.
+  `Global/TargetTraceB.stage_target_trace` gives the exact target-wire trace: early
+  readouts, centre scatters, deferred readouts and final root reads. All repeated frames
+  are retained. `TemporaryTraceB` proves the complete temporary traces of both stages:
+  star then zero, and complemented star then one. `StageReflectionB` proves reversed
+  complemented traces for every register, and now supplies the auxiliary reflection proof.
+  These three modules check at 1,600, 1,568 and 1,566 MiB.
+  `Local/UseSlotsB.useSlotB` computes slots from the checked allocation count and serving
+  index. `Global/UseSlotsB` proves agreement with actual compiler assignments for leaf
+  uses and non-kept internal uses, including consumed uses. The existing deferred-use
+  checks exclude kept internal uses. Twelve generated source-check modules certify all
+  11,374 source-key uses in 128-use declarations, peaking at 1,142 MiB.
+  `Global/SourceKeysB` replaces the actual early/late source keys and deferred-readout
+  keys and membership predicate by these computable slots, without evaluating any
+  compiler prefix. UseSlotsB and SourceKeysB check at 1,999 and 1,988 MiB.
+  All 82 emitted geometry/source modules reproduce byte for byte; seven Python tests,
+  the guarded build including the public theorem, and standard-axiom audits pass.
+  κ remains unchanged.
+  Next: connect the data-wire source/readout traces to the signed chains, allowing
+  repeated equal frames. For target T, the candidate backward recurrence over uses is
+  c(root j) = [T ∈ targets j], b(n) = Σ_{u ∈ freeUses n} c(u), and
+  c(gate n pos) = b(n) + [pos is the linked operand] c(linkUse n), over F₂.
+  An untrusted Python replay agrees with all 28,866 actual slot covectors; its Lean
+  adjoint soundness theorem remains to be proved. The source-key and allocation facts
+  above provide direct slots for instantiating the recurrence. Then finish data-wire
+  nesting, integrate the global node/costs and switch the supplier and retune.
   The replay's compiler mapping and `AssignmentB` provide the concrete labels and order;
   the missing proof is their correspondence to `fseq`, allowing repeated equal frames.
   These concrete stages are not yet the public supplier: the Lean wire-chain alignment,
