@@ -378,8 +378,15 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    simultaneous shear, spectator-row preservation and terminal table-count bound.
    `CompiledSharedRouting` joins actual shared-counter setup and final shared
    cleanup to that path, with closed setup/cleanup prices and a complete
-   stream-only bank frame. Generating the coordinate table and shared raw inputs,
-   and composing with the bulk router, remain open.
+   stream-only bank frame. `SharedInputExec` now generates the raw record count,
+   unary address width and initial mask from binary dimensions, preserving inputs
+   and scratch, for positive address width. `SharedInputProgram` proves executed
+   preparation and cleanup around a restored stream-only router, charging both
+   phases. `BinarySharedRouting` now composes actual generation, shared setup,
+   coordinate-table compilation, routing and all cleanup, with a stream-only
+   final frame and a closed total cost. It starts from binary dimensions and a
+   raw coordinate table; coordinate-table generation and composition with the
+   bulk router remain open. The zero-width fallback is still separate.
 3. **Coordinate placement and prepared execution proved; setup open:** `BlockExchange` specifies
    equal-width interval interchanges, and `ReservoirPlacement` composes at most
    three of them to populate the physical `b,y,t,u` layout from the selected bank.
@@ -390,8 +397,22 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    `BlockExchangeChain` composes all calls with their full frame and summed cost.
    `reservoirPlacement_exec` executes both the concrete forward and reverse
    three-call schedules from initially prepared canonical header banks, with only
-   the stream changed. Header generation, installation and cleanup are still
-   required, and complete placement/R2/terminal composition remains open.
+   the stream changed. `BinaryTripleScale` executes the general payload-header
+   arithmetic (three times record width, shifted by the lower interval offset),
+   clearing its intermediate word and restoring scratch with a linear cost bound.
+   `ExchangeHeaderValues` proves the canonicality and exact host values of all
+   five general interval-exchange headers. `ExchangeHeaderExec` now executes
+   generation of the complete five-word bank from unary exponent tapes and
+   binary row, block and interval-width inputs, preserving all inputs and scratch
+   and charging the full cost. `InstalledBlockExchange` executes raw-header
+   installation, the actual host interchange and installed-header cleanup,
+   restoring every tape except the stream. Exact installation and cleanup prices
+   are proved in total raw-header length. `GeneratedBlockExchange` now composes
+   header generation, installation, the actual exchange and cleanup of both
+   header banks, restoring every register except the stream. Its bound charges
+   all phases; removing the generated-bank size from the exchange price and
+   generating the unary exponent inputs remain required. Complete
+   placement/R2/terminal composition remains open.
    `RouterGeometry` resolves the shared-width constraint using
    `d = (n-K)/(K+3G)`: all residues share borrowed width `dG`, the complete field
    bank has width exactly `n`, and the terminal suffix is shorter than `2K+3G`

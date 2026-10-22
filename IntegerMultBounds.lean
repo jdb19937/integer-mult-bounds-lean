@@ -77,6 +77,10 @@ public import IntegerMultBounds.MathlibTM2.Routing.UnaryComplement
 public import IntegerMultBounds.MathlibTM2.Routing.UnaryPredecessor
 public import IntegerMultBounds.MathlibTM2.Routing.ConfigurationChoose
 public import IntegerMultBounds.MathlibTM2.Routing.CompiledSharedRouting
+public import IntegerMultBounds.MathlibTM2.Routing.BinarySharedRouting
+public import IntegerMultBounds.MathlibTM2.Routing.ExchangeHeaderExec
+public import IntegerMultBounds.MathlibTM2.Routing.InstalledBlockExchange
+public import IntegerMultBounds.MathlibTM2.Routing.GeneratedBlockExchange
 public import IntegerMultBounds.MathlibTM2.Routing.CompiledElementarySemantics
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
