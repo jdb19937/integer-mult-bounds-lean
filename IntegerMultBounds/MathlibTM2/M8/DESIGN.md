@@ -1108,6 +1108,11 @@ chunk before choosing.
   The complete public theorem rebuild passes after extending the framed-step language:
   11,108 modules, 36.8 GiB total peak under the guard. Sampled new/changed modules use
   at most 2,242 MiB; coefficient bounds and proof limits are unchanged.
+  `Global/StageGateB` proves that every gate of the actual first-stage word is
+  an XOR on distinct, in-range wires, for any frame assignment. The compiler-role
+  count bridge reuses the existing global world's side roles; the generic
+  `Local/SourceListB.srcB_node_lt` supplies source bounds without evaluating the
+  concrete compiler. The stage check uses 3,033 MiB under the default proof limits.
   These concrete stages and exits are not yet the public supplier. Assemble the gauged
   node, prove its boundary semantics and actual move-moment bound, then replace the
   supplier and complete the B6 retune. Public κ remains unchanged.

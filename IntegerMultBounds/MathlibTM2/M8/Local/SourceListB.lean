@@ -128,6 +128,13 @@ theorem srcB_leaf_targets (D : Dag) (hv : D.Valid) (n : Nat) (hn : n < D.v) :
     sourceBlocks_leaf_targets (fun i => List.range' (D.compileTo i).next (D.freeUses i).length)
       (List.range D.v) List.nodup_range n
 
+/-- Every V-source operation reads a genuine leaf. -/
+theorem srcB_node_lt (D : Dag) (hv : D.Valid) (op : Op) (ho : op ∈ D.srcB) : op.node < D.v := by
+  rw [srcB_eq_sourceBlocks D hv] at ho
+  obtain ⟨n, hn, ho⟩ := List.mem_flatMap.mp ho
+  obtain ⟨s, _, rfl⟩ := List.mem_map.mp ho
+  exact List.mem_range.mp hn
+
 end Dag
 end
 end IntegerMultBounds.MathlibTM2.M8.Local
