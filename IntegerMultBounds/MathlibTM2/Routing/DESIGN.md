@@ -71,12 +71,31 @@ both masks must already be present; constructing them and clearing the output af
 consumption belong to the caller. Register-disjointness hypotheses must also be
 instantiated there. This is not yet a complete rotation pass.
 
-**Sources inside the target field remain an obligation.** The current packed
-reader depends on a separate unchanged factor. A general shear may read unselected
-upper bits of target digits themselves. Those bits return to their original values
-after each complete dirty-control pass, but can change during its rotations. The
-load must read the actual intermediate state, and its stability must be proved;
-copying those bits into the separate source factor is not a free solution.
+## Checked self-reading loads
+
+`SelfRead.lean` closes the address-level source-stability obligation for upper
+bits inside target digits. `earlyPass_good_upper` shows that each complete early
+pass restores those bits, even though individual rotations may change them.
+`selfRead` loads and unloads from the actual current upper digits. Both operations
+are global permutations because their offsets do not depend on the rotated
+control field. `selfRead_eq_frozen` proves agreement with the old constant-source
+composition on the early good set, using the *newly loaded* controls in the second
+pass. `selfRead_endpoint` restores both borrowed fields and all upper target bits.
+The variable-source ideal is globally involutive, preserves guards, and supplies
+`selfRead_bad` and `repair_selfRead`; no source copy or initialized field is assumed.
+The reader may capture additional unchanged source/spectator values as parameters.
+
+`SourceBits.lean` instantiates this reader with arbitrary ordered pairs of digit
+indices and upper-bit indices. `selfRead_physical` proves the actual destination
+bit at `K*j` is XORed with the specified physical source bit
+`K*sourceDigit + upperBit + 1`. All indices are structural; there is no exhaustive
+address enumeration. The checks peak at 804 MiB and 824 MiB respectively.
+
+This closes the upper-target-source *semantics*, not the host implementation.
+A separate active-target mask is still needed when only some packed digit starts
+are selected: unselected digit low bits may then be sources, and must survive
+each early pass too. The current physical theorem selects every packed digit
+start; the logical `Shear` theorem by itself does not discharge this mask case.
 
 **Ordering is a real remaining obligation.** A mask scanner emits sources in
 increasing physical order. It does not implement an arbitrary `Fin n -> coordinate`
@@ -84,6 +103,16 @@ ordering. The general mathematical endpoint accepts arbitrary ordering, but the
 host reader currently proves only increasing order. The next source-order bridge
 must supply and price reordering or an appropriate physical placement. Relabeling
 logical coordinates alone does not implement that placement on a record stream.
+
+For the next host slice, a fixed-tape interpreter of the ordered source descriptor
+can use polynomial work on the small address metadata. The retained untouched
+suffix gives superpolynomial record width in the long-record regime, so this can
+be amortized there; the short-record fallback must be proved separately. This is
+a reason to investigate repeated scans of metadata, not repeated single-bit moves
+of the entire record stream. Charge the actual descriptor scans and prove the
+record-width inequality before using that amortization. `SourceGather` remains the
+linear-time path for increasing descriptors. No descriptor-specific unrolled
+program should substitute for the fixed interpreter required by the uniform router.
 
 `Density.lean` proves that a complete nonempty source/spectator factor leaves the
 exceptional fraction unchanged, and that a complete address equivalence preserves
@@ -111,9 +140,8 @@ Checks peak at approximately 817 MiB for coordinates, 814 MiB for physical bits,
 
 ## R1 next: complete the priced host program
 
-1. Generalize the load to read preserved upper target bits from the actual
-   intermediate state, and prove source-read stability after each dirty-control
-   pass. Then close source ordering: connect arbitrary source descriptors to an executable
+1. Add the active-target mask, including source reads of unselected digit low
+   bits, building on the checked upper-bit self-read argument. Close source ordering: connect arbitrary source descriptors to an executable
    arrangement or reorder, while retaining the complete spectator tensor. The
    ordered mask scan alone is insufficient.
 2. Bind the packed fields to physical record-index fields and implement their

@@ -198,7 +198,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
-| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Ordered scattered-source gathering has host execution, cleanup and cost. Reads of upper target bits, arbitrary source ordering, field moves and full rotation binding remain. | 2–3k |
+| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Ordered scattered-source gathering has host execution, cleanup and cost. Self-reading upper target bits and their physical source coordinates are proved. Active-target masks, arbitrary source ordering, field moves and full rotation binding remain. | 2–3k |
 | R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
@@ -214,8 +214,12 @@ source order**, restores gathering scratch, and charges `8 W + 8 n G + 2 n + 18`
 host steps. `packed_read_eq` identifies its offset with the packed gadget's source
 value. Source/mask registers are inputs to this call, so mask setup remains charged
 at the future caller; arbitrary source ordering is not silently supplied by a mask.
-The new checks peak below 1.2 GiB. R1 is still open: allow sources in unselected
-upper target bits (the current reader uses a separate field), bind arbitrary source ordering,
+`SelfRead` now loads from actual intermediate upper target bits, proves agreement
+with the frozen-source program, and preserves the exceptional set; `SourceBits`
+identifies arbitrary ordered physical upper-bit sources. No copied source field is
+assumed in this extension. The new checks peak below 1.2 GiB. R1 is still open:
+add active-target masks (including unselected digit low bits as sources), bind
+arbitrary source ordering,
 field placement/interchanges, mask setup, all modular rotations and cleanup to a
 complete priced host execution. Kappa is unchanged.
 

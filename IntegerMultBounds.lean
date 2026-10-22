@@ -7,6 +7,8 @@ public import IntegerMultBounds.MathlibTM2.Routing.Coordinates
 public import IntegerMultBounds.MathlibTM2.Routing.PhysicalBits
 public import IntegerMultBounds.MathlibTM2.Routing.SourceGather
 public import IntegerMultBounds.MathlibTM2.Routing.Density
+public import IntegerMultBounds.MathlibTM2.Routing.SelfRead
+public import IntegerMultBounds.MathlibTM2.Routing.SourceBits
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume
