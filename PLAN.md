@@ -369,8 +369,17 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    program emits a valid instruction from five binary inputs and restores every
    register except the output configuration stream. `ElementaryCompilerCost`
    bounds private cleanup by input sizes, completing the priced single-instruction
-   compiler. Generation of successive instruction coordinates and the complete
-   instruction-stream loop remain open.
+   compiler. `ElementaryCompileTableCost` proves a fixed loop compiles any framed
+   coordinate table into valid instructions, restores the complete raw input and
+   reusable bank, and bounds total time using pair count and input dimensions.
+   `CompiledElementaryRouting` joins table compilation, actual routing and
+   generated-instruction cleanup, restoring every register except the record
+   stream, with all phases charged. `CompiledElementarySemantics` proves the exact
+   simultaneous shear, spectator-row preservation and terminal table-count bound.
+   `CompiledSharedRouting` joins actual shared-counter setup and final shared
+   cleanup to that path, with closed setup/cleanup prices and a complete
+   stream-only bank frame. Generating the coordinate table and shared raw inputs,
+   and composing with the bulk router, remain open.
 3. **Coordinate placement and prepared execution proved; setup open:** `BlockExchange` specifies
    equal-width interval interchanges, and `ReservoirPlacement` composes at most
    three of them to populate the physical `b,y,t,u` layout from the selected bank.

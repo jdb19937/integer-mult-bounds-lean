@@ -43,6 +43,18 @@ theorem elementaryCompilerCleanCost_le {T A n : ℕ}
   rw [hlen] at h
   omega
 
+/-- Each emitted instruction has a linear-size framed encoding. -/
+theorem elementaryCompiled_frame_length_le {n A : ℕ} (target source : Fin n) (hne : source ≠ target)
+    (rowBits triple : List Bool) (Lb : ℕ) (hl : triple.length ≤ Lb + 2) :
+    ((ElementaryInstruction.mk target source hne (elementaryCompilerWords rowBits triple target)).frame :
+      List (Fin (A + 4))).length ≤ rowBits.length + 3 * n + Lb + 11 := by
+  have ht := target.isLt
+  have hr := Nat.sub_le n (target.val + (elementarySwapSpec target).w)
+  simp [ElementaryInstruction.frame, ElementaryInstruction.words, elementaryConfigWord,
+    elementaryCompilerWords, elementaryHeaderWords, List.ofFn_succ, configurationWords,
+    binaryPowerBits, binaryNonemptyBits]
+  split_ifs <;> simp_all only [List.length_nil, List.length_cons] <;> omega
+
 /-- The actual compiler with a closed bound for private cleanup. -/
 theorem elementaryCompiler_exec_le {T Q A n : ℕ} {P U : Type}
     (body : P → Pr P T Q A U) (rg : ElementaryCompilerReg → Fin T) (hrg : Function.Injective rg)

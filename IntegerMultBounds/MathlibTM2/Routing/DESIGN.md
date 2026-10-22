@@ -644,7 +644,26 @@ a valid instruction frame is prepended to the output stream and every other
 register is restored. `ElementaryCompilerCost` bounds every private word and
 connects a closed cleanup-size bound to actual execution. The total bound charges
 preparation, serialization by framed output length, and cleanup by input sizes.
-The loop generating successive instruction coordinates remains required.
+`ElementaryCoordinatePair` loads two binary coordinates from a framed table,
+retaining its consumed prefix in a right-stack archive. `ElementaryCompileCall`
+composes loading, the compiler and operand cleanup into one fully priced reusable
+iteration; only the input cursor, archive and output stream change.
+`ElementaryCompileLoop` executes any finite coordinate table with one fixed loop,
+proving every emitted instruction valid and identifying its reverse order.
+`ElementaryCompileTable` rewinds the complete table and restores the entire bank
+except for output. `ElementaryCompileTableCost` bounds instruction size and total
+time by pair count and input dimensions, including every guard and rewind.
+`CompiledElementaryRouting` joins this compiler to the actual routing engine
+and clears the generated instruction tape. Every register except the record
+stream is restored, and the total cost includes compilation, routing and cleanup.
+`CompiledElementarySemantics` transfers the coordinate-table contract to exact
+simultaneous shear semantics and spectator-row preservation, and bounds terminal
+tables by `131G`. `CompiledSharedRouting` additionally executes shared-counter
+setup and final shared cleanup. It starts from raw shared words and a coordinate
+table; the complete bank frame changes only at the record stream, and setup,
+compilation, routing and cleanup all have explicit dimension-based bounds.
+Generating the shared raw inputs and coordinate table, and composing the bulk
+router, remain required.
 
 Complete composition with executed R2 calls, shared setup and raw configuration
 generation, long-record amortization and the short-record regime remain mandatory
