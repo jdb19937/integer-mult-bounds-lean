@@ -68,7 +68,9 @@ public import IntegerMultBounds.MathlibTM2.Routing.ReservoirExchangeSchedule
 public import IntegerMultBounds.MathlibTM2.Routing.ElementaryRouting
 public import IntegerMultBounds.MathlibTM2.Routing.ElementaryInstructionSemantics
 public import IntegerMultBounds.MathlibTM2.Routing.RouterTerminalCost
-public import IntegerMultBounds.MathlibTM2.Routing.ElementarySharedSetup
+public import IntegerMultBounds.MathlibTM2.Routing.ElementarySharedRouting
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryCanonicalExec
+public import IntegerMultBounds.MathlibTM2.Routing.ElementaryHeaderExec
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial

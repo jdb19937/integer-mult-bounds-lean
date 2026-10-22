@@ -354,8 +354,13 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    address width fits the record width. `ElementarySharedSetup` executes both
    binary-to-unary counters, zero-field construction and first-mask copying,
    with exact cost and a dimension-independent program. It establishes the shared
-   invariant from binary input tapes. Uniform generation of these inputs and
-   instruction/header words, plus full setup/router/cleanup composition, remain open.
+   invariant from binary input tapes. `ElementarySharedRouting` composes actual
+   shared setup, the elementary router and final shared cleanup, with a complete
+   bank frame and all phases charged. `ElementaryHeaderExec` generates all five
+   canonical headers on a fixed bank, with restored inputs/scratch and linear
+   cost; `elementaryHeaderInstruction_valid` proves their actual loader contract.
+   Coordinate/exponent tape construction, source-mask generation and uniform
+   serialization of instruction words remain open.
 3. **Coordinate placement and prepared execution proved; setup open:** `BlockExchange` specifies
    equal-width interval interchanges, and `ReservoirPlacement` composes at most
    three of them to populate the physical `b,y,t,u` layout from the selected bank.

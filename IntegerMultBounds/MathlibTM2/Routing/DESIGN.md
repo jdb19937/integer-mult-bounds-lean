@@ -591,9 +591,29 @@ Archived prefixes do not inflate later calls. `RouterTerminalCost` applies the
 `131G` count to this ledger. These bounds require address width at most record
 width. `ElementarySharedSetup` executes shared setup from binary input tapes,
 establishes the shared scan invariant and proves its exact cost. The code is
-independent of the numeric dimensions. Generating those binary inputs and the
-instruction words, and composing shared setup with routing and final cleanup,
-remain unproved.
+independent of the numeric dimensions. `ElementarySharedFrame` establishes the
+full loop entry invariant and proves exact restoration after clearing the shared
+words. `ElementarySharedProgram` gives a structural execution composition, and
+`ElementarySharedRouting` instantiates it with the actual elementary router:
+setup, routing and cleanup execute with a complete bank frame and every phase
+charged. `BinaryCanonicalExec` converts padded binary arithmetic results into
+canonical header words with unchanged value, exact cost `4L+6`, and restored
+scratch. This closes the normalization gap between arithmetic registers and
+interchange headers; generating their arithmetic values and the complete
+instruction stream remains unproved. `ElementaryHeaderValues` reduces elementary
+headers to a shifted row count, a power of two, three times record width and two
+zero-or-one words. `BinaryPower` generates the power header uniformly from an
+exponent tape, with canonicality, exact value and cost, and restored scratch.
+`BinaryScale` generates shifted row words. `BinaryTriple` constructs canonical
+triples in linear input width by using the two-bit constant as the multiplier
+first operand; constant setup, cleanup and canonicalization are charged.
+`BinaryNonempty` generates zero-or-one width words from the live unary target
+tape. `ElementaryHeaderExec` composes all five generators on one fixed bank,
+with restored inputs and scratch and a summed linear cost.
+`elementaryHeaderInstruction_valid` connects the generated words directly to
+the executed loader's validity predicate. Coordinate/exponent tape construction,
+source-mask generation and serialization of the complete instruction stream
+remain required.
 
 Complete composition with executed R2 calls, shared setup and raw configuration
 generation, long-record amortization and the short-record regime remain mandatory
