@@ -546,10 +546,23 @@ proves the original shear after unplacing, and preserves arbitrary reservoir
 contents. Transported matchings still fix the reservoir and cannot read into it
 from live coordinates.
 
-These theorems specify concrete coordinate placement; they do not yet execute its
-host interchanges or price their generated headers. Executed R2 calls and
-terminal-coordinate operations, uniform configuration generation and amortization
-also remain open. Those and the short-record fallback remain mandatory R3 gates.
+`BlockExchangeIndex` identifies the actual digit-interchange rank map bit by bit
+with `blockExchangePerm`, preserving the row above the record. `BlockExchangeExec`
+specializes the existing uniform host program, including conversion, movement,
+private scratch restoration and supplier-exponent cost. `BlockExchangeChain`
+executes a structural list of exchanges from initially prepared banks: each actual
+call restores every register except the shared stream, preserving later headers
+and their cost terms. No per-stage execution oracle is assumed.
+
+`ReservoirExchangeSchedule` specifies the three concrete exchanges, including a
+zero-width first call for reservoir zero so the program shape is fixed. Its rank
+action is exactly `reservoirPlacement`. `reservoirPlacement_exec` executes both
+forward and reverse schedules and charges every call, leaving only the stream
+changed. Canonical header banks are still initially prepared inputs; generation,
+installation and final cleanup remain unproved at this boundary.
+
+Complete composition with executed R2 calls and terminal-coordinate operations,
+uniform configuration generation and amortization also remain open. Those and the short-record fallback remain mandatory R3 gates.
 In particular, computable Lean functions are not yet a priced tape compiler.
 
 ## Completion gates

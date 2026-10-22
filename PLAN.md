@@ -341,12 +341,18 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    common borrowed-width bound. `TerminalShears` composes the bulk passes with at
    most `K` singleton XORs and proves no target is omitted. Execution of those
    singleton XORs, physical placement and generated configuration remain open.
-3. **Coordinate placement proved; execution open:** `BlockExchange` specifies
+3. **Coordinate placement and prepared execution proved; setup open:** `BlockExchange` specifies
    equal-width interval interchanges, and `ReservoirPlacement` composes at most
    three of them to populate the physical `b,y,t,u` layout from the selected bank.
    `PlacementShear` transports both targets and source names and proves exact
-   restoration after unplacing, including dirty reservoir bits. Connect these
-   coordinate exchanges to the actual host interchange and charge every call.
+   restoration after unplacing, including dirty reservoir bits.
+   `BlockExchangeIndex` now identifies the host rank map with those coordinate
+   exchanges. `BlockExchangeExec` supplies the actual uniform host call;
+   `BlockExchangeChain` composes all calls with their full frame and summed cost.
+   `reservoirPlacement_exec` executes both the concrete forward and reverse
+   three-call schedules from initially prepared canonical header banks, with only
+   the stream changed. Header generation, installation and cleanup are still
+   required, and complete placement/R2/terminal composition remains open.
    `RouterGeometry` resolves the shared-width constraint using
    `d = (n-K)/(K+3G)`: all residues share borrowed width `dG`, the complete field
    bank has width exactly `n`, and the terminal suffix is shorter than `2K+3G`
