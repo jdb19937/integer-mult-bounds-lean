@@ -965,8 +965,8 @@ chunk before choosing.
   c(root j) = [T ∈ targets j], b(n) = Σ_{u ∈ freeUses n} c(u), and
   c(gate n pos) = b(n) + [pos is the linked operand] c(linkUse n), over F₂.
   An untrusted Python replay agrees with all 28,866 actual slot covectors. The generic
-  compiler recurrence soundness theorem is now proved; concrete coefficient certificates
-  satisfying its local hypotheses remain to be generated and kernel-checked.
+  compiler recurrence soundness theorem and the concrete coefficient certificates
+  satisfying its local hypotheses are now proved and kernel-checked.
   `Local/AdjointB` now proves generic backward observation weights for arbitrary operation
   lists. Its `cov_eq_pullOps` identifies the actual `Dag.cov` with the initial auxiliary
   slot coefficient obtained by pulling back the root weights through `sideB`. This
@@ -999,8 +999,21 @@ chunk before choosing.
   `Local/CovarianceRecurrenceB.UseRecurrence.cov_eq` now composes all node cases
   and identifies the actual `Dag.cov` with the proposed initial garbage vector, from
   local use/allocation equations, root weights and the final allocation bound. It checks
-  at 1,095 MiB. No concrete compiler prefix is reduced. The next concrete step is
-  generating the use and slot coefficient data and kernel-checking these equations.
+  at 1,095 MiB. No concrete compiler prefix is reduced.
+  `scripts/pr97/designbcovariance.py`, invoked by `designbgeometry.py`, now emits 39,014
+  shared bit masks, 64,042 argument-mask pairs and all 28,866 slot masks from the
+  pinned reconstruction. An independent reverse replay agrees with every slot mask.
+  `CovarianceKernelB` checks consecutive fresh allocations and argument XOR equations
+  in 128-node declarations; `CovarianceChecksB` proves them for all 64,042 nodes.
+  `CovarianceRootChecksB` checks all 23 centre masks against the checked leaf records;
+  output-root masks are single target bits. `CovarianceFactsB` proves scalar soundness
+  simultaneously for all target bits. `Global/CovarianceDataB` proves agreement with
+  the actual root target lists. `Global/CovarianceB.covariance_eq_slotMask` now
+  identifies every actual `dagB.cov` coefficient with its slot-mask bit, by instantiating
+  the full use recurrence and the structural allocation correspondence. This integration
+  checks at 2,048 MiB. All 141 emitted modules reproduce byte for byte; the three
+  covariance generator tests pass. Next: use these coefficients to connect the exact
+  data-wire traces to their signed frame chains, including repeated equal frames.
   The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.
@@ -1019,3 +1032,9 @@ B1 and B2 can run in parallel; B3 is the largest. Risks:
 - the reordered word's semantics, which `check_word.py` replays upstream but which needs a
   structural proof here;
 - the commuting-exit generalization of the node's chain alignment.
+
+The execution gates in the updated root `PLAN.md` apply: finish this design-B
+compiler/frame checkpoint, then assess the remaining machine integration before
+starting a major new construction. Design-B is an intermediate bound improvement;
+the longer-term M9–M11 target is κ = 0.0023. No further design-B-specific
+optimization is planned, and the public κ remains unchanged until full integration.
