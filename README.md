@@ -29,11 +29,12 @@ is more than `2^46` times the historical M2 saving `2^-66`, as an exponent impro
 This completed proof is the primary route. The [retention audit](docs/proof-retention.md)
 lists its dependencies and legacy removal candidates; the retired native controller is preserved in Git history.
 
-The next routing construction has completed R1: a concrete selective-update
-program with priced setup, execution and cleanup, restored borrowed registers,
-and a checked exceptional-density bound. Exact repair and the complete router
-remain in R2–R4; this work does not yet change the multiplication saving.
-See [the active plan](PLAN.md) and [R1 audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md).
+The next routing construction has completed R1 and R2: a concrete selective-update
+program with exact repair on every address, fully priced metadata setup, keying,
+routing, classification, sorting and cleanup, and restored borrowed registers.
+The complete router and multiplication integration remain in R3–R4; this work
+does not yet change the multiplication saving. See [the active plan](PLAN.md) and
+[the R2 audit](IntegerMultBounds/MathlibTM2/Routing/R2-AUDIT.md).
 
 ## Historical native-machine target
 

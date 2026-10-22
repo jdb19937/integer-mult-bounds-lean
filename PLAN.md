@@ -201,7 +201,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
 | R1 selective updates | ✅ | Complete selective primitive: arbitrary ordered allowed sources, physical good-set XOR, full source/spectator and borrowed-field restoration, global rank permutation, and executed setup/routing/cleanup with every phase priced. `SelectiveRouter.selectiveRouting_exec` instantiates concrete register placement, canonical header values, logarithmic guard widths and the physical exceptional bound `5 / (128 scale³)`. See [completion audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md). | ~6.5k |
-| R2 exact repair | 🟡 | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
+| R2 exact repair | ✅ | Complete all-address selective primitive. `exactSelective_exec` in `ExactSelective.lean` executes all 34 metadata installations, complete-rank keying, R1 routing, physical classification, exceptional extraction/radix sort/merge/key stripping, and final cleanup on one concrete bank. Every register except the output stream is restored; canonical headers, explicit logarithmic guards and the physical density price the total cost. See [completion audit](IntegerMultBounds/MathlibTM2/Routing/R2-AUDIT.md). | ~2.7k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
 
@@ -291,66 +291,31 @@ There are approximately **6.5k** routing Lean lines in total.
 The [R1 completion audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md) records
 requirements and theorem evidence. Raw configuration descriptors and canonical
 header bits are inputs, with installation executed and charged; uniform generation
-remains R3's obligation. Exact exceptional-record repair remains R2; complete
-routing and long/short-record amortization remain R3, and multiplication integration
+remains R3's obligation. Exact exceptional-record repair is provided by the
+completed R2 below; complete routing and long/short-record amortization remain R3, and multiplication integration
 remains R4. Completing R1 does not change the current multiplication kappa.
 
-R2 is active. The first implementation slice proves an all-address physical ideal
-XOR permutation (`SelectiveIdeal`), source-observation invariance without guards,
-and physical good/bad-set preservation. `SelectiveRepairSpec` connects the actual
-schedule to the existing stable-sort repair partition theorem and identifies the
-extracted-record count with R1's exact physical bad count. The executed repair
-wrapper now checks, with full register restoration and its exceptional-sort cost
-bounded by the same physical density. It still requires a concrete classifier
-and keyed input; R2 remains open. `selectiveBadCode_padded` proves that one
-extra classifier column flushes the final segment even at zero suffix width;
-`badClassifier_spec` in `BadClassifier.lean` now executes that padded classifier,
-restores every register, and costs at most `34 * targetWidth + 62` steps. Mask
-installation and concrete placement remain in the final setup/composition gate.
+R2 is complete. `SelectiveIdeal` supplies the all-address physical XOR permutation
+and bad-set invariance; `SelectiveRepairSpec` instantiates the existing exact
+stable-sort repair identities. `BadClassifier` handles the actual five-field bank,
+including zero suffix width. `SelectiveKeyPass` executes complete-rank keying,
+including row bits, with full counter and scratch restoration. `RepairPlacement`
+supplies the shared finite bank, and `RepairCore` composes the actual phases.
 
-The next checked keying slice includes complete row bits. `SelectiveKeyLayout`
-adds a most-significant row counter without changing the five physical field
-offsets, proves the emitted digits equal the ideal destination, and identifies
-`keyedFrom` with repair's exact full-rank `keyRecs`. `SelectiveKeyPattern` gives
-one concrete arbitrary-source descriptor for the sparse target word. `HeaderRead`
-and `PatternKey` execute its live-header read and target-key emission, with setup,
-XOR and cleanup charged. `selectiveKeyTarget_exec` instantiates the actual field
-bank with a fixed cost. `KeyEmission` now supplies the actual record loop, payload
-transfer, stream-order restoration and counter reset. `SelectiveKeyEmitter` proves
-the concrete six-digit emitter, and `selectiveKeyPass_exec` supplies the complete
-executed stream pass with exact cost and full register restoration. It returns
-repair's `keyRecs` representation; `selectiveKey_rank_bound` supplies key uniqueness
-when the row counter fits. Shared placement and metadata setup/composition remain.
+`RepairSetupBank`, `RepairSetupData`, `RepairSetupBlank` and `RepairSetup` install
+all 34 metadata words from raw configuration, preserving inputs and constructing
+all counters with charged programs. `RepairProgram` executes setup, the exact core
+and final cleanup. `RepairDensity` bounds the actual exceptional-sort cost using
+R1's physical bad count. `exactSelective_exec` in `ExactSelective.lean` combines the complete
+execution with canonical headers and explicit ceiling-logarithm guards; it has no
+prepared-state, classifier, key-emitter or placement oracle. The
+[R2 audit](IntegerMultBounds/MathlibTM2/Routing/R2-AUDIT.md) records the acceptance
+evidence. The routing directory now has approximately **9.2k** Lean lines, about
+**2.7k** beyond the R1 checkpoint, reusing the existing scan and radix-sort programs.
 
-The shared-bank core is now checked. `HostEmbedding` transports R1's complete
-host/setup contracts through any injective embedding. `RepairPlacement` supplies
-one fixed finite bank, sharing the first five key counters with routing and the
-classifier while retaining a sixth row counter. It discharges every key-driver,
-repair-scan and radix-sort separation condition. `repairCore_exec` composes the
-actual whole-stream key pass, full R1 schedule and concrete classifier/repair
-pipeline into the exact all-address ideal stream, with their full summed costs.
-Only shared prepared metadata is assumed at this boundary. R2 remains open until
-its complete metadata installation/cleanup and final density-priced theorem are
-executed and audited; the configured core alone does not complete the milestone.
-
-R2 acceptance work, in dependency order:
-
-1. All-address ideal permutation, bad-set invariance and exact partition identities.
-2. **Classifier execution checked.** `badClassifier_spec` handles the actual
-   field bank and the final segment at zero suffix width. Its masks are explicit
-   metadata inputs; initialize and clear them in item 5.
-3. **Complete key pass checked.** The full six-field emitter and executed stream
-   loop handle arbitrary ordered sources and complete row/rank keys, with source,
-   descriptor, header, scratch and all index counters restored. Instantiate its
-   metadata and shared register placement in item 5.
-4. **Shared executed core checked.** `repairCore_exec` instantiates keying, routing,
-   classification and route/radix-sort/merge/strip on one bank, with exact ideal
-   output and full restoration. The exceptional-sort cost is tied to R1's physical
-   bad count. Instantiate the final concrete density choice in item 5.
-5. **Shared placement checked.** Finish charged metadata setup/cleanup around the
-   composed core and the all-address, density-priced selective-update theorem. Audit
-   this complete boundary before closing R2; prepared classifier/key assumptions
-   do not complete it.
+Raw descriptor/header generation, matching/reservoir scheduling, permutation
+decomposition and short-record fallback remain R3. Layout/support integration
+remains R4. Completing R2 does not change the current multiplication kappa.
 
 Estimated routing total: **15–24k additional or substantially revised Lean lines**; excludes generated data and Python. Existing layout,
 CRT-control, rotation and sorting primitives are reused. R1's logical identity is

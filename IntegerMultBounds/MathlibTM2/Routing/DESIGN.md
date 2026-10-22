@@ -300,7 +300,7 @@ radix-density assumption. Its raw configuration input remains explicit.
 The program structure is independent of source order, dimensions and record count.
 
 R1 is complete at this boundary; see the [requirement audit](R1-AUDIT.md).
-R2 must execute exact exceptional-record repair. R3 must generate configuration,
+R2 supplies the exact exceptional-record repair described below. R3 must generate configuration,
 compose matchings and permutations, amortize the metadata cost and supply the
 short-record fallback. R4 integrates the complete router and support contract.
 
@@ -309,6 +309,9 @@ for the gadget and matching decomposition, and the pinned
 [new outer support contract](https://github.com/zxv/integer-mult-bounds/blob/da637c87c89482bc4c86be36bd0071b3d400dbed/research/kappa-rebuild/transfer-audit/OUTER-TRANSFER-AUDIT.md#5-the-changed-row-reserve-fits-the-support-local-outer-wrapper)
 for reserved chunks, complete spectators and exposure restoration. The old note's
 parameter values and time estimates are historical, not current requirements.
+
+The following R2 checkpoints describe the intermediate interfaces; the completed
+entry point is `exactSelective_exec`, described after them.
 
 ## R2 checkpoint: exact selective repair from classified keyed input
 
@@ -359,8 +362,8 @@ including all word preparation and cleanup, and the check peaks near 2.1 GiB.
 This removes the executed-classifier obligation at the prepared repair boundary.
 Its two masks and field counters remain explicit invariant inputs: their charged
 installation/cleanup and concrete shared placement belong to R2's final
-composition. Destination keying, including complete row bits, remains next;
-R2 is not complete.
+composition. The later keying and final installation/composition sections discharge those
+remaining obligations; this classifier alone is not the complete R2 primitive.
 
 ## R2 checkpoint: complete key layout and executed target digit
 
@@ -387,9 +390,9 @@ Its fixed cost is `wy * (6 * W + 25) + 8 * W + 45`, where
 `W = wy + 2 * wc + X`; it includes every header copy, interpreter scan, XOR and
 cleanup. All new modules check at about 1.2 GiB.
 
-This is not yet the full stream key pass. Next compose this target emitter with
-copies of all other fields, including the row, then execute the record loop,
-move its accumulated keyed stream back and reset every index counter. The
+This target-emitter boundary is composed with copies of all other fields,
+including the row, by the complete key pass below. That pass executes the record
+loop, restores forward stream order and resets every index counter. The
 key/header descriptor and full mask remain configuration inputs whose installation
 and cleanup belong to the final R2 composition.
 
@@ -417,11 +420,10 @@ than only destination arithmetic or a hypothetical key callback. The existing
 `selectiveKey_rank_bound` must be used with the row-width bound before sorting,
 so distinct full ranks are not truncated to equal keys.
 
-The whole-stream key pass checks near 1.2 GiB. R2 remains open: instantiate one
-shared finite placement for keying, routing and classification/repair; install
-and clear every metadata bank with charged execution; compose keying, the full
-R1 schedule and exact repair, and audit the all-address primitive and its density
-cost. The prepared key/classifier invariants are not completion of that gate.
+The whole-stream key pass checks near 1.2 GiB. Its prepared key/classifier
+invariants are discharged by the shared placement and final executed metadata
+installation described below. The full primitive also includes their cleanup
+and the all-address, density-priced composition.
 
 ## R2 checkpoint: one concrete shared key/route/repair core
 
@@ -453,6 +455,45 @@ and payload/key counters, use concrete canonical headers and guard widths, and
 combine the physical density estimate with the complete cost. Descriptor/header
 generation remains the documented later R3 input-compiler obligation; installation
 and cleanup are required here. Do not close R2 on `repairCore_exec` alone.
+
+## Completed R2 primitive: installation, exact execution and cleanup
+
+`RepairSetupBank` enumerates the fixed 34 metadata destinations: routing's 27 and
+seven extra words for the row, key descriptor/full mask, classifier masks and
+payload/key-length counters. It proves destination uniqueness and separation of
+all raw sources, installer temporaries and the stream. `RepairSetupBlank` proves
+that no installed word replaces required blank scratch in any phase.
+
+`RepairSetupData` states the raw configuration and the fixed installation jobs.
+The row is constructed as a zero binary counter; payload and key-length unary
+counters are constructed from binary inputs. Descriptor/mask copies and canonical
+header separator installation are real programs. `repairSetup_eq` proves that
+all numerical annotations leave the program structure unchanged.
+
+`repairSetup_exec` in `RepairSetup.lean` executes and prices the complete installer,
+restores its raw inputs/scratch and establishes every `RepairPrepared` condition.
+The shared `selectivePrepared_of_words` constructor factors the original R1 proof;
+the R1 setup theorem and its interface are preserved.
+
+`repairProgram_exec` in `RepairProgram.lean` surrounds the concrete key/route/repair
+core with installation and final metadata clearing. Its complete register file is
+an update of the original bank only at the stream. No prepared classifier, key,
+metadata, placement or per-phase execution assumption crosses this boundary.
+Its bound adds all installer, key-pass, routing-pass, classifier/scan/sort/merge/
+strip/reset and cleanup costs.
+
+`RepairDensity` replaces the actual exceptional-sort count in that total by the
+physical `5 / (128 scale³)` density estimate. The count is for the same predicate
+used by the executed classifier, over all rows and spectator values. `ExactSelective`
+fixes canonical interchange header values and ceiling-logarithm guard widths;
+`exactSelective_exec` proves exact ideal output on **every** address under this
+fully priced density bound. All new setup/final modules check near 2.1 GiB.
+
+R2 is complete at this boundary; see the [requirement audit](R2-AUDIT.md).
+Raw configuration generation is still the R3 input-compiler obligation, not a
+free generation claim. R3 must also compose matchings, reservoir placement and
+permutation decomposition and supply the short-record fallback. R4 integrates
+the complete router and support contract into multiplication; kappa is unchanged.
 
 ## Completion gates
 

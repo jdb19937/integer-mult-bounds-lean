@@ -66,17 +66,12 @@ theorem selectiveSetup_blank (H : SelectiveHost T) (cfg : SetupKey → Fin T) (l
   rw [setupJob_dst] at he
   exact layout.blanks key k hk he
 
-/-- Installed metadata satisfies the full prepared host invariant. -/
-theorem selectiveSetup_prepared (H : SelectiveHost T) (cfg : SetupKey → Fin T)
-    (layout : SetupLayout H cfg) {wb wm B M : ℕ} {hs : Fin 2 → Fin 5 → List Bool}
-    (S : Stacks T (prime + K)) (data : SetupData p X hG hK active s cfg wb wm B M hs S.R)
-    (hL : ∀ j, S.L j = []) (hblank : ∀ k, H.Blank k → S.R k = []) :
-    SelectivePrepared p X H hG hK active s B M hs
-      { S with R := metadataInstalled S.R (setupJobs H cfg wb wm B M) } := by
-  have hat := selectiveSetup_at p X hG hK active s H cfg layout data
-  have hb (k : Fin T) (hk : H.Blank k) :
-      metadataInstalled S.R (setupJobs H cfg wb wm B M) k = [] := by
-    rw [selectiveSetup_blank H cfg layout wb wm B M S.R k hk, hblank k hk]
+/-- The host invariant depends only on its installed words and blank scratch. -/
+theorem selectivePrepared_of_words (H : SelectiveHost T) {B M : ℕ}
+    {hs : Fin 2 → Fin 5 → List Bool} (S : Stacks T (prime + K))
+    (hat : ∀ key : SetupKey, S.R (key.target H) = setupPayload p X hG hK active s B M hs key)
+    (hL : ∀ j, S.L j = []) (hb : ∀ k, H.Blank k → S.R k = []) :
+    SelectivePrepared p X H hG hK active s B M hs S := by
   refine ⟨hL, ?_, ?_, ?_, ?_, ?_, fun d => ?_, fun d => ?_, fun off => ?_,
     fun c => ?_, fun c j hj => ?_, fun c k => ?_⟩
   · simpa [SetupKey.target, setupPayload] using congrArg List.length (hat .block)
@@ -101,6 +96,19 @@ theorem selectiveSetup_prepared (H : SelectiveHost T) (cfg : SetupKey → Fin T)
   · exact hb _ (Or.inr (Or.inr (Or.inr (Or.inr ⟨c, reg selectiveSwapPay, Or.inl rfl, rfl⟩))))
   · exact hb _ (Or.inr (Or.inr (Or.inr (Or.inr ⟨c, j, Or.inr hj, rfl⟩))))
   · exact hat (.header c k)
+
+/-- Installed metadata satisfies the full prepared host invariant. -/
+theorem selectiveSetup_prepared (H : SelectiveHost T) (cfg : SetupKey → Fin T)
+    (layout : SetupLayout H cfg) {wb wm B M : ℕ} {hs : Fin 2 → Fin 5 → List Bool}
+    (S : Stacks T (prime + K)) (data : SetupData p X hG hK active s cfg wb wm B M hs S.R)
+    (hL : ∀ j, S.L j = []) (hblank : ∀ k, H.Blank k → S.R k = []) :
+    SelectivePrepared p X H hG hK active s B M hs
+      { S with R := metadataInstalled S.R (setupJobs H cfg wb wm B M) } := by
+  have hat := selectiveSetup_at p X hG hK active s H cfg layout data
+  have hb (k : Fin T) (hk : H.Blank k) :
+      metadataInstalled S.R (setupJobs H cfg wb wm B M) k = [] := by
+    rw [selectiveSetup_blank H cfg layout wb wm B M S.R k hk, hblank k hk]
+  exact selectivePrepared_of_words p X hG hK active s H _ hat hL hb
 
 /-- Fixed-program setup executes all copies and counter constructions, with all
 configuration inputs restored and the exact prepared invariant established. -/
