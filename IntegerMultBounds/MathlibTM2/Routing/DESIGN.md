@@ -257,18 +257,29 @@ one terminal sequence step. This is a full prepared execution, not an execution
 oracle for individual passes. It still assumes prepared metadata and hence does
 not close R1's setup/cleanup acceptance gate.
 
-## R1 next: complete the priced host program
+## Metadata installation and cleanup
 
-1. Execute and price preparation of all five retained descriptor banks, the live
-   counter bank, stream/block counters and both canonical interchange headers.
-   Descriptor generation belongs to R3's uniform compiler; R1 must still execute
-   its metadata installation and charge every copy and counter construction.
-2. Execute final cleanup/restoration of that metadata, and compose setup, the
-   checked prepared schedule, and cleanup into one clean-scratch `Exec` theorem
-   with the total cost. No prepared-header or prepared-counter hypothesis may be
-   silently carried across this final boundary.
-3. Instantiate guard widths/density arithmetic and attach the complete execution
-   to its physical good-set endpoint. R2 then supplies all-address repair.
+`MetadataJob`, `MetadataInstall` and `MetadataClean` execute and price structural
+installation and clearing of a fixed metadata bank. The concrete `SelectiveSetup`
+installs 27 words: five field counters, ten descriptor words, two unary stream/block
+counters and ten interchange headers. All source configuration tapes are restored.
+The program reads binary counters; their numerical proof annotations do not alter
+its structure. Setup establishes every `SelectivePrepared` condition.
+
+`SelectiveProgram` composes setup, the complete prepared schedule and cleanup;
+the complete execution and its physical good-set endpoint are checked. Its final register file differs from the
+original only at the stream, and its bound adds all three phases. Stream separation
+from metadata follows from `SelectiveHost.Valid`.
+
+Raw descriptor words and canonical header bits remain input configuration, not
+installed working metadata. Their generation is an R3 compiler obligation and
+must be included in the eventual full router's cost.
+
+## R1 next: finish the acceptance audit
+
+1. Instantiate a concrete register allocation satisfying both host and setup
+   separation, rather than leaving only abstract placement hypotheses.
+2. Instantiate guard widths/density arithmetic. R2 then supplies all-address repair.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)
 for the gadget and matching decomposition, and the pinned
