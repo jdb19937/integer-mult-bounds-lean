@@ -161,22 +161,51 @@ Checks peak at approximately 817 MiB for coordinates, 814 MiB for physical bits,
   candidate physical rotations, placements and scans. Prove their exact headers,
   address layout, frame and cost hypotheses at each new call site.
 
+## Checked physical masks and source-controlled host rotations
+
+`MaskedBits.lean` instantiates the selective source observation with physical digit
+and bit indices. `maskedRead_physical` permits inactive digit starts as sources and
+excludes active starts. `maskedSelfRead_physical` proves the actual modular program
+changes each physical target bit by precisely the active-mask/source XOR. Arbitrary
+ordered descriptors are allowed. The check peaks at 828 MiB.
+
+`SourceCode.lean` makes the ordered source reader a concrete `CodeSpec`, with a
+fixed bank of index fields, descriptor, mask and scratch. Its `SourceInv` follows
+the *current* index as routing and merging advance; no original source word is
+saved. `sourceCode_spec` restores all stacks, clears the prepared offset, and
+charges `n (6 W + 10) + 16 n G + 22` steps for source interpretation, spreading,
+code evaluation and cleanup. It works over an arbitrary finite field bank.
+
+`SourceRot.lean` instantiates both wrap-class callbacks with those actual programs.
+`sourceRotate_exec` is a complete record-stream rotation pass. Its source field
+must be above its compact target field, its record rectangle is complete, and its
+cost is the existing `classMoveCost` with both source-code costs included. It
+restores every register except the stream, including zeroed index counters, masks,
+descriptors and scratch. This prices prepared source-controlled load/unload passes;
+it does not assume callback execution as a hypothesis. The checks peak near
+1,214 MiB for callbacks and 1,196 MiB for the rotation.
+
+`SourceRotAlgebra.lean` identifies the executed target-digit rank map with signed
+addition of the exact radix-packed source list modulo the compact field. Both
+load and unload are identified on all addresses, without good-set assumptions.
+
 ## R1 next: complete the priced host program
 
-1. Instantiate the masked physical-coordinate decoder, including sources at
-   inactive digit low bits and arbitrary untouched source/spectator coordinates.
-   Supply the actual source header and ordered descriptor to `readOffset_exec`.
-2. Bind the packed fields to physical record-index fields and implement their
-   interchanges. Instantiate actual field order, width and header hypotheses;
-   a coordinate equivalence is not a tape program.
-3. Use the concrete source-offset interpreter in the modular load/unload code
-   callbacks. Reuse existing wrap-class automata and `cxRot_exec` where their
-   hypotheses apply; generalize the masked control code programs where required.
-   Compose both dirty-control passes with all loads, moves and inverses, proving
-   scratch and spectator frames.
-4. Charge source/header/mask setup, every rotation and interchange, and cleanup.
-   Instantiate radix widths and the density inequalities. End with one host `Exec`
-   theorem and its total cost on the good set. R2 then supplies all-address repair.
+1. Bind the complete physical field layout, including prefix/suffix spectators,
+   to the masked arithmetic rectangle and the actual source-index descriptors.
+2. Implement and price the masked and mixed-control callbacks for both early
+   passes. Plain source-controlled rotations are now implemented. The temporary-
+   times-control and masked-XOR offsets still need concrete callbacks. A fixed
+   source interpreter with a temporary zero sentinel in its *metadata* source
+   word can supply zero at inactive control positions, restoring the source word
+   afterwards; never initialize or restrict a physical borrowed field for this.
+3. Bind the field interchanges with their actual order, width and canonical header
+   hypotheses. A different decomposition of index-counter fields must be backed
+   by priced counter setup/reset; it is not a record-coordinate move.
+4. Charge descriptor/mask/counter setup, every rotation and interchange, and
+   cleanup. Instantiate radix widths and the density inequalities. Compose one
+   host `Exec` theorem and total cost for the complete good-set shear. R2 then
+   supplies all-address repair.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)
 for the gadget and matching decomposition, and the pinned

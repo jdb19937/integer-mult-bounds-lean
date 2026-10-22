@@ -15,6 +15,10 @@ public import IntegerMultBounds.MathlibTM2.Routing.ReadRow
 public import IntegerMultBounds.MathlibTM2.Routing.ReadRows
 public import IntegerMultBounds.MathlibTM2.Routing.ReadOrdered
 public import IntegerMultBounds.MathlibTM2.Routing.ReadOffset
+public import IntegerMultBounds.MathlibTM2.Routing.MaskedBits
+public import IntegerMultBounds.MathlibTM2.Routing.SourceCode
+public import IntegerMultBounds.MathlibTM2.Routing.SourceRot
+public import IntegerMultBounds.MathlibTM2.Routing.SourceRotAlgebra
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume
