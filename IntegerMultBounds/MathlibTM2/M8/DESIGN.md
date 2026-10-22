@@ -1113,9 +1113,32 @@ chunk before choosing.
   count bridge reuses the existing global world's side roles; the generic
   `Local/SourceListB.srcB_node_lt` supplies source bounds without evaluating the
   concrete compiler. The stage check uses 3,033 MiB under the default proof limits.
-  These concrete stages and exits are not yet the public supplier. Assemble the gauged
-  node, prove its boundary semantics and actual move-moment bound, then replace the
-  supplier and complete the B6 retune. Public κ remains unchanged.
+  These concrete stages and exits are not yet the public supplier. The node integration
+  below closes boundary semantics; the histogram bound, supplier replacement and
+  B6 retune remain. Public κ remains unchanged.
+  The executable gauged node is now assembled in `Global/NodeB`, using the existing
+  roles, placements and correction. `StageValidityB` proves gate legality and frame
+  validity in both orientations. `NodeScalar` proves the global swap for arbitrary
+  local shear programs; `NodeScalarB` instantiates it with the actual design-B word.
+  `NodeTraceB` gives exact placed traces, and `NodeFramesB.chainOk_node` joins the
+  complete local chains through the two lifted stages and the correction.
+  `GaugedSinks` explicitly aligns each side role to its terminal endpoint before
+  the whole-projector exit. This matters for reflected chains that can stop below
+  their padded endpoint. `NodeRunB.valid_node` proves every implemented step valid;
+  `NodeRunB.node_run` proves the routed transpose on arbitrary stored streams and
+  zero temporaries. Every side stream closes through complementary entrance/exit
+  gauges, rather than assuming its entrance is zero.
+  `GaugedMoments` prices both terminal alignment and the single exterior projector;
+  `NodeMomentsB.edgeMoment_node` expresses the exact executed moment as a wire sum.
+  Each side path includes its terminal endpoint and one exterior of rank
+  `506 + rank sigma`. The next obligation is to bound these actual paths, including
+  repeated frames and skipped chain entries, by the checked signed-chain histogram.
+  Node semantics alone does not improve the public kappa; histogram linkage,
+  recursive supplier replacement and the B6 retune remain.
+  All ten new modules pass the single-file guard, with peak RSS at most 3,111 MiB.
+  The guarded build including the public root passes (14,295 jobs, 30.9 GiB combined
+  peak). The completed-proof check and standard-axiom audits pass. Default proof
+  limits and coefficient bounds are unchanged.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.
