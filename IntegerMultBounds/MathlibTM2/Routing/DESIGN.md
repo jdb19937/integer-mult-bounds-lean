@@ -310,6 +310,37 @@ for the gadget and matching decomposition, and the pinned
 for reserved chunks, complete spectators and exposure restoration. The old note's
 parameter values and time estimates are historical, not current requirements.
 
+## R2 checkpoint: exact selective repair from classified keyed input
+
+`SelectiveIdeal` defines the desired physical sparse XOR on every index, including
+failed guards. The source observation is invariant under this XOR without any
+no-carry assumption (`slotView_xor_targetWord`). Allowed physical source reads
+therefore remain unchanged. `selectiveIdealIdx_involutive` and
+`selectiveIdealPerm` supply the all-address ideal permutation;
+`selectiveIdeal_good` proves preservation of the same physical exceptional set.
+
+`SelectiveRepairSpec` proves actual/ideal agreement on good ranks and bad-set
+invariance of the actual schedule. `selectiveRepair_partition` instantiates the
+existing repair mathematics: good records agree with the ideal stream, and a
+stable radix sort of the exceptional destination keys gives exactly its bad
+records. `selectiveBad_records` identifies extraction length with R1's physical
+bad-rank count, without assumptions on payload values.
+
+`SelectiveRepairPass.lean`’s `selectiveRepair_exec` instantiates the existing actual `repairAtC` scan/sort/merge/strip
+program, restoring every register except the stream. Its explicit cost counts all
+scan, sort, merge, key stripping and index-reset work. The exceptional-sort term
+is bounded by `selectiveRepair_sortCost_density` using R1's physical density.
+
+This is a prepared repair boundary, not completed R2. It requires an executed
+classifier contract, already keyed input, initialized counters and register
+separation. Next: implement the classifier and arbitrary-source destination key
+pass, instantiate placement, execute and price setup/cleanup, and compose keying,
+R1 and repair. The classifier must handle zero suffix width: the older `badC_eval`
+requires a positive suffix to flush its final segment, while the R1 contract
+allows zero. `selectiveBadCode_padded` now proves the value-level fix: one extra
+column flushes the final segment, and neither the phase mask nor the guard
+predicate depends on that padding. Its concrete tape execution remains next.
+
 ## Completion gates
 
 R1 ends with packed good-set semantics and priced host calls; R2 supplies exact

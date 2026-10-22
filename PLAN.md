@@ -201,7 +201,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
 | R1 selective updates | ✅ | Complete selective primitive: arbitrary ordered allowed sources, physical good-set XOR, full source/spectator and borrowed-field restoration, global rank permutation, and executed setup/routing/cleanup with every phase priced. `SelectiveRouter.selectiveRouting_exec` instantiates concrete register placement, canonical header values, logarithmic guard widths and the physical exceptional bound `5 / (128 scale³)`. See [completion audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md). | ~6.5k |
-| R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
+| R2 exact repair | 🟡 | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
 
@@ -294,6 +294,31 @@ header bits are inputs, with installation executed and charged; uniform generati
 remains R3's obligation. Exact exceptional-record repair remains R2; complete
 routing and long/short-record amortization remain R3, and multiplication integration
 remains R4. Completing R1 does not change the current multiplication kappa.
+
+R2 is active. The first implementation slice proves an all-address physical ideal
+XOR permutation (`SelectiveIdeal`), source-observation invariance without guards,
+and physical good/bad-set preservation. `SelectiveRepairSpec` connects the actual
+schedule to the existing stable-sort repair partition theorem and identifies the
+extracted-record count with R1's exact physical bad count. The executed repair
+wrapper now checks, with full register restoration and its exceptional-sort cost
+bounded by the same physical density. It still requires a concrete classifier
+and keyed input; R2 remains open. `selectiveBadCode_padded` proves that one
+extra classifier column flushes the final segment even at zero suffix width;
+executing that padded classifier remains next.
+
+R2 acceptance work, in dependency order:
+
+1. All-address ideal permutation, bad-set invariance and exact partition identities.
+2. Executed physical bad classifier on the actual field bank, including the final
+   segment when the target suffix has zero width; initialize and clear its masks.
+3. Executed ideal-destination key pass for arbitrary ordered source descriptors;
+   include the complete row/rank key and restore all source/header scratch.
+4. Instantiate the existing executed route/radix-sort/merge/strip pipeline; derive
+   its exceptional-sort cost from the physical density, and prove full restoration.
+5. Concrete register placement, charged metadata setup/cleanup, and composition
+   with keying and R1 into an all-address exact selective-update theorem. Audit
+   this complete boundary before closing R2; prepared classifier/key assumptions
+   do not complete it.
 
 Estimated routing total: **15–24k additional or substantially revised Lean lines**; excludes generated data and Python. Existing layout,
 CRT-control, rotation and sorting primitives are reused. R1's logical identity is
