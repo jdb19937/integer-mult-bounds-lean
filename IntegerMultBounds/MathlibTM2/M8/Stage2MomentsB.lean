@@ -15,10 +15,10 @@ The certificate of `Stage2Moments` with the saving as a parameter `a`: for check
 (`rowOkAt a`), `(r/m)^(1-a) ≤ (r/m) cubic (a L_r)` (`rpow_le_at`), so the `(1-a)`-moment is at most
 the rational sum `tauBoundAt a` (`moment_le_at`).
 
-The design-B histogram (`histogramB`, from `scripts/pr97/stage2designb.py` and `stage2cert.py`)
+The design-B histogram (`histogramB`, from the actual signed geometry in `scripts/pr97/stage2framebank.py` and `stage2cert.py`)
 has the same linear moment `q₁` and the same rank mass as the plain one, and its `τ*`-moment at
 `τ* = 1 - 1240/10⁷` stays below `q_τ = 1 - 1/10⁸`. Its whole-projector saving is
-`a* ≈ 1.24105·10⁻⁴`.
+`a* ≈ 1.24086·10⁻⁴`.
 -/
 
 @[expose] public section

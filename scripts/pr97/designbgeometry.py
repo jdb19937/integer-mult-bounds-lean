@@ -12,6 +12,7 @@ import designbtargetgeometry
 import designbtargetranks
 import designbslots
 import designbauxcoverage
+import designbhist
 import designbsourcegeometry
 import designbsigmaranks
 import stage2designb
@@ -360,6 +361,7 @@ def main():
         designbtargetranks.emit(args.lean_root)
         designbslots.emit(compiled, json.loads(args.dag_json.read_text()), args.lean_root)
         designbauxcoverage.emit(args.lean_root)
+        designbhist.emit(result, compiled, args.lean_root)
         designbsourcegeometry.emit(result, args.lean_root)
         designbsigmaranks.emit(result, args.lean_root)
 

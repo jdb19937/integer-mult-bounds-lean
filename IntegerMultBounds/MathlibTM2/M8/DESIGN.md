@@ -1187,17 +1187,32 @@ chunk before choosing.
   owned temporaries still charged. Its closure passes the standard-axiom audit
   (251,801 declarations); the 33 emitted check/aggregation modules reproduce exactly.
   All 39 affected modules pass the single-file guard, at most 3,148 MiB peak RSS.
-  Histogram aggregation and supplier replacement/retuning remain.
   Fresh reconstruction of the complete signed snapshot matches the recorded digest
-  `606486ea…b4909b`. Its histogram differs slightly from the preliminary
-  `Stage2HistogramB`: regenerate the numerical certificate from the actual signed
-  counts. The exact rational preview still supports `savingB = 1240/10^7`, with
-  moment bound about `0.999999983792195`, below `1 - 10^-8` by `6.208e-9`.
-  This numerical preview is not yet connected to the machine theorem; public kappa
-  is unchanged.
-- **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
-  ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
-  `≤ 528`.
+  `606486ea…b4909b`. Its slightly different histogram replaces the preliminary
+  schedule-dimension certificate in the next step; public kappa is unchanged.
+- **Actual histogram and stopped moments.** `designbhist.py` counts auxiliary
+  chain steps directly over the physical compiler slot map, so no unproved
+  permutation of chain indices is used. Separate checks count source/target chains
+  and the actual readout-frame ranks. `Global/SignedHistogram` proves structural
+  histogram concatenation and evaluation for arbitrary checked chains and trees;
+  the concrete chunks are joined without checking their frames twice.
+  `Global/HistogramB` identifies the four histogram evaluations with the actual
+  canonical-chain and exterior sums. `Stage2HistogramB` is regenerated from this
+  full signed geometry, replacing the preliminary schedule-dimension counts.
+  Its linear rank mass remains `57403754177`; the rational tau moment is at most
+  about `0.999999983792195`. `Stage2LinkB.edgeMomentB_le_histogram` now bounds the
+  actual executed node by this histogram, and `linear_premiseB` / `tau_premiseB`
+  prove both stopped-recurrence premises at `savingB = 1240/10^7`, with
+  `qτB = 1 - 10^-8`. The closure passes the standard-axiom audit (254,416 declarations).
+  All 25 affected modules pass the single-file guard (at most 2,427 MiB peak RSS),
+  all 20 generated modules reproduce byte for byte, and all ten Python tests pass.
+  Reversed child programs/rank bounds, supplier replacement and retuning remain;
+  the public multiplication bound is unchanged.
+- **B5 supplier integration.** The actual gauged node and both moment premises are
+  complete above. Connect its arbitrary-ring/reversed execution to `RevNetwork`,
+  show the block child ranks are positive and `≤ 528`, and instantiate the existing
+  recursive family with `savingB` and `qτB`. The width, role set and machine interfaces
+  remain those of the existing supplier.
 - **B6 switch and retune.** `τ*`, `Bound.tau₂_eq`, `retune.py` to `κ = 4222422970/2⁴⁶`,
   `PLAN.md` and `README.md`.
 

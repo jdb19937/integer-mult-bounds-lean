@@ -60,8 +60,11 @@ def series(L, k):
 
 
 def main(path, lean_root=None, mode=None):
+    return emit(json.load(open(path)), lean_root, mode)
+
+
+def emit(H, lean_root=None, mode=None, script_name=None):
     A, QT, module, name, frames, source = DESIGNB if mode == '--designb' else PLAIN
-    H = json.load(open(path))
     hist = [tuple(x) for x in H['histogram']]
     W, m = H['W'], H['m']
     total = Fraction(0)
@@ -86,7 +89,7 @@ def main(path, lean_root=None, mode=None):
         designb = mode == '--designb'
         text = HEADER.format(
             title=' with design-B frames' if designb else '',
-            script='`stage2designb.py`' if designb else '`stage2hist.py`', frames=frames,
+            script='`' + (script_name or ('stage2designb.py' if designb else 'stage2hist.py')) + '`', frames=frames,
             source=source, upstream=UPSTREAM, sha=sha[source] if designb else sha,
             checker='`Stage2MomentsB`' if designb else '`Stage2Moments`', name=name)
         text += ',\n'.join('  (%d, %d, %d, %d)' % row for row in rows)
