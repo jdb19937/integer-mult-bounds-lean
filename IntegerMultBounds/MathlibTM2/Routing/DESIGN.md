@@ -140,8 +140,8 @@ router; no descriptor-specific unrolled program substitutes for this interpreter
 `Density.lean` proves that a complete nonempty source/spectator factor leaves the
 exceptional fraction unchanged, and that a complete address equivalence preserves
 it. `encoded_repair_density` imports the existing uniform bound under explicit
-radix/gap inequalities. The chosen dyadic widths must still discharge those
-inequalities at the caller. No initialized spectator or borrowed values are assumed.
+radix/gap inequalities. The concrete dyadic widths are now discharged by `SelectiveDensity`; the older
+encoded statement remains available under its explicit inequalities at the caller. No initialized spectator or borrowed values are assumed.
 
 Checks peak at approximately 817 MiB for coordinates, 814 MiB for physical bits,
 1,197 MiB for source gathering, and 858 MiB for density.
@@ -275,11 +275,34 @@ Raw descriptor words and canonical header bits remain input configuration, not
 installed working metadata. Their generation is an R3 compiler obligation and
 must be included in the eventual full router's cost.
 
-## R1 next: finish the acceptance audit
+## Completed concrete selective primitive
 
-1. Instantiate a concrete register allocation satisfying both host and setup
-   separation, rather than leaving only abstract placement hypotheses.
-2. Instantiate guard widths/density arithmetic. R2 then supplies all-address repair.
+`SelectivePlacement` enumerates a fixed finite role bank. Every field, callback
+scratch register, move register, swap-bank register and configuration source has
+its own role; only each callback's target aliases its intended live field.
+`placedSelectiveHost_valid`, `placedSelectiveHost_setup` and
+`placedSelectiveHost_swapT` discharge the complete placement requirements.
+
+`SelectiveDensity` uses the original compact all-ones-window count, generalized
+to require only the three field lengths actually used. No width assumption is
+made on the spectator field. The count is for `Good p (selectiveView p X i)`, the
+same physical predicate as the executed endpoint, rather than a separately
+encoded rectangle. `routingParameters` chooses `G = 4g + 6`, `K = 8g + 17`, with
+`g = Nat.clog 2 scale`. For positive scale and `n ≤ scale`,
+`routingParameters_clog_density` bounds the actual exceptional count by
+`5 / (128 scale³)` times the complete record count, including every spectator value.
+
+`SelectiveRouter.selectiveRouting_exec` joins concrete placement, canonical
+interchange values, explicit guard widths, full setup/routing/cleanup execution,
+its total cost, the physical XOR endpoint and the exceptional-count bound.
+It has no abstract placement, prepared-header, prepared-counter, guard-gap or
+radix-density assumption. Its raw configuration input remains explicit.
+The program structure is independent of source order, dimensions and record count.
+
+R1 is complete at this boundary; see the [requirement audit](R1-AUDIT.md).
+R2 must execute exact exceptional-record repair. R3 must generate configuration,
+compose matchings and permutations, amortize the metadata cost and supply the
+short-record fallback. R4 integrates the complete router and support contract.
 
 Use the older [routing construction](../Balanced/DESIGN.md#b-the-selected-construction)
 for the gadget and matching decomposition, and the pinned

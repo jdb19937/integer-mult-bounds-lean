@@ -53,7 +53,8 @@ theorem card_window_ones (a w R q : ℕ) (h : a + w ≤ q) :
 variable {p : Par} {nf : ℕ} {len : Fin nf → ℕ} {F : Fields nf}
 
 /-- A bad index has, for some used segment, an all-ones window in `t`, `u` or the guard of `y`. -/
-lemma bad_windows (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {i : ℕ}
+lemma bad_windows_of_lengths (htlen : len F.t = p.wc)
+    (hulen : len F.u = p.wc) (hylen : len F.y = p.wy) (hGK : p.G + 1 < p.K) {i : ℕ}
     (hi : ¬ GoodIdx p len F i) : ∃ c < p.n,
       (∀ j < p.G, i.testBit (fieldOff len F.t + c * p.G + j) = true) ∨
       (∀ j < p.G, i.testBit (fieldOff len F.u + c * p.G + j) = true) ∨
@@ -77,7 +78,7 @@ lemma bad_windows (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {i : ℕ}
       push Not at hy
       refine Or.inr (Or.inr fun j hj => ?_)
       have hj' : posS p c + 1 + p.G + j < len F.y := by
-        rw [hF.ly]
+        rw [hylen]
         have := Nat.mul_le_mul_right p.K (show c + 1 ≤ p.n by omega)
         rw [Nat.add_mul, Nat.one_mul] at this
         unfold posS Par.wy; omega
@@ -87,17 +88,18 @@ lemma bad_windows (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {i : ℕ}
     · rw [cdig_good_iff] at hu
       push Not at hu
       refine Or.inr (Or.inl fun j hj => ?_)
-      rw [Nat.add_assoc, ← hbit F.u _ (by rw [hF.lu]; omega)]
+      rw [Nat.add_assoc, ← hbit F.u _ (by rw [hulen]; omega)]
       exact hu j hj
   · rw [cdig_good_iff] at ht
     push Not at ht
     refine Or.inl fun j hj => ?_
-    rw [Nat.add_assoc, ← hbit F.t _ (by rw [hF.lt]; omega)]
+    rw [Nat.add_assoc, ← hbit F.t _ (by rw [htlen]; omega)]
     exact ht j hj
 
 open Classical in
 /-- **The number of bad indices** below `R 2^q`. -/
-theorem card_bad_le (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {q R : ℕ}
+theorem card_bad_le_of_lengths (htlen : len F.t = p.wc)
+    (hulen : len F.u = p.wc) (hylen : len F.y = p.wy) (hGK : p.G + 1 < p.K) {q R : ℕ}
     (hq : ∀ g, touched F g → fieldOff len g + len g ≤ q) :
     ((range (R * 2 ^ q)).filter fun i => ¬ GoodIdx p len F i).card ≤
       p.n * (2 * (R * 2 ^ (q - p.G)) + R * 2 ^ (q - (p.K - 1 - p.G))) := by
@@ -109,7 +111,7 @@ theorem card_bad_le (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {q R : ℕ}
         W (fieldOff len F.y + (posS p c + 1 + p.G)) (p.K - 1 - p.G) := by
     intro i hi
     simp only [mem_filter, mem_range] at hi
-    obtain ⟨c, hc, h⟩ := bad_windows hF hGK hi.2
+    obtain ⟨c, hc, h⟩ := bad_windows_of_lengths htlen hulen hylen hGK hi.2
     simp only [mem_biUnion, mem_range, mem_union, W, mem_filter, mem_range]
     exact ⟨c, hc, by tauto⟩
   have hT := hq F.t (Or.inr (Or.inl rfl))
@@ -128,12 +130,12 @@ theorem card_bad_le (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {q R : ℕ}
       have := Nat.mul_le_mul_right p.K (show c + 1 ≤ p.n by omega)
       rw [Nat.add_mul, Nat.one_mul] at this; unfold posS Par.wy; omega
     have h1 : (W (fieldOff len F.t + c * p.G) p.G).card ≤ R * 2 ^ (q - p.G) :=
-      card_window_ones _ _ R q (by rw [hF.lt] at hT; omega)
+      card_window_ones _ _ R q (by rw [htlen] at hT; omega)
     have h2 : (W (fieldOff len F.u + c * p.G) p.G).card ≤ R * 2 ^ (q - p.G) :=
-      card_window_ones _ _ R q (by rw [hF.lu] at hU; omega)
+      card_window_ones _ _ R q (by rw [hulen] at hU; omega)
     have h3 : (W (fieldOff len F.y + (posS p c + 1 + p.G)) (p.K - 1 - p.G)).card ≤
         R * 2 ^ (q - (p.K - 1 - p.G)) :=
-      card_window_ones _ _ R q (by rw [hF.ly] at hY; omega)
+      card_window_ones _ _ R q (by rw [hylen] at hY; omega)
     calc _ ≤ (W (fieldOff len F.t + c * p.G) p.G ∪ W (fieldOff len F.u + c * p.G) p.G).card +
           (W (fieldOff len F.y + (posS p c + 1 + p.G)) (p.K - 1 - p.G)).card := card_union_le _ _
       _ ≤ _ := by
@@ -147,6 +149,14 @@ theorem card_bad_le (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {q R : ℕ}
     _ ≤ ∑ _c ∈ range p.n, (2 * (R * 2 ^ (q - p.G)) + R * 2 ^ (q - (p.K - 1 - p.G))) :=
         sum_le_sum hcard
     _ = _ := by rw [sum_const, card_range, smul_eq_mul]
+
+open Classical in
+/-- Compatibility with callers that supply the complete gadget field contract. -/
+theorem card_bad_le (hF : F.Valid p len) (hGK : p.G + 1 < p.K) {q R : ℕ}
+    (hq : ∀ g, touched F g → fieldOff len g + len g ≤ q) :
+    ((range (R * 2 ^ q)).filter fun i => ¬ GoodIdx p len F i).card ≤
+      p.n * (2 * (R * 2 ^ (q - p.G)) + R * 2 ^ (q - (p.K - 1 - p.G))) :=
+  card_bad_le_of_lengths hF.lt hF.lu hF.ly hGK hq
 
 /-- The length of a filtered `finRange` is the card of the filtered `range`. -/
 lemma length_filter_finRange (M : ℕ) (P : ℕ → Prop) [DecidablePred P] :

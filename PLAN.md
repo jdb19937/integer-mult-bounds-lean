@@ -200,7 +200,7 @@ obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIG
 
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
-| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Masked self-reading semantics preserve inactive low-bit sources. A fixed host interpreter reads arbitrary source order, restores its descriptor/source and prepares the compact offset with explicit cost. Masked physical decoding and concrete source-controlled record rotations are checked; signed load/unload matches packed arithmetic. Concrete mixed/masked early-pass callbacks and their exact compact offset formulas are checked. Live-header construction, callback execution and cleanup now compose with explicit cost and complete stack restoration; the contiguous-header value is checked. Actual field-bank callbacks and full header-based rotations are checked, with automatic higher-field windows and exact A/Z/Y/YZ/source offsets. The complete masked instruction schedule and fixed-layout physical rank endpoint are checked, with actual intermediate sources and full spectator restoration. Full concrete prepared host execution is checked, including both interchanges and all pass costs. Full setup/routing/cleanup execution and its physical good-set endpoint are checked. Guard/density and concrete register-placement instantiation remain. | 6–8k |
+| R1 selective updates | ✅ | Complete selective primitive: arbitrary ordered allowed sources, physical good-set XOR, full source/spectator and borrowed-field restoration, global rank permutation, and executed setup/routing/cleanup with every phase priced. `SelectiveRouter.selectiveRouting_exec` instantiates concrete register placement, canonical header values, logarithmic guard widths and the physical exceptional bound `5 / (128 scale³)`. See [completion audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md). | ~6.5k |
 | R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
 | R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
 | R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
@@ -280,12 +280,20 @@ registers. `SelectiveProgram.selectiveProgram_exec` joins setup, all passes and 
 with the physical good-set endpoint of the same executed permutation. Configuration inputs are restored, and the program shape
 is independent of all numerical dimension annotations.
 
-R1 remains open: discharge guard/density parameters, instantiate a concrete
-register allocation, and audit the complete executed good-set contract. Raw
-configuration descriptors and canonical header bits are caller inputs; their
-uniform generation belongs to R3 and must not disappear from the eventual router
-cost. This checkpoint does not complete R1 or improve kappa. Budget **6–8k** total
-R1 Lean lines; earlier 3–5k estimates were too low.
+R1 is complete at its selective-primitive boundary. `SelectivePlacement` supplies
+one fixed finite register allocation and proves both the host and setup separation
+contracts. `SelectiveDensity` adapts the existing all-ones-window count to arbitrary
+spectator widths, and instantiates logarithmic guards using the ceiling binary
+logarithm of the scale. `SelectiveRouter.selectiveRouting_exec` combines that count
+with the same physical permutation executed by the fully priced host program.
+There are approximately **6.5k** routing Lean lines in total.
+
+The [R1 completion audit](IntegerMultBounds/MathlibTM2/Routing/R1-AUDIT.md) records
+requirements and theorem evidence. Raw configuration descriptors and canonical
+header bits are inputs, with installation executed and charged; uniform generation
+remains R3's obligation. Exact exceptional-record repair remains R2; complete
+routing and long/short-record amortization remain R3, and multiplication integration
+remains R4. Completing R1 does not change the current multiplication kappa.
 
 Estimated routing total: **15–24k additional or substantially revised Lean lines**; excludes generated data and Python. Existing layout,
 CRT-control, rotation and sorting primitives are reused. R1's logical identity is
