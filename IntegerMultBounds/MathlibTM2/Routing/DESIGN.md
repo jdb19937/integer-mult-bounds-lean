@@ -512,9 +512,24 @@ coordinate count. The two reflections are involutions whose composition is the
 original permutation; `permutationReservoirSchedule_eq` proves the resulting
 eighteen-shear address identity.
 
-These theorems do not supply physical reservoir placement, residue-separated R2
-profiles, terminal-coordinate operations, executed configuration generation or
-amortization. Those and the short-record fallback remain mandatory R3 gates.
+`ResidueShears` proves source-preserving composition for any finite partition,
+then instantiates all residues. `SparseProfiles` uses exactly `(n-r)/K` slots for
+residue `r`: each has a complete segment and quotient/remainder recover every
+such coordinate. `ProfileCompiler` fixes prefix and suffix widths to preserve the
+entire target field; its borrowed width fits the common reservoir. `SourceCoordinates`
+encodes any preserved target-field bit using R2's low/digit/high constructors.
+Active descriptors read their requested source; inactive slots read themselves,
+which satisfies R2's source condition even when unused original descriptors would
+have pointed at active targets. This is a computable descriptor construction,
+not its executed tape generator.
+
+`TerminalShears` partitions targets into complete-segment and terminal regions.
+The terminal set has at most `K` elements, and its singleton-XOR schedule composes
+with the residue passes to give the complete original shear. Thus the last segment
+is explicitly accounted for rather than dropped.
+
+These theorems do not supply physical reservoir placement, executed R2 calls or
+terminal-coordinate operations, executed configuration generation or amortization. Those and the short-record fallback remain mandatory R3 gates.
 In particular, computable Lean functions are not yet a priced tape compiler.
 
 ## Completion gates

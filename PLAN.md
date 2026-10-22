@@ -330,12 +330,17 @@ proved shorter than the coordinate count. `permutationReservoirSchedule_eq`
 composes their eighteen directional shears into the exact address permutation.
 This closes the logical decomposition; it does not price or execute generation.
 
-R3's work is ordered by dependency (the first item is now proved):
+R3's work is ordered by dependency (the first two logical items are now proved):
 
 1. **Done, logical:** computable two-involution decomposition and composition with
    the reservoir-safe matching schedule.
-2. Split directional shears by residue into R2-compatible sparse target profiles;
-   handle the terminal segment explicitly.
+2. **Done, logical profiles:** `ResidueShears` partitions a directional shear
+   without changing its source observations. `SparseProfiles` enumerates exactly
+   the targets with complete `K`-bit segments; `ProfileCompiler` proves their R2
+   dimensions, target positions, active masks, source-descriptor validity and
+   common borrowed-width bound. `TerminalShears` composes the bulk passes with at
+   most `K` singleton XORs and proves no target is omitted. Execution of those
+   singleton XORs, physical placement and generated configuration remain open.
 3. Execute reservoir placement and its inverse, accounting for displaced
    coordinates, borrowed-field restoration and every interchange cost.
 4. Execute uniform generation of all raw R2 configuration words: source and mask
