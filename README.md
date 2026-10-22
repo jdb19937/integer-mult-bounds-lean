@@ -13,28 +13,34 @@ total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.m
 
 The running multiplier combines linear direct CRT routing with compact controls
 and full-width chunks above the root `⌈d/2⌉`. It uses rounded synthetic layers on the T16 node (73 slots, 14336 data
-roles, 1,041,408 children, so `log_73 (F/NW) < 999/1000`). Its bit interchange runs PR97's two-stage
-partial-swap word (`h = 23`, `m = 529`, 108,516,254 roles, 57,403,754,177 rank-one children) on the
-generic interchange machine of `MathlibTM2/M8`, so `tau = 1-3734039/10^12`
-([note](docs/pr97-stage1/pr97-stage1.pdf)). Its parameters are `epsilon = 31/64`,
-`lambda = 1-3734/10^9` and `lambda' = 1-3733/10^9`. The public saving is the binding layer margin
-`epsilon (1-lambda')`, just below the layout margin `epsilon (1-tau)`, rounded down to `2^-46`. Complete input preparation, distribution, transforms,
+roles, 1,041,408 children, so `log_73 (F/NW) < 999/1000`). Its bit interchange uses
+PR97 stage 2: the opposite-bank compiler on plain frames, variable-rank children,
+stopped recursion over atoms, and the F L F wrapper on the generic machine in
+`MathlibTM2/M8`. The atom exponent is `1/1000`; the resulting ordinary bit exponent
+is `tau = 1-96806834039/10^15` (`Stage2Machine.Bound.uniform_bound`). PR97's
+rank-one construction remains the leaf supplier ([stage-one note](docs/pr97-stage1/pr97-stage1.pdf)).
+The parameters are `epsilon = 31/64`, `lambda = 1-9680683/10^11` and
+`lambda' = 1-9680682/10^11`. The public saving is the binding layer margin
+`epsilon (1-lambda')`, just below the layout margin `epsilon (1-tau)`, rounded down to `2^-46`.
+Complete input preparation, distribution, transforms,
 output and cleanup are included in the fixed-machine proof. The public saving
 is more than `2^46` times the historical M2 saving `2^-66`, as an exponent improvement.
 
 This completed proof is the primary route. The [retention audit](docs/proof-retention.md)
 lists its dependencies and legacy removal candidates; the retired native controller is preserved in Git history.
 
-## Stronger compact-control target
+## Historical native-machine target
 
-The original target is an actual deterministic machine with a fixed finite alphabet and
+The original, separate native-machine target is an actual deterministic machine with a fixed finite alphabet and
 a fixed number of one-dimensional tapes, correct on every positive input
 length, with worst-case runtime
 `O(n (max(ceil(log₂ n), 1))^(1 - 83/10^12))`.
 
 `IntegerMultBounds/Machine.lean` defines the machine semantics and the target
 proposition `IntegerMultBounds.Machine.EndToEnd`. This is a proposition to be
-proved, not a theorem or an assumed interface. Its transition function only
+proved, not a theorem or an assumed interface. Its exponent saving is smaller than the
+current Mathlib result; this separate machine interface is not the active improvement route.
+Its transition function only
 sees the finite state and scanned symbols. Each step writes at most one cell
 per tape and moves each head at most one cell. Constants and the machine are
 chosen before quantifying over inputs.
@@ -58,8 +64,17 @@ machine and the proof.
 ## Status
 
 The end-to-end Mathlib proof is complete, with no remaining algorithmic or
-runtime assumptions. The stronger `83/10^12` exponent saving remains open.
-See [PLAN.md](PLAN.md) for milestones and supporting results.
+runtime assumptions, at `kappa = 3299646951/2^46 ≈ 0.0000468908`.
+Design-B compiler and frame proofs are in progress; design-B is not yet the running
+supplier and has not changed the public bound. Its projected saving is about
+`0.0000600`, roughly 28% above the current result, subject to complete machine integration.
+
+The long-term direction is an unconditional `kappa = 0.0023`, following the productive
+helper jobs, finite mixed-to-uniform compiler, delayed BIT cover, and outer assembly of
+[upstream PR 4359](https://github.com/CrocSwap/integer-mult-bounds/pull/4359).
+That upstream construction is conditional, and the target is not proved here.
+[PLAN.md](PLAN.md) keeps smaller checked improvements on the path, with a design-B
+completion checkpoint and explicit dependencies for the new construction.
 
 The superseded native controller and its unused wrappers have been removed.
 The [retirement record](docs/retired-compact-complex.md) lists the deleted

@@ -2,10 +2,12 @@
 
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
-**Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 🟡 · M6 🟡 · M7 🟡 · M8 ⬜.
+**Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 🟡 · M6 🟡 · M7 🟡 · M8 ⬜ (legacy route deferred) · M9 ⬜ · M10 ⬜ · M11 ⬜.
 The completed compact multiplier proves saving `3299646951/2^46 ≈ 2^-14.3803`. With today's bit
 supplier (PR97 stage 2, the opposite-bank compiler on plain frames) no route in this plan exceeds
 about `2^-13.33`; going further needs a better bit supplier.
+The long-term target is **unconditional `kappa = 0.0023`**, with smaller checked
+machine bounds delivered along the way. Design-B is active work, not yet a public bound.
 
 ## Bound scoreboard
 
@@ -31,9 +33,11 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 | **Historical M2 result** | `2^-66` | 2026-10-15 12:42 | ✅ Superseded; the current theorem improves the public saving by more than `2^36`, not a measured runtime speedup. |
 | **Historical M1 result** | `2^-93` | 2026-10-15 09:37 | M2 improves the public exponent saving by `2^27`; this is not a timing speedup. |
 | **Pre-M1 unconditional result** | `296 / (10^11 * 2^131)` (between `2^-160` and `2^-159`) | 2026-10-15 05:31 | Superseded by M1; the existential theorem remains compatible. |
-| **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | — | ⬜ Not yet proved here. Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
+| **Intermediate benchmark: selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | — | ⬜ Not yet proved here. Upstream construction is conditional; matching this saving is a benchmark, not a requirement to reproduce its older construction. |
+| **Long-term target: productive helper construction** | **`23/10000 = 0.0023`** | — | ⬜ Upstream PR 4359 is conditional; requires new supplier, compiler, cover, and outer execution proofs here. |
 
-The goal corresponds to a log exponent of `0.998327339802923082`.
+The long-term target corresponds to a log exponent of `0.9977`.
+The intermediate benchmark corresponds to `0.998327339802923082`.
 These are asymptotic exponent bounds, not measured execution speedups.
 Update the current-result row only after the stronger machine theorem passes
 the guarded checks and axiom audit; parameter arithmetic or a finite
@@ -49,7 +53,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 636 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 700 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -92,13 +96,13 @@ margin near the top of the table carries it. The layer margin carries it too, be
 - **Near-one dimensions** reach about `1-tau ≈ 2^-13.33`, one bit. That needs `epsilon → 1`, which
   needs M7, M5b and the bulk exposure transfer
   ([NearOne/DESIGN.md](IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md) §c).
-- **Beyond `2^-13.33`** only a better bit supplier helps (M6). Upstream's selected PR589 supplier
+- **Beyond `2^-13.33`** a better bit supplier is necessary (M6, then M10). Upstream's selected PR589 supplier
   has bit saving `10/5769`, but its accounting does not transfer to this machine: helper hosting,
   port routes and frame changes are not free here ([pr589-hole](docs/pr589-hole/pr589-hole.pdf)).
-  The cover-free suppliers that do run here are ranked in the
+  The cover-free suppliers and candidate improvements are ranked in the
   [PR97 note](docs/pr97-stage1/pr97-stage1.pdf): PR97 with flag-basis corner runs
   (`a_b = 6.40e-5`), and #104's opposite-bank compiler on PR97 (`9.70e-5` plain frames, now in
-  the proof, and `1.24e-4` design-B frames).
+  the proof, and `1.24e-4` design-B frames, not yet integrated).
 
 ## Bottlenecks by manuscript section
 
@@ -107,47 +111,109 @@ Section numbers are the [original manuscript](plan/D-sharper-bound.md)'s printed
 | Manuscript section | Progress | What limits our bound | Improvement needed |
 | --- | --- | --- | --- |
 | §2 Machine model and streams | 🟡 | Every new algorithm needs actual finite-machine costs and clean returned state. | Price new schedules with the existing host primitives. |
-| §3 Finite networks | 🟡 | Bit saving `1-tau = 9.68e-5` (PR97 stage 2, plain frames) caps every margin. Complex: T16 at `log_73 (F/NW) < 999/1000`, in the proof. | Design-B frames for #104's compiler, or a larger-saving bit node (M6). |
+| §3 Finite networks | 🟡 | Bit saving `1-tau = 9.68e-5` (PR97 stage 2, plain frames) caps every margin. Complex: T16 at `log_73 (F/NW) < 999/1000`, in the proof. | Design-B checkpoint (M6), then productive complex jobs and delayed-cover BIT (M9–M10). |
 | §4 Address interchange | 🟡 | Field moves inherit `tau`; the CRT uses linear direct routing. | Arbitrary-source coordinate routing (M5b). |
-| §5 Butterfly layers; Appendix A | 🟡 | The T16 node takes the layer margin off the critical path. | Stopped recursion, precision and recursive stock (M3, M4). |
+| §5 Butterfly layers; Appendix A | 🟡 | The T16 node takes the layer margin off the critical path. | General supplier closure, stopped recursion, precision and recursive stock (M3, M4), instantiated for M9. |
 | **§6 Synthetic transforms/layout** | 🟡 | **The layout margin `epsilon (1-tau)` and the layer margin `epsilon (1-lambda')` bind together.** The balanced prefix (M5a) and full-width chunks are done. | M5b with `epsilon → 1` lifts the layout margin to `1-tau`. |
 | §7 Exact polynomial products | ✅ | Packing widths must stay within budget. Not binding. | Revalidate under new widths. |
 | §8 Resampling | 🟡 | The Gaussian margin keeps `epsilon < 1/2`. | The rest of M7: tape costs and bulk core/halo execution. |
-| §9 Exact multiplication/cost | 🟡 | The exposure margin `(1-epsilon)(1-tau)`. The moduli are short-interval primes, so they no longer bound `epsilon`. | Bulk exposure transfer; the M8 bootstrap. |
+| §9 Exact multiplication/cost | 🟡 | The exposure margin `(1-epsilon)(1-tau)`. The moduli are short-interval primes, so they no longer bound `epsilon`. | Grouped/fused bulk exposure and complete outer execution (M11); legacy M8 is deferred. |
 | §§10–11 Corollaries | 🟡 | Not multiplication bottlenecks. | DFT over `F_p` done (`dftInTime`); division, square root and transposition not started. |
 
 ## Milestones
 
-✅ means the whole deliverable is checked. Details are in the
-[implementation plan](plan/D-sharper-bound.md) and its milestone-detail section.
+✅ means the whole deliverable is checked. M1–M8 are historical identifiers, loosely
+organized by manuscript section, not a dependency order. The execution order below
+controls the active queue. The [implementation plan](plan/D-sharper-bound.md) and
+linked design notes contain reusable details and historical checkpoints; their older
+parameter choices and route-specific completion lists are not all prerequisites for 0.0023.
 
 | ID | Progress | Sections | Deliverable | Status |
 | --- | --- | --- | --- | --- |
 | M1 | ✅ | §§5, 6, 9 | Retune the existing construction. | Historical, `kappa = 2^-93`. |
 | M2 | ✅ | §§4.3, 8.2, 9.3 | Direct nonadjacent CRT swaps. | Historical, `kappa = 2^-66`; the running CRT still uses it. |
 | M3 | 🟡 | §5.2–5.3, App. A | Compact controls, caller integration, stopped recursion. | Compact integration complete; it is the current theorem. Stopped-recursion integration remains. |
-| M4 | ⬜ | §5.4, §9.7 | Linear child-precision bound; recursive workspace and stock. | Planned. |
+| M4 | ⬜ | §5.4, §9.7 | Linear child-precision bound; recursive workspace and stock. | Derive constants from the actual finite template and account for simultaneous owned centers and BIT stock; feed M9–M11. |
 | M5 | 🟡 | §6.2, §4 | Balanced prefix (M5a); arbitrary-source routing (M5b). | M5a done (`CompactStageGrowth.prefix_le`). M5b open ([design](IntegerMultBounds/MathlibTM2/Balanced/DESIGN.md)). |
-| M6 | 🟡 | §§3–5 | Selected finite suppliers in the machine. | T16 complex supplier and the PR97 bit supplier are in the proof. Stage 2 (variable-rank children, #104's opposite-bank compiler on plain frames) is the running bit supplier: the moment gaps (`Stage2Moments`), atom adapters (`AtomSegment`, `AtomRoleSegment`), the stopped recurrence (`Rev97Ranks.rev97_closed`), the reversed family with data (`RevMachine.RevSemantics.rev97_family_spec`), the F L F wrapper and width selection (`Stage2Machine.Bound.uniform_bound`), seamed in by `Stage2Machine.Total`. Design-B frames (`1.24e-4`) remain. PR589 bit side checked under upstream's idealization (`M6/Bit*`, outside the root); it does not run on this machine ([design](IntegerMultBounds/MathlibTM2/M6/DESIGN.md)). |
-| M7 | 🟡 | §§8, 9.2, 9.7 | Faster rounded Gaussian inverse, prime supply, bulk execution. | Prime supply done (`primes_in_window`, `primeSrc_good`). Rounded inverse composed (`rounded_inverse`); chirped forward map approximated (`chirpA_approx`). Tape costs and bulk core/halo execution remain ([design](IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md)). |
-| M8 | ⬜ | §9.1–9.8 | Bootstrap stages linked to all 47 target inequalities. | Planned. Goal: saving `0.001672660197076918`. |
+| M6 | 🟡 | §§3–5 | Selected finite suppliers in the machine. | T16 complex supplier and the PR97 bit supplier are in the proof. Stage 2 (variable-rank children, #104's opposite-bank compiler on plain frames) is the running bit supplier: the moment gaps (`Stage2Moments`), atom adapters (`AtomSegment`, `AtomRoleSegment`), the stopped recurrence (`Rev97Ranks.rev97_closed`), the reversed family with data (`RevMachine.RevSemantics.rev97_family_spec`), the F L F wrapper and width selection (`Stage2Machine.Bound.uniform_bound`), seamed in by `Stage2Machine.Total`. Design-B frames (`1.24e-4` supplier saving) are active: scalar semantics and extensive geometry checks are complete; full backward-weight recurrence, data-wire alignment, boundary transitions and node/cost integration remain. Use the checkpoint below. PR589 bit side checked under upstream's idealization (`M6/Bit*`, outside the root); it does not run on this machine ([design](IntegerMultBounds/MathlibTM2/M6/DESIGN.md)). |
+| M7 | 🟡 | §§8, 9.2, 9.7 | Faster rounded Gaussian inverse, prime supply, bulk execution. | Prime supply done (`primes_in_window`, `primeSrc_good`). Rounded inverse composed (`rounded_inverse`); chirped forward map approximated (`chirpA_approx`). Tape costs and bulk execution remain ([design](IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md)); align new work with M11's fused, support-local outer contracts before implementing an older schedule. |
+| M8 | ⬜ | §9.1–9.8 | Legacy selected bootstrap and 47 inequalities. | Deferred as a route-specific package. Reuse applicable transfer lemmas; reproducing its seven stages or PR589 supplier is not required for M11. |
+| M9 | ⬜ | New supplier/compiler | Productive mixed jobs compiled into a finite uniform supplier. | Prove arbitrary-input endpoints, ownership, complements, integer batching and chronological execution; instantiate the p3 complex controller at uniform saving `0.002304`. Depends on the supplier closure and precision/stock work in M3–M4. |
+| M10 | ⬜ | New BIT supplier | Delayed ambient cover and ordinary BIT saving above `0.0027`. | Use M9's mixed-job construction with projector covariance, common weights, modular matchers, priced cover routing and bad-class fallback; raise the atom exponent and prove the new stock bound. Reuse generic stopped-recurrence and wrapper results. |
+| M11 | ⬜ | New outer assembly | Unconditional fixed-machine theorem at `kappa = 0.0023`. | Combine M9–M10 with M4, M5b and the adapted M7 work: grouped/fused execution, global support-local phases, boundary matrix costs, new sizing and every outer cost matched to actual execution. |
 
-## Next steps
+## Execution order and decision gates
 
-1. **A bit supplier with a larger saving.** It is the only lever beyond `2^-13.33`: #104's
-   compiler on design-B frames (`1.24e-4`), or a bit node with a larger saving.
-2. **Near-one dimensions** (one bit with today's suppliers): the rest of M7, M5b and the bulk
-   exposure transfer.
-3. **M3 stopped recursion and M4.** M8 needs them; they do not change `kappa` today.
+**Finish the current design-B compiler checkpoint first.** The structural adjoint,
+pending-use and combined-boundary lemmas are generic in the DAG or operation list;
+they are useful beyond the concrete design-B tables. Complete the internal-node
+boundary step and compose it with the leaf steps to prove the full backward-weight
+recurrence. Then connect the data-wire traces to their frame chains. Current details
+are in [M8/DESIGN.md §16](IntegerMultBounds/MathlibTM2/M8/DESIGN.md#16-design-b-frames).
 
-The bootstrap base saving `0.0000384599` must itself be proved or replaced by a sufficiently
-strong proved base; our current theorem does not supply it. After each integration, record the
-achieved saving, the binding margin and its manuscript section.
+**Then assess the remaining design-B integration.** Continue through boundary transitions,
+node semantics, exact rank/cost linkage, supplier replacement and retuning if these
+fit the existing recursive machine. The full design-B target is
+`4222422970/2^46 ≈ 0.0000600042`, about 28% above today's bound; it remains a projection
+until the actual implemented histogram and machine theorem are checked. If integration
+requires another major construction, reassess before expanding the scope. Do not pursue
+further design-B-specific optimization. Its final concrete supplier can later be replaced;
+its generic compiler/frame proofs survive. Design-B is not a prerequisite for M9–M11.
 
-The external selected result remains conditional. Its
+**Define the new contracts before further old-route integration.** Pin the M9 mixed-job
+interface and M11 outer execution requirements, then direct M3–M5 and M7 work toward them.
+Keep generic stopped recursion, completed-child precision, owned storage, coordinate
+routing, analytic identities and exact recovery. Do not finish an older scanner, reserve,
+Gaussian schedule or numerical bootstrap solely to check off a historical milestone.
+The older PR589 machine integration and exact M8 seven-stage/47-inequality package are
+optional alternatives, not the active critical path.
+
+**Develop suppliers and outer execution as separate work streams.** M9 supplies the
+finite mixed-to-uniform construction shared with M10; M10 supplies the stronger ordinary
+BIT bound. M4's bounds must close for those actual templates. M5b and the adapted M7 work
+supply M11's routing and grouped/fused execution. Preserve the current multiplier as a
+working instance while introducing the needed general interfaces.
+
+**Integrate smaller wins whenever all affected costs close.** Design-B is the immediate
+candidate. Later routing, resampling and supplier improvements may yield intermediate
+bounds before M11 is complete; each must include every affected execution and cost
+contract. With today's supplier the near-one route is limited by its approximately
+`0.000096807` saving. With the new complex saving but today's dimension, the layer
+margin alone is only `0.001116`: reaching 0.0023 needs both work streams. These are
+planning margins, not promised intermediate machine theorems. Reaching or exceeding
+`0.001672660197076918` is a useful benchmark by whichever proved route reaches it first.
+
+After each successful integration, record the proved saving, binding margin and guarded
+checks/axiom audit. Component certificates and parameter arithmetic do not move the scoreboard.
+The current numerical saving already exceeds the old bootstrap base `0.0000384599`;
+whether it supplies a particular bootstrap interface still requires an explicit theorem.
+
+## Long-term source and proof obligations
+
+The new direction follows [PR 4359](https://github.com/CrocSwap/integer-mult-bounds/pull/4359),
+pinned for this assessment to `da637c87c89482bc4c86be36bd0071b3d400dbed`:
+
+- [Finite precompilation](https://github.com/zxv/integer-mult-bounds/blob/da637c87c89482bc4c86be36bd0071b3d400dbed/research/kappa-rebuild/architecture/FINITE-PRECOMPILATION.md): autonomous productive jobs, paid complementary axes, exact integer batch matching and an acyclic execution schedule.
+- [Finite-template closure](https://github.com/zxv/integer-mult-bounds/blob/da637c87c89482bc4c86be36bd0071b3d400dbed/research/kappa-rebuild/transfer-audit/FINITE-TEMPLATE-CLOSURE.md): fresh linear semantic precision and actual simultaneous storage, including uncredited owned centers.
+- [Outer transfer audit](https://github.com/zxv/integer-mult-bounds/blob/da637c87c89482bc4c86be36bd0071b3d400dbed/research/kappa-rebuild/transfer-audit/OUTER-TRANSFER-AUDIT.md): delayed BIT cover, changed atom width and reserves, global support-local scheduling and the nine outer charges.
+
+These are conditional written arguments and replay evidence, not Lean proofs. Prove the
+compiler structurally for arbitrary finite data and instantiate the local certificates last;
+do not materialize the astronomical winning uniform word. Rank counts alone do not prove
+native adapters, arbitrary-input semantics or ownership. Cover routing must preserve one
+common external weight and pay fallback classes; reserves must include simultaneous stock.
+
+The old outer ledger cannot be retuned to the new target: Gaussian resampling restricts
+its dimension exponent to below one half, and its exposure saving collapses near one.
+M11 needs the grouped/fused and support-local outer construction at dimension exponent
+`0.99999`, including boundary matrix execution/error bounds and deferred reserved axes.
+The upstream minimum outer saving is `0.00230197698`, leaving only `0.00000197698`
+above the target; every charge must be justified by the implemented machine.
+
+The older selected construction remains a conditional benchmark. Its
 [selected record](https://github.com/CrocSwap/integer-mult-bounds/blob/0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2/certificates/selected-result.json)
-and [pinned source evidence](docs/sharper-bound-source.json) distinguish it
-from our unconditional result and from older intermediate research witnesses.
+and [pinned source evidence](docs/sharper-bound-source.json) are retained for provenance,
+not as a requirement to implement its entire route.
 
 ## Archived route and reusable work
 
