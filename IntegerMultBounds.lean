@@ -62,6 +62,9 @@ public import IntegerMultBounds.MathlibTM2.Routing.ReservoirSchedule
 public import IntegerMultBounds.MathlibTM2.Routing.PermutationMatchings
 public import IntegerMultBounds.MathlibTM2.Routing.ProfileCompiler
 public import IntegerMultBounds.MathlibTM2.Routing.TerminalShears
+public import IntegerMultBounds.MathlibTM2.Routing.RouterGeometry
+public import IntegerMultBounds.MathlibTM2.Routing.ReservoirPlacement
+public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume

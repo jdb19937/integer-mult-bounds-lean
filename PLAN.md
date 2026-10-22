@@ -341,8 +341,17 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    common borrowed-width bound. `TerminalShears` composes the bulk passes with at
    most `K` singleton XORs and proves no target is omitted. Execution of those
    singleton XORs, physical placement and generated configuration remain open.
-3. Execute reservoir placement and its inverse, accounting for displaced
-   coordinates, borrowed-field restoration and every interchange cost.
+3. **Coordinate placement proved; execution open:** `BlockExchange` specifies
+   equal-width interval interchanges, and `ReservoirPlacement` composes at most
+   three of them to populate the physical `b,y,t,u` layout from the selected bank.
+   `PlacementShear` transports both targets and source names and proves exact
+   restoration after unplacing, including dirty reservoir bits. Connect these
+   coordinate exchanges to the actual host interchange and charge every call.
+   `RouterGeometry` resolves the shared-width constraint using
+   `d = (n-K)/(K+3G)`: all residues share borrowed width `dG`, the complete field
+   bank has width exactly `n`, and the terminal suffix is shorter than `2K+3G`
+   (hence `131G` at `K=64G`). Fixed-count profiles cover exactly the bulk region;
+   the target-field-only profiles in item 2 remain reusable local lemmas.
 4. Execute uniform generation of all raw R2 configuration words: source and mask
    descriptors, dimensions and canonical headers. Charge generation and cleanup;
    raw words cannot remain an unpriced input oracle.

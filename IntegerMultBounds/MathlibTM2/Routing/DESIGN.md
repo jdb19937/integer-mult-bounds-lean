@@ -528,8 +528,28 @@ The terminal set has at most `K` elements, and its singleton-XOR schedule compos
 with the residue passes to give the complete original shear. Thus the last segment
 is explicitly accounted for rather than dropped.
 
-These theorems do not supply physical reservoir placement, executed R2 calls or
-terminal-coordinate operations, executed configuration generation or amortization. Those and the short-record fallback remain mandatory R3 gates.
+The target-field-only profiles above do not by themselves allocate borrowed
+fields inside the original record. `RouterGeometry` resolves that constraint:
+choose a common digit count `d = (n-K)/(K+3G)` and compact width `w=dG`. The target
+field has width `n-3w`; every residue uses the same `d` digits, with prefix `r` and
+suffix `routerTail-r`. Division with remainder proves the total field bank is
+exactly `n` bits and the elementary suffix is shorter than `2K+3G`, hence `131G`
+for `K=64G`. Every bulk coordinate occurs in a fixed-count profile, whose targets
+all stay outside that suffix. The compact width fits the common reservoir.
+
+`BlockExchange` gives an explicit involutive equal-width interval permutation.
+`ReservoirPlacement` first exchanges the complete selected reservoir with the
+front bank (or does nothing for bank zero), then moves two compact slices to the
+end. It proves every borrowed position of the resulting `b,y,t,u` layout originates
+in that reservoir. `PlacementShear` conjugates both source and target coordinates,
+proves the original shear after unplacing, and preserves arbitrary reservoir
+contents. Transported matchings still fix the reservoir and cannot read into it
+from live coordinates.
+
+These theorems specify concrete coordinate placement; they do not yet execute its
+host interchanges or price their generated headers. Executed R2 calls and
+terminal-coordinate operations, uniform configuration generation and amortization
+also remain open. Those and the short-record fallback remain mandatory R3 gates.
 In particular, computable Lean functions are not yet a priced tape compiler.
 
 ## Completion gates
