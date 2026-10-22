@@ -410,8 +410,30 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    are proved in total raw-header length. `GeneratedBlockExchange` now composes
    header generation, installation, the actual exchange and cleanup of both
    header banks, restoring every register except the stream. Its bound charges
-   all phases; removing the generated-bank size from the exchange price and
-   generating the unary exponent inputs remain required. Complete
+   all phases. `MetadataBankCost` bounds installed size structurally, without
+   expanding concrete banks; `GeneratedBlockExchangeCost` removes generated-word
+   and installed-bank sizes from the execution bound, using only original bank
+   size and input dimensions. `UnaryDifference3` executes both binary subtractions,
+   unary conversion and cleanup of both intermediate words. `ExchangeExponents`
+   now generates all three exponent tapes from binary width, interval offsets and
+   interval width, with restored input/scratch and a total cost bound; its final
+   cleanup restores the original bank and has an exact geometry-based price.
+   `BinaryCanonicalCopy` constructs canonical bits while preserving the padded
+   source. `ExchangeBinarySetup` composes exponent generation and canonical-width
+   construction from four padded binary coordinates, restoring inputs and scratch;
+   the generated bank has a complete cleanup frame and a dimension-only cleanup
+   bound. `BinaryBlockExchange` now composes binary-only coordinate setup,
+   canonical-width construction, header generation and installation, the actual
+   exchange and all cleanup. Its total bound uses original input dimensions and
+   borrowed-bank size, and every register except the stream is restored.
+   `BinaryExchangeCall` packages the fixed layout and original binary-input
+   invariant, proving readiness and cost survive stream changes.
+   `BinaryExchangeChain` executes structural schedules without per-call execution
+   premises. `BinaryReservoirPlacement` now executes the complete three-call
+   forward and reverse placement schedules from binary coordinates, including
+   all setup and cleanup, with only the stream changed. Building the concrete
+   common layout/input bank and composing placement with R2 and terminal routing
+   remain required. Complete
    placement/R2/terminal composition remains open.
    `RouterGeometry` resolves the shared-width constraint using
    `d = (n-K)/(K+3G)`: all residues share borrowed width `dG`, the complete field

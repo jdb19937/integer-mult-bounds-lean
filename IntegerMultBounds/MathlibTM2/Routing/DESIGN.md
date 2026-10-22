@@ -558,8 +558,20 @@ and their cost terms. No per-stage execution oracle is assumed.
 zero-width first call for reservoir zero so the program shape is fixed. Its rank
 action is exactly `reservoirPlacement`. `reservoirPlacement_exec` executes both
 forward and reverse schedules and charges every call, leaving only the stream
-changed. Canonical header banks are still initially prepared inputs; generation,
-installation and final cleanup remain unproved at this boundary.
+changed. That chain theorem still starts from prepared banks. The new
+`BinaryBlockExchange` theorem executes a single exchange from padded binary
+coordinates: it generates all three unary exponents and a canonical width,
+constructs and installs all five headers, executes the host call and clears every
+generated bank. Only the stream changes; the total cost uses original dimensions
+and borrowed-bank size. `MetadataBankCost`, `ExchangeCost` and
+`GeneratedBlockExchangeCost` eliminate generated-size unknowns structurally.
+`BinaryExchangeCall` separates fixed layout facts from the original tape
+invariant; readiness and price survive stream updates. `BinaryExchangeChain`
+executes arbitrary schedules by the actual binary-call theorem, without execution
+oracles. `BinaryReservoirPlacement` specializes it to both concrete three-call
+directions, preserving the exact reservoir-placement action and restoring all
+metadata. Constructing the common concrete bank and joining placement to R2 and
+terminal routing remain open.
 
 The elementary terminal engine is now executed. `LowBitXor` routes by the new
 lowest bit and merges by the ordinary lowest bit; monotonicity within each route
@@ -662,8 +674,10 @@ tables by `131G`. `CompiledSharedRouting` additionally executes shared-counter
 setup and final shared cleanup. It starts from raw shared words and a coordinate
 table; the complete bank frame changes only at the record stream, and setup,
 compilation, routing and cleanup all have explicit dimension-based bounds.
-Generating the shared raw inputs and coordinate table, and composing the bulk
-router, remain required.
+`SharedInputExec` generates the raw shared words from binary dimensions, and
+`BinarySharedRouting` composes this generation with shared setup, table compilation,
+routing and complete cleanup for positive address width. Coordinate-table
+generation and composition with the bulk router remain required.
 
 Complete composition with executed R2 calls, shared setup and raw configuration
 generation, long-record amortization and the short-record regime remain mandatory
