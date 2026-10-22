@@ -359,8 +359,18 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    bank frame and all phases charged. `ElementaryHeaderExec` generates all five
    canonical headers on a fixed bank, with restored inputs/scratch and linear
    cost; `elementaryHeaderInstruction_valid` proves their actual loader contract.
-   Coordinate/exponent tape construction, source-mask generation and uniform
-   serialization of instruction words remain open.
+   `ElementarySourceMask` generates the full-width renamed source mask from
+   unary coordinate and padding tapes, with restored inputs and linear cost.
+   `ElementaryInstructionWrite` serializes the exact six-word loader frame.
+   `ElementaryCoordinates` constructs the complete coordinate/exponent bank
+   from binary width, target and source, restoring inputs and scratch and
+   charging all phases. `ElementaryCompiler` now composes coordinate, header and
+   mask generation, exact frame serialization and private-bank cleanup: one fixed
+   program emits a valid instruction from five binary inputs and restores every
+   register except the output configuration stream. `ElementaryCompilerCost`
+   bounds private cleanup by input sizes, completing the priced single-instruction
+   compiler. Generation of successive instruction coordinates and the complete
+   instruction-stream loop remain open.
 3. **Coordinate placement and prepared execution proved; setup open:** `BlockExchange` specifies
    equal-width interval interchanges, and `ReservoirPlacement` composes at most
    three of them to populate the physical `b,y,t,u` layout from the selected bank.

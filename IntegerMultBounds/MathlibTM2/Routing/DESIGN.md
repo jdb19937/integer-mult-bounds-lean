@@ -611,9 +611,40 @@ first operand; constant setup, cleanup and canonicalization are charged.
 tape. `ElementaryHeaderExec` composes all five generators on one fixed bank,
 with restored inputs and scratch and a summed linear cost.
 `elementaryHeaderInstruction_valid` connects the generated words directly to
-the executed loader's validity predicate. Coordinate/exponent tape construction,
-source-mask generation and serialization of the complete instruction stream
-remain required.
+the executed loader's validity predicate. Coordinate/exponent tape construction and generation of successive instruction
+banks remain required. `ElementarySourceMask` computes the exact renamed source
+mask from unary coordinate and high-padding tapes, restores all inputs and
+scratch, and costs at most `10n+9`. `ConfigurationWrite` executes serialization of a fixed bank, restoring
+its sources and scratch. `ElementaryInstructionWrite` produces exactly the
+six-word frame consumed by the loop, including all separators, in at most seven
+steps per framed symbol plus one. `UnaryDifference` executes subtraction of
+live equal-width binary dimensions, unary conversion and intermediate cleanup,
+restoring both operands and scratch. `BinarySuccessor` computes a coordinate
+plus one on a copied binary word. `UnaryComplement` composes successor, difference
+and cleanup to construct high-padding length from binary width and coordinate,
+restoring both inputs and all scratch. The full coordinate-bank construction and
+successive instruction-generation composition remain open. `UnaryPredecessor`
+constructs the gap by copying the unary target then popping one symbol.
+`ConfigurationChoose` executes live selection between two metadata sources, and
+`ElementaryCoordinateData` identifies the source-zero branch with the actual
+coordinate permutation. `ElementarySourceCoordinate` executes that renaming
+on binary words. `ElementaryRowExponent` constructs the outer-row exponent
+with an executed zero-target branch, restoring all inputs and scratch; its
+nonzero branch uses `UnaryComplement`. `ElementaryCoordinates` composes both
+coordinate stages into one fixed program: from three binary inputs it generates
+all seven coordinate/exponent tapes, restores original operands and shared
+scratch, and proves a total cost bound. `ElementaryCompilerBank` supplies one
+fixed layout reusing those seven scratch tapes for all compiler phases.
+`ElementaryCompilerHeaders` composes coordinate construction with actual header
+generation and bounds their combined cost. `ElementaryCompilerMask` joins
+source-mask generation. `ElementaryCompilerFrame` identifies the exact six loader
+words, proves instruction validity and restores the original bank after private
+cleanup. `ElementaryCompiler` composes all phases into one fixed actual program:
+a valid instruction frame is prepended to the output stream and every other
+register is restored. `ElementaryCompilerCost` bounds every private word and
+connects a closed cleanup-size bound to actual execution. The total bound charges
+preparation, serialization by framed output length, and cleanup by input sizes.
+The loop generating successive instruction coordinates remains required.
 
 Complete composition with executed R2 calls, shared setup and raw configuration
 generation, long-record amortization and the short-record regime remain mandatory

@@ -71,6 +71,12 @@ public import IntegerMultBounds.MathlibTM2.Routing.RouterTerminalCost
 public import IntegerMultBounds.MathlibTM2.Routing.ElementarySharedRouting
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryCanonicalExec
 public import IntegerMultBounds.MathlibTM2.Routing.ElementaryHeaderExec
+public import IntegerMultBounds.MathlibTM2.Routing.ElementaryInstructionWrite
+public import IntegerMultBounds.MathlibTM2.Routing.ElementarySourceMask
+public import IntegerMultBounds.MathlibTM2.Routing.UnaryComplement
+public import IntegerMultBounds.MathlibTM2.Routing.UnaryPredecessor
+public import IntegerMultBounds.MathlibTM2.Routing.ConfigurationChoose
+public import IntegerMultBounds.MathlibTM2.Routing.ElementaryCompilerCost
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
