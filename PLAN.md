@@ -144,7 +144,7 @@ parameter choices and route-specific completion lists are not all prerequisites 
 
 ## Execution order and decision gates
 
-**Finish the current design-B compiler checkpoint first.** The structural adjoint,
+**Current design-B checkpoint (independent of routing).** The structural adjoint,
 pending-use and combined-boundary lemmas are generic in the DAG or operation list;
 they are useful beyond the concrete design-B tables. The full backward-weight
 recurrence and the auxiliary/target frame chains are now checked. Complete source-key
@@ -187,6 +187,69 @@ After each successful integration, record the proved saving, binding margin and 
 checks/axiom audit. Component certificates and parameter arithmetic do not move the scoreboard.
 The current numerical saving already exceeds the old bootstrap base `0.0000384599`;
 whether it supplies a particular bootstrap interface still requires an explicit theorem.
+
+## Routing work packages (M5b)
+
+Routing is now an active work stream alongside the design-B checkpoint. R1–R4 are
+local work-package labels in dependency order, not replacements for M1–M11. They
+must provide the global support and spectator contracts required by M11, not only
+the old layout's cheaper numerical bound. Implementation notes and the next concrete
+obligation are in [Routing/DESIGN.md](IntegerMultBounds/MathlibTM2/Routing/DESIGN.md).
+
+| Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
+| --- | --- | --- | --- |
+| R1 selective updates | 🟡 | Ideal arbitrary-source coordinate shear, preserved sources/spectators, global bijectivity and arbitrary borrowed-control restoration; then bind the packed modular gadget on its good set. Logical/packed endpoints, coordinate decoding, physical target-bit identities and spectator density checked. Ordered scattered-source gathering has host execution, cleanup and cost. Reads of upper target bits, arbitrary source ordering, field moves and full rotation binding remain. | 2–3k |
+| R2 exact repair | ⬜ | Flag, extract, key, sort and reinsert exceptional records. Reuse `Compact/RepairPipeline` mathematics, but prove the actual scan programs, clean scratch and cost from the bad-set density. Depends on R1's packed good-set contract. | 3–5k |
+| R3 complete router | ⬜ | Matching/reservoir partition, permutation decomposition, descriptor generation and short-record fallback. Compose R1–R2 into a full arbitrary-coordinate routing program, with all borrowed fields restored. | 3–5k |
+| R4 integration and support | ⬜ | Forward/inverse layout replacement and cost matching; preserve reserved coordinates and a complete untouched suffix for M11's grouped phases. Supplies S4's movement interface. | 3–6k |
+
+R1 checkpoint: `Routing/Shear` and `PackedShear` prove the logical and packed
+endpoints, arbitrary borrowed-field restoration, target upper-bit preservation,
+and exceptional-set/repair identities. `Coordinates.program_decode` identifies the
+packed endpoint with the requested coordinate shear; `PhysicalBits.program_physical`
+identifies the actual radix-two target bits. `Density.encoded_repair_density` retains
+the complete source/spectator tensor without changing the exceptional fraction.
+`SourceGather.sourceOffset_exec` implements gathering and spreading **in increasing
+source order**, restores gathering scratch, and charges `8 W + 8 n G + 2 n + 18`
+host steps. `packed_read_eq` identifies its offset with the packed gadget's source
+value. Source/mask registers are inputs to this call, so mask setup remains charged
+at the future caller; arbitrary source ordering is not silently supplied by a mask.
+The new checks peak below 1.2 GiB. R1 is still open: allow sources in unselected
+upper target bits (the current reader uses a separate field), bind arbitrary source ordering,
+field placement/interchanges, mask setup, all modular rotations and cleanup to a
+complete priced host execution. Kappa is unchanged.
+
+Estimated routing total: **11–19k additional or substantially revised Lean lines**,
+rounded to 10–20k for planning; excludes generated data and Python. Existing layout,
+CRT-control, rotation and sorting primitives are reused. R1's logical identity is
+not a tape implementation: source gathering, packed loads, guards, repair and their
+costs must be proved before the router can improve a machine bound. Do not introduce
+a free arbitrary-source read or a zero-initialized borrowed-control assumption.
+
+## Resampling work packages (M7 and M11)
+
+These packages prioritize shared arithmetic and the new fused schedule. The older
+[NearOne design](IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md) remains a mathematics
+index, but its status and estimates are historical: `Mult/ShortConv` and `Mult/ChirpRing`
+are absent from the current checkout, despite being listed there as completed.
+Locate reusable versions in history or reconstruct those bridges before claiming S1
+complete. The existing chirped-forward and phase-cell inverse/error theorems remain.
+
+| Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
+| --- | --- | --- | --- |
+| S1 shared short convolution | ⬜ | Pad and pack blocks, invoke the existing ring-product stage, extract coefficients, and establish exact register effects, rounding error, cost and scratch restoration. Shared by S2 and S3. | 1–3k |
+| S2 fast forward map | 🟡 math / ⬜ machine | Implement the chirped-correlation formula using S1, with executable coefficient tables, overlapping input windows and a proved forward-resampling contract. | 3–5k |
+| S3 fast inverse map | 🟡 math / ⬜ machine | Cell-interior products, boundary preparation/solve, coupling and recovery, with precision and actual line costs. Reuse the phase-cell mathematics and band primitives; fix the interface to S4–S5 before implementing a legacy whole-axis schedule. | 6–10k |
+| S4 grouped/fused execution | ⬜ | Ordered core/halo neighborhoods, overlap/cropping, reusable setup, error composition and full-tensor support. Combine S2–S3 with R4 so exposure is not repaid per axis. Preserve reserved chunks and restore layouts before subsequent phases. | 8–16k |
+| S5 boundary work | ⬜ | Fast boundary matrix operations required by the new parameter regime, including numerical stability, coefficient widths and actual tape costs. Specify this interface with S3–S4; the old band solve alone does not establish it. | 4–10k |
+| S6 outer integration | ⬜ | New sizing and precision, both resampling directions, bulk CRT/exposure and every changed cost matched into the final machine. Depends on R4, S4–S5 and M4; closes M11 with M9–M10. | 3–6k |
+
+Estimated resampling/outer-integration total: **25–50k additional or substantially
+revised Lean lines**, excluding R1–R4, M9–M10 and generated data. This is a lower-confidence
+scope estimate, especially for fused execution and boundary work, not a delivery-time
+estimate. The rows partition the intended work; shared helpers should be proved once.
+S1 is the smallest independent implementation milestone. Neither S1 nor R1 alone
+raises kappa; integrate a new public bound only when all affected costs close.
 
 ## Long-term source and proof obligations
 
