@@ -192,6 +192,16 @@ default build does not check them.
      rescaled output is within `2r/2^p` of the convolution (`pwC_recOf_err`). The block
      correlation of b5 has `A = 3m + 1` inputs and `4m` kernel values, so `r ≥ 7m`; the cell
      products of b3 have `A = B = L`, `r ≥ 2L`.
+   * **The shared block machine** (`Mult/ShortConvUnary.lean`). `fromUnary_exec` starts
+     with raw Gaussian-integer coefficient blocks and unary `p,l,w`, generates both
+     symbol-padding counters and the header, packs the zero-padded records, invokes
+     the existing ring-product program, and clears every generated word. Only the
+     full output stream changes; all inputs, left stacks, private scratch and user
+     state are restored. `ShortConvExec.coeff_err` links the returned numerators to
+     the `2r/2^p` error bound. `unaryCost_le` prices every phase by one packed-product
+     bound plus linear stream and header work. `ShortConvCheck` audits the bridge.
+     S2/S3 still need their own table production, window/batch schedules and output
+     cropping; the block primitive does not execute those schedules.
    * **The ring arithmetic of b5** (`Mult/ChirpRing.lean`). Per block, the reversed halved
      computed inputs and the shifted halved kernel are one disk record pair of size `2^l ≥ 7m`
      (`norm_chirpRec_le`); coefficient `4m - 1 - b` of their convolution is the correlation
