@@ -1139,6 +1139,32 @@ chunk before choosing.
   The guarded build including the public root passes (14,295 jobs, 30.9 GiB combined
   peak). The completed-proof check and standard-axiom audits pass. Default proof
   limits and coefficient bounds are unchanged.
+  Cost linkage now handles repeated and skipped frames structurally.
+  `Global/ChainRefinement.chainMoment_le_of_subset` removes repetitions and bounds
+  a covered nested path by its reference chain, for nonnegative subadditive costs.
+  `Frames/ChainLookupMoments.pathCheck_moment_le` applies this to existing path
+  checks, including the constant-path case. No matrix certificate is regenerated.
+  `SourceMomentsB` proves that checked rank-one source entrances are exactly the
+  input lines and bounds all actual source paths by their full signed chains.
+  `designbtargetranks.py` checks the lengths of all 1,771 existing endpoint bases,
+  in 128-target declarations across four check modules. It introduces no new bank
+  records or endpoint data and needs no temporary reconstructed inputs. All six
+  emitted modules reproduce byte for byte; the main geometry emitter invokes it.
+  `TargetMomentsB` identifies these complements with the actual output hyperplanes
+  and bounds every actual target path by its full signed chain, including zero
+  prefixes, repeated readouts and repeated output reads.
+  `LocalMomentsB` proves that either side orientation pays exactly the full local
+  path from sigma to one, plus one exterior of rank `506 + rank sigma`.
+  `DataMomentsB` joins the two local data paths through the rank-484 connector.
+  `NodeBoundB.node_moment_le_data_chains` combines these costs with all owned
+  centre/correction temporaries. Its remaining side terms are the actual local
+  auxiliary moments. Next: cover those paths by the canonical slot chains, sum
+  the resulting signed rank steps against the histogram, replace the supplier
+  and retune. Public kappa is unchanged.
+  All thirteen new modules pass the single-file guard, with peak RSS at most
+  3,436 MiB, and the guarded build including the public root passes. The new cost
+  closure passes the standard-axiom audit; all ten Python tests pass. The checked
+  endpoint-rank modules reproduce byte for byte without temporary input files.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.
