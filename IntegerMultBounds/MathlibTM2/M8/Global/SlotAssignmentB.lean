@@ -11,7 +11,7 @@ namespace IntegerMultBounds.MathlibTM2.M8.Global.DesignB
 noncomputable section
 open Local
 
-private theorem pivotSlot_eq (n : Nat) :
+theorem pivotSlot_eq (n : Nat) :
     SlotAssignmentB.pivotSlot n (SlotAssignmentB.argument n) = SlotAssignmentB.slotOf (dagB.pivotUse n) := by
   cases h : (recAt n).link with
   | none => simp [SlotAssignmentB.pivotSlot, records_get, h, Dag.pivotUse, dagB, dag, SlotAssignmentB.slotOf]

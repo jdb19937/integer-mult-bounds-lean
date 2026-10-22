@@ -1173,8 +1173,28 @@ chunk before choosing.
   generated modules reproduce byte for byte. The local equations pass kernel checks,
   and `Global/SlotAssignmentB` identifies every actual argument and root slot without
   evaluating concrete compiler prefixes. All 41 new modules pass the single-file
-  memory guard, at most 1,954 MiB peak RSS. Canonical auxiliary-chain membership checks
-  are next; this does not yet change the public bound.
+  memory guard, at most 1,954 MiB peak RSS. This does not yet change the public bound.
+- **Canonical auxiliary costs.** `designbauxcoverage.py` reuses the existing
+  slot-chain map, argument table and root endpoint data: all 64,042 node cases,
+  28,866 slot cases and 5,336 roots pass membership checks. Endpoints are checked
+  to have codimension one on the same chain as the actual root slot.
+  `AuxTraceCoverageB` propagates an arbitrary property from compiler frames and
+  boundary frames through the whole reordered first stage. `AuxMomentsB` identifies
+  the root endpoints with output hyperplanes and centre stars, proves membership
+  of every actual side frame in its canonical chain, and applies chain refinement.
+  `SignedNodeBoundB.node_moment_le_signed_chains` bounds the complete executed node
+  by canonical auxiliary/source/target chains, with exteriors, connectors and all
+  owned temporaries still charged. Its closure passes the standard-axiom audit
+  (251,801 declarations); the 33 emitted check/aggregation modules reproduce exactly.
+  All 39 affected modules pass the single-file guard, at most 3,148 MiB peak RSS.
+  Histogram aggregation and supplier replacement/retuning remain.
+  Fresh reconstruction of the complete signed snapshot matches the recorded digest
+  `606486ea…b4909b`. Its histogram differs slightly from the preliminary
+  `Stage2HistogramB`: regenerate the numerical certificate from the actual signed
+  counts. The exact rational preview still supports `savingB = 1240/10^7`, with
+  moment bound about `0.999999983792195`, below `1 - 10^-8` by `6.208e-9`.
+  This numerical preview is not yet connected to the machine theorem; public kappa
+  is unchanged.
 - **B5 the node.** Gauged entrances and commuting exits in `Node` and `NodeFrames`, `Lift`
   ranks, the new `LocalRanks` and `LocalSteps` tables, `Stage2Link`, and `Rev97Ranks` with ranks
   `≤ 528`.
