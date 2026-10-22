@@ -339,7 +339,28 @@ R1 and repair. The classifier must handle zero suffix width: the older `badC_eva
 requires a positive suffix to flush its final segment, while the R1 contract
 allows zero. `selectiveBadCode_padded` now proves the value-level fix: one extra
 column flushes the final segment, and neither the phase mask nor the guard
-predicate depends on that padding. Its concrete tape execution remains next.
+predicate depends on that padding. Its concrete tape execution is now supplied by `BadClassifier` below.
+
+## R2 checkpoint: executed padded physical classifier
+
+`paddedCopy_exec` in `PaddedCopy.lean` copies the actual target counter into an empty work
+register with one high zero, charging the push and full binary copy.
+`spreadPadded_exec` in `PaddedSpread.lean` spreads each borrowed counter into a word of
+width `p.wy + 1`, preserving its source, mask and scan scratch. The extra column
+is a mathematical/tape scan pad, not an added physical address field.
+
+`badClassifier_spec` in `BadClassifier.lean`
+executes the target copy, both spreads, the existing `badC` automaton and all three
+word cleanups. It proves `CodeSpec` for exactly `selectiveBadCode p X`, on the actual
+five-field bank with arbitrary spectator width. Every register is restored; the
+scan slot carries the computed code. The explicit bound is `34 * p.wy + 62`,
+including all word preparation and cleanup, and the check peaks near 2.1 GiB.
+
+This removes the executed-classifier obligation at the prepared repair boundary.
+Its two masks and field counters remain explicit invariant inputs: their charged
+installation/cleanup and concrete shared placement belong to R2's final
+composition. Destination keying, including complete row bits, remains next;
+R2 is not complete.
 
 ## Completion gates
 

@@ -304,13 +304,16 @@ wrapper now checks, with full register restoration and its exceptional-sort cost
 bounded by the same physical density. It still requires a concrete classifier
 and keyed input; R2 remains open. `selectiveBadCode_padded` proves that one
 extra classifier column flushes the final segment even at zero suffix width;
-executing that padded classifier remains next.
+`badClassifier_spec` in `BadClassifier.lean` now executes that padded classifier,
+restores every register, and costs at most `34 * targetWidth + 62` steps. Mask
+installation and concrete placement remain in the final setup/composition gate.
 
 R2 acceptance work, in dependency order:
 
 1. All-address ideal permutation, bad-set invariance and exact partition identities.
-2. Executed physical bad classifier on the actual field bank, including the final
-   segment when the target suffix has zero width; initialize and clear its masks.
+2. **Classifier execution checked.** `badClassifier_spec` handles the actual
+   field bank and the final segment at zero suffix width. Its masks are explicit
+   metadata inputs; initialize and clear them in item 5.
 3. Executed ideal-destination key pass for arbitrary ordered source descriptors;
    include the complete row/rank key and restore all source/header scratch.
 4. Instantiate the existing executed route/radix-sort/merge/strip pipeline; derive

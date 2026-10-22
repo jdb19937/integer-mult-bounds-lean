@@ -51,6 +51,7 @@ public import IntegerMultBounds.MathlibTM2.Routing.SelectivePasses
 public import IntegerMultBounds.MathlibTM2.Routing.SelectiveProgram
 public import IntegerMultBounds.MathlibTM2.Routing.SelectiveRouter
 public import IntegerMultBounds.MathlibTM2.Routing.SelectiveRepairPass
+public import IntegerMultBounds.MathlibTM2.Routing.BadClassifier
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume
