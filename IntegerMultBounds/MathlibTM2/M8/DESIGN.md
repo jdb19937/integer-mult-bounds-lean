@@ -1208,8 +1208,18 @@ chunk before choosing.
   all 20 generated modules reproduce byte for byte, and all ten Python tests pass.
   Reversed child programs/rank bounds, supplier replacement and retuning remain;
   the public multiplication bound is unchanged.
+- **Reversed execution bridge.** `Rev/FramedRingB` proves the actual gauged node's
+  routed interchange for arbitrary stored streams and any permitted common frame
+  interpretation over a commutative coordinate ring. It reuses the generic framed
+  execution proof, the actual design-B logical run and the complementary side exit.
+  `Rev/NodeB.rev_node_runB` then runs its existing conjugated reversed edge programs
+  under the same basis/prime and involutive atom-map hypotheses as the plain node.
+  Both modules pass the single-file guard (at most 2,443 MiB); the joint closure
+  with `Stage2LinkB` passes the standard-axiom audit (264,701 declarations).
+  The selected recursive supplier is still the plain node. Its concrete choice,
+  strict block-child ranks, family contraction parameters and final retune remain.
 - **B5 supplier integration.** The actual gauged node and both moment premises are
-  complete above. Connect its arbitrary-ring/reversed execution to `RevNetwork`,
+  complete above, as is arbitrary-ring/reversed execution. Select it in `RevNetwork`,
   show the block child ranks are positive and `≤ 528`, and instantiate the existing
   recursive family with `savingB` and `qτB`. The width, role set and machine interfaces
   remain those of the existing supplier.
