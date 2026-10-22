@@ -7,6 +7,7 @@ from pathlib import Path
 
 import designbword
 import designbcovariance
+import designbkeyorder
 import stage2designb
 
 
@@ -348,6 +349,7 @@ def main():
         emit_root_geometry(result, compiled, args.lean_root)
         emit_source_checks(result, compiled, args.lean_root)
         designbcovariance.emit(result, compiled, json.loads(args.dag_json.read_text()), args.lean_root)
+        designbkeyorder.emit(result, compiled, args.lean_root)
 
 
 if __name__ == '__main__':

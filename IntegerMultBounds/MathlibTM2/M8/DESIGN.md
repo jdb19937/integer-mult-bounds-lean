@@ -1014,6 +1014,15 @@ chunk before choosing.
   checks at 2,048 MiB. All 141 emitted modules reproduce byte for byte; the three
   covariance generator tests pass. Next: use these coefficients to connect the exact
   data-wire traces to their signed frame chains, including repeated equal frames.
+  `Local/KeyedOrderB` proves that sorting a permutation of a duplicate-free key
+  recovers its order, and that filtering commutes with this recovery.
+  `scripts/pr97/designbkeyorder.py` emits inverse-position certificates reusing the
+  existing key chunks. `Local/KeyOrderChecksB` checks 34,504 entries: the 11,565
+  framed readouts, 11,565 deferred slots, 6,258 early sources and 5,116 late sources.
+  `Global/KeyOrderB` proves uniqueness for the actual stage readout order and all
+  three plan keys. All 46 new emitted modules reproduce byte for byte. Remaining:
+  prove coverage/permutation and the stable zero-first readout partition, then
+  identify the source/readout orders in the exact traces with their signed chains.
   The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.
