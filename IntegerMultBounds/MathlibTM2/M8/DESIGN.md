@@ -961,11 +961,12 @@ chunk before choosing.
   the guarded build including the public theorem, and standard-axiom audits pass.
   κ remains unchanged.
   Next: connect the data-wire source/readout traces to the signed chains, allowing
-  repeated equal frames. For target T, the candidate backward recurrence over uses is
+  repeated equal frames. For target T, the backward recurrence over uses is
   c(root j) = [T ∈ targets j], b(n) = Σ_{u ∈ freeUses n} c(u), and
   c(gate n pos) = b(n) + [pos is the linked operand] c(linkUse n), over F₂.
-  An untrusted Python replay agrees with all 28,866 actual slot covectors; its Lean
-  compiler recurrence soundness theorem remains to be proved.
+  An untrusted Python replay agrees with all 28,866 actual slot covectors. The generic
+  compiler recurrence soundness theorem is now proved; concrete coefficient certificates
+  satisfying its local hypotheses remain to be generated and kernel-checked.
   `Local/AdjointB` now proves generic backward observation weights for arbitrary operation
   lists. Its `cov_eq_pullOps` identifies the actual `Dag.cov` with the initial auxiliary
   slot coefficient obtained by pulling back the root weights through `sideB`. This
@@ -974,8 +975,8 @@ chunk before choosing.
   preserves auxiliary weights and gives exact backward identities for fresh-copy
   serving blocks and both linked and unlinked addition steps. Leaf steps preserve
   auxiliary weights, including through the earlier compiler prefix. This module checks
-  at 1,093 MiB. Composing these block identities with the pending-use allocation
-  invariant to prove the full use recurrence is still required.
+  at 1,093 MiB. The block identities and pending-use allocation invariant feed the
+  full recurrence theorem below.
   `Local/PendingWeightsB` now constructs the finite pending-use frontier, proves its
   exact disjoint transition into survivors, free uses and the linked use, and identifies
   its terminal observation with `rootWeights`. The compiler invariant supplies exact
@@ -983,7 +984,7 @@ chunk before choosing.
   `Local/ServingWeightsB` identifies the actual serving-slot observation list with the
   kept pivot followed by consecutive fresh slots, and proves that pulling back internal
   copies gives the pivot exactly the sum of free-use weights. These modules check at
-  1,105 and 1,087 MiB. The remaining composition should track the frontier
+  1,105 and 1,087 MiB. The composition tracks the frontier
   observation plus the proposed garbage weights restricted to slots not yet allocated:
   each reverse step preserves this combined boundary, the terminal boundary is the
   root observation and the initial boundary is the proposed garbage coefficient vector.
@@ -992,10 +993,14 @@ chunk before choosing.
   `Local/LeafBoundaryWeightsB` now proves its preservation through every leaf step,
   including backward propagation through the already compiled prefix, when each
   newly allocated slot has its named use coefficient. It checks at 1,090 MiB.
-  The remaining internal-step proof can split off surviving uses, the kept first
-  free use, and the optional linked use. Fresh-copy pullback gives the pivot b(n);
-  addition sends b(n) to both arguments and retains the linked-use contribution on
-  the other operand. This must still be proved and composed over all nodes.
+  `Local/InternalBoundaryWeightsB` proves both linked and unlinked addition cases:
+  fresh-copy pullback gives the pivot b(n), addition sends b(n) to both arguments,
+  and the linked-use contribution remains on its operand. It checks at 1,110 MiB.
+  `Local/CovarianceRecurrenceB.UseRecurrence.cov_eq` now composes all node cases
+  and identifies the actual `Dag.cov` with the proposed initial garbage vector, from
+  local use/allocation equations, root weights and the final allocation bound. It checks
+  at 1,095 MiB. No concrete compiler prefix is reduced. The next concrete step is
+  generating the use and slot coefficient data and kernel-checking these equations.
   The source-key and allocation facts
   above provide direct slots for instantiating the recurrence. Then finish data-wire
   nesting, integrate the global node/costs and switch the supplier and retune.
