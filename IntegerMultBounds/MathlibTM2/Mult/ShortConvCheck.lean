@@ -1,6 +1,6 @@
 module
 
-import IntegerMultBounds.MathlibTM2.Mult.ShortConvProgram
+import IntegerMultBounds.MathlibTM2.Mult.ShortConvUnary
 import IntegerMultBounds.MathlibTM2.Mult.ChirpRing
 import Lean.Util.CollectAxioms
 
@@ -13,6 +13,14 @@ import Lean.Util.CollectAxioms
 /-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.chirpAR_approx' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in
 #print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.chirpAR_approx
+
+/-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.withHeader_exec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.withHeader_exec
+
+/-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.fromUnary_exec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.fromUnary_exec
 
 open Lean in
 run_cmd do

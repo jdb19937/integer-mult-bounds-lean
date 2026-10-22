@@ -118,4 +118,14 @@ theorem program_exec (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) 
     simp [S₄, S₃, S₂, S₁, Function.update_apply, hxs, hys,
       ne .out .xs (by decide), ne .out .ys (by decide)]
 
+/-- Packing both operands and clearing their copies is linear in the padded stream size. -/
+theorem overhead_le (r w a b : ℕ) (ha : a ≤ r) (hb : b ≤ r) :
+    4 * ((r - a) * w) + 6 * (a * w) +
+      4 * ((r - b) * w) + 6 * (b * w) + 4 * (r * w) + 24 ≤ 16 * (r * w) + 24 := by
+  have hA : (r - a) * w + a * w = r * w := by
+    rw [← Nat.add_mul, Nat.sub_add_cancel ha]
+  have hB : (r - b) * w + b * w = r * w := by
+    rw [← Nat.add_mul, Nat.sub_add_cancel hb]
+  omega
+
 end IntegerMultBounds.MathlibTM2.Mult.ShortConv
