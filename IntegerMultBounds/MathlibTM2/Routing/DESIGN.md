@@ -570,8 +570,27 @@ invariant; readiness and price survive stream updates. `BinaryExchangeChain`
 executes arbitrary schedules by the actual binary-call theorem, without execution
 oracles. `BinaryReservoirPlacement` specializes it to both concrete three-call
 directions, preserving the exact reservoir-placement action and restoring all
-metadata. Constructing the common concrete bank and joining placement to R2 and
-terminal routing remain open.
+metadata. `BinaryExchangeLayoutCall` discharges separation obligations using one
+role bank; `BinaryExchangeInput` establishes readiness without zeroing permitted
+spectator words. `BinaryScheduleLayout` shares headers and scratch across stages,
+allocating only three coordinate-input tapes per stage (34 extra tapes for three
+calls). `CommonBankReservoir` executes both directions from one concrete initial
+bank, deriving all call invariants and restoring generated metadata. Joining
+placement to R2 and terminal routing remains open. The placement input contract
+now constrains only owned roles so other raw inputs can coexist.
+`EmbedStream` and `ExactSelectiveEmbedded` execute the actual R2 program inside
+a larger bank with identical time and a complete stream-only frame.
+`RepairInputFrame` proves its raw configuration survives placement's stream
+permutation. `SharedScheduleLayout` and `PlacementRepairLayout` now provide the
+joint bank, sharing exactly the stream. `SharedScheduleInput` overlays raw core
+and placement words, proving both input contracts coexist. The numeric layout
+proofs are generic in core tape count and instantiated last.
+`RepairStreamFrame` transports R2 scratch requirements across stream permutations.
+`PlacedExactSelective` executes forward placement, the actual embedded exact
+primitive and inverse placement, with summed costs and a stream-only final frame.
+Its entry point still takes raw R2 words and binary-call readiness: the concrete
+joint-bank instantiation, physical-shear semantic bridge, terminal integration and
+raw R2 compiler remain open.
 
 The elementary terminal engine is now executed. `LowBitXor` routes by the new
 lowest bit and merges by the ordinary lowest bit; monotonicity within each route

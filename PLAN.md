@@ -54,7 +54,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 700 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 701 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -431,10 +431,36 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    `BinaryExchangeChain` executes structural schedules without per-call execution
    premises. `BinaryReservoirPlacement` now executes the complete three-call
    forward and reverse placement schedules from binary coordinates, including
-   all setup and cleanup, with only the stream changed. Building the concrete
-   common layout/input bank and composing placement with R2 and terminal routing
-   remain required. Complete
-   placement/R2/terminal composition remains open.
+   all setup and cleanup, with only the stream changed. `BinaryExchangeLayoutCall`
+   discharges every single-call layout/separation premise from a common role bank;
+   `BinaryExchangeSlots` numbers it with 28 tapes beyond the host bank, sharing
+   scratch between phases. `BinaryExchangeInput` constructs its input bank and
+   proves readiness while preserving arbitrary permitted borrowed spectator
+   words. `BinaryScheduleLayout` gives each stage three coordinate-input tapes
+   while sharing all scratch, headers and host words; its explicit numbering uses
+   only 34 tapes beyond the host bank for three calls. `BinaryScheduleCalls`
+   derives simultaneous readiness from this one input bank. `CommonBankReservoir`
+   now executes both placement directions from that concrete bank, with all
+   generated metadata cleared and arbitrary permitted spectators restored.
+   Its input assumptions are scoped to owned roles, permitting other phases'
+   configuration tapes to coexist. `EmbedStream` lifts stream-only executions
+   with identical time and exact outside-bank restoration;
+   `ExactSelectiveEmbedded` applies it to the actual R2 program in any larger
+   common bank. `RepairInputFrame` proves raw R2 configuration survives stream
+   permutations. `SharedScheduleLayout` constructs disjoint core and placement
+   banks sharing only the stream; `PlacementRepairLayout` instantiates it for R2.
+   `SharedScheduleInput` overlays the two input banks and proves every core word
+   and every placement input is retained, without assuming zero spectator words.
+   The indexing proofs remain generic until the concrete R2 tape count is
+   instantiated, avoiding costly count expansion. `RepairStreamFrame` proves
+   stream permutations preserve required R2 scratch blankness.
+   `PlacedExactSelective` now executes forward placement, the actual embedded R2
+   program and reverse placement, derives all intermediate invariants, restores
+   every tape except the stream and charges all three phases. It still assumes
+   raw R2 configuration and initial binary-call readiness; instantiating the full
+   joint input-bank entry point, connecting the conjugated ideal to the desired
+   physical shear, terminal-bank integration and uniform raw R2 input generation
+   remain required.
    `RouterGeometry` resolves the shared-width constraint using
    `d = (n-K)/(K+3G)`: all residues share borrowed width `dG`, the complete field
    bank has width exactly `n`, and the terminal suffix is shorter than `2K+3G`

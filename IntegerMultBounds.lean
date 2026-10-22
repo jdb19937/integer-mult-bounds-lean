@@ -86,6 +86,13 @@ public import IntegerMultBounds.MathlibTM2.Routing.ExchangeExponents
 public import IntegerMultBounds.MathlibTM2.Routing.ExchangeBinarySetup
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryBlockExchange
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryReservoirPlacement
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryExchangeInput
+public import IntegerMultBounds.MathlibTM2.Routing.CommonBankReservoir
+public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveEmbedded
+public import IntegerMultBounds.MathlibTM2.Routing.RepairInputFrame
+public import IntegerMultBounds.MathlibTM2.Routing.PlacementRepairLayout
+public import IntegerMultBounds.MathlibTM2.Routing.SharedScheduleInput
+public import IntegerMultBounds.MathlibTM2.Routing.PlacedExactSelective
 public import IntegerMultBounds.MathlibTM2.Routing.CompiledElementarySemantics
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
