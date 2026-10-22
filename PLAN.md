@@ -339,8 +339,23 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    the targets with complete `K`-bit segments; `ProfileCompiler` proves their R2
    dimensions, target positions, active masks, source-descriptor validity and
    common borrowed-width bound. `TerminalShears` composes the bulk passes with at
-   most `K` singleton XORs and proves no target is omitted. Execution of those
-   singleton XORs, physical placement and generated configuration remain open.
+   most `K` singleton XORs and proves no target is omitted.
+   The elementary execution path is now proved: `LowBitXor` gives stable
+   route/merge semantics; `ElementaryXorExec` executes two width-at-most-one bit
+   exchanges around the scan. `ElementaryRouting` runs any instruction stream
+   with one fixed program and tape bank, loading and clearing each six-word
+   configuration and finally restoring the raw input. Its full bank changes only
+   at the record stream, with explicit costs for every phase.
+   `ElementaryInstructionSemantics` connects the executed rank permutation to
+   the simultaneous terminal shear and bounds the shared-geometry instruction
+   count by `131G`. `ElementaryLoopCost` proves a closed total bound, linear in
+   call count times volume and restored-bank size, plus total configuration length;
+   `RouterTerminalCost` specializes it to the shared terminal geometry when the
+   address width fits the record width. `ElementarySharedSetup` executes both
+   binary-to-unary counters, zero-field construction and first-mask copying,
+   with exact cost and a dimension-independent program. It establishes the shared
+   invariant from binary input tapes. Uniform generation of these inputs and
+   instruction/header words, plus full setup/router/cleanup composition, remain open.
 3. **Coordinate placement and prepared execution proved; setup open:** `BlockExchange` specifies
    equal-width interval interchanges, and `ReservoirPlacement` composes at most
    three of them to populate the physical `b,y,t,u` layout from the selected bank.
@@ -360,7 +375,13 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    the target-field-only profiles in item 2 remain reusable local lemmas.
 4. Execute uniform generation of all raw R2 configuration words: source and mask
    descriptors, dimensions and canonical headers. Charge generation and cleanup;
-   raw words cannot remain an unpriced input oracle.
+   raw words cannot remain an unpriced input oracle. `ConfigurationWord`,
+   `ConfigurationLoad` and `ConfigurationBatch` now execute framed raw-word
+   loading and input archiving with unchanged left stacks; batch loading costs
+   at most six times the framed input length plus one. The elementary path
+   supplies an actual six-word loader, cleanup and fixed loop, not a per-call
+   prepared-state or execution oracle. Producing those raw words and building
+   the persistent counters are still required.
 5. Amortize setup for long records and supply the executed short-record fallback,
    preserving spectators in both regimes.
 6. Compose the full arbitrary-coordinate router and audit its total cost and

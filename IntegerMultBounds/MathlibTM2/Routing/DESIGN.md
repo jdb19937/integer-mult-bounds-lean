@@ -561,8 +561,43 @@ forward and reverse schedules and charges every call, leaving only the stream
 changed. Canonical header banks are still initially prepared inputs; generation,
 installation and final cleanup remain unproved at this boundary.
 
-Complete composition with executed R2 calls and terminal-coordinate operations,
-uniform configuration generation and amortization also remain open. Those and the short-record fallback remain mandatory R3 gates.
+The elementary terminal engine is now executed. `LowBitXor` routes by the new
+lowest bit and merges by the ordinary lowest bit; monotonicity within each route
+class proves the exact XOR permutation. `LowBitXorCode` supplies a fixed finite
+automaton reading two masks. `LowBitXorExec` runs it on an arbitrary outer row
+count with explicit scan cost; when record width dominates address width the
+scan cost is at most `108` times record volume. `ElementaryXor` and
+`ElementaryXorExec` conjugate this scan by two width-at-most-one exchanges to
+handle any distinct source and target, preserving all spectators and scratch.
+
+`ConfigurationWord`, `ConfigurationLoad` and `ConfigurationBatch` execute the
+framed configuration reader, using a right-stack rewind archive so every left
+stack stays empty between calls. They prove exact installed words, preserved
+unrelated registers and scratch cleanup; loading a batch costs at most six times
+its framed input length plus one. `ElementarySetup` loads the five interchange
+headers and source mask while retaining the shared counters. `ElementaryCall`
+composes actual setup, XOR execution and cleanup, restoring its reusable bank.
+
+`ElementaryLoop` reads any instruction sequence with one fixed program and tape
+bank. Its explicit cost ledger follows the actual successor states, including
+all per-call setup, routing, cleanup and loop guards. `ElementaryRouting` rewinds
+the archive and restores the complete initial register bank except for the
+permuted stream. `ElementaryInstructionSemantics` identifies this rank permutation
+with the terminal simultaneous shear and inherits the `131G` call-count bound.
+These results still require shared counter setup, valid canonical raw words and
+an initially empty archive. `ElementaryLoopCost` bounds the entire execution by
+call count times a fixed volume-and-bank term, plus total configuration length.
+Archived prefixes do not inflate later calls. `RouterTerminalCost` applies the
+`131G` count to this ledger. These bounds require address width at most record
+width. `ElementarySharedSetup` executes shared setup from binary input tapes,
+establishes the shared scan invariant and proves its exact cost. The code is
+independent of the numeric dimensions. Generating those binary inputs and the
+instruction words, and composing shared setup with routing and final cleanup,
+remain unproved.
+
+Complete composition with executed R2 calls, shared setup and raw configuration
+generation, long-record amortization and the short-record regime remain mandatory
+R3 gates.
 In particular, computable Lean functions are not yet a priced tape compiler.
 
 ## Completion gates
