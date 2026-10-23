@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.ShortConvPacking
+public import IntegerMultBounds.Spec.SignedRingProductFacts
 
 /-! # Shared short-convolution execution
 
@@ -109,6 +110,35 @@ theorem diskGrid_block (p r : ℕ) (x : List GaussianInt)
       hx x[c.val] (List.getElem_mem hi)
   · rw [block_eq_zero x (by omega)]
     simp
+
+/-- Truncation preserves the disk bound, so output numerators fit the signed tape words. -/
+theorem coeff_diskGrid (p l : ℕ) (x y : List GaussianInt)
+    (hxy : x.length + y.length ≤ 2 ^ l + 1)
+    (hx : ∀ z ∈ x, z.re ^ 2 + z.im ^ 2 ≤ (2 : ℤ) ^ (2 * p))
+    (hy : ∀ z ∈ y, z.re ^ 2 + z.im ^ 2 ≤ (2 : ℤ) ^ (2 * p)) :
+    DiskGrid p (fun c => (coeff p l x y c).re) (fun c => (coeff p l x y c).im) := by
+  let X := fun (_ : ℕ) => recOf (2 ^ l) (block x)
+  let Y := fun (_ : ℕ) => recOf (2 ^ l) (block y)
+  have hX : SynthErr.SupLe 0 (rpGrid p X) 1 :=
+    fun _ _ c => (diskGrid_block p (2 ^ l) x hx).norm_le c
+  have hY : SynthErr.SupLe 0 (rpGrid p Y) 1 :=
+    fun _ _ c => (diskGrid_block p (2 ^ l) y hy).norm_le c
+  have hnorm := SynthErr.pwC_supLe p hX hY
+  have hdisk := rp_diskGrid_of_norm p (rpOut p X Y) 0 (fun c => by
+    rw [rpGrid_rpOut]
+    exact hnorm 0 (by decide) c)
+  have hout : rpOut p X Y = fun _ => coeff p l x y :=
+    funext (rpOut_block p l x y hxy)
+  simpa only [hout, rpRec] using hdisk
+
+/-- Signed-word decoding recovers both output numerators without modular aliasing. -/
+theorem coeff_fits (p l w : ℕ) (x y : List GaussianInt)
+    (hxy : x.length + y.length ≤ 2 ^ l + 1) (hw : p + 2 ≤ w)
+    (hx : ∀ z ∈ x, z.re ^ 2 + z.im ^ 2 ≤ (2 : ℤ) ^ (2 * p))
+    (hy : ∀ z ∈ y, z.re ^ 2 + z.im ^ 2 ≤ (2 : ℤ) ^ (2 * p)) (c : Fin (2 ^ l)) :
+    compValue (compWord w (coeff p l x y c).re) = (coeff p l x y c).re ∧
+    compValue (compWord w (coeff p l x y c).im) = (coeff p l x y c).im :=
+  (coeff_diskGrid p l x y hxy hx hy).fits hw c
 
 /-- Actual per-block machine bound, with the packed multiplication priced by its proved bound. -/
 theorem shortConv_cost_le (p l w : ℕ) :

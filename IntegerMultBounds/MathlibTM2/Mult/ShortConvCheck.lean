@@ -1,7 +1,7 @@
 module
 
 import IntegerMultBounds.MathlibTM2.Mult.ShortConvUnary
-import IntegerMultBounds.MathlibTM2.Mult.ShortConvBatchUnary
+import IntegerMultBounds.MathlibTM2.Mult.ShortConvDecode
 import IntegerMultBounds.MathlibTM2.Mult.ChirpRing
 import Lean.Util.CollectAxioms
 
@@ -30,6 +30,18 @@ import Lean.Util.CollectAxioms
 /-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.batchFromUnary_exec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in
 #print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.batchFromUnary_exec
+
+/-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.Fixed.closed_exec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.Fixed.closed_exec
+
+/-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.Fixed.output_coeff' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.Fixed.output_coeff
+
+/-- info: 'IntegerMultBounds.MathlibTM2.Mult.ShortConv.Fixed.output_err' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms IntegerMultBounds.MathlibTM2.Mult.ShortConv.Fixed.output_err
 
 open Lean in
 run_cmd do

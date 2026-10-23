@@ -31,6 +31,26 @@ theorem rpStream_congr {r M : ℕ} (X Y : ℕ → Fin r → GaussianInt)
   intro n hn
   rw [h n (List.mem_range.mp hn)]
 
+/-- Extract a coefficient at its actual flattened stream position. -/
+theorem rpStream_get {r M : ℕ} (X : ℕ → Fin r → GaussianInt)
+    (n : ℕ) (hn : n < M) (c : Fin r) :
+    (rpStream M X)[n * r + c.val]? = some (X n c) := by
+  induction M with
+  | zero => omega
+  | succ M ih =>
+      have hsplit : rpStream (M + 1) X = rpStream M X ++ List.ofFn (X M) := by
+        simp [rpStream, List.range_succ]
+      rw [hsplit]
+      by_cases h : n < M
+      · have hm : n * r + r ≤ M * r := by
+          simpa only [Nat.succ_mul] using Nat.mul_le_mul_right r (Nat.succ_le_of_lt h)
+        rw [List.getElem?_append_left (by rw [length_rpStream]; omega)]
+        exact ih h
+      · have he : n = M := by omega
+        subst n
+        rw [List.getElem?_append_right (by rw [length_rpStream]; omega)]
+        simp [length_rpStream, c.isLt]
+
 variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U}
   {rg : RpReg → Fin T} {ι : Fin 91 → Fin T}
 
