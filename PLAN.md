@@ -786,6 +786,41 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    from compact input words and shared blanks, and proves each output equals
    `repairDescriptorWord`. Connecting this bank to the header/placement repair
    execution and generating compact inputs from routing profiles remain open.
+   `RepairCompactFrame` proves all descriptors are covered and every other raw
+   input survives. `RepairCompactData` establishes the complete existing
+   `RepairSetupData` from descriptor-free initial data. `RepairCompactInstall`
+   executes compact compilation followed by the actual complete R2 installer,
+   derives its intermediate readiness from the initial bank and sums both costs.
+   Exact-repair execution, generated-descriptor cleanup and header/placement
+   integration for this compact path remain required. `CompactDescriptorClean`
+   and `RepairCompactClean` now erase generated tables after an arbitrary stream
+   update, with exact cost and full restoration. `RepairCompactScratch` preserves
+   all exact-repair scratch and installed destinations. `ExactSelectiveCompact`
+   composes actual compact compilation, complete exact R2 execution and table
+   erasure, restoring every nonstream tape and charging all phases. Width/mask
+   and header/placement integration for this compact path remain required.
+   `RepairCompactWidthData` now proves generated row/key-mask fields followed
+   by compact compilation establish the full repair setup contract.
+   `RepairCompactWidths` executes both width jobs inside the extended compact
+   bank, with only those two outputs changed and all generation work charged.
+   `RepairCompactWidthFrame` preserves compact inputs, installed destinations
+   and exact-repair scratch. `ExactSelectiveCompactConfiguration` now composes
+   width generation, actual compact exact repair and width cleanup, restoring
+   every nonstream tape and charging all phases. Classifier-mask generation,
+   header generation and placement integration for this compact path remain open.
+   `RepairCompactInputFrame` supplies the compact core embeddings;
+   `RepairCompactClassifierFrame` preserves compact inputs, width workspace,
+   exact-repair scratch, installed targets and the stream under mask generation.
+   `RepairCompactClassifierBank` connects the concrete sixteen-tape classifier
+   workspace to the exact generated compact configuration bank. Composing actual
+   classifier execution, compact repair and mask cleanup remains required.
+   `ExactSelectiveCompactGeneratedClassifiers` now executes compact exact repair
+   from the generated-mask bank, deriving every readiness condition from initial
+   mask-free inputs. This theorem starts after mask generation and charges repair
+   only. `ExactSelectiveCompactClassifiers` now composes actual binary-dimension
+   mask generation, compact exact repair and final mask erasure, restoring every
+   nonstream tape and charging the full execution. Header generation and
+   forward/inverse placement integration for this compact path remain open.
    The next selector gates are:
    (a) execute a streaming gap/entry expander from sparse positions, generating
    the distinguished absent-source selector in gaps and charging every output;
