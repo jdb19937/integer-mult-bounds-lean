@@ -571,26 +571,50 @@ a free arbitrary-source read or a zero-initialized borrowed-control assumption.
 
 These packages prioritize shared arithmetic and the new fused schedule. The older
 [NearOne design](IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md) remains a mathematics
-index, but its status and estimates are historical: `Mult/ShortConv` and `Mult/ChirpRing`
-are absent from the current checkout, despite being listed there as completed.
-Locate reusable versions in history or reconstruct those bridges before claiming S1
-complete. The existing chirped-forward and phase-cell inverse/error theorems remain.
+index; its broader status and estimates are historical. The `Mult/ShortConv` and
+`Mult/ChirpRing` bridges have been restored, and S1 now supplies an executed shared
+batch primitive. The existing chirped-forward and phase-cell inverse/error theorems
+remain available for the S2–S3 callers.
 
 | Package | Status | Deliverable and acceptance gate | Additional Lean, estimate |
 | --- | --- | --- | --- |
-| S1 shared short convolution | ⬜ | Pad and pack blocks, invoke the existing ring-product stage, extract coefficients, and establish exact register effects, rounding error, cost and scratch restoration. Shared by S2 and S3. | 1–3k |
+| S1 shared short convolution | ✅ | `ShortConv.Fixed.closed_exec` executes a fixed 117-tape batch program from raw blocks and unary dimensions. Packing, one shared ring-product call, exact coefficient extraction/decoding, rounding error, costs and scratch restoration are proved. Shared by S2 and S3. | Implemented |
 | S2 fast forward map | 🟡 math / ⬜ machine | Implement the chirped-correlation formula using S1, with executable coefficient tables, overlapping input windows and a proved forward-resampling contract. | 3–5k |
 | S3 fast inverse map | 🟡 math / ⬜ machine | Cell-interior products, boundary preparation/solve, coupling and recovery, with precision and actual line costs. Reuse the phase-cell mathematics and band primitives; fix the interface to S4–S5 before implementing a legacy whole-axis schedule. | 6–10k |
 | S4 grouped/fused execution | ⬜ | Ordered core/halo neighborhoods, overlap/cropping, reusable setup, error composition and full-tensor support. Combine S2–S3 with R4 so exposure is not repaid per axis. Preserve reserved chunks and restore layouts before subsequent phases. | 8–16k |
 | S5 boundary work | ⬜ | Fast boundary matrix operations required by the new parameter regime, including numerical stability, coefficient widths and actual tape costs. Specify this interface with S3–S4; the old band solve alone does not establish it. | 4–10k |
 | S6 outer integration | ⬜ | New sizing and precision, both resampling directions, bulk CRT/exposure and every changed cost matched into the final machine. Depends on R4, S4–S5 and M4; closes M11 with M9–M10. | 3–6k |
 
-Estimated resampling/outer-integration total: **25–50k additional or substantially
+Estimated remaining resampling/outer-integration total (S2–S6): **24–48k additional or substantially
 revised Lean lines**, excluding R1–R4, M9–M10 and generated data. This is a lower-confidence
 scope estimate, especially for fused execution and boundary work, not a delivery-time
 estimate. The rows partition the intended work; shared helpers should be proved once.
-S1 is the smallest independent implementation milestone. Neither S1 nor R1 alone
-raises kappa; integrate a new public bound only when all affected costs close.
+S1 is complete independently of root imports and Routing. For `r = 2^l`, disk-grid
+inputs, `1 ≤ p`, `w ≥ p + 2`, block lengths `a,b ≤ r` and `a+b ≤ r+1`,
+`ShortConv.Fixed.closed_exec` generates reusable counters and the header from unary
+dimensions, packs the raw batch, invokes one ring-product program and clears all
+generated workspace. Only the output register changes; raw inputs, dimensions,
+all scratch, user state and spectator input/output stacks are restored. Empty batches
+and zero-length blocks are covered. With `M` records, `ShortConv.Fixed.cost` bounds
+execution by
+`M (rpRecBound + 44rw + 50) + rpFixCost + 46rw + 8w + 18l + ldrHeaderCost + 2|header| + 63`;
+setup and cleanup outside the per-record term are paid once for the batch.
+
+`ShortConv.Fixed.output_coeff` reads the actual pair-symbol word at record/coefficient
+position `(n r + c) w` and recovers the Gaussian-integer convolution truncated by
+`2^(p+l)`, without modular aliasing. `output_err` bounds its decoded, rescaled error
+by `2r/2^p`. `ShortConv.copySlice_coeffs_exec` also executes interval extraction
+with restored source, counters and scratch, at cost `6 start·w + 10 len·w + 16`.
+`ShortConvCheck` audits the shared namespace: only `propext`, `Classical.choice` and
+`Quot.sound` occur. The final five changed modules passed guarded single-file checks
+below 1.85 GiB each; the standalone audit target also passed after rebasing onto master.
+
+Remaining caller work includes binary-to-unary dimension conversion, chirp-specific
+selection/reversal, overlapping-window gathering, coefficient-table production and
+quantization, and composition with subsequent output arithmetic. `ShortConv.chirpAR_approx` (in `Mult/ChirpRing`)
+supplies the analytic correlation/error bridge; it does not execute those caller
+operations. S2–S6 remain open. Neither S1 nor R1 alone raises kappa; integrate a new
+public bound only when all affected costs close.
 
 ## Long-term source and proof obligations
 
