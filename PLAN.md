@@ -587,8 +587,28 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    concrete generation, actual exact repair and final mask erasure in one
    execution theorem. It starts with both masks blank, restores every nonstream
    tape and charges every phase. The phase-width guard follows from the actual
-   routing parameters. Placement/concrete initial-bank integration remains open;
-   sparse selectors and remaining binary/raw headers are still supplied.
+   routing parameters. The placement and concrete-bank integration below
+   retain supplied sparse selectors and remaining binary/raw headers.
+   `ClassifierPlacementLayout` now gives a shared placement/repair bank with
+   disjoint classifier workspace; `RepairClassifierInputFrame` preserves the
+   reduced configuration and binary dimensions under stream updates.
+   `ExactSelectiveClassifiersEmbedded` lifts the complete generated-mask repair
+   execution into any larger bank with the identical step count and nonstream
+   frame. `ClassifierRepairExec` gives
+   the verified complete program under named `classifierRepairProgram` and
+   `classifierRepairPrice` interfaces. `PlacementAround` proves reusable
+   forward-placement/core-permutation/inverse composition, retaining nonstream
+   tapes and charging all three phases. `ClassifierRepairMoved` transfers every
+   initial readiness fact across an arbitrary prior record permutation.
+   `PlacedClassifierRepair` now instantiates actual forward placement, complete
+   classifier-generated exact repair and inverse placement in any larger bank,
+   restoring all nonstream tapes and charging every phase.
+   `JointBankClassifierRepair` now derives all placement readiness from the
+   concrete overlaid initial bank and executes the full placed repair program,
+   with both generated classifier destinations initially blank. Binary sparse
+   selector tables and remaining dimensions/headers are still supplied; full
+   matching scheduling, terminal-table generation and final amortization remain
+   required for R3.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
    phases charged. `BinaryFullMask` identifies unary conversion with the exact

@@ -128,6 +128,13 @@ public import IntegerMultBounds.MathlibTM2.Routing.ClassifierBankFrame
 public import IntegerMultBounds.MathlibTM2.Routing.ClassifierBankRepair
 public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveGeneratedClassifiers
 public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveClassifiers
+public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveClassifiersEmbedded
+public import IntegerMultBounds.MathlibTM2.Routing.ClassifierPlacementLayout
+public import IntegerMultBounds.MathlibTM2.Routing.RepairClassifierInputFrame
+public import IntegerMultBounds.MathlibTM2.Routing.ClassifierRepairExec
+public import IntegerMultBounds.MathlibTM2.Routing.PlacementAround
+public import IntegerMultBounds.MathlibTM2.Routing.PlacedClassifierRepair
+public import IntegerMultBounds.MathlibTM2.Routing.JointBankClassifierRepair
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField

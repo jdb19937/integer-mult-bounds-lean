@@ -937,5 +937,32 @@ exact-repair and classifier-cleanup program. Both raw mask destinations begin
 blank; all nonstream tapes return to their initial contents, and the bound
 includes both mask generators, exact repair and mask erasure. The phase-block
 width guard is derived from the actual routing parameters. This theorem still
-uses the supplied descriptor selectors and remaining dimensions/headers;
-placement and concrete initial-bank readiness remain to be integrated.
+uses supplied descriptor selectors and remaining dimensions/headers;
+placement and concrete-bank integration follow below.
+
+`ClassifierPlacementLayout` extends the shared placement bank to the complete
+classifier-generated repair core. Every classifier workspace tape is disjoint
+from placement metadata. `RepairClassifierInputFrame` preserves the reduced
+configuration and binary dimensions under stream updates.
+`ExactSelectiveClassifiersEmbedded` lifts the complete repair execution into
+any larger bank with unchanged time and a stream-only frame. The placed
+execution and concrete input-bank readiness are derived below.
+
+`ClassifierRepair` names the complete generated-classifier program and price;
+`ClassifierRepairExec` verifies their execution interface. `PlacementAround`
+proves the structural forward-placement/core-permutation/inverse composition,
+including nonstream restoration and all three costs. Applying it to classifier
+repair uses the readiness-transfer and placed-execution theorems below.
+
+`ClassifierRepairMoved` derives all exact-repair readiness conditions after an
+arbitrary prior record permutation. `PlacedClassifierRepair` instantiates the
+actual forward-placement/classifier-generated-repair/inverse execution in any
+larger bank, charging all phases and restoring every nonstream tape. Its
+placement-call readiness is derived by the concrete entry point below.
+
+`JointBankClassifierRepair` derives all placement-call readiness from the
+concrete overlaid binary input bank, then executes forward placement, full
+classifier-generated exact repair and inverse placement. Both classifier
+outputs begin blank, all nonstream tapes are restored and every phase is
+charged. Sparse binary selector tables and remaining dimensions/headers are
+still supplied; this does not close the full matching router or its amortization.
