@@ -966,3 +966,61 @@ classifier-generated exact repair and inverse placement. Both classifier
 outputs begin blank, all nonstream tapes are restored and every phase is
 charged. Sparse binary selector tables and remaining dimensions/headers are
 still supplied; this does not close the full matching router or its amortization.
+
+`CanonicalHeaderValue` proves canonical binary representations are uniquely
+determined by their numeric value. It identifies the existing executed padded
+binary normalization with the exact canonical list used by R2.
+`RoutingHeaderCopy` generates any R2 header from a live padded numeric operand,
+restoring source and scratch with exact linear cost. Numeric operand generation,
+the ten-header bank and integration into placed repair remain open.
+
+`CanonicalHeaderJob` and `CanonicalHeaderBatch` execute arbitrary fixed header
+lists using shared scratch. The structural proof derives every intermediate
+readiness condition from initial inputs and register separation. Exact total
+cost, destination contents, unrelated-tape preservation and output length bounds
+are proved. The concrete ten-header bank, operand generation and integration
+with repair still remain open.
+
+`HeaderBankLayout` and `HeaderBank` place an indexed bank of canonical-header
+jobs in an arbitrary core with one source per output and two shared scratch
+tapes. `RepairHeaderBank` instantiates and executes all ten R2 headers at their
+actual raw configuration destinations, with distinct outputs, exact canonical
+contents and auxiliary restoration. Numeric operands are still supplied;
+operand generation, header erasure and repair integration remain open.
+
+`CanonicalHeaderClean` erases generated header banks after an arbitrary stream
+change, restoring the original bank everywhere else. Its closed upper bound
+charges two steps per supplied width bit plus the per-header loop overhead.
+Existing `ExchangeHeaderExec` already constructs shifted row/payload, power
+and width headers; connecting its canonical values to R2 can reuse that
+arithmetic generator instead of regenerating its large binary operands.
+
+`ExchangeCanonicalHeaders` identifies the existing arithmetic header generator's
+output with exact canonical swap lists. `RepairExchangeHeaders` proves either
+R2 interchange is precisely such an interval exchange and executes its exact
+five-header bank, with all costs charged and non-output tapes restored. Its row
+shift is spectator width plus counter width for the first swap, spectator width
+for the second; its gap shift is address width plus counter width only for the
+second swap. These counts can be copied from existing unary dimension tapes.
+Their construction/erasure, canonical row/width preparation and repair integration
+remain open.
+
+`RepairHeaderCounts` executes both shift-count constructions by copying fixed
+lists of live field-width tapes. It proves exact R2 lengths and one closed
+cost for either interchange. `RepairHeaderCountsClean` erases the generated
+counts, preserving every other tape with exact cost. Composition around the
+arithmetic header generator, canonical row/width preparation and integration
+with repair remain open.
+
+`RepairHeaderLayout` combines live dimensions and the arithmetic generator,
+reusing row/gap and two scratch roles for count construction.
+`RepairHeaderCountFrame` proves canonical-header writes preserve all count and
+dimension tapes and commute with count preparation. This establishes the state
+identity needed to erase counts after generating headers.
+
+`RepairHeaderGenerate` now executes count construction, arithmetic generation
+of five exact R2 headers, and count erasure as one program, restoring every
+non-output tape with a closed total bound. `RepairHeaderSources` constructs
+canonical row/width tapes from padded binary inputs with both inputs and
+scratch restored. Source preparation/erasure still needs joining around the
+header program, followed by both-swap composition and repair integration.

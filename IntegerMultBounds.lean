@@ -135,6 +135,14 @@ public import IntegerMultBounds.MathlibTM2.Routing.ClassifierRepairExec
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementAround
 public import IntegerMultBounds.MathlibTM2.Routing.PlacedClassifierRepair
 public import IntegerMultBounds.MathlibTM2.Routing.JointBankClassifierRepair
+public import IntegerMultBounds.MathlibTM2.Routing.RoutingHeaderCopy
+public import IntegerMultBounds.MathlibTM2.Routing.CanonicalHeaderBatch
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderBank
+public import IntegerMultBounds.MathlibTM2.Routing.CanonicalHeaderClean
+public import IntegerMultBounds.MathlibTM2.Routing.RepairExchangeHeaders
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderCountsClean
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderCountFrame
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderSources
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField
