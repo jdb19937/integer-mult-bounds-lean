@@ -143,6 +143,13 @@ public import IntegerMultBounds.MathlibTM2.Routing.RepairExchangeHeaders
 public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderCountsClean
 public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderCountFrame
 public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderSources
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryRepairHeaders
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryRepairHeaderPair
+public import IntegerMultBounds.MathlibTM2.Routing.RepairSharedHeaders
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderDataExec
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderFrame
+public import IntegerMultBounds.MathlibTM2.Routing.ClassifierRepairGeneratedHeaders
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderRepair
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField

@@ -1024,3 +1024,49 @@ non-output tape with a closed total bound. `RepairHeaderSources` constructs
 canonical row/width tapes from padded binary inputs with both inputs and
 scratch restored. Source preparation/erasure still needs joining around the
 header program, followed by both-swap composition and repair integration.
+
+`RepairHeaderSourceFrame` proves canonical-source preparation commutes with
+header writes. `RepairHeaderSourcesClean` erases prepared sources with a
+width-based bound. `BinaryRepairHeaders` now executes canonical-source
+preparation, count/header generation and all intermediate erasure from padded
+binary inputs, restoring every non-output tape with a closed total bound.
+Both-swap shared-scratch composition and integration into repair remain open.
+
+`BinaryRepairHeaderPair` executes both five-header generators from one shared
+binary row/width input pair; all non-output scratch may be reused. The proof
+derives second-bank readiness from the initial inputs, identifies all ten final
+header words and preserves every unrelated tape with both full costs charged.
+Concrete shared-bank placement and header-free repair integration remain open.
+
+`SharedHeaderRoles` and `SharedHeaderBankLayout` provide one concrete fifteen-tape
+workspace, sharing every non-output role across the two swaps.
+`RepairSharedHeaderLayout` maps the live dimensions, block input and ten outputs
+to actual raw repair configuration tapes. `RepairSharedHeaders` derives readiness
+from initial binary inputs and blank workspace and executes both generators on
+this placement. The header-free repair input contract and repair/cleanup
+composition remain open.
+
+`RepairPendingHeaderData` removes the ten canonical headers from the initial
+repair contract. `RepairHeaderData.generated` establishes the existing mask-free
+contract from the actual generated bank, preserving the remaining raw inputs.
+`RepairHeaderDataExec` joins this readiness result to actual shared-bank execution,
+deriving the dimension and block premises from the reduced data. Exact-repair
+composition and final generated-header erasure remain open.
+
+`RepairHeaderFrame` preserves classifier, width and descriptor auxiliary tapes,
+installed targets, raw descriptors/extras, all blank repair registers and the
+record stream under header generation. These structural lemmas provide the
+readiness transfer needed to invoke existing exact repair on the generated bank.
+
+`ClassifierRepairGeneratedHeaders` now executes actual classifier-generated
+exact repair on the generated-header bank using initial data with all ten headers
+omitted. All readiness obligations follow from the preserved initial frame.
+It starts after header generation and charges repair only; generation and final
+header erasure still need joining around this execution.
+
+`RepairHeadersClean` erases all ten generated headers while preserving an
+arbitrary changed record stream, with an exact price from canonical lengths.
+`HeaderRepair` now executes header generation, complete classifier-generated
+exact repair and final header erasure as one program, restoring every nonstream
+tape and charging all phases. Placement integration for this extended core and
+the remaining selector/dimension/matching/amortization gates are still open.
