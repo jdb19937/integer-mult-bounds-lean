@@ -738,3 +738,51 @@ reader and descriptor erasure. Its final bank differs only at the requested
 output; the bound includes compilation, interpretation and erasure. Binary
 selector frames remain inputs, so sparse-profile selector generation is still
 a required compiler stage.
+
+`BinaryFullMask` reuses unary conversion to generate the exact full-mask word.
+`BinaryZeroField` constructs a zero field from a binary width and clears its
+unary temporary. `BinaryFieldBatch` executes a structural list of either kind
+with shared scratch, initial-bank readiness only, and a sum of actual costs.
+Only listed destinations change. Instantiation in the concrete R2 setup bank
+and generation of sparse selector inputs remain required.
+
+`RepairWidthFields` instantiates paired generation at the actual raw R2 row
+and key-mask configuration registers. Six auxiliary tapes contain the two binary
+widths, one shared unary temporary and three shared scratch words. All other
+core words are preserved. Composition with the complete R2 installer remains open.
+
+`RepairPendingWidthData` omits the initial row and key-mask assumptions.
+`RepairWidthData` proves the generated bank, restricted to the actual core
+registers, satisfies `RepairSetupData` from those remaining assumptions alone.
+Thus these two generated words discharge the existing installer contract;
+executed composition with that installer remains required.
+
+`RepairWidthInstall` executes width generation followed by the complete R2
+metadata installer embedded in the larger bank. Intermediate data and scratch
+conditions follow from the initial bank, and the bound includes both phases
+with no embedding overhead. Repair execution, erasure of generated raw words
+and generation of the remaining configuration are still required.
+
+`RepairWidthFrame` proves generation preserves all blank registers and installed
+destinations required by exact repair. `RepairWidthClean` erases the two raw
+generated words after an arbitrary stream change in exactly twice the sum of
+the row and key widths plus five steps, restoring every other tape. Composition
+with actual repair execution remains open.
+
+`ExactSelectiveWidth` closes the execution chain for these two words: binary
+width generation, actual embedded exact R2, then raw-word erasure. It derives
+all intermediate invariants, restores every tape except the record stream, and
+charges all phases. Other raw configuration remains input, and the six-tape
+width bank is not yet integrated into the placement bank.
+
+`ExactSelectiveWidthEmbedded` lifts the complete generation/repair/cleanup
+execution into an arbitrary bank with identical time and a stream-only frame.
+`WidthPlacementLayout` instantiates a joint placement bank with those six extra
+core tapes, structurally separated from every placement register. Actual
+placement/exact-repair composition in that bank remains required.
+
+`PlacedExactSelectiveWidth` executes forward placement, the complete generated-
+width exact repair, then inverse placement. It derives intermediate repair and
+placement invariants from initial data, restores every nonstream tape and sums
+all phase costs. Concrete joint-input readiness and remaining configuration
+generation are still required.

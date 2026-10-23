@@ -497,7 +497,35 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    the interpreter’s exact order, with a bound in selector count and binary width.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
-   phases charged. Generating selector tables
+   phases charged. `BinaryFullMask` identifies unary conversion with the exact
+   full-mask word used by R2, and `BinaryZeroField` generates a zero field from
+   its binary width and clears the temporary unary counter. Both restore their
+   inputs and scratch with closed costs. `BinaryFieldJob` and `BinaryFieldBatch`
+   now execute fixed mixed banks of these generators with shared scratch, derive
+   every intermediate readiness condition from the initial bank, preserve all
+   non-output tapes, and sum every generation cost. `RepairWidthFields` now
+   instantiates the row and full-key-mask generators at the actual raw R2
+   configuration registers, using six additional tapes shared by both jobs.
+   `RepairWidthData` removes these two words from the initial data contract and
+   proves the literal generated bank satisfies the complete R2 setup-data contract
+   when the remaining configuration is supplied. `RepairWidthInstall` now executes
+   width generation followed by the complete metadata installer in the larger
+   bank, derives its intermediate input and scratch conditions, and sums both
+   costs. `RepairWidthFrame` preserves every exact-repair blank and installed
+   destination; `RepairWidthClean` erases the two generated raw words after an
+   arbitrary stream change, restores every other tape and charges the exact
+   cleanup cost. `ExactSelectiveWidth` now composes generation, actual exact R2
+   execution and generated-word cleanup, restores every tape except the stream,
+   and includes all three phases in its bound. Generation of the remaining
+   configuration remains required. `ExactSelectiveWidthEmbedded` preserves this
+   execution and exact step count in an arbitrary larger bank. `WidthPlacementLayout`
+   supplies the joint placement/generated-width bank and proves all six width
+   tapes disjoint from placement. `PlacedExactSelectiveWidth` now executes forward
+   placement, width generation, exact repair, raw-word cleanup and inverse
+   placement, deriving all intermediate invariants and restoring every nonstream
+   tape with all phase costs included. Instantiating its call readiness from
+   the concrete joint input bank and generating remaining configuration stay open.
+   Generating selector tables
    from sparse profiles and the complete R2 descriptor/header compiler remain open.
 5. Amortize setup for long records and supply the executed short-record fallback,
    preserving spectators in both regimes.
