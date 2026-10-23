@@ -98,6 +98,13 @@ public import IntegerMultBounds.MathlibTM2.Routing.PlacedSelectiveBits
 public import IntegerMultBounds.MathlibTM2.Routing.PlacedSelectiveShear
 public import IntegerMultBounds.MathlibTM2.Routing.DescriptorCompile
 public import IntegerMultBounds.MathlibTM2.Routing.DescriptorTableCompile
+public import IntegerMultBounds.MathlibTM2.Routing.DescriptorBatch
+public import IntegerMultBounds.MathlibTM2.Routing.RepairDescriptorBank
+public import IntegerMultBounds.MathlibTM2.Routing.RepairDescriptorContents
+public import IntegerMultBounds.MathlibTM2.Routing.RepairDescriptorData
+public import IntegerMultBounds.MathlibTM2.Routing.RepairDescriptorInstall
+public import IntegerMultBounds.MathlibTM2.Routing.RepairDescriptorClean
+public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveDescriptor
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField
@@ -109,6 +116,7 @@ public import IntegerMultBounds.MathlibTM2.Routing.RepairWidthClean
 public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveWidth
 public import IntegerMultBounds.MathlibTM2.Routing.WidthPlacementLayout
 public import IntegerMultBounds.MathlibTM2.Routing.PlacedExactSelectiveWidth
+public import IntegerMultBounds.MathlibTM2.Routing.JointBankExactSelectiveWidth
 public import IntegerMultBounds.MathlibTM2.Routing.DescriptorRows
 public import IntegerMultBounds.MathlibTM2.Routing.CompiledElementarySemantics
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear

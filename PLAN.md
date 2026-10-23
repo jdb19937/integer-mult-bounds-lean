@@ -495,6 +495,27 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    generation, loop tests and input restoration. `DescriptorTableCompile` proves
    that reversed selector frames produce source and optional-pattern tables in
    the interpreter’s exact order, with a bound in selector count and binary width.
+   `DescriptorJob` and `DescriptorBatch` now compile fixed descriptor banks
+   with shared scratch, restored selector inputs, initial-bank readiness only,
+   a non-output frame and a sum of every compilation cost. `DescriptorBank`
+   derives readiness from a concrete shared layout with two inputs per table and
+   twelve shared compiler/archive tapes. `RepairDescriptorBank` instantiates all
+   eleven actual R2 tables and raw configuration destinations.
+   `RepairDescriptorContents` proves destination injectivity, the exact intended
+   table at every output, and restoration of all auxiliary tapes.
+   `RepairDescriptorFrame` covers every descriptor and preserves all other raw
+   configuration. `RepairDescriptorData` removes all eleven initial descriptor
+   assumptions and proves the generated bank satisfies the complete setup-data
+   contract. `RepairDescriptorInstall` now composes actual eleven-table compilation
+   with the complete metadata installer, derives its intermediate conditions and
+   sums both costs. `DescriptorClean` and `RepairDescriptorClean` erase all
+   generated tables after an arbitrary stream change, restore the initial bank
+   elsewhere and charge an exact cost in table dimensions.
+   `RepairDescriptorScratch` preserves every repair scratch and installed target;
+   `ExactSelectiveDescriptor` now composes all eleven table compilations, actual
+   exact repair and descriptor erasure with a complete nonstream frame and all
+   phase costs included. Combining descriptor and width generators, placement
+   integration and sparse selector generation remain required.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
    phases charged. `BinaryFullMask` identifies unary conversion with the exact
@@ -523,8 +544,10 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    tapes disjoint from placement. `PlacedExactSelectiveWidth` now executes forward
    placement, width generation, exact repair, raw-word cleanup and inverse
    placement, deriving all intermediate invariants and restoring every nonstream
-   tape with all phase costs included. Instantiating its call readiness from
-   the concrete joint input bank and generating remaining configuration stay open.
+   tape with all phase costs included. `JointBankExactSelectiveWidth` derives
+   all placement readiness from the concrete overlaid initial bank and supplies
+   the generated-width repair inputs from its core words. The remaining raw
+   configuration generator is still required.
    Generating selector tables
    from sparse profiles and the complete R2 descriptor/header compiler remain open.
 5. Amortize setup for long records and supply the executed short-record fallback,

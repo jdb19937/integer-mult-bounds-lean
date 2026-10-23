@@ -786,3 +786,54 @@ width exact repair, then inverse placement. It derives intermediate repair and
 placement invariants from initial data, restores every nonstream tape and sums
 all phase costs. Concrete joint-input readiness and remaining configuration
 generation are still required.
+
+`JointBankExactSelectiveWidth` closes the concrete initial-bank entry point:
+placement readiness follows from the overlaid binary input words, and the core
+provides binary row/key widths with blank raw destinations. Generation, exact
+repair, cleanup and inverse placement use no intermediate readiness oracle.
+Other raw descriptors, masks and headers remain initial configuration inputs.
+
+`DescriptorJob` and `DescriptorBatch` execute a structural list of source-table
+compilers. Optional patterns use the existing padded source indices. All selector
+inputs and scratch are restored; only descriptor destinations change, and costs
+are summed. Initial-bank separation derives each intermediate readiness fact.
+Instantiation at the R2 descriptor bank and sparse selector generation remain open.
+
+`DescriptorBank` supplies a concrete core/auxiliary layout with two binary
+inputs per table and twelve shared compiler/archive tapes. `RepairDescriptorBank`
+instantiates the eleven actual R2 descriptor jobs at their raw configuration
+registers. Source-table words equal the actual optional-pattern words. Proving
+the final bank contents table by table, composing setup and generating sparse
+selector input tables remain required.
+
+`DescriptorBankContents` proves exact per-output contents for distinct targets
+and preservation of every auxiliary register. `RepairDescriptorContents` proves
+all eleven concrete destinations distinct and identifies each output with its
+actual R2 pattern table. Discharging setup assumptions from these generated
+contents and generating sparse binary selector inputs remain required.
+
+`RepairDescriptorData` supplies a contract without any of the eleven raw
+descriptor assumptions. From blank descriptor destinations, the literal compiler
+output satisfies the complete existing `RepairSetupData` contract. All other
+raw configuration words are preserved. Executed composition and sparse selector
+input generation remain required.
+
+`RepairDescriptorInstall` executes eleven-table compilation followed by the
+complete embedded metadata installer. Descriptor-free initial data, blank
+outputs and binary selector/width inputs derive every intermediate installer
+condition. The bound sums compilation and installation with no embedding
+overhead. Exact repair/cleanup composition and sparse selector generation remain.
+
+`DescriptorClean` gives structural erasure and restoration for arbitrary compiled
+descriptor banks after a disjoint stream changes, with an exact cost in table
+dimensions. `RepairDescriptorClean` specializes this execution to all eleven R2
+tables and restores every other tape. Composition with actual exact repair and
+sparse selector generation remain required.
+
+`ExactSelectiveDescriptor` executes compilation of all eleven raw tables,
+actual embedded exact R2 and descriptor erasure. `RepairDescriptorScratch`
+derives its blank/target invariants from initial data. Every nonstream tape
+returns to its initial value; the bound charges compilation, setup, core repair,
+installed cleanup and raw-table erasure. Binary selector inputs and other raw
+configuration remain supplied; width/descriptor generator composition and
+placement integration remain open.
