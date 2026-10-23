@@ -203,8 +203,14 @@ default build does not check them.
      `ShortConvBatchProgram.batchProgram_exec` now also packs two raw equal-block
      streams, runs one product call and clears the packed banks, restoring all other
      registers, at most `M (rpRecBound + 44rw + 50) + rpFixCost + 20` steps. Its reusable
-     symbol/padding/record counters and header are explicit shared setup inputs;
-     generation and cleanup of that batch setup still need composition.
+     symbol/padding/record counters and header are explicit shared setup inputs.
+     `ShortConvBatchUnary.batchFromUnary_exec` now generates both block-symbol counts,
+     both padding counts and the header from unary `p,l,w,a,b`, runs the batch and
+     clears every generated word. Its complete bound is
+     `M (rpRecBound + 44rw + 50) + rpFixCost + 46rw + 8w + 18l + ldrHeaderCost +
+     2|header| + 63`: the setup and cleanup costs are independent of the record count.
+     The unary record count remains an input dimension; binary dimension conversion
+     is still caller work.
      `ShortConvSlice.copySlice_coeffs_exec` copies a coefficient interval with the
      complete source and scratch restored; `slice_coeff_err` retains the rounding bound.
      S2/S3 still need table production, window schedules, chirp-specific interval
