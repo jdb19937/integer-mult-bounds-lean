@@ -849,7 +849,62 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    concrete overlaid initial bank. Every phase is charged and every nonstream
    tape restored. Compact profile inputs and remaining scalar/dimension words
    are still supplied; profile generation, full matching/terminal scheduling and
-   long/short-record amortization remain R3 gates.
+   long/short-record amortization remain R3 gates. `SparseSelectorGaps` now
+   identifies a whole zero interval with one compact gap update and proves
+   exact live-entry and trailing-zero compression identities. These are
+   specification lemmas for generating runs directly from sparse positions;
+   no executed profile-coordinate generation is claimed. `SparseCoordinateEmit`
+   now computes a compact gap by subtracting a live binary cursor from a live
+   target, serializes that gap and a live selector, then clears the gap scratch.
+   Its fixed program restores all inputs and scratch, changes only the compact
+   output stream and has exact cost `16 * coordinateWidth + 6 * selectorWidth + 25`.
+   Position traversal, cursor advancement and source-selector arithmetic remain
+   required before this is a complete profile generator. `SparseCursorAdvance`
+   now executes cursor replacement by the live target plus one, retaining target,
+   reusable binary one and arithmetic scratch, with exact cost
+   `10 * coordinateWidth + 10` under the explicit nonoverflow bound. Composition
+   with pair emission and target traversal remains required. `SparseCoordinateStep`
+   now composes computed gap/selector emission with cursor advancement, changing
+   only cursor and compact output and restoring all other tapes. Its exact cost
+   is `26 * coordinateWidth + 6 * selectorWidth + 35`. Loading and traversing
+   successive targets and generating source-selector coordinates remain open.
+   `SparseCoordinateCall` now executes one complete streamed iteration: load
+   target/selector frames into an archive, compute and emit the compact gap,
+   advance the cursor and erase loaded operands. Only input/archive, cursor
+   and compact output change, with exact cost
+   `32 * coordinateWidth + 12 * selectorWidth + 52`. The full traversal loop,
+   final rewind/cursor restoration and source-coordinate generation remain open.
+   `SparseCoordinateLoop` now traverses arbitrary ordered absolute-coordinate
+   streams with one fixed program, derives each iteration's readiness and proves
+   exact cost `entries * (32 * coordinateWidth + 12 * selectorWidth + 54) + 1`.
+   Its trace bank records the executed archive/cursor/output updates; closed
+   final-bank algebra, rewind and cursor restoration remain required.
+   `SparseCoordinateFrame` now proves the trace has exhausted input, archived
+   every original frame exactly in reverse, computed the explicit compact output,
+   reached the final target-plus-one cursor and preserved every spectator tape.
+   `SparseCoordinateCompile` now executes the initial test, full coordinate
+   traversal and final input rewind. The complete input/archive and all spectator
+   tapes are restored; only compact output and advanced cursor change. Its exact
+   total cost includes every loop iteration and rewind symbol. Saving/restoring
+   the original cursor and matching output to the compact compiler remain open.
+   `SparseCursorRestore` now restores a saved forward cursor and erases its copy.
+   `SparseCoordinateGenerate` composes cursor save, complete coordinate traversal,
+   input rewind and cursor restoration, changing only the compact output with
+   exact cost including every phase. Identifying this output with the compiler
+   input, generating target/source coordinates for actual profiles and handling
+   the terminal zero suffix remain required. `SparseCoordinateRuns` now proves
+   generated coordinate output is exactly `selectorRunFrames` in reverse run
+   order, has one compact entry per coordinate and satisfies compiler gap bounds
+   from ordered-coordinate readiness. Executed generation/compiler composition
+   and actual profile-coordinate correctness remain required.
+   `SparseCoordinateCoverage` proves dense expansion covers exactly the interval
+   from the initial cursor through the last target, including all gaps, and proves
+   a final zero-selector coordinate closes a terminal suffix at the exact width.
+   `CoordinateSelectorGenerate` now executes coordinate-to-compact generation,
+   dense selector expansion and intermediate compact-stream erasure, restoring
+   every non-output tape and charging all phases. Absolute coordinates are still
+   supplied; actual profile lookup correctness, terminal suffix integration and
+   descriptor compilation from these generated selector frames remain required.
    The next selector gates are:
    (a) execute a streaming gap/entry expander from sparse positions, generating
    the distinguished absent-source selector in gaps and charging every output;
