@@ -93,6 +93,13 @@ public import IntegerMultBounds.MathlibTM2.Routing.RepairInputFrame
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementRepairLayout
 public import IntegerMultBounds.MathlibTM2.Routing.SharedScheduleInput
 public import IntegerMultBounds.MathlibTM2.Routing.PlacedExactSelective
+public import IntegerMultBounds.MathlibTM2.Routing.JointBankExactSelective
+public import IntegerMultBounds.MathlibTM2.Routing.PlacedSelectiveBits
+public import IntegerMultBounds.MathlibTM2.Routing.PlacedSelectiveShear
+public import IntegerMultBounds.MathlibTM2.Routing.DescriptorCompile
+public import IntegerMultBounds.MathlibTM2.Routing.DescriptorTableCompile
+public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
+public import IntegerMultBounds.MathlibTM2.Routing.DescriptorRows
 public import IntegerMultBounds.MathlibTM2.Routing.CompiledElementarySemantics
 public import IntegerMultBounds.MathlibTM2.Routing.PlacementShear
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime

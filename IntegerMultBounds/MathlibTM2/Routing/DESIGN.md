@@ -588,9 +588,17 @@ proofs are generic in core tape count and instantiated last.
 `RepairStreamFrame` transports R2 scratch requirements across stream permutations.
 `PlacedExactSelective` executes forward placement, the actual embedded exact
 primitive and inverse placement, with summed costs and a stream-only final frame.
-Its entry point still takes raw R2 words and binary-call readiness: the concrete
-joint-bank instantiation, physical-shear semantic bridge, terminal integration and
-raw R2 compiler remain open.
+`JointBankExactSelective` instantiates the concrete overlaid bank and derives all
+binary-call readiness, leaving only actual input-word contracts.
+`SelectiveIdealBits` proves target XOR and spectator/row preservation on every
+address; `PlacedSelectiveBits` transports target and spectator bits through
+placement and identifies the executed record output with the conjugated ideal.
+`SelectiveCoordinates` identifies absolute source/target positions and source
+disjointness; `PlacedSelectiveCoordinates` expresses source reads directly in
+original physical bits. `PlacedSelectiveShear` proves the full simultaneous-shear
+identity and instantiates it for the actual reservoir rank/coordinate pair.
+Terminal integration, the raw R2 compiler, full matching scheduling and the
+long/short-record cost regimes remain open.
 
 The elementary terminal engine is now executed. `LowBitXor` routes by the new
 lowest bit and merges by the ordinary lowest bit; monotonicity within each route
@@ -714,3 +722,19 @@ grouped resampling. A cheaper symbolic layout bound alone completes none of thes
 Keep all finite checking structural and split certificates by declaration. Use
 the guarded Lean scripts and the standard-axiom audit. The existing multiplication
 theorem remains the public result until the new programs and all costs are integrated.
+
+`DescriptorCompile` executes arbitrary framed binary selector tables using one
+fixed loop. It emits one-hot descriptor rows in reverse selector order and
+restores the selector input and all scratch. Its bound includes frame loading,
+mask generation, loop tests and archive restoration; generating selector inputs
+from sparse profiles and compiling the remaining R2 configuration remain open.
+
+`DescriptorTableCompile` connects that execution to `sourceTable` and
+`patternTable`, including absent selectors. Reversed selector frames produce
+forward interpreter row order; all input frames are restored exactly.
+
+`GeneratedReadPattern` composes the compiler with the actual optional-pattern
+reader and descriptor erasure. Its final bank differs only at the requested
+output; the bound includes compilation, interpretation and erasure. Binary
+selector frames remain inputs, so sparse-profile selector generation is still
+a required compiler stage.

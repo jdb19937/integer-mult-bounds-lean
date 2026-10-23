@@ -457,10 +457,19 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    `PlacedExactSelective` now executes forward placement, the actual embedded R2
    program and reverse placement, derives all intermediate invariants, restores
    every tape except the stream and charges all three phases. It still assumes
-   raw R2 configuration and initial binary-call readiness; instantiating the full
-   joint input-bank entry point, connecting the conjugated ideal to the desired
-   physical shear, terminal-bank integration and uniform raw R2 input generation
-   remain required.
+   raw R2 configuration and initial binary-call readiness. `JointBankExactSelective`
+   now instantiates the concrete joint-bank entry point, deriving every call
+   invariant from the overlaid binary inputs. `SelectiveIdealBits` proves exact
+   target XOR, unchanged other bits and outer-row preservation on every address;
+   `PlacedSelectiveBits` transports target/spectator bits through coordinate
+   conjugation and identifies the literal executed record output with that
+   permutation. `SelectiveCoordinates` gives exact absolute target/source
+   coordinates and proves allowed sources avoid active targets.
+   `PlacedSelectiveCoordinates` transports source reads to original physical
+   bits; `PlacedSelectiveShear` identifies the complete conjugated permutation
+   with simultaneous shear, including the concrete reservoir-placement instance.
+   Terminal-bank integration, uniform raw R2 input generation, full matching
+   scheduling and long/short-record amortization remain required.
    `RouterGeometry` resolves the shared-width constraint using
    `d = (n-K)/(K+3G)`: all residues share borrowed width `dG`, the complete field
    bank has width exactly `n`, and the terminal suffix is shorter than `2K+3G`
@@ -474,7 +483,22 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    at most six times the framed input length plus one. The elementary path
    supplies an actual six-word loader, cleanup and fixed loop, not a per-call
    prepared-state or execution oracle. Producing those raw words and building
-   the persistent counters are still required.
+   the persistent counters are still required. `BinaryMask` now generates one
+   full-width one-hot descriptor row from binary width and selector inputs,
+   computing and clearing all unary coordinates and padding. `BinaryMaskEmit`
+   prepends that row to an accumulating output and restores the reusable row
+   bank, with a closed total cost. `DescriptorRows` identifies these generated
+   rows with the actual source/pattern-table format, including the optional-zero
+   selector. `DescriptorCompile` now executes a fixed loop over arbitrary framed
+   binary selector tables, emits all rows in reverse selector order, restores
+   the complete selector input and compiler scratch, and charges loading, row
+   generation, loop tests and input restoration. `DescriptorTableCompile` proves
+   that reversed selector frames produce source and optional-pattern tables in
+   the interpreter’s exact order, with a bound in selector count and binary width.
+   `GeneratedReadPattern` composes actual table generation, pattern interpretation
+   and descriptor erasure; only the requested output changes, with all three
+   phases charged. Generating selector tables
+   from sparse profiles and the complete R2 descriptor/header compiler remain open.
 5. Amortize setup for long records and supply the executed short-record fallback,
    preserving spectators in both regimes.
 6. Compose the full arbitrary-coordinate router and audit its total cost and
