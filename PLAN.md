@@ -916,6 +916,72 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    The expander must use a fixed loop, not unroll the profile in program code.
    Generating selector tables from sparse profiles and the complete R2
    configuration compiler remain open.
+   `SparsePatternCoordinates` represents sparse patterns by mirrored absolute
+   coordinates, proving strict order and exact target/zero-gap lookup against
+   reversed descriptor indices. `SparsePatternReadiness` derives all traversal
+   readiness from strict position order, bounds and one binary width bound.
+   This covers inactive zero entries and repeated sources; terminal suffix
+   completion and actual repair-pattern instantiation remain required, along
+   with executed generation of the absolute-coordinate input itself.
+   `SparseCoordinateTerminal` conditionally adds one final zero-selector entry,
+   proves no duplicate target is introduced, preserves order and bounds, derives
+   traversal readiness and proves the final cursor equals the exact requested
+   dense width. It adds at most one entry. Pattern lookup preservation through
+   this completion and actual repair-pattern instantiation remain required.
+   `SparsePatternComplete` now proves terminal-completed mirrored sparse
+   coordinates expand to the exact reversed pattern-index list.
+   `RepairKeyCoordinates` instantiates this for the actual key-source descriptor,
+   deriving ordered traversal readiness and exact selector equality. Remaining
+   rotation patterns and executed generation of these coordinate words remain
+   required; no free coordinate-input oracle is discharged by these lemmas.
+   `RepairRotationCoordinates` now supplies the actual sparse position/source
+   formulas for all ten rotation descriptors, proves equality with existing R2
+   patterns, exact reversed descriptor indices, traversal readiness and a bound
+   of sparse slot count plus one terminal entry. Together with the key result,
+   all eleven descriptor coordinate specifications are covered. Executed
+   coordinate-word generation and shared-bank execution integration remain open.
+   `RepairDescriptorCoordinates` unifies all eleven coordinate specifications,
+   proving traversal readiness, sparse entry-count bounds and exact final table
+   equality with `repairDescriptorWord` over any alphabet. Machine generation of
+   the coordinate words and integration into the shared repair bank remain open.
+   `SparseSourceCoordinateEmit` now generates a mirrored target and present
+   source-selector frame directly from live binary position/source operands,
+   computing selector `wire + 1`, erasing temporaries and restoring every input.
+   Its exact cost is `16 * coordinateWidth + 16 * selectorWidth + 35`.
+   Absent-source handling, generating positions/source operands from dimensions
+   and profiles, and repeated coordinate-frame emission remain required.
+   `SparseAbsentCoordinateEmit` now generates mirrored-target frames with a
+   zero selector from a live operand's width, restoring all inputs/scratch and
+   charging exactly `16 * coordinateWidth + 12 * selectorWidth + 31` steps.
+   Both present and absent source arithmetic are executed; live activity
+   selection, operand generation and repeated profile emission remain open.
+   `SparseOptionalCoordinateEmit` now reads a live activity bit without consuming
+   it and executes present-source or absent-source coordinate emission through
+   one fixed conditional program. Only the coordinate output changes; its bound
+   includes the test, branch and all arithmetic/cleanup. Operand generation and
+   repeated profile emission remain required.
+   `BinaryAffinePosition` now executes offset-plus-index-times-stride from live
+   binary operands, reuses multiplication scratch for addition, erases the
+   product and restores every non-output tape under an explicit nonoverflow
+   bound. This supplies the arithmetic for selected/control slot positions;
+   profile iteration and quotient/remainder positions remain required.
+   `AffineSourceCoordinate` now composes actual affine slot generation,
+   mirrored present-source emission and position cleanup, restoring every input
+   and scratch tape with the full cost charged. No prepared position/selector
+   word is supplied. Activity selection for this combined path and repeated
+   profile iteration remain required; temporary-bit positions still require
+   their group/within-group arithmetic.
+   `AffineOptionalCoordinate` now combines affine position generation with a
+   live activity test, emitting either a computed source selector or zero and
+   erasing the generated position. All inputs and scratch are restored, and the
+   bound charges arithmetic, branching and cleanup. Repeated profile execution
+   and group/within-group temporary positions remain open.
+   `RepairCoordinateDescriptor` now executes the coordinate compiler for any
+   of the eleven actual descriptors, deriving readiness and the exact output
+   word from the profile specification. Its dense compilation cost uses the
+   actual row count; compact/dense intermediates are erased and only descriptor
+   output changes. Coordinate frames are still supplied: repeated profile
+   generation and shared-bank composition remain required.
 5. Amortize setup for long records and supply the executed short-record fallback,
    preserving spectators in both regimes.
 6. Compose the full arbitrary-coordinate router and audit its total cost and
