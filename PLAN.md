@@ -821,6 +821,35 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    mask generation, compact exact repair and final mask erasure, restoring every
    nonstream tape and charging the full execution. Header generation and
    forward/inverse placement integration for this compact path remain open.
+   `RepairCompactHeaderLayout` and `RepairCompactSharedHeaders` now execute
+   both header generators on the compact classifier bank with shared workspace.
+   `RepairCompactHeaderData` and `RepairCompactHeaderDataExec` derive all
+   dimensions/block readiness from header-free initial data and establish the
+   complete mask-free input contract after generation, charging both swaps.
+   `RepairCompactHeaderFrame` now preserves all compact input roles, classifier
+   and width workspace, raw non-header inputs and repair scratch.
+   `RepairCompactHeadersClean` erases all ten generated headers after an arbitrary
+   stream update with exact canonical-length cost and complete restoration.
+   `CompactConfigurationRepair` and `CompactClassifierRepair` name the complete
+   compact repair programs and prices. `CompactClassifierRepairExec` verifies
+   the named execution; `CompactClassifierRepairGeneratedHeaders` derives all
+   repair readiness from the generated-header bank. `CompactHeaderRepairProgram`
+   and `CompactHeaderRepair` now compose actual ten-header generation, compact
+   classifier/width/descriptor repair and final header erasure, restoring every
+   nonstream tape and charging all phases. Compact inputs and remaining raw
+   dimensions are still supplied; placement integration remains open.
+   `RepairCompactHeaderInputFrame` preserves header-free inputs under stream
+   updates; `CompactHeaderPlacementLayout` separates placement from the complete
+   compact header workspace. `CompactHeaderRepairMoved` now executes the full
+   header-generating compact repair after any record permutation, deriving
+   readiness from the original bank and preserving the complete cost/frame
+   contract. `PlacedCompactHeaderRepair` now executes forward placement, full
+   compact header-generating repair and inverse placement in an arbitrary larger
+   bank. `JointBankCompactHeaderRepair` derives placement readiness from the
+   concrete overlaid initial bank. Every phase is charged and every nonstream
+   tape restored. Compact profile inputs and remaining scalar/dimension words
+   are still supplied; profile generation, full matching/terminal scheduling and
+   long/short-record amortization remain R3 gates.
    The next selector gates are:
    (a) execute a streaming gap/entry expander from sparse positions, generating
    the distinguished absent-source selector in gaps and charging every output;
