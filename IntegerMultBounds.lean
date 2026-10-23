@@ -150,6 +150,16 @@ public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderDataExec
 public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderFrame
 public import IntegerMultBounds.MathlibTM2.Routing.ClassifierRepairGeneratedHeaders
 public import IntegerMultBounds.MathlibTM2.Routing.HeaderRepair
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderRepairProgram
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderPlacementLayout
+public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderInputFrame
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderRepairMoved
+public import IntegerMultBounds.MathlibTM2.Routing.PlacedHeaderRepair
+public import IntegerMultBounds.MathlibTM2.Routing.JointBankHeaderRepair
+public import IntegerMultBounds.MathlibTM2.Routing.DescriptorSelectorFrames
+public import IntegerMultBounds.MathlibTM2.Routing.SelectorGap
+public import IntegerMultBounds.MathlibTM2.Routing.BinarySelectorZeroFrame
+public import IntegerMultBounds.MathlibTM2.Routing.GeneratedSelectorGap
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField

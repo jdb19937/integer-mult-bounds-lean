@@ -680,8 +680,17 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    after an arbitrary stream update with an exact price determined by canonical
    header lengths. `HeaderRepair` joins actual header generation, complete
    classifier-generated exact repair and final header erasure in one execution,
-   restoring every nonstream tape and charging all phases. Placement integration
-   for this extended core, sparse selector generation, remaining raw dimensions
+   restoring every nonstream tape and charging all phases. `HeaderRepairProgram`
+   names this complete program and price. `HeaderPlacementLayout` separates its
+   shared header workspace from placement metadata; `RepairHeaderInputFrame`
+   preserves header-free inputs under stream changes. `HeaderRepairMoved` now
+   executes the complete header-generating repair after any record permutation,
+   deriving intermediate readiness and preserving the cost/restoration contract.
+   `PlacedHeaderRepair` now composes actual forward placement, header-generating
+   repair and inverse placement in an arbitrary larger bank, charging all phases
+   and restoring every nonstream tape. `JointBankHeaderRepair` derives placement
+   readiness from the concrete shared initial bank, with no supplied phase
+   execution assumptions. Sparse selector generation, remaining raw dimensions
    and the full matching/amortization gates remain open.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
@@ -715,8 +724,28 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    all placement readiness from the concrete overlaid initial bank and supplies
    the generated-width repair inputs from its core words. The remaining raw
    configuration generator is still required.
-   Generating selector tables
-   from sparse profiles and the complete R2 descriptor/header compiler remain open.
+   `DescriptorSelectorFrames` now proves exact framed selector lengths, append
+   composition and executed serialization from live binary source registers,
+   with exact cost `rows * (6 * width + 7) + 1` and all source/scratch tapes
+   restored. This supplies emission only; it does not generate coordinates or
+   remove the supplied selector-table hypothesis. `SelectorGap` now executes
+   a binary-sized run of absent selectors with a fixed repetition loop, preserving
+   its binary count, reusable zero frame and scratch, with the complete repeat
+   cost charged. `BinarySelectorZeroFrame` constructs the reusable frame from
+   a binary width. `GeneratedSelectorGap` composes construction, binary-sized
+   gap emission and frame erasure, changes only the accumulating output and
+   charges all phases. Sparse-entry traversal remains open.
+   The next selector gates are:
+   (a) execute a streaming gap/entry expander from sparse positions, generating
+   the distinguished absent-source selector in gaps and charging every output;
+   (b) generate each actual offset's source coordinates from live dimensions and
+   sparse profile data, including inactive slots, repeated reads and spectator
+   sources; (c) identify reverse emitted order with `repairDescriptorIndices`
+   for all eleven jobs and derive their width inputs; (d) compose generation,
+   descriptor compilation, repair and selector cleanup in the shared bank.
+   The expander must use a fixed loop, not unroll the profile in program code.
+   Generating selector tables from sparse profiles and the complete R2
+   configuration compiler remain open.
 5. Amortize setup for long records and supply the executed short-record fallback,
    preserving spectators in both regimes.
 6. Compose the full arbitrary-coordinate router and audit its total cost and

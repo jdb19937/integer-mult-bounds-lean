@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Routing.ClassifierRepairGeneratedHeaders
 public import IntegerMultBounds.MathlibTM2.Routing.RepairHeadersClean
+public import IntegerMultBounds.MathlibTM2.Routing.HeaderRepairProgram
 public import IntegerMultBounds.MathlibTM2.Routing.RepairHeaderFrame
 public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveGeneratedClassifiers
 public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveConfiguration
@@ -82,16 +83,11 @@ theorem headerRepair_exec (body : P → Pr P repairT Q (prime + K) U)
     (hwidthInput : H.R (sharedHeaderBinary 1) = binSyms Lwidth (p₀).wc)
     (hheaders : ∀ c i, H.R (repairSharedHeaderBank c (.exchange (.base (.header i)))) = [])
     (hwork : ∀ r : HeaderWorkRole, (∀ i, r ≠ .binary i) → H.R (sharedHeaderWork r) = []) :
-    let G : Stacks repairHeaderT (prime + K) := { H with R := repairHeaderPairBank p₀ X rb R B repairSharedHeaderBank H.R }
-    let C := embStk sharedHeaderCore G
     ∃ (v' : HS repairHeaderT Q (prime + K) U) (steps : ℕ), v'.user = v.user ∧
-      (steps : ℝ) ≤ (2 * (14 * ((p₀).wc + (p₀).wy + X) + 18 * Lrow + 24 * Lwidth + 52 * wb + 280) : ℕ) +
-        classifierRepairPrice p₀ X rb hG₀ hK₀ active s scale wb wm wp wk R B Lr Lm LK Ln Lo Lt L C +
-        (repairHeaderErasePrice p₀ X rb R B : ℕ) ∧
-      Exec headerBody (.seq (binaryRepairHeaderPairProgram sharedHeaderBinary repairSharedHeaderBank)
-        (.seq (embProg sharedHeaderCore id (classifierRepairProgram p₀ X rb hG₀ hK₀ active s Lr Lm L hQ hA))
-          (metadataClean repairGeneratedHeaderTargets)))
+      (steps : ℝ) ≤ headerRepairPrice p₀ X rb hG₀ hK₀ active s scale wb wm wp wk R B Lr Lm LK Ln Lo Lt Lrow Lwidth L H ∧
+      Exec headerBody (headerRepairProgram p₀ X rb hG₀ hK₀ active s Lr Lm L hQ hA)
         (mk v H) steps (mk v' { H with R := Function.update H.R (repairHeaderRawCore repairHost.src) (moveRecs (selectiveIdealPerm hK₀ active s R hs) l).flatten }) := by
+  unfold headerRepairPrice headerRepairProgram
   let G : Stacks repairHeaderT (prime + K) := { H with R := repairHeaderPairBank p₀ X rb R B repairSharedHeaderBank H.R }
   let C := embStk sharedHeaderCore G
   have hinner (i : Fin repairConfigurationT) : H.R (sharedHeaderCore (classifierCore i)) = S.R i := by
