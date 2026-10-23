@@ -892,13 +892,50 @@ final-width padding as described below.
 `BinaryTemporaryMask` generates the literal full-width R2 temporary classifier
 mask from binary segment/run/count/offset/top dimensions. It composes block
 construction, repetition, low shift and high padding, erasing every intermediate
-and restoring all non-output tapes with a closed total cost. Integration into
-the common raw-configuration bank remains required.
+and restoring all non-output tapes with a closed total cost. The combined
+raw-configuration integration is described below.
 
 `PhaseBlockCounts` constructs the three-mark phase block from unary run and
 complementary widths, restoring the counts with three fixed pushes after
 construction. `PhaseMaskNumeral` proves that repetition, the final boundary
 mark and low padding give the exact phase classifier. `BinaryPhaseMask`
 executes binary dimension conversion, block construction, seeded repetition and low/high padding,
-restoring every non-output tape and charging all phases. Both classifier
-generators still need integration into the common raw-configuration bank.
+restoring every non-output tape and charging all phases. Both generators
+feed the common raw-configuration bank through the composition below.
+
+`ClassifierPair` executes both generators using the same binary segment/run
+inputs, count/archive tapes and scratch; only the output and offset roles differ.
+`RepairPendingMaskData` omits both raw masks from the initial configuration.
+`RepairClassifierPair` identifies the executed output bank with these missing
+inputs and derives the existing configuration contract. The concrete layout
+and exact-repair composition below use this bridge.
+
+`ClassifierBankLayout` places the shared generator workspace in sixteen
+auxiliary tapes, keeping both output masks in existing core destinations.
+Its injectivity and separation lemmas support generation without collisions.
+`ClassifierBankFrame` projects the generated bank onto its core and proves
+all auxiliary tapes survive unchanged. `ClassifierClean` erases both generated
+masks after an arbitrary stream change, restoring every other tape with exact
+cost. The concrete generator instantiation and exact-repair composition
+below use these frame and cleanup lemmas.
+
+`ClassifierBank` now instantiates generation on the concrete sixteen-tape
+placement, deriving all generator readiness from six binary dimension words
+and ten blank workspace tapes. `ClassifierBankRepair` proves the structural
+composition with an embedded core execution and final classifier cleanup,
+including all costs and restoration. Its core-execution premise is instantiated
+with exact repair by `ExactSelectiveClassifiers` below.
+
+`RepairClassifierFrame` proves that mask generation preserves all readiness
+facts for the existing exact-repair program. `ExactSelectiveGeneratedClassifiers`
+instantiates actual exact repair from the generated bank using only the reduced
+initial data contract. It starts after mask generation and accounts for repair
+only; the complete program below joins concrete generation and cleanup around it.
+
+`ExactSelectiveClassifiers` now executes the complete concrete generation,
+exact-repair and classifier-cleanup program. Both raw mask destinations begin
+blank; all nonstream tapes return to their initial contents, and the bound
+includes both mask generators, exact repair and mask erasure. The phase-block
+width guard is derived from the actual routing parameters. This theorem still
+uses the supplied descriptor selectors and remaining dimensions/headers;
+placement and concrete initial-bank readiness remain to be integrated.

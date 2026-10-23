@@ -123,6 +123,11 @@ public import IntegerMultBounds.MathlibTM2.Routing.BinaryTemporaryMask
 public import IntegerMultBounds.MathlibTM2.Routing.PhaseBlockCounts
 public import IntegerMultBounds.MathlibTM2.Routing.PhaseMaskNumeral
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryPhaseMask
+public import IntegerMultBounds.MathlibTM2.Routing.RepairClassifierPair
+public import IntegerMultBounds.MathlibTM2.Routing.ClassifierBankFrame
+public import IntegerMultBounds.MathlibTM2.Routing.ClassifierBankRepair
+public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveGeneratedClassifiers
+public import IntegerMultBounds.MathlibTM2.Routing.ExactSelectiveClassifiers
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField

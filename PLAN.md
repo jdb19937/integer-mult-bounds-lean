@@ -563,8 +563,32 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    repeats and clears the generated block; `BinaryPhaseSeed` executes the final
    boundary mark even for a zero repetition count. `BinaryPhaseMask` composes
    these with binary low/high padding, producing the full-width phase classifier
-   with all non-output tapes restored and a closed total cost. Integration of
-   both classifier-mask generators into the raw-configuration bank remains open.
+   with all non-output tapes restored and a closed total cost. The combined
+   exact-repair integration below starts with both raw mask destinations blank.
+   `ClassifierPair` now executes both generators with shared dimensions, counters
+   and scratch, changes exactly the two output tapes and charges both costs.
+   `RepairPendingMaskData` omits the raw masks; `RepairClassifierPair` proves the
+   generated bank establishes the existing configuration contract. Concrete bank
+   placement is defined in `ClassifierBankLayout`: sixteen auxiliary tapes,
+   existing core mask destinations and proved register separation.
+   `ClassifierBankFrame` proves core projection and auxiliary preservation.
+   `ClassifierClean` executes final mask erasure, preserving an arbitrary changed
+   stream and restoring all other tapes with exact cost. `ClassifierBank` now
+   executes generation on this concrete placement from six binary dimensions
+   and ten blank workspace tapes. `ClassifierBankRepair` composes generation,
+   any embedded core execution with a stream-only frame, and mask cleanup,
+   proving complete restoration and summing all phase costs; the exact-repair
+   instantiation is supplied below.
+   `RepairClassifierFrame` proves preservation of all descriptor, width, blank,
+   target and stream inputs. `ExactSelectiveGeneratedClassifiers` now executes
+   actual exact repair from the generated classifier bank using the reduced
+   initial contract, discharging every input-frame obligation. This starts after
+   mask generation and charges repair only. `ExactSelectiveClassifiers` now joins
+   concrete generation, actual exact repair and final mask erasure in one
+   execution theorem. It starts with both masks blank, restores every nonstream
+   tape and charges every phase. The phase-width guard follows from the actual
+   routing parameters. Placement/concrete initial-bank integration remains open;
+   sparse selectors and remaining binary/raw headers are still supplied.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
    phases charged. `BinaryFullMask` identifies unary conversion with the exact
