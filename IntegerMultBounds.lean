@@ -113,6 +113,16 @@ public import IntegerMultBounds.MathlibTM2.Routing.ConfigurationPlacementLayout
 public import IntegerMultBounds.MathlibTM2.Routing.RepairConfigurationInputFrame
 public import IntegerMultBounds.MathlibTM2.Routing.PlacedExactSelectiveConfiguration
 public import IntegerMultBounds.MathlibTM2.Routing.JointBankExactSelectiveConfiguration
+public import IntegerMultBounds.MathlibTM2.Routing.WordRepeat
+public import IntegerMultBounds.MathlibTM2.Routing.RepeatedTemporaryMask
+public import IntegerMultBounds.MathlibTM2.Routing.RepeatedPhaseMask
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryTemporaryRepeat
+public import IntegerMultBounds.MathlibTM2.Routing.WordRepeatNumeral
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryLowPad
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryTemporaryMask
+public import IntegerMultBounds.MathlibTM2.Routing.PhaseBlockCounts
+public import IntegerMultBounds.MathlibTM2.Routing.PhaseMaskNumeral
+public import IntegerMultBounds.MathlibTM2.Routing.BinaryPhaseMask
 public import IntegerMultBounds.MathlibTM2.Routing.GeneratedReadPattern
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryFullMask
 public import IntegerMultBounds.MathlibTM2.Routing.BinaryZeroField

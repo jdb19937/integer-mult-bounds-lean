@@ -870,3 +870,35 @@ point for the complete placement/generation/repair/cleanup/inverse program.
 Every placement and compiler invariant follows from initial input words, with
 all thirteen generated raw destinations initially blank. Remaining raw masks,
 headers and binary sparse selector inputs still require generation.
+
+`WordRepeat` executes one supplied block per count-tape symbol with a fixed
+loop and complete count/source/scratch restoration. Its bound includes count
+archiving, copies, tests and rewind. This is a reusable generator for repeated
+classifier masks, composed with block construction and arithmetic
+identification below.
+
+`WordRepeatValue` proves the exact length and numerical value of emitted
+blocks, using structural binary concatenation. `RepeatedTemporaryMask` proves
+the actual temporary classifier mask equals the corresponding shifted block
+sum. The phase-mask analogue includes the final boundary bit; the executable
+generators below supply block construction and padding.
+
+`PaddedOnesBlock` constructs an ones-run block with high padding.
+`BinaryTemporaryBlock` supplies its padding from live binary segment/run widths
+and clears that intermediate, preserving all input and scratch tapes with a
+closed cost. `BinaryTemporaryMask` composes repetition, offset shift and
+final-width padding as described below.
+
+`BinaryTemporaryMask` generates the literal full-width R2 temporary classifier
+mask from binary segment/run/count/offset/top dimensions. It composes block
+construction, repetition, low shift and high padding, erasing every intermediate
+and restoring all non-output tapes with a closed total cost. Integration into
+the common raw-configuration bank remains required.
+
+`PhaseBlockCounts` constructs the three-mark phase block from unary run and
+complementary widths, restoring the counts with three fixed pushes after
+construction. `PhaseMaskNumeral` proves that repetition, the final boundary
+mark and low padding give the exact phase classifier. `BinaryPhaseMask`
+executes binary dimension conversion, block construction, seeded repetition and low/high padding,
+restoring every non-output tape and charging all phases. Both classifier
+generators still need integration into the common raw-configuration bank.

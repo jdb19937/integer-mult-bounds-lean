@@ -537,6 +537,34 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    readiness from the concrete overlaid initial bank, with all thirteen generated
    raw destinations initially blank. Sparse selector generation, remaining masks/
    headers, full matching scheduling and final amortization remain required.
+   `WordRepeat` now executes fixed archived-count block repetition, restores
+   the full count input, source block and scratch, and charges iteration, tests
+   and rewind. `WordRepeatValue` identifies emitted words with explicit shifted
+   block sums; `RepeatedTemporaryMask` proves the actual temporary classifier
+   mask has that repeated-block value. `RepeatedPhaseMask` proves the phase-mask
+   analogue, including its final boundary bit. `BinaryTemporaryBlock` constructs
+   the temporary-mask repeated block from binary segment/run dimensions, generates
+   and clears unary padding, and restores all scratch with every phase charged.
+   `BinaryWordRepeat` generates and clears a binary-specified repetition count;
+   `BinaryTemporaryRepeat` composes binary block construction, repetition and
+   generated-block erasure with an output-only frame and all costs charged.
+   `WordRepeatNumeral` identifies repeated outputs as fitted arithmetic registers.
+   `BinaryLowPad` executes a binary-specified low-zero offset shift and clears
+   its generated unary exponent, preserving inputs and scratch. `BinaryHighPad`
+   supplies binary-specified final padding. `BinaryTemporaryMask` now composes
+   all phases to generate the actual full-width temporary classifier mask from
+   binary dimensions, restoring every non-output tape and charging all work.
+   `PhaseBlockCounts` executes three-mark phase-block construction from unary
+   run/complementary widths, restoring both inputs and all scratch with exact
+   cost. `PhaseMaskNumeral` identifies repeated blocks plus the final boundary
+   mark and low shift with the exact phase-mask register, including fit bounds.
+   `BinaryPhaseBlock` now generates both unary dimensions from binary widths,
+   constructs the phase block and erases both counters. `BinaryPhaseRepeat`
+   repeats and clears the generated block; `BinaryPhaseSeed` executes the final
+   boundary mark even for a zero repetition count. `BinaryPhaseMask` composes
+   these with binary low/high padding, producing the full-width phase classifier
+   with all non-output tapes restored and a closed total cost. Integration of
+   both classifier-mask generators into the raw-configuration bank remains open.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
    phases charged. `BinaryFullMask` identifies unary conversion with the exact
