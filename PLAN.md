@@ -54,7 +54,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 701 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 719 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -514,8 +514,29 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    `RepairDescriptorScratch` preserves every repair scratch and installed target;
    `ExactSelectiveDescriptor` now composes all eleven table compilations, actual
    exact repair and descriptor erasure with a complete nonstream frame and all
-   phase costs included. Combining descriptor and width generators, placement
-   integration and sparse selector generation remain required.
+   phase costs included. `RepairConfigurationData` supplies one initial contract
+   omitting all thirteen generated raw words and proves width generation followed
+   by descriptor compilation establishes full setup data. `RepairConfigurationWidths`
+   executes width generation inside the combined descriptor/width bank and proves
+   its exact projection into the descriptor bank. `FieldPairClean` supplies
+   reusable stream-preserving erasure for the two generated fields.
+   `RepairConfigurationFrame` proves width generation preserves all descriptor
+   inputs, repair scratch and installed targets, and establishes the next input
+   contract without an intermediate oracle. `ExactSelectiveConfiguration` now
+   executes both generators, actual exact repair and all generated-word cleanup
+   in one forty-auxiliary-tape bank, restores every nonstream tape and charges
+   every phase. `ExactSelectiveConfigurationEmbedded` lifts this complete program
+   to larger banks at identical time; `ConfigurationPlacementLayout` supplies the
+   concrete placement bank and structural separation of its nonstream tapes.
+   `RepairConfigurationInputFrame` preserves the complete initial data contract
+   under a stream update and proves all compiler inputs and scratch lie off-stream.
+   `PlacedExactSelectiveConfiguration` now executes forward placement, both
+   generators, exact repair, every cleanup phase and inverse placement, deriving
+   all intermediate invariants and restoring all nonstream tapes with full costs.
+   `JointBankExactSelectiveConfiguration` now derives all placement and compiler
+   readiness from the concrete overlaid initial bank, with all thirteen generated
+   raw destinations initially blank. Sparse selector generation, remaining masks/
+   headers, full matching scheduling and final amortization remain required.
    `GeneratedReadPattern` composes actual table generation, pattern interpretation
    and descriptor erasure; only the requested output changes, with all three
    phases charged. `BinaryFullMask` identifies unary conversion with the exact

@@ -837,3 +837,36 @@ returns to its initial value; the bound charges compilation, setup, core repair,
 installed cleanup and raw-table erasure. Binary selector inputs and other raw
 configuration remain supplied; width/descriptor generator composition and
 placement integration remain open.
+
+`RepairConfigurationData` omits thirteen raw words at once.
+`RepairConfigurationWidths` executes width generation inside the descriptor
+bank extended by six tapes, with an exact projection to its next input bank.
+`FieldPairClean` supplies generic priced erasure preserving a changed stream.
+Complete combined execution and remaining raw-configuration generation stay open.
+
+`ExactSelectiveConfiguration` closes combined execution: width generation,
+eleven-table compilation, actual exact R2 and both raw cleanup phases. The
+combined bank has forty auxiliary tapes. All intermediate invariants are derived;
+every nonstream tape is restored and every phase is charged. Proofs normalize
+structural auxiliary indices before rewriting, avoiding concrete bank reduction
+and preserving default limits. Placement integration and remaining configuration
+generation are still open.
+
+`ExactSelectiveConfigurationEmbedded` preserves complete generated-configuration
+repair execution and its exact step count inside arbitrary larger banks.
+`ConfigurationPlacementLayout` supplies the concrete joint placement bank, with
+all nonstream placement tapes outside the full forty-tape configuration core.
+Executed placement composition remains required.
+
+`ConfigurationRepair` names the complete program and price.
+`PlacedExactSelectiveConfiguration` executes forward placement, both raw
+generators, actual exact R2, all generated-word cleanup and inverse placement.
+It derives intermediate input/readiness facts and restores every nonstream
+tape, with every phase charged. Concrete joint-input readiness and remaining
+configuration generation remain required.
+
+`JointBankExactSelectiveConfiguration` supplies the concrete overlaid-bank entry
+point for the complete placement/generation/repair/cleanup/inverse program.
+Every placement and compiler invariant follows from initial input words, with
+all thirteen generated raw destinations initially blank. Remaining raw masks,
+headers and binary sparse selector inputs still require generation.
