@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Routing.DescriptorCompileData
+public import IntegerMultBounds.MathlibTM2.Routing.DescriptorTableCompile
 public import IntegerMultBounds.MathlibTM2.Routing.ConfigurationWrite
 
 /-! Exact framing and price for serializing live binary selectors. The source
@@ -21,14 +21,6 @@ theorem descriptorSelectorFrames_append (L : ℕ) (qs rs : List (Fin M)) :
   induction qs with
   | nil => rfl
   | cons q qs ih => simp [descriptorSelectorFrames, ih, List.append_assoc]
-
-theorem descriptorSelectorFrames_length (L : ℕ) (qs : List (Fin M)) :
-    (descriptorSelectorFrames (A := A) L qs).length = qs.length * (L + 1) := by
-  induction qs with
-  | nil => simp [descriptorSelectorFrames]
-  | cons q qs ih =>
-    simp only [descriptorSelectorFrames, List.length_append, List.length_cons, length_binSyms, ih]
-    simp [Nat.add_mul]; omega
 
 theorem configurationWords_binSyms (L : ℕ) (qs : List (Fin M)) :
     configurationWords (qs.map (fun q => (binSyms L q.val : List (Fin (A + 4))))) =

@@ -734,7 +734,58 @@ R3's work is ordered by dependency (the first two logical items are now proved):
    cost charged. `BinarySelectorZeroFrame` constructs the reusable frame from
    a binary width. `GeneratedSelectorGap` composes construction, binary-sized
    gap emission and frame erasure, changes only the accumulating output and
-   charges all phases. Sparse-entry traversal remains open.
+   charges all phases. `SelectorEntry` now emits a gap followed by a live binary
+   selector, restoring both operands, the reusable frame and scratch, with the
+   serialization and repetition costs charged. `SparseSelectorRuns` specifies
+   compact gap/entry runs, proves exact dense/framed sizes and proves that reverse
+   run traversal with prepending produces the forward dense selector stream.
+   `SelectorRunLoad` now reads each compact binary gap/selector pair using
+   fixed scanners, with exact cost `4 * gapWidth + 4 * selectorWidth + 12`,
+   preserving all other tapes and archiving both complete frames for rewind.
+   `SelectorRunStep` now composes actual pair loading, gap/live-entry emission
+   and operand erasure in one fixed iteration. It charges every phase, archives
+   consumed input and restores every tape except input/archive/output. Its frame
+   lemmas reestablish the next iteration's scratch blanks. `SelectorRunLoopData`
+   proves compact-stream and archive/output composition; `SelectorRunLoop` now
+   executes arbitrary finite compact streams with one fixed loop and a summed
+   per-entry cost. `SelectorRunCompile` adds the initial test and final archive
+   rewind, restoring the complete input and every non-output tape. It still
+   uses a supplied reusable zero frame. `GeneratedSelectorRuns` now generates
+   that frame once from a live binary width, compiles the complete compact stream
+   and erases the frame, restoring every non-output tape and charging all phases.
+   `SparseSelectorCompress` proves compact runs cover arbitrary dense selector
+   lists, including trailing gaps and all-zero tables, and bounds each gap by
+   dense length. `GeneratedSelectorList` executes the exact dense list from its
+   compact representation. This representation is still supplied input; generating
+   it from actual sparse profile coordinates remains required.
+   `CompactDescriptorCompile` now executes compact expansion, actual descriptor
+   table compilation and dense-selector erasure, restoring every non-output tape
+   with all phases charged. This removes prepared dense selector frames from
+   that table-level execution contract, but still requires compact input.
+   `SparseSelectorRun.compress_length_le` bounds compact entries by the number
+   of nonzero reads plus one final zero entry, including all-zero tables.
+   `CompactPatternTable` proves the executed optional-source table contract;
+   `RepairCompactPattern` instantiates it for every actual repair descriptor,
+   identifies its output with `repairDescriptorWord` and charges all phases.
+   These per-table executions still require compact input and are not yet
+   assembled into the concrete eleven-job shared bank. `CompactDescriptorJob`
+   packages the complete initial readiness and alphabet-independent cost, and
+   proves readiness survives other output writes. `CompactDescriptorBatch`
+   executes any separated list of these jobs with shared workspace, derives
+   every intermediate readiness condition from the original bank, restores all
+   non-output tapes and sums the complete costs. The concrete eleven-job layout
+   and its input-coordinate generator remain required. `CompactDescriptorLayout`
+   now supplies three persistent inputs per job and one shared generation/compiler
+   workspace, proving all register injections and separation from core outputs.
+   `CompactDescriptorBank` derives every job's readiness from those concrete input
+   words and shared blanks, and executes the complete finite bank with all costs
+   summed. Specialization to the eleven repair jobs and input-coordinate
+   generation remain required. `CompactDescriptorContents` now proves exact
+   individual outputs and unchanged auxiliary tapes. `RepairCompactBank`
+   instantiates the actual eleven repair jobs, executes the whole concrete bank
+   from compact input words and shared blanks, and proves each output equals
+   `repairDescriptorWord`. Connecting this bank to the header/placement repair
+   execution and generating compact inputs from routing profiles remain open.
    The next selector gates are:
    (a) execute a streaming gap/entry expander from sparse positions, generating
    the distinguished absent-source selector in gaps and charging every output;
